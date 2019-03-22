@@ -60,7 +60,8 @@ export default class InitScreen extends React.Component {
         console.log(this.state);
     }
     _handleUseLocation = () => {
-        console.log('hello');
+        console.log('pressed');
+        this.props.navigation.navigate('Main');
     }
 
 }
