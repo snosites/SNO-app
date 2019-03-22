@@ -1,10 +1,12 @@
 import React from 'react';
 import {
+    Platform,
     Image,
     StyleSheet,
     Text,
     View,
 } from 'react-native';
+import { Constants, Location, Permissions } from 'expo';
 
 import { Button, colors, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -15,8 +17,10 @@ export default class InitScreen extends React.Component {
         header: null,
     };
 
-    state={
-        zipCode: ''
+    state = {
+        zipCode: '',
+        location: null,
+        errorMessage: null,
     }
 
     render() {
@@ -34,23 +38,30 @@ export default class InitScreen extends React.Component {
                 </View>
                 <View style={styles.locationContainer}>
                     <Input
-                        inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                        inputContainerStyle={{ borderBottomWidth: 0}}
+                        inputStyle={{ borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20 }}
+                        inputContainerStyle={{ borderBottomWidth: 0 }}
                         value={this.state.zipCode}
                         placeholder='Zip Code'
-                        onChangeText={(text) => this.setState({zipCode: text})}
+                        onChangeText={(text) => this.setState({ zipCode: text })}
                         onSubmitEditing={(text) => this._handleZipSubmit(text)}
                     />
-                    <Text style={styles.locationContainerText}>Or</Text>
-                    <Button
-                        title='Use Your Current Location'
-                        type='outline'
-                        buttonStyle={{ borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30}}
-                        onPress={this._handleUseLocation}
-                        titleStyle={{color: '#9A1D20'}}
-                    />
-                    
-                    
+                    {this.state.error ? 
+                    <Text>{this.state.error}</Text>
+                    :
+                    <View>
+                        
+                        <Text style={styles.locationContainerText}>Or</Text>
+                        <Button
+                            title='Use Your Current Location'
+                            type='outline'
+                            buttonStyle={{ borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                            onPress={this._handleUseLocation}
+                            titleStyle={{ color: '#9A1D20' }}
+                        />
+                        <Text>{JSON.stringify(this.state.location)}</Text>
+                    </View>
+                    }
+
                 </View>
             </View>
         );
@@ -60,8 +71,24 @@ export default class InitScreen extends React.Component {
         console.log(this.state);
     }
     _handleUseLocation = () => {
-        console.log('pressed');
-        this.props.navigation.navigate('Main');
+        if (Platform.OS === 'android' && !Constants.isDevice) {
+            this.setState({
+                errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+            });
+        } else {
+            this._getLocationAsync();
+        }
+    }
+
+    _getLocationAsync = async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            this.setState({
+                errorMessage: 'Permission to access location was denied',
+            });
+        }
+        let location = await Location.getCurrentPositionAsync({});
+        this.setState({ location });
     }
 
 }
