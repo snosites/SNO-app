@@ -5,6 +5,7 @@ import AppNavigator from './navigation/AppNavigator';
 import { ThemeProvider } from 'react-native-elements';
 
 const theme = {
+    
   };
 
 export default class App extends React.Component {

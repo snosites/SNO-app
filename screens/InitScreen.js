@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { Button, colors, Input } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/Entypo';
 
 
 export default class InitScreen extends React.Component {
@@ -33,7 +34,7 @@ export default class InitScreen extends React.Component {
                 </View>
                 <View style={styles.locationContainer}>
                     <Input
-                        inputStyle={{borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 30, paddingHorizontal: 20}}
+                        inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
                         inputContainerStyle={{ borderBottomWidth: 0}}
                         value={this.state.zipCode}
                         placeholder='Zip Code'
@@ -41,11 +42,12 @@ export default class InitScreen extends React.Component {
                         onSubmitEditing={(text) => this._handleZipSubmit(text)}
                     />
                     <Text style={styles.locationContainerText}>Or</Text>
-                    <Button 
+                    <Button
                         title='Use Your Current Location'
                         type='outline'
-                        buttonStyle={{ borderRadius: 7, paddingHorizontal: 30}}
+                        buttonStyle={{ borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30}}
                         onPress={this._handleUseLocation}
+                        titleStyle={{color: '#9A1D20'}}
                     />
                     
                     
