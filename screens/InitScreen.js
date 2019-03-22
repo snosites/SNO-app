@@ -20,6 +20,7 @@ export default class InitScreen extends React.Component {
     state = {
         zipCode: '',
         location: null,
+        cityLocation: null,
         errorMessage: null,
     }
 
@@ -58,7 +59,7 @@ export default class InitScreen extends React.Component {
                             onPress={this._handleUseLocation}
                             titleStyle={{ color: '#9A1D20' }}
                         />
-                        <Text>{JSON.stringify(this.state.location)}</Text>
+                        <Text>{JSON.stringify(this.state.cityLocation)}</Text>
                     </View>
                     }
 
@@ -88,7 +89,13 @@ export default class InitScreen extends React.Component {
             });
         }
         let location = await Location.getCurrentPositionAsync({});
-        this.setState({ location });
+        let locationObj = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+        }
+        let cityLocation = await Location.reverseGeocodeAsync(locationObj);
+
+        this.setState({ cityLocation });
     }
 
 }
