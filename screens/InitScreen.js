@@ -37,35 +37,45 @@ export default class InitScreen extends React.Component {
                     />
                 </View>
                 <View style={styles.getStartedContainer}>
-                    <Text style={styles.getStartedText}>Get started by entering your zip code below
+                    <Text style={styles.getStartedText}>Get started by finding your organization
                     </Text>
                 </View>
                 <View style={styles.locationContainer}>
-                    <Input
-                        inputStyle={{ borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20 }}
-                        inputContainerStyle={{ borderBottomWidth: 0 }}
-                        value={this.state.zipCode}
-                        placeholder='Zip Code'
-                        onChangeText={(text) => this.setState({ zipCode: text })}
-                        onSubmitEditing={(text) => this._handleZipSubmit(text)}
+                    <Button
+                        title='Use Your Current Location'
+                        type='outline'
+                        buttonStyle={{ width: 300, borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                        onPress={this._handleUseLocation}
+                        titleStyle={{ color: '#9A1D20' }}
                     />
-                    {this.state.error ? 
-                    <Text>{this.state.error}</Text>
-                    :
-                    <View>
-                        
-                        <Text style={styles.locationContainerText}>Or</Text>
-                        <Button
-                            title='Use Your Current Location'
-                            type='outline'
-                            buttonStyle={{ borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                            onPress={this._handleUseLocation}
-                            titleStyle={{ color: '#9A1D20' }}
+                    <Text>{this.state.errorMessage}</Text>
+                    <Text style={styles.locationContainerText}>Or enter your organization's name and zip code below</Text>
+                    {/* <Text>{JSON.stringify(this.state.cityLocation)}</Text> */}
+                    <View style={styles.formContainer}>
+                        <Input
+                            inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
+                            inputContainerStyle={{ width: 300, borderBottomWidth: 0}}
+                            value={this.state.zipCode}
+                            placeholder='Organization Name'
+                            onChangeText={(text) => this.setState({ zipCode: text })}
+                            onSubmitEditing={(text) => this._handleZipSubmit(text)}
                         />
-                        <Text>{JSON.stringify(this.state.cityLocation)}</Text>
+                        <Input
+                            inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
+                            inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
+                            value={this.state.zipCode}
+                            placeholder='Zip Code'
+                            onChangeText={(text) => this.setState({ zipCode: text })}
+                            onSubmitEditing={(text) => this._handleZipSubmit(text)}
+                        />
+                        <Button
+                            title='Search'
+                            buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                            onPress={this._handleUseLocation}
+                            titleStyle={{ color: 'white' }}
+                            />
                     </View>
-                    }
-
+                    
                 </View>
             </View>
         );
@@ -88,7 +98,7 @@ export default class InitScreen extends React.Component {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
             this.setState({
-                errorMessage: 'Permission to access location was denied',
+                errorMessage: 'Permission to access location was denied, please enter information manually',
             });
         }
         let location = await Location.getCurrentPositionAsync({});
@@ -107,7 +117,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        margin: 30
+        margin: 30,
     },
     logoContainer: {
         alignItems: 'center',
@@ -132,13 +142,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     locationContainer: {
-        marginTop: 50,
-        alignItems: 'center'
+        flex: 1,
+        marginTop: 30,
+        alignItems: 'center',
     },
     locationContainerText: {
         fontSize: 19,
         color: 'rgba(96,100,109, 1)',
         textAlign: 'center',
         margin: 20
+    },
+    formContainer: {
+        flex: 1,
+        alignItems: 'center',
     }
 });
