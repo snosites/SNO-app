@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Text,
     View,
+    ScrollView
 } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 
@@ -21,69 +22,70 @@ export default class InitScreen extends React.Component {
     };
 
     state = {
+        orgName: '',
         zipCode: '',
-        location: null,
         cityLocation: null,
         errorMessage: null,
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.logoContainer}>
-                    <Image
-                        source={require('../assets/images/snologo-dev.png')}
-                        style={styles.logoImage}
-                    />
-                </View>
-                <View style={styles.getStartedContainer}>
-                    <Text style={styles.getStartedText}>Get started by finding your organization
-                    </Text>
-                </View>
-                <View style={styles.locationContainer}>
-                    <Button
-                        title='Use Your Current Location'
-                        type='outline'
-                        buttonStyle={{ width: 300, borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                        onPress={this._handleUseLocation}
-                        titleStyle={{ color: '#9A1D20' }}
-                    />
-                    <Text>{this.state.errorMessage}</Text>
-                    <Text style={styles.locationContainerText}>Or enter your organization's name and zip code below</Text>
-                    {/* <Text>{JSON.stringify(this.state.cityLocation)}</Text> */}
-                    <View style={styles.formContainer}>
-                        <Input
-                            inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                            inputContainerStyle={{ width: 300, borderBottomWidth: 0}}
-                            value={this.state.zipCode}
-                            placeholder='Organization Name'
-                            onChangeText={(text) => this.setState({ zipCode: text })}
-                            onSubmitEditing={(text) => this._handleZipSubmit(text)}
+            <ScrollView>
+                <View style={styles.container}>
+                    <View style={styles.logoContainer}>
+                        <Image
+                            source={require('../assets/images/snologo-dev.png')}
+                            style={styles.logoImage}
                         />
-                        <Input
-                            inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                            inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
-                            value={this.state.zipCode}
-                            placeholder='Zip Code'
-                            onChangeText={(text) => this.setState({ zipCode: text })}
-                            onSubmitEditing={(text) => this._handleZipSubmit(text)}
-                        />
-                        <Button
-                            title='Search'
-                            buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                            onPress={this._handleUseLocation}
-                            titleStyle={{ color: 'white' }}
-                            />
                     </View>
-                    
+                    <View style={styles.getStartedContainer}>
+                        <Text style={styles.getStartedText}>Get started by finding your organization
+                        </Text>
+                    </View>
+                    <View style={styles.locationContainer}>
+                        <Button
+                            title='Use Your Current Location'
+                            type='outline'
+                            buttonStyle={{ width: 300, borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                            onPress={this._handleUseLocation}
+                            titleStyle={{ color: '#9A1D20' }}
+                        />
+                        <Text>{this.state.errorMessage}</Text>
+                        <Text style={styles.locationContainerText}>Or enter your organization's name and zip code below</Text>
+                        {this.state.cityLocation && <Text>{JSON.stringify(this.state.cityLocation)}</Text>}
+                        <View style={styles.formContainer}>
+                            <Input
+                                inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
+                                inputContainerStyle={{ width: 300, borderBottomWidth: 0}}
+                                value={this.state.orgName}
+                                placeholder='Organization Name'
+                                onChangeText={(text) => this.setState({ orgName: text })}
+                            />
+                            <Input
+                                inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
+                                inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
+                                value={this.state.zipCode}
+                                placeholder='Zip Code'
+                                onChangeText={(text) => this.setState({ zipCode: text })}
+                            />
+                            <Button
+                                title='Search'
+                                buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                onPress={this._handleSubmit}
+                                titleStyle={{ color: 'white' }}
+
+                                />
+                        </View>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         );
     }
 
-    _handleZipSubmit = text => {
+    _handleSubmit = text => {
         console.log(this.state);
     }
+
     _handleUseLocation = () => {
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
@@ -109,11 +111,18 @@ export default class InitScreen extends React.Component {
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
 
         this.setState({ cityLocation });
+        this.props.navigation.navigate('Select', {
+            location: this.state.cityLocation
+        })
     }
 
 }
 
 const styles = StyleSheet.create({
+    scrollContainer: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

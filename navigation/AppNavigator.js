@@ -4,9 +4,12 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator } from 
 import MainTabNavigator from './MainTabNavigator';
 
 import InitScreen from '../screens/InitScreen';
+import selectScreen from '../screens/selectScreen';
 
-
-const AuthStack = createStackNavigator({ Init: InitScreen });
+const AuthStack = createStackNavigator({
+    Init: InitScreen,
+    Select: selectScreen
+});
 
 export default createAppContainer(createSwitchNavigator(
     {
