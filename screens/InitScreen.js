@@ -12,9 +12,6 @@ import { Constants, Location, Permissions } from 'expo';
 import { Button, colors, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Entypo';
 
-import { secrets } from '../env';
-
-console.log(secrets.CAPSULEBEARER);
 
 export default class InitScreen extends React.Component {
     static navigationOptions = {

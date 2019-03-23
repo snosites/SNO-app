@@ -17,9 +17,10 @@ export default class selectScreen extends React.Component {
         const cityLocation = navigation.getParam('location', null);
         const orgName = navigation.getParam('orgName', null);
         const zipCode = navigation.getParam('zipCode', null);
-
+        console.log(cityLocation[0])
+        console.log(Number(cityLocation[0].postalCode));
         if(cityLocation) {
-            return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${cityLocation[0].city}${cityLocation[0].postalCode}`, {
+            return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${Number(cityLocation[0].postalCode)}`, {
                 method: 'GET',
                 headers: {
                   Accept: 'application/json',
@@ -33,6 +34,8 @@ export default class selectScreen extends React.Component {
                     isLoading: false,
                     orgs: responseJson.parties,
                 });
+                console.log(responseJson.parties);
+                
             })
             .catch((error) => {
                 console.error(error);
@@ -45,7 +48,7 @@ export default class selectScreen extends React.Component {
         const cityLocation = navigation.getParam('location', null);
         return (
             <ScrollView style={styles.container}>
-                {cityLocation && <Text>{JSON.stringify(orgs)}</Text>}
+                {cityLocation && <Text>{JSON.stringify(this.state.orgs)}</Text>}
             </ScrollView>
         );
     }
