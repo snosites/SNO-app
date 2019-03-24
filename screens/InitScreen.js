@@ -119,6 +119,9 @@ export default class InitScreen extends React.Component {
         this.props.navigation.navigate('Select', {
             location: this.state.cityLocation
         })
+        this.setState({
+            isLoading: false
+        })
     }
 
 }

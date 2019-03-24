@@ -1,6 +1,16 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, ActivityIndicator, View } from 'react-native';
-import { ListItem } from 'react-native-elements'
+import { 
+    ScrollView, 
+    StyleSheet, 
+    Text,
+    TouchableHighlight,
+    ActivityIndicator, 
+    View, 
+    AsyncStorage,
+    Modal
+    } from 'react-native';
+import { ListItem, Button } from 'react-native-elements'
+import { Haptic } from 'expo';
 import {secrets} from '../env';
 
 export default class selectScreen extends React.Component {
@@ -10,6 +20,7 @@ export default class selectScreen extends React.Component {
 
     state = {
         isLoading: true,
+        modalVisible: false,
         orgs: []
     }
 
@@ -56,25 +67,62 @@ export default class selectScreen extends React.Component {
           }
         return (
             <ScrollView style={styles.container}>
-                {/* {cityLocation && <Text>{JSON.stringify(this.state.orgs)}</Text>} */}
                 {this.state.orgs.map(item => (
                     item.name && 
                     <ListItem
                         key={item.id}
                         title={item.name}
                         bottomDivider
+                        chevron
                         onPress={() => this._handleSelect(item.id)}
-                        // leftIcon={{ name: item.icon }}
                     />
                     ))
                 }
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        this.props.navigation.navigate('Main')
+                    }}>
+                    <View style={{flex: 1, marginTop: 25, padding: 25}}>
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                            <Text style={{fontSize: 19, lineHeight: 24}}>Great!</Text>
+                            <Text style={{fontSize: 15, paddingBottom: 25}}>
+                                Your selected newspaper has been saved.  If you ever want to change this you can find it in your settings.
+                            </Text>
+                            <Button
+                                title='Dismiss'
+                                buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                onPress={() => {
+                                    this.setState({
+                                        modalVisible: false
+                                    })
+                                    this.props.navigation.navigate('Main')
+                                }}
+                                titleStyle={{ color: 'white' }}
+                                />
+                        </View>
+                    </View>
+                    </Modal>
             </ScrollView>
+            
         );
     }
 
-    _handleSelect = (orgId) => {
-        console.log('org ID:', orgId)
+    _handleSelect = async (orgId) => {
+        Haptic.selection();
+        try {
+            await AsyncStorage.setItem('userOrg', String(orgId));
+            this.setState({
+                modalVisible: true
+            })
+          } 
+          catch (error) {
+            console.log('error saving users org')
+          }
     }
+
 }
 
 const styles = StyleSheet.create({

@@ -21,9 +21,9 @@ class AuthLoadingScreen extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken');
+        const userOrg = await AsyncStorage.getItem('userOrg');
 
-        this.props.navigation.navigate(userToken ? 'Main' : 'Auth');
+        this.props.navigation.navigate(userOrg ? 'Main' : 'Auth');
     };
 
     // Render any loading content that you like here
