@@ -61,7 +61,7 @@ export default class selectScreen extends React.Component {
         if(this.state.isLoading){
             return(
               <View style={{flex: 1, padding: 20}}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator color="#9A1D20" />
               </View>
             )
           }
@@ -86,10 +86,10 @@ export default class selectScreen extends React.Component {
                         this.props.navigation.navigate('Main')
                     }}>
                     <View style={{flex: 1, marginTop: 25, padding: 25}}>
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            <Text style={{fontSize: 19, lineHeight: 24}}>Great!</Text>
-                            <Text style={{fontSize: 15, paddingBottom: 25}}>
-                                Your selected newspaper has been saved.  If you ever want to change this you can find it in your settings.
+                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 25, paddingBottom: 10, color: '#D17931', fontWeight: 'bold'}}>Great!</Text>
+                            <Text style={{fontSize: 17, paddingBottom: 25}}>
+                                Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
                             </Text>
                             <Button
                                 title='Dismiss'

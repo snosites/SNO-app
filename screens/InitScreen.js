@@ -30,7 +30,7 @@ export default class InitScreen extends React.Component {
         if(this.state.isLoading){
             return(
               <View style={{flex: 1, paddingVertical: 40}}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator color="#9A1D20" />
               </View>
             )
           }
@@ -50,6 +50,7 @@ export default class InitScreen extends React.Component {
                     <View style={styles.locationContainer}>
                         <Button
                             title='Use Your Current Location'
+                            raised
                             buttonStyle={{ width: 300, backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
                             onPress={this._handleUseLocation}
                             titleStyle={{ color: 'white' }}
