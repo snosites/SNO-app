@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text, ActivityIndicator, View } from 'react-native';
+import { ListItem } from 'react-native-elements'
 import {secrets} from '../env';
 
 export default class selectScreen extends React.Component {
@@ -46,18 +47,39 @@ export default class selectScreen extends React.Component {
     render() {
         const { navigation } = this.props;
         const cityLocation = navigation.getParam('location', null);
+        if(this.state.isLoading){
+            return(
+              <View style={{flex: 1, padding: 20}}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )
+          }
         return (
             <ScrollView style={styles.container}>
-                {cityLocation && <Text>{JSON.stringify(this.state.orgs)}</Text>}
+                {/* {cityLocation && <Text>{JSON.stringify(this.state.orgs)}</Text>} */}
+                {this.state.orgs.map(item => (
+                    item.name && 
+                    <ListItem
+                        key={item.id}
+                        title={item.name}
+                        bottomDivider
+                        onPress={() => this._handleSelect(item.id)}
+                        // leftIcon={{ name: item.icon }}
+                    />
+                    ))
+                }
             </ScrollView>
         );
+    }
+
+    _handleSelect = (orgId) => {
+        console.log('org ID:', orgId)
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 15,
         backgroundColor: '#fff',
     },
 });

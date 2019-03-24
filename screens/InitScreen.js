@@ -5,12 +5,12 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 
 import { Button, colors, Input } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Entypo';
 
 
 export default class InitScreen extends React.Component {
@@ -19,6 +19,7 @@ export default class InitScreen extends React.Component {
     };
 
     state = {
+        isLoading: false,
         orgName: '',
         zipCode: '',
         cityLocation: null,
@@ -26,6 +27,13 @@ export default class InitScreen extends React.Component {
     }
 
     render() {
+        if(this.state.isLoading){
+            return(
+              <View style={{flex: 1, paddingVertical: 40}}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )
+          }
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -42,14 +50,12 @@ export default class InitScreen extends React.Component {
                     <View style={styles.locationContainer}>
                         <Button
                             title='Use Your Current Location'
-                            type='outline'
-                            buttonStyle={{ width: 300, borderWidth: 1.25, borderColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                            buttonStyle={{ width: 300, backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
                             onPress={this._handleUseLocation}
-                            titleStyle={{ color: '#9A1D20' }}
+                            titleStyle={{ color: 'white' }}
                         />
                         <Text>{this.state.errorMessage}</Text>
                         <Text style={styles.locationContainerText}>Or enter your organization's name and zip code below</Text>
-                        {this.state.cityLocation && <Text>{JSON.stringify(this.state.cityLocation)}</Text>}
                         <View style={styles.formContainer}>
                             <Input
                                 inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
@@ -70,7 +76,6 @@ export default class InitScreen extends React.Component {
                                 buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
                                 onPress={this._handleSubmit}
                                 titleStyle={{ color: 'white' }}
-
                                 />
                         </View>
                     </View>
@@ -100,6 +105,9 @@ export default class InitScreen extends React.Component {
                 errorMessage: 'Permission to access location was denied, please enter information manually',
             });
         }
+        this.setState({
+            isLoading: true
+        })
         let location = await Location.getCurrentPositionAsync({});
         let locationObj = {
             latitude: location.coords.latitude,
