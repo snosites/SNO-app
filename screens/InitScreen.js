@@ -8,7 +8,7 @@ import {
     ScrollView,
     ActivityIndicator
 } from 'react-native';
-import { Constants, Location, Permissions } from 'expo';
+import { Constants, Location, Permissions, Haptic } from 'expo';
 
 import { Button, colors, Input } from 'react-native-elements';
 
@@ -90,6 +90,7 @@ export default class InitScreen extends React.Component {
     }
 
     _handleUseLocation = () => {
+        Haptic.selection();
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
                 errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
@@ -115,7 +116,7 @@ export default class InitScreen extends React.Component {
             longitude: location.coords.longitude
         }
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
-
+        console.log('city location', cityLocation)
         this.setState({ cityLocation });
         this.props.navigation.navigate('Select', {
             location: this.state.cityLocation
