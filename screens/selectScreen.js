@@ -43,25 +43,27 @@ export default class selectScreen extends React.Component {
             .then((response) => response.json())
             // filter out parties that don't have fields
             .then((responseJson) => {
+                console.log('responseJson Length', responseJson.parties.length)
                 return responseJson.parties.filter(item => {
                     return item.fields.length > 0;
                 })
             })
+            // filter out parties that don't have a domain
             .then(filteredArr => {
-                return filteredArr.parties.filter(item => {
+                return filteredArr.filter(item => {
                     for(let field of item.fields) {
                         if(field.definition.id == 3747){
                             return true;
                         }
                     }
                 })
-                // console.log('filtered arr', filteredArr);
-                // this.setState({
-                //     isLoading: false,
-                //     orgs: responseJson.parties,
-                // });
-                // console.log('response', responseJson.parties);
-                
+            })
+            .then(newFilteredArr => {
+                this.setState({
+                    isLoading: false,
+                    orgs: newFilteredArr,
+                });
+                // console.log('newFilteredArr', newFilteredArr);
             })
             .catch((error) => {
                 console.error(error);
@@ -82,13 +84,13 @@ export default class selectScreen extends React.Component {
         return (
             <ScrollView style={styles.container}>
                 {this.state.orgs.map(item => (
-                    item.organisation && 
+                    item.name && 
                     <ListItem
                         key={item.id}
-                        title={item.organisation.name}
+                        title={item.name}
                         bottomDivider
                         chevron
-                        onPress={() => this._handleSelect(item.id)}
+                        onPress={() => this._handleSelect(item.id, item.fields)}
                     />
                     ))
                 }
@@ -132,10 +134,17 @@ export default class selectScreen extends React.Component {
         );
     }
 
-    _handleSelect = async (orgId) => {
+    _handleSelect = async (orgId, fields) => {
         Haptic.selection();
+        let domain = '';
+        for(let field of fields) {
+            if(field.definition.id == 3747) {
+                domain = field.value;
+            }
+        }
         try {
             await AsyncStorage.setItem('userOrg', String(orgId));
+            await AsyncStorage.setItem('userDomain', String(domain));
             this.setState({
                 modalVisible: true
             })
