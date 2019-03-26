@@ -13,6 +13,8 @@ import { ListItem, Button, Icon } from 'react-native-elements'
 import { Haptic } from 'expo';
 import {secrets} from '../env';
 
+import InitModal from './InitModal';
+
 export default class selectScreen extends React.Component {
     static navigationOptions = {
         title: 'Select Your Organization',
@@ -43,9 +45,9 @@ export default class selectScreen extends React.Component {
             .then((response) => response.json())
             // filter out parties that don't have fields
             .then((responseJson) => {
-                console.log('responseJson', responseJson.parties)
+                // console.log('responseJson', responseJson.parties)
 
-                console.log('responseJson Length', responseJson.parties.length)
+                // console.log('responseJson Length', responseJson.parties.length)
                 return responseJson.parties.filter(item => {
                     return item.fields.length > 0;
                 })
@@ -96,41 +98,11 @@ export default class selectScreen extends React.Component {
                     />
                     ))
                 }
-                <Modal
-                    animationType="slide"
-                    transparent={false}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {
-                        this.props.navigation.navigate('Main')
-                    }}
-                >
-                    <View style={{flex: 1, padding: 25}}>
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <Icon
-                                name='cloud-done'
-                                type='material'
-                                color='#517fa4'
-                                size={55}
-                            />
-                            <Text style={{fontSize: 30, paddingBottom: 10, color: '#517fa4', fontWeight: 'bold'}}>Great!</Text>
-                            <Text style={{fontSize: 17, paddingBottom: 25}}>
-                                Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
-                            </Text>
-                            <Button
-                                title='Dismiss'
-                                buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                                onPress={() => {
-                                    Haptic.selection();
-                                    this.setState({
-                                        modalVisible: false
-                                    })
-                                    this.props.navigation.navigate('Main')
-                                }}
-                                titleStyle={{ color: 'white' }}
-                                />
-                        </View>
-                    </View>
-                </Modal>
+                <InitModal 
+                    modalVisible={this.state.modalVisible} 
+                    handleDismiss={this._handleModalDismiss} 
+                    nav={this.props.navigation.navigate}    
+                />
             </ScrollView>
             
         );
@@ -154,6 +126,12 @@ export default class selectScreen extends React.Component {
           catch (error) {
             console.log('error saving users org')
           }
+    }
+
+    _handleModalDismiss = () => {
+        this.setState({
+            modalVisible: false
+        })
     }
 
 }

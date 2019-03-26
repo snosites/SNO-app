@@ -11,7 +11,7 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator } from 
 import MainTabNavigator from './MainTabNavigator';
 
 import InitScreen from '../screens/InitScreen';
-import selectScreen from '../screens/selectScreen';
+import selectScreen from '../screens/SelectScreen';
 
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
