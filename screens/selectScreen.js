@@ -54,7 +54,7 @@ export default class selectScreen extends React.Component {
             .then(filteredArr => {
                 return filteredArr.filter(item => {
                     for(let field of item.fields) {
-                        if(field.definition.id == 3747){
+                        if(field.definition.id == 309073){
                             return true;
                         }
                     }
