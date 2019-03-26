@@ -20,15 +20,18 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userOrg: ''
+            userOrg: '',
+            userDomain: ''
         }
-        this._bootstrapAsync();
+        this._loadUserSiteAsync();
     }
 
-    _bootstrapAsync = async () => {
+    _loadUserSiteAsync = async () => {
         const userOrg = await AsyncStorage.getItem('userOrg');
+        const userDomain = await AsyncStorage.getItem('userDomain');
         this.setState({
-            userOrg: userOrg
+            userOrg,
+            userDomain
         })
         
     };
@@ -44,7 +47,7 @@ export default class HomeScreen extends React.Component {
                         />
                     </View>
                     <Text style={styles.textHeading}>{this.state.userOrg}</Text>
-
+                    <Text style={styles.textHeading}>{this.state.userDomain}</Text>
                     <Text style={styles.text}>wordpress blog stuff goes here</Text>
                 </ScrollView>
 

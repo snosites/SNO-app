@@ -32,7 +32,7 @@ export default class selectScreen extends React.Component {
         console.log(Number(cityLocation[0].postalCode));
         if(cityLocation) {
             // fetch capsule entries by city and state
-            return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${cityLocation[0].city} ${cityLocation[0].region}&embed=fields`, {
+            return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${cityLocation[0].city} ${cityLocation[0].region}&embed=fields,tags`, {
                 method: 'GET',
                 headers: {
                   Accept: 'application/json',
@@ -43,6 +43,8 @@ export default class selectScreen extends React.Component {
             .then((response) => response.json())
             // filter out parties that don't have fields
             .then((responseJson) => {
+                console.log('responseJson', responseJson.parties)
+
                 console.log('responseJson Length', responseJson.parties.length)
                 return responseJson.parties.filter(item => {
                     return item.fields.length > 0;
@@ -63,7 +65,7 @@ export default class selectScreen extends React.Component {
                     isLoading: false,
                     orgs: newFilteredArr,
                 });
-                // console.log('newFilteredArr', newFilteredArr);
+                console.log('newFilteredArr', newFilteredArr);
             })
             .catch((error) => {
                 console.error(error);

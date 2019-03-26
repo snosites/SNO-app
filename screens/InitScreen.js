@@ -56,21 +56,14 @@ export default class InitScreen extends React.Component {
                             titleStyle={{ color: 'white' }}
                         />
                         <Text>{this.state.errorMessage}</Text>
-                        <Text style={styles.locationContainerText}>Or enter your organization's name and zip code below</Text>
+                        <Text style={styles.locationContainerText}>Or enter your organization's name below</Text>
                         <View style={styles.formContainer}>
                             <Input
                                 inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                                inputContainerStyle={{ width: 300, borderBottomWidth: 0}}
+                                inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10}}
                                 value={this.state.orgName}
                                 placeholder='Organization Name'
                                 onChangeText={(text) => this.setState({ orgName: text })}
-                            />
-                            <Input
-                                inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                                inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
-                                value={this.state.zipCode}
-                                placeholder='Zip Code'
-                                onChangeText={(text) => this.setState({ zipCode: text })}
                             />
                             <Button
                                 title='Search'
@@ -153,6 +146,7 @@ const styles = StyleSheet.create({
     getStartedContainer: {
         alignItems: 'center',
         marginHorizontal: 50,
+        marginBottom: 100
     },
     getStartedText: {
         fontSize: 19,
