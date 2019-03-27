@@ -15,6 +15,7 @@ const { Lottie } = DangerZone;
 export default class initModal extends Component {
     state = {
         animation: null,
+        showText: false
     };
 
 
@@ -27,7 +28,7 @@ export default class initModal extends Component {
                 onRequestClose={() => {
                     this.props.nav('Main')
                 }}
-                onShow={this._playAnimation}
+                onShow={this._startAnimation}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.animationContainer}>
@@ -40,21 +41,23 @@ export default class initModal extends Component {
                                 height: 300,
                             }}
                             loop={false}
-                            speed={0.5}
-                            source={require('../assets/lottiefiles/checked-done.json')}
+                            speed={0.75}
+                            duration={1200}
+                            source={require('../assets/lottiefiles/success.json')}
                         />
                         {/* <View style={styles.buttonContainer}>
                         <Button title="Restart Animation" onPress={this._playAnimation} />
                     </View> */}
                     </View>
+                    {this.state.showText &&
                     <View style={styles.textContainer}>
-                        <Text style={{ fontSize: 30, paddingVertical: 10, color: '#38c172', textAlign: 'center' }}>Great!</Text>
+                        <Text style={{ fontSize: 30, paddingBottom: 10, textAlign: 'center' }}>Success!</Text>
                         <Text style={{ fontSize: 17, paddingBottom: 35 }}>
                             Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
                             </Text>
                         <Button
                             title='Dismiss'
-                            buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                            buttonStyle={{ backgroundColor: '#01C885', borderRadius: 10, paddingHorizontal: 30 }}
                             onPress={() => {
                                 Haptic.selection();
                                 this.props.handleDismiss();
@@ -62,12 +65,20 @@ export default class initModal extends Component {
                             }}
                             titleStyle={{ color: 'white' }}
                         />
-                    </View>
+                    </View>}
                 </View>
             </Modal>
         )
     }
 
+    _startAnimation = () => {
+        this._playAnimation();
+        setTimeout(() => {
+            this.setState({
+                showText: true
+            })
+        }, 1200)
+    }
 
     _playAnimation = () => {
         this.animation.reset();
@@ -103,6 +114,7 @@ const styles = StyleSheet.create({
         height: 300,
     },
     textContainer: {
-        alignContent: 'center'
+        alignContent: 'center',
+        marginHorizontal: 30
     },
 });
