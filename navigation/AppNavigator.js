@@ -21,23 +21,7 @@ class AuthLoadingScreen extends React.Component {
 
     _bootstrapAsync = async () => {
         const userDomain = await AsyncStorage.getItem('userDomain');
-        // pull in menus
-        console.log('domain', userDomain)
-        if (userDomain) {
-            let response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
-            let menus = await response.json();
-            this.props.navigation.navigate('Main', {
-                menuItems: menus
-            },
-                NavigationActions.navigate('HomeStack', {
-                    menuItems: menus
-                }, NavigationActions.navigate('')),
-            )
-            console.log('user menus', menus)
-        }
-        else {
-            this.props.navigation.navigate('Auth')
-        }
+        this.props.navigation.navigate(userDomain ? 'Main' : 'Auth')
     };
 
     render() {

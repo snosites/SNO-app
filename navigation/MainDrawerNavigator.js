@@ -1,97 +1,196 @@
 import React from 'react';
 import {
-    Image,
     Platform,
     Button,
     ScrollView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
     AsyncStorage
 } from 'react-native';
 import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 
+import TouchableItem from '../constants/TouchableItem';
+
 import { Feather } from '@expo/vector-icons';
-
+import { Ionicons } from '@expo/vector-icons';
 import TabBarIcon from '../components/TabBarIcon';
-import LinksScreen from '../screens/LinksScreen';
+import DrawerNavIcon from '../components/DrawerNavIcon';
 
 
 
-class MyHomeScreen extends React.Component {
+class ListScreen extends React.Component {
     static navigationOptions = {
-        title: 'testing home',
-        
+        title: 'ListScreen',
     };
 
     render() {
         return (
             <Button
-                onPress={() => this.props.navigation.navigate('Links')}
-                title="Go to notifications"
+                onPress={() => this.props.navigation.navigate('FullArticle')}
+                title="Go to Full Article Screen"
             />
         );
     }
 }
 
-class MyNotificationsScreen extends React.Component {
+class FullArticleScreen extends React.Component {
     static navigationOptions = {
-        drawerLabel: 'Notifications',
-        drawerIcon: ({ tintColor }) => (
-            <Feather name="menu" size={24} color={tintColor} />
-        ),
+        title: 'FullArticleScreen',
     };
 
     render() {
         return (
             <Button
                 onPress={() => this.props.navigation.goBack()}
-                title="Go back home"
+                title="Go back to List Screen"
             />
         );
     }
 }
 
-const LinksStack = createStackNavigator({
-    Home: MyHomeScreen,
-    Links: LinksScreen,
-  });
-  
-LinksStack.navigationOptions = {
+const ArticleStack = createStackNavigator({
+    List: ListScreen,
+    FullArticle: FullArticleScreen,
+});
+
+ArticleStack.navigationOptions = {
     drawerLabel: 'Breaking News',
     drawerIcon: ({ tintColor }) => (
         <Feather name="menu" size={24} color={tintColor} />
     ),
 };
 
+class CustomDrawerComponent extends React.Component {
+    state = {
+        menus: []
+    }
+    componentDidMount() {
+        console.log('mounted')
+        this._asyncLoadMenus();
+    }
+
+    render() {
+        console.log('custom comp props', this.state.menus)
+        return (
+            <ScrollView style={styles.container}>
+                <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
+                    {this.state.menus &&
+                        <ScrollView >
+                            {this.state.menus.map((item, i) => {
+                                return (
+
+                                    <TouchableItem
+                                        key={i}
+                                        accessible
+                                        accessibilityLabel={item.title}
+                                        onPress={() => {
+                                            this._handleMenuPress(item);
+                                        }}
+                                        delayPressIn={0}
+                                    >
+                                        <View style={styles.item}>
+                                            <View
+                                                style={[
+                                                    styles.icon,
+                                                    this.props.focused ? null : styles.inactiveIcon
+                                                ]}
+                                            >
+                                                <Ionicons name="ios-arrow-dropright" size={24} color='blue' />
+                                            </View>
+                                            <Text
+                                                style={styles.label}
+                                            >
+                                                {item.title}
+                                            </Text>
+                                        </View>
+                                    </TouchableItem>
+
+                                )
+                            })}
+                        </ScrollView>
+
+                    }
+                </SafeAreaView>
+            </ScrollView>
+        )
+
+    }
+
+    _asyncLoadMenus = async () => {
+        const userDomain = await AsyncStorage.getItem('userDomain');
+        // pull in menus
+        console.log('user domain', userDomain)
+        const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
+        const menus = await response.json();
+        this.setState({
+            menus: menus
+        })
+    };
+
+    _handleMenuPress = (item) => {
+        this.props.navigation.closeDrawer();
+        this.props.navigation.navigate("List", { pageData: item })
+    }
+}
+
+const styles = StyleSheet.create({
+    rootContainer: {
+        flex: 1,
+    },
+    container: {
+        paddingVertical: 10,
+    },
+    item: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    icon: {
+        marginHorizontal: 16,
+        width: 24,
+        alignItems: 'center',
+    },
+    inactiveIcon: {
+        /*
+         * Icons have 0.54 opacity according to guidelines
+         * 100/87 * 54 ~= 62
+         */
+        opacity: 0.62,
+    },
+    label: {
+        margin: 16,
+        fontWeight: 'bold',
+        fontSize: 19
+    },
+});
+
+
 const MyDrawerNavigator = createDrawerNavigator({
     Home: {
-        screen: LinksStack,
-    },
-    Notifications: {
-        screen: MyNotificationsScreen,
+        screen: ArticleStack,
     },
 },
-{
-    contentOptions: {
-        labelStyle: {fontSize: 19}
-    },
-    contentComponent: <CustomDrawerContent />
-});
+    {
+        contentOptions: {
+            items: ['test1', 'test2'],
+            labelStyle: { fontSize: 19 }
+        },
+        contentComponent: CustomDrawerComponent
+    });
+
 
 MyDrawerNavigator.navigationOptions = {
     tabBarLabel: 'Home',
     tabBarIcon: ({ focused }) => (
-      <TabBarIcon
-        focused={focused}
-        name={
-          Platform.OS === 'ios'
-            ? `ios-home`
-            : 'md-home'
-        }
-      />
+        <TabBarIcon
+            focused={focused}
+            name={
+                Platform.OS === 'ios'
+                    ? `ios-home`
+                    : 'md-home'
+            }
+        />
     ),
-  };
+};
 
 export default MyDrawerNavigator;
