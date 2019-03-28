@@ -96,7 +96,10 @@ class CustomDrawerComponent extends React.Component {
                                                     this.props.focused ? null : styles.inactiveIcon
                                                 ]}
                                             >
-                                                <Ionicons name="ios-arrow-dropright" size={24} color='blue' />
+                                                <DrawerNavIcon 
+                                                    style={item.menu_icon_dir}
+                                                    name={item.menu_icon_name}
+                                                />
                                             </View>
                                             <Text
                                                 style={styles.label}
