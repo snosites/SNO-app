@@ -20,17 +20,14 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userOrg: '',
             userDomain: ''
         }
         this._loadUserSiteAsync();
     }
 
     _loadUserSiteAsync = async () => {
-        const userOrg = await AsyncStorage.getItem('userOrg');
         const userDomain = await AsyncStorage.getItem('userDomain');
         this.setState({
-            userOrg,
             userDomain
         })
         
@@ -46,7 +43,6 @@ export default class HomeScreen extends React.Component {
                             style={styles.welcomeImage}
                         />
                     </View>
-                    <Text style={styles.textHeading}>{this.state.userOrg}</Text>
                     <Text style={styles.textHeading}>{this.state.userDomain}</Text>
                     <Text style={styles.text}>wordpress blog stuff goes here</Text>
                 </ScrollView>

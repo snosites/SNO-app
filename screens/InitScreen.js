@@ -104,6 +104,7 @@ export default class InitScreen extends React.Component {
             isLoading: true
         })
         let location = await Location.getCurrentPositionAsync({});
+        console.log('location obj', location)
         let locationObj = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude

@@ -114,7 +114,6 @@ export default class selectScreen extends React.Component {
             }
         }
         try {
-            await AsyncStorage.setItem('userOrg', String(orgId));
             await AsyncStorage.setItem('userDomain', String(domain));
             this.setState({
                 modalVisible: true

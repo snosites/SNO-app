@@ -6,7 +6,7 @@ import {
     StyleSheet,
     View,
 } from 'react-native';
-import { createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createAppContainer, createStackNavigator, createSwitchNavigator, NavigationActions } from 'react-navigation';
 
 import MainTabNavigator from './MainTabNavigator';
 
@@ -20,8 +20,24 @@ class AuthLoadingScreen extends React.Component {
     }
 
     _bootstrapAsync = async () => {
-        const userOrg = await AsyncStorage.getItem('userOrg');
-        this.props.navigation.navigate(userOrg ? 'Main' : 'Auth')
+        const userDomain = await AsyncStorage.getItem('userDomain');
+        // pull in menus
+        console.log('domain', userDomain)
+        if (userDomain) {
+            let response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
+            let menus = await response.json();
+            this.props.navigation.navigate('Main', {
+                menuItems: menus
+            },
+                NavigationActions.navigate('HomeStack', {
+                    menuItems: menus
+                }, NavigationActions.navigate('')),
+            )
+            console.log('user menus', menus)
+        }
+        else {
+            this.props.navigation.navigate('Auth')
+        }
     };
 
     render() {
