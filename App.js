@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+import { Provider, connect } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
 import AppNavigator from './navigation/AppNavigator';
 import { ThemeProvider } from 'react-native-elements';
 

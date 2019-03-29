@@ -32,15 +32,15 @@ export default class ListScreen extends React.Component {
     };
 
 
-    componentDidMount() {
-        this._fetchCategoryStories();
+    componentWillRecieveProps() {
+        console.log('wefhrtwfecwerbty')
     }
 
     render() {
         return (
             <View>
                 <NavigationEvents
-                    onDidFocus={payload => console.log('did focus',payload)}
+                    onDidFocus={payload => console.log('did focus',payload, this.props.navigation.state.params)}
                 />
                 <Button
                 onPress={() => this.props.navigation.navigate('FullArticle')}

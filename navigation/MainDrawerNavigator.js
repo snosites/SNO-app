@@ -24,7 +24,7 @@ import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-butto
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
-  );
+);
 
 
 class FullArticleScreen extends React.Component {
@@ -48,7 +48,7 @@ const ArticleStack = createStackNavigator({
 });
 
 ArticleStack.navigationOptions = {
-    
+
 };
 
 class CustomDrawerComponent extends React.Component {
@@ -57,6 +57,7 @@ class CustomDrawerComponent extends React.Component {
     }
     componentDidMount() {
         this._asyncLoadMenus();
+        console.log('props', this.props)
     }
 
     render() {
@@ -84,7 +85,7 @@ class CustomDrawerComponent extends React.Component {
                                                     this.props.focused ? null : styles.inactiveIcon
                                                 ]}
                                             >
-                                                <DrawerNavIcon 
+                                                <DrawerNavIcon
                                                     style={item.menu_icon_dir}
                                                     name={item.menu_icon_name}
                                                 />
@@ -117,18 +118,18 @@ class CustomDrawerComponent extends React.Component {
         this.setState({
             menus: menus
         })
-        this.props.navigation.navigate("List", { 
+        this.props.navigation.navigate("List", {
             menuTitle: this.state.menus[0].title,
-            categoryId: this.state.menus[0].object_id 
+            categoryId: this.state.menus[0].object_id
         })
     };
 
     _handleMenuPress = (item) => {
         this.props.navigation.closeDrawer();
-        this.props.navigation.navigate("List", { 
+        this.props.navigation.navigate("List", {
             menuTitle: item.title,
             categoryId: item.object_id
-         })
+        })
     }
 }
 
@@ -167,8 +168,11 @@ const MyDrawerNavigator = createDrawerNavigator({
     Home: {
         screen: ArticleStack,
     },
+    Away: {
+        screen: ArticleStack,
+    },
 },
-    {
+    {   
         contentComponent: CustomDrawerComponent
     });
 

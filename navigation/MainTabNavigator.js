@@ -46,7 +46,7 @@ class HomeScreen extends React.Component {
 }
 
 export default createBottomTabNavigator({
-  HomeStack: HomeScreen,
+  HomeStack: MainDrawerNavigator,
   LinksStack,
   SettingsStack,
 });
