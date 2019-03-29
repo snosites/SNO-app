@@ -53,11 +53,11 @@ ArticleStack.navigationOptions = {
 
 class CustomDrawerComponent extends React.Component {
     state = {
+        userDomain: '',
         menus: []
     }
     componentDidMount() {
         this._asyncLoadMenus();
-        console.log('props', this.props)
     }
 
     render() {
@@ -112,27 +112,30 @@ class CustomDrawerComponent extends React.Component {
     _asyncLoadMenus = async () => {
         const userDomain = await AsyncStorage.getItem('userDomain');
         // pull in menus
-        console.log('user domain', userDomain)
         const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = await response.json();
         this.setState({
-            menus: menus
+            userDomain,
+            menus
         })
+        // pass inital category to screen
         this._handleMenuPress(this.state.menus[0]);
     };
 
     _handleMenuPress = async (item) => {
-        const temp = await this._getArticles(item.object_id)
+        const stories = await this._getArticles(item.object_id)
         this.props.navigation.closeDrawer();
         this.props.navigation.navigate("List", {
             menuTitle: item.title,
             categoryId: item.object_id,
-            content: temp
+            content: stories
         })
     }
 
-    _getArticles = (category) => {
-        return category
+    _getArticles = async (category) => {
+        const response = await fetch(`${this.state.userDomain}/wp-json/wp/v2/posts?categories=${category}`)
+        const stories = await response.json();
+        return stories;
     }
 }
 
