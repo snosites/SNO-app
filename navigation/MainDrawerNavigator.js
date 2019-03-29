@@ -8,7 +8,7 @@ import {
     View,
     AsyncStorage
 } from 'react-native';
-import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createAppContainer } from 'react-navigation';
 
 import TouchableItem from '../constants/TouchableItem';
 
@@ -163,28 +163,40 @@ const styles = StyleSheet.create({
 });
 
 
-const MyDrawerNavigator = createDrawerNavigator({
-    Home: {
-        screen: ArticleStack,
-    },
-},
-    {
-        contentComponent: CustomDrawerComponent
-    });
+let routeConfig = {};
+const Drawer = createDrawerNavigator(routeConfig);
+const HomeAppContainer = createAppContainer(Drawer);
+
+class HomeScreen extends React.Component {
+    static navigationOptions = {
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+                focused={focused}
+                name={
+                    Platform.OS === 'ios'
+                        ? `ios-home`
+                        : 'md-home'
+                }
+            />
+        ),
+    };
+
+    componentDidMount() {
+        routeConfig = {
+            updatedHome: {
+                screen: ArticleStack,
+            },
+        }
+    }
+
+    render() {
+        
+        return (
+            <HomeAppContainer />
+        )
+    }
+}
 
 
-MyDrawerNavigator.navigationOptions = {
-    tabBarLabel: 'Home',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon
-            focused={focused}
-            name={
-                Platform.OS === 'ios'
-                    ? `ios-home`
-                    : 'md-home'
-            }
-        />
-    ),
-};
-
-export default MyDrawerNavigator;
+export default HomeScreen;
