@@ -118,18 +118,21 @@ class CustomDrawerComponent extends React.Component {
         this.setState({
             menus: menus
         })
-        this.props.navigation.navigate("List", {
-            menuTitle: this.state.menus[0].title,
-            categoryId: this.state.menus[0].object_id
-        })
+        this._handleMenuPress(this.state.menus[0]);
     };
 
-    _handleMenuPress = (item) => {
+    _handleMenuPress = async (item) => {
+        const temp = await this._getArticles(item.object_id)
         this.props.navigation.closeDrawer();
         this.props.navigation.navigate("List", {
             menuTitle: item.title,
-            categoryId: item.object_id
+            categoryId: item.object_id,
+            content: temp
         })
+    }
+
+    _getArticles = (category) => {
+        return category
     }
 }
 
@@ -166,9 +169,6 @@ const styles = StyleSheet.create({
 
 const MyDrawerNavigator = createDrawerNavigator({
     Home: {
-        screen: ArticleStack,
-    },
-    Away: {
         screen: ArticleStack,
     },
 },

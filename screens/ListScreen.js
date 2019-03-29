@@ -3,7 +3,8 @@ import {
     Platform,
     Button,
     AsyncStorage,
-    View
+    View,
+    Text
 } from 'react-native';
 import { createDrawerNavigator, createStackNavigator, NavigationEvents } from 'react-navigation';
 
@@ -31,17 +32,14 @@ export default class ListScreen extends React.Component {
         };
     };
 
-
-    componentWillRecieveProps() {
-        console.log('wefhrtwfecwerbty')
-    }
-
     render() {
+        console.log('render in params', this.props.navigation.state.params)
         return (
             <View>
                 <NavigationEvents
                     onDidFocus={payload => console.log('did focus',payload, this.props.navigation.state.params)}
                 />
+                <Text></Text>
                 <Button
                 onPress={() => this.props.navigation.navigate('FullArticle')}
                 title="Go to Full Article Screen"
