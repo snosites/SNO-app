@@ -9,7 +9,6 @@ export default class DrawerNavIcon extends React.Component {
     
     render() {
         const { style, name } = this.props;
-        console.log('style', style)
         let iconName = '';
         if (name) {
             let splitName = name.split('-');
@@ -23,7 +22,7 @@ export default class DrawerNavIcon extends React.Component {
             return (
                 <FontAwesome
                     name={iconName}
-                    size={26}
+                    size={29}
                     color={Colors.tabIconSelected}
                 />
             )
@@ -32,7 +31,7 @@ export default class DrawerNavIcon extends React.Component {
             return (
                 <Foundation
                     name={iconName}
-                    size={26}
+                    size={29}
                     color={Colors.tabIconSelected}
                 />
             );

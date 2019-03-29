@@ -17,22 +17,15 @@ import { Ionicons } from '@expo/vector-icons';
 import TabBarIcon from '../components/TabBarIcon';
 import DrawerNavIcon from '../components/DrawerNavIcon';
 
+import ListScreen from '../screens/ListScreen';
 
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
-class ListScreen extends React.Component {
-    static navigationOptions = {
-        title: 'ListScreen',
-    };
+// header icon native look component
+const IoniconsHeaderButton = passMeFurther => (
+    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
+  );
 
-    render() {
-        return (
-            <Button
-                onPress={() => this.props.navigation.navigate('FullArticle')}
-                title="Go to Full Article Screen"
-            />
-        );
-    }
-}
 
 class FullArticleScreen extends React.Component {
     static navigationOptions = {
@@ -55,10 +48,7 @@ const ArticleStack = createStackNavigator({
 });
 
 ArticleStack.navigationOptions = {
-    drawerLabel: 'Breaking News',
-    drawerIcon: ({ tintColor }) => (
-        <Feather name="menu" size={24} color={tintColor} />
-    ),
+    
 };
 
 class CustomDrawerComponent extends React.Component {
@@ -66,12 +56,11 @@ class CustomDrawerComponent extends React.Component {
         menus: []
     }
     componentDidMount() {
-        console.log('mounted')
         this._asyncLoadMenus();
     }
 
     render() {
-        console.log('custom comp props', this.state.menus)
+        // console.log('items', this.state.menus)
         return (
             <ScrollView style={styles.container}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
@@ -79,7 +68,6 @@ class CustomDrawerComponent extends React.Component {
                         <ScrollView >
                             {this.state.menus.map((item, i) => {
                                 return (
-
                                     <TouchableItem
                                         key={i}
                                         accessible
@@ -129,11 +117,18 @@ class CustomDrawerComponent extends React.Component {
         this.setState({
             menus: menus
         })
+        this.props.navigation.navigate("List", { 
+            menuTitle: this.state.menus[0].title,
+            categoryId: this.state.menus[0].object_id 
+        })
     };
 
     _handleMenuPress = (item) => {
         this.props.navigation.closeDrawer();
-        this.props.navigation.navigate("List", { pageData: item })
+        this.props.navigation.navigate("List", { 
+            menuTitle: item.title,
+            categoryId: item.object_id
+         })
     }
 }
 
@@ -150,7 +145,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginHorizontal: 16,
-        width: 24,
+        width: 40,
         alignItems: 'center',
     },
     inactiveIcon: {
@@ -163,7 +158,7 @@ const styles = StyleSheet.create({
     label: {
         margin: 16,
         fontWeight: 'bold',
-        fontSize: 19
+        fontSize: 21
     },
 });
 
@@ -174,10 +169,6 @@ const MyDrawerNavigator = createDrawerNavigator({
     },
 },
     {
-        contentOptions: {
-            items: ['test1', 'test2'],
-            labelStyle: { fontSize: 19 }
-        },
         contentComponent: CustomDrawerComponent
     });
 

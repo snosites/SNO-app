@@ -36,8 +36,17 @@ SettingsStack.navigationOptions = {
   ),
 };
 
+class HomeScreen extends React.Component {
+
+    render() {
+        return (
+            <MainDrawerNavigator />
+        );
+    }
+}
+
 export default createBottomTabNavigator({
-  HomeStack: MainDrawerNavigator,
+  HomeStack: HomeScreen,
   LinksStack,
   SettingsStack,
 });
