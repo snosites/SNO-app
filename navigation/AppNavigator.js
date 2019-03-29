@@ -16,10 +16,10 @@ import selectScreen from '../screens/SelectScreen';
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
         super(props);
-        this._bootstrapAsync();
+        this._getDomainAsync();
     }
 
-    _bootstrapAsync = async () => {
+    _getDomainAsync = async () => {
         const userDomain = await AsyncStorage.getItem('userDomain');
         this.props.navigation.navigate(userDomain ? 'Main' : 'Auth')
     };
