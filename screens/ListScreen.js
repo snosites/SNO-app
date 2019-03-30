@@ -45,7 +45,7 @@ export default class ListScreen extends React.Component {
                 </View>
             )
         }
-        console.log('render in params', navigation.state.params.content)
+        // console.log('render in params', navigation.state.params.content)
         return (
             <ScrollView>
                 {navigation.state.params.content.map((story, i) => {
