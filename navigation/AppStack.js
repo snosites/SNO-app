@@ -5,7 +5,6 @@ import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator }
 import TabBarIcon from '../components/TabBarIcon';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-
 import MainDrawerNavigator from './MainDrawerNavigator';
 
 const LinksStack = createStackNavigator({
@@ -35,15 +34,6 @@ SettingsStack.navigationOptions = {
     />
   ),
 };
-
-class HomeScreen extends React.Component {
-
-    render() {
-        return (
-            <MainDrawerNavigator />
-        );
-    }
-}
 
 export default createBottomTabNavigator({
   HomeStack: MainDrawerNavigator,

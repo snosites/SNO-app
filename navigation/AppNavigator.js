@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { createAppContainer, createStackNavigator, createSwitchNavigator, NavigationActions } from 'react-navigation';
 
-import MainTabNavigator from './MainTabNavigator';
+import AppStack from './AppStack';
 
 import InitScreen from '../screens/InitScreen';
 import selectScreen from '../screens/SelectScreen';
@@ -19,11 +19,6 @@ class AuthLoadingScreen extends React.Component {
         this._getDomainAsync();
     }
 
-    _getDomainAsync = async () => {
-        const userDomain = await AsyncStorage.getItem('userDomain');
-        this.props.navigation.navigate(userDomain ? 'Main' : 'Auth')
-    };
-
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
@@ -32,6 +27,11 @@ class AuthLoadingScreen extends React.Component {
             </View>
         );
     }
+
+    _getDomainAsync = async () => {
+        const userDomain = await AsyncStorage.getItem('userDomain');
+        this.props.navigation.navigate(userDomain ? 'App' : 'Auth')
+    };
 }
 
 const AuthStack = createStackNavigator({
@@ -42,7 +42,7 @@ const AuthStack = createStackNavigator({
 export default createAppContainer(createSwitchNavigator(
     {
         AuthLoading: AuthLoadingScreen,
-        Main: MainTabNavigator,
+        App: AppStack,
         Auth: AuthStack,
     },
     {

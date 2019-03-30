@@ -6,9 +6,11 @@ import {
     StyleSheet,
     Text,
     View,
-    AsyncStorage
+    AsyncStorage,
+    StatusBar,
+    ActivityIndicator
 } from 'react-native';
-import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator } from 'react-navigation';
 
 import TouchableItem from '../constants/TouchableItem';
 
@@ -139,6 +141,31 @@ class CustomDrawerComponent extends React.Component {
     }
 }
 
+class HomeLoadingScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            loadingSettings: true
+        }
+    }
+
+    componentDidMount(){
+        setTimeout(() => {
+            this.setState({loadingSettings: false})
+            this.props.navigation.navigate('HomeMain');
+        }, 2000)
+    }
+
+    render() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center'}}>
+                <StatusBar barStyle="dark-content" />
+                <ActivityIndicator size="large" color='purple' />
+            </View>
+        );
+    }
+}
+
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
@@ -170,14 +197,14 @@ const styles = StyleSheet.create({
 });
 
 
-const MyDrawerNavigator = createDrawerNavigator({
-    Home: {
-        screen: ArticleStack,
+const MyDrawerNavigator = createDrawerNavigator(
+    {
+        Home: ArticleStack,
     },
-},
-    {   
+    {
         contentComponent: CustomDrawerComponent
-    });
+    }
+);
 
 
 MyDrawerNavigator.navigationOptions = {
@@ -194,4 +221,24 @@ MyDrawerNavigator.navigationOptions = {
     ),
 };
 
-export default MyDrawerNavigator;
+const HomeLoadingStack = createSwitchNavigator({
+    HomeLoading: HomeLoadingScreen,
+    HomeMain: MyDrawerNavigator
+})
+
+HomeLoadingStack.navigationOptions = {
+    tabBarLabel: 'Home',
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon
+            focused={focused}
+            name={
+                Platform.OS === 'ios'
+                    ? `ios-home`
+                    : 'md-home'
+            }
+        />
+    ),
+};
+
+
+export default HomeLoadingStack;
