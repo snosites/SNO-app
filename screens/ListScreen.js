@@ -34,7 +34,7 @@ export default class ListScreen extends React.Component {
 
     render() {
         if(this.props.navigation.state.params){
-            console.log('render in params', this.props.navigation.state.params.content.length)
+            console.log('render in params', this.props.navigation.state.params.content)
         }
         
         return (
