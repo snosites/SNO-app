@@ -1,10 +1,12 @@
 import React from 'react';
 import {
     Platform,
-    Button,
     AsyncStorage,
     View,
-    Text
+    ScrollView,
+    Text,
+    Image,
+    ActivityIndicator
 } from 'react-native';
 import { createDrawerNavigator, createStackNavigator, NavigationEvents } from 'react-navigation';
 
@@ -14,6 +16,8 @@ import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+
+import { Card, ListItem, Button, Icon } from 'react-native-elements'
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
@@ -33,21 +37,36 @@ export default class ListScreen extends React.Component {
     };
 
     render() {
-        if(this.props.navigation.state.params){
-            console.log('render in params', this.props.navigation.state.params.content)
+        const { navigation } = this.props;
+        if (!navigation.state.params) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <ActivityIndicator color='blue' />
+                </View>
+            )
         }
-        
+        console.log('render in params', navigation.state.params.content)
         return (
-            <View>
-                <NavigationEvents
-                    onDidFocus={payload => console.log('did focus',payload, this.props.navigation.state.params)}
-                />
-                <Text></Text>
-                <Button
-                onPress={() => this.props.navigation.navigate('FullArticle')}
-                title="Go to Full Article Screen"
-            />
-            </View>
+            <ScrollView>
+                {navigation.state.params.content.map((story, i) => {
+                    return (
+                        <Card
+                            key={story.id}
+                            title={story.title.rendered}
+                        // image={require('../images/pic2.jpg')}
+                        >
+                            <Text style={{ marginBottom: 10 }}>
+                                {story.excerpt.rendered}
+                            </Text>
+                            <Button
+                                icon={<Icon name='code' color='#ffffff' />}
+                                backgroundColor='#03A9F4'
+                                buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+                                title='Read More' />
+                        </Card>
+                    )
+                })}
+            </ScrollView>
         );
     }
 

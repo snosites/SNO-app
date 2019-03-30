@@ -98,7 +98,7 @@ export default class selectScreen extends React.Component {
                 <InitModal 
                     modalVisible={this.state.modalVisible} 
                     handleDismiss={this._handleModalDismiss} 
-                    nav={this.props.navigation.navigate}    
+                    navigation={this.props.navigation}    
                 />
             </ScrollView>
             
