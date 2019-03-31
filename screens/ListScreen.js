@@ -6,9 +6,10 @@ import {
     ScrollView,
     Text,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    StyleSheet
 } from 'react-native';
-import { createDrawerNavigator, createStackNavigator, NavigationEvents } from 'react-navigation';
+import Moment from 'moment';
 
 import TouchableItem from '../constants/TouchableItem';
 
@@ -36,34 +37,31 @@ export default class ListScreen extends React.Component {
         };
     };
 
+
     render() {
         const { navigation } = this.props;
-        if (!navigation.state.params) {
+        let stories = navigation.getParam('content', 'loading')
+        console.log('stories', stories)
+        console.log('render in params', navigation.state)
+        if (stories === 'loading') {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <ActivityIndicator color='blue' />
                 </View>
             )
         }
-        // console.log('render in params', navigation.state.params.content)
         return (
-            <ScrollView>
-                {navigation.state.params.content.map((story, i) => {
+            <ScrollView style={{flex: 1, marginVertical: 5}}>
+                {stories.map(story => {
+                    console.log('story title', story.title.rendered)
                     return (
-                        <Card
-                            key={story.id}
-                            title={story.title.rendered}
-                        // image={require('../images/pic2.jpg')}
-                        >
-                            <Text style={{ marginBottom: 10 }}>
-                                {story.excerpt.rendered}
-                            </Text>
-                            <Button
-                                icon={<Icon name='code' color='#ffffff' />}
-                                backgroundColor='#03A9F4'
-                                buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-                                title='Read More' />
-                        </Card>
+                        <View key={story.id} style={styles.storyContainer}>
+                            <Image source={{uri: story.featuredImage}} style={styles.featuredImage} />
+                            <View style={styles.storyInfo}>
+                                <Text ellipsizeMode='tail' numberOfLines={2}style={styles.title}>{story.title.rendered}</Text>
+                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                            </View>
+                        </View>
                     )
                 })}
             </ScrollView>
@@ -83,3 +81,30 @@ export default class ListScreen extends React.Component {
         }
     }
 }
+
+const styles = StyleSheet.create({
+    storyContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        marginHorizontal: 20,
+        marginVertical: 15
+    },
+    featuredImage: {
+        width: 125,
+        height: 90,
+        borderRadius: 15
+    },
+    storyInfo: {
+        flex: 1, 
+        marginLeft: 10,
+        justifyContent: 'space-between'
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    date: {
+        fontSize: 15,
+        color: 'grey'
+    }
+});
