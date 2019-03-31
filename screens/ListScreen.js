@@ -7,13 +7,14 @@ import {
     Text,
     Image,
     ActivityIndicator,
-    StyleSheet
+    StyleSheet,
+    TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
-
+import Colors from '../constants/Colors'
 import TouchableItem from '../constants/TouchableItem';
 
-import { Feather } from '@expo/vector-icons';
+import { EvilIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -51,17 +52,31 @@ export default class ListScreen extends React.Component {
             )
         }
         return (
-            <ScrollView style={{flex: 1, marginVertical: 5}}>
+            <ScrollView style={{ flex: 1, marginVertical: 5 }}>
                 {stories.map(story => {
                     console.log('story title', story.title.rendered)
                     return (
-                        <View key={story.id} style={styles.storyContainer}>
-                            <Image source={{uri: story.featuredImage}} style={styles.featuredImage} />
-                            <View style={styles.storyInfo}>
-                                <Text ellipsizeMode='tail' numberOfLines={2}style={styles.title}>{story.title.rendered}</Text>
-                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                        <TouchableOpacity
+                            key={story.id}
+                            onPress={this._handleArticlePress(story)}
+                        >
+                            <View style={styles.storyContainer}>
+                                <Image source={{ uri: story.featuredImage }} style={styles.featuredImage} />
+                                <View style={styles.storyInfo}>
+                                    <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
+                                    <View style={styles.extraInfo}>
+                                        <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                        <View style={styles.socialIconsContainer}>
+
+                                            <EvilIcons onPress={() => {
+                                                alert('share')
+                                            }} style={styles.socialIcon} name='share-google' size={28} color={Colors.tintColor} />
+                                            <EvilIcons style={styles.socialIcon} name='star' size={28} color={Colors.tintColor} />
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )
                 })}
             </ScrollView>
@@ -80,6 +95,14 @@ export default class ListScreen extends React.Component {
             console.log('error saving users org', error)
         }
     }
+
+    _handleArticlePress = article => async () => {
+        const { navigation } = this.props;
+        navigation.push('FullArticle', {
+            articleId: article.id,
+            article
+        })
+    }
 }
 
 const styles = StyleSheet.create({
@@ -87,7 +110,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 20,
-        marginVertical: 15
+        marginVertical: 15,
     },
     featuredImage: {
         width: 125,
@@ -95,9 +118,18 @@ const styles = StyleSheet.create({
         borderRadius: 15
     },
     storyInfo: {
-        flex: 1, 
+        flex: 1,
         marginLeft: 10,
         justifyContent: 'space-between'
+    },
+    extraInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        flex: 1,
+    },
+    socialIconsContainer: {
+        flexDirection: 'row',
     },
     title: {
         fontSize: 20,
@@ -106,5 +138,8 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 15,
         color: 'grey'
+    },
+    socialIcon: {
+        paddingHorizontal: 5
     }
 });

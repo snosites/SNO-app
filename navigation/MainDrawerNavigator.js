@@ -31,8 +31,11 @@ const IoniconsHeaderButton = passMeFurther => (
 
 
 class FullArticleScreen extends React.Component {
-    static navigationOptions = {
-        title: 'FullArticleScreen',
+    static navigationOptions = ({ navigation }) => {
+        const story = navigation.getParam('article', 'Full Article')
+        return {
+            title: story.title.rendered,
+        };
     };
 
     render() {
