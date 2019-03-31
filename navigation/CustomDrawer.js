@@ -88,6 +88,9 @@ export default class CustomDrawerComponent extends React.Component {
 
     _handleMenuPress = async (item) => {
         this.props.navigation.closeDrawer();
+        this.props.navigation.navigate('List', {
+            content: 'loading'
+        })
         const stories = await this._getArticles(item.object_id)
         console.log('stories', stories)
         this.props.navigation.navigate("List", {

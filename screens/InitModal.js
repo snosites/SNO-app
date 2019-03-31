@@ -45,9 +45,6 @@ export default class initModal extends Component {
                             duration={1200}
                             source={require('../assets/lottiefiles/success.json')}
                         />
-                        {/* <View style={styles.buttonContainer}>
-                        <Button title="Restart Animation" onPress={this._playAnimation} />
-                    </View> */}
                     </View>
                     {this.state.showText &&
                     <View style={styles.textContainer}>
@@ -84,20 +81,6 @@ export default class initModal extends Component {
         this.animation.reset();
         this.animation.play();
     };
-
-    // _loadAnimationAsync = async () => {
-    //     console.log('in load ani')
-    //     let result = await fetch(
-    //         'https://cdn.rawgit.com/airbnb/lottie-react-native/635163550b9689529bfffb77e489e4174516f1c0/example/animations/Watermelon.json'
-    //     )
-    //         .then(data => {
-    //             return data.json();
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //         });
-    //     this.setState({ animation: result }, this._playAnimation);
-    // };
 }
 
 

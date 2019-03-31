@@ -19,7 +19,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import { Haptic, DangerZone } from 'expo';
+
+const { Lottie } = DangerZone;
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
@@ -38,6 +40,17 @@ export default class ListScreen extends React.Component {
         };
     };
 
+    componentDidMount(){
+        if(this.animation){
+            this._playAnimation();
+        }
+    }
+
+    componentDidUpdate(){
+        if(this.animation){
+            this._playAnimation();
+        }
+    }
 
     render() {
         const { navigation } = this.props;
@@ -45,9 +58,24 @@ export default class ListScreen extends React.Component {
         console.log('stories', stories)
         console.log('render in params', navigation.state)
         if (stories === 'loading') {
+            
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <ActivityIndicator color='blue' />
+                    <View style={styles.animationContainer}>
+                        <Lottie
+                            ref={animation => {
+                                this.animation = animation;
+                            }}
+                            style={{
+                                width: 400,
+                                height: 400,
+                            }}
+                            loop={true}
+                            speed={1}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/loading-article-multi')}
+                        />
+                    </View>
                 </View>
             )
         }
@@ -98,11 +126,17 @@ export default class ListScreen extends React.Component {
 
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
+        Haptic.selection();
         navigation.push('FullArticle', {
             articleId: article.id,
             article
         })
     }
+
+    _playAnimation = () => {
+        this.animation.reset();
+        this.animation.play();
+    };
 }
 
 const styles = StyleSheet.create({
@@ -111,6 +145,10 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 20,
         marginVertical: 15,
+    },
+    animationContainer: {
+        width: 400,
+        height: 400,
     },
     featuredImage: {
         width: 125,
@@ -141,5 +179,6 @@ const styles = StyleSheet.create({
     },
     socialIcon: {
         paddingHorizontal: 5
-    }
+    },
+
 });
