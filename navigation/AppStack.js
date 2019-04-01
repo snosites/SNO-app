@@ -21,6 +21,20 @@ LinksStack.navigationOptions = {
   ),
 };
 
+const BookmarkStack = createStackNavigator({
+    Links: LinksScreen,
+  });
+  
+  BookmarkStack.navigationOptions = {
+    tabBarLabel: 'Saved',
+    tabBarIcon: ({ focused }) => (
+      <TabBarIcon
+        focused={focused}
+        name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
+      />
+    ),
+  };
+
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
 });
@@ -37,6 +51,7 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   HomeStack: MainDrawerNavigator,
+  BookmarkStack,
   LinksStack,
   SettingsStack,
 });

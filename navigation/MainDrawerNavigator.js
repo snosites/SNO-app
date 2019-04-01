@@ -21,6 +21,7 @@ import DrawerNavIcon from '../components/DrawerNavIcon';
 
 import CustomDrawer from './CustomDrawer';
 import ListScreen from '../screens/ListScreen';
+import FullArticleScreen from '../screens/FullArticleScreen';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -28,25 +29,6 @@ import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-butto
 const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
 );
-
-
-class FullArticleScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const story = navigation.getParam('article', 'Full Article')
-        return {
-            title: story.title.rendered,
-        };
-    };
-
-    render() {
-        return (
-            <Button
-                onPress={() => this.props.navigation.goBack()}
-                title="Go back to List Screen"
-            />
-        );
-    }
-}
 
 const ArticleStack = createStackNavigator({
     List: ListScreen,
@@ -69,7 +51,7 @@ class HomeLoadingScreen extends React.Component {
         setTimeout(() => {
             this.setState({loadingSettings: false})
             this.props.navigation.navigate('HomeMain');
-        }, 2000)
+        }, 100)
     }
 
     render() {

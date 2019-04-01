@@ -16,6 +16,8 @@ import TouchableItem from '../constants/TouchableItem';
 
 import { EvilIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -25,7 +27,7 @@ const { Lottie } = DangerZone;
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
+    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
 export default class ListScreen extends React.Component {
@@ -34,7 +36,7 @@ export default class ListScreen extends React.Component {
             title: navigation.getParam('menuTitle', 'Stories'),
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item title="search" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
+                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
             ),
         };
@@ -55,10 +57,7 @@ export default class ListScreen extends React.Component {
     render() {
         const { navigation } = this.props;
         let stories = navigation.getParam('content', 'loading')
-        console.log('stories', stories)
-        console.log('render in params', navigation.state)
         if (stories === 'loading') {
-            
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -73,7 +72,7 @@ export default class ListScreen extends React.Component {
                             loop={true}
                             speed={1}
                             autoPlay={true}
-                            source={require('../assets/lottiefiles/loading-article-multi')}
+                            source={require('../assets/lottiefiles/article-loading-animation')}
                         />
                     </View>
                 </View>
@@ -93,13 +92,17 @@ export default class ListScreen extends React.Component {
                                 <View style={styles.storyInfo}>
                                     <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                     <View style={styles.extraInfo}>
+                                        <View style={{flex: 1}}>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
                                         <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                        </View>
+                                        
                                         <View style={styles.socialIconsContainer}>
 
-                                            <EvilIcons onPress={() => {
+                                            <MaterialIcons onPress={() => {
                                                 alert('share')
-                                            }} style={styles.socialIcon} name='share-google' size={28} color={Colors.tintColor} />
-                                            <EvilIcons style={styles.socialIcon} name='star' size={28} color={Colors.tintColor} />
+                                            }} style={styles.socialIcon} name='share' size={28} color={Colors.tintColor} />
+                                            <MaterialIcons style={styles.socialIcon} name='bookmark-border' size={28} color={Colors.tintColor} />
                                         </View>
                                     </View>
                                 </View>
@@ -117,7 +120,6 @@ export default class ListScreen extends React.Component {
             const userDomain = await AsyncStorage.getItem('userDomain');
             const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?categories=${this.props.navigation.getParam('categoryId')}`)
             const stories = await response.json();
-            console.log('results', stories)
         }
         catch (error) {
             console.log('error saving users org', error)
@@ -176,6 +178,10 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 15,
         color: 'grey'
+    },
+    author: {
+        fontSize: 15,
+        color: '#90caf9'
     },
     socialIcon: {
         paddingHorizontal: 5

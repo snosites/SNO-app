@@ -6,7 +6,7 @@ import {
     View,
     AsyncStorage,
     StatusBar,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 
@@ -49,7 +49,7 @@ export default class CustomDrawerComponent extends React.Component {
                                             <View
                                                 style={[
                                                     styles.icon,
-                                                    this.props.focused ? null : styles.inactiveIcon
+                                                    this.state.activeMenu == item.object_id ? null : styles.inactiveIcon
                                                 ]}
                                             >
                                                 <DrawerNavIcon
@@ -92,7 +92,6 @@ export default class CustomDrawerComponent extends React.Component {
             content: 'loading'
         })
         const stories = await this._getArticles(item.object_id)
-        console.log('stories', stories)
         this.props.navigation.navigate("List", {
             menuTitle: item.title,
             categoryId: item.object_id,
@@ -103,6 +102,7 @@ export default class CustomDrawerComponent extends React.Component {
         })
     }
 
+
     _getArticles = async (category) => {
         const response = await fetch(`${this.state.userDomain}/wp-json/wp/v2/posts?categories=${category}`)
         const stories = await response.json();
@@ -110,14 +110,13 @@ export default class CustomDrawerComponent extends React.Component {
             try {
                 const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
                 const featuredImage = await imgResponse.json();
-                story.featuredImage = featuredImage.media_details.sizes.medium.source_url;
+                story.featuredImage = featuredImage.media_details.sizes.full.source_url;
                 console.log('featured image', story.featuredImage)
             }
             catch (err) {
                 console.log('error getting featured image', err)
             }
         }))
-        // console.log('stories', stories)
         return stories;
     }
 }
