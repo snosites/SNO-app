@@ -9,10 +9,11 @@ import {
     AsyncStorage,
     StatusBar,
     ActivityIndicator,
-    Image
+    Image,
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
+import { Permissions, MediaLibrary, WebBrowser } from 'expo';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -34,7 +35,15 @@ export default class FullArticleScreen extends React.Component {
         return (
             <ScrollView style={styles.storyContainer}>
                 {article.featuredImage &&
-                    <Image source={{ uri: article.featuredImage }} style={styles.featuredImage} />
+                    // <TouchableItem
+                    //     onPress={() => this._downloadImage(article)}
+                    // >
+                        <Image
+                            source={{ uri: article.featuredImage }}
+                            style={styles.featuredImage}
+
+                        />
+                    // </TouchableItem>
                 }
                 <Text style={styles.title}>{article.title.rendered}</Text>
                 <Text style={styles.byLine}>{this._getArticleAuthor()}
@@ -55,14 +64,15 @@ export default class FullArticleScreen extends React.Component {
                 </View>
                 <Text style={styles.date}>Published: {Moment(article.modified).fromNow()}</Text>
                 <View style={styles.articleContents}>
-                    <HTML 
+                    <HTML
                         html={article.content.rendered}
-                        textSelectable={true} 
+                        textSelectable={true}
+                        onLinkPress={(e, href) => this._viewLink(href)}
                         tagsStyles={{
-                            p: { 
+                            p: {
                                 fontSize: 18,
                                 marginBottom: 15
-                            } 
+                            }
                         }}
                     />
                 </View>
@@ -86,9 +96,28 @@ export default class FullArticleScreen extends React.Component {
         }
     }
 
-    _renderContent = (article) => {
-        const regEx = /<\/?[^>]+(>|$)/g;
+    _viewLink = async (href) => {
+        let result = await WebBrowser.openBrowserAsync(href);
     }
+
+
+    //work on later
+    // _downloadImage = async (article) => {
+    //     console.log('in image press func')
+    //     const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    //     if (status !== 'granted') {
+    //         const { updatedStatus } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    //         if (updatedStatus === 'granted') {
+    //             let uri = article.featuredImage;
+    //             MediaLibrary.createAssetAsync(uri);
+    //         }
+    //         else {
+    //             alert('sorry cant save you denied the permission')
+    //         }
+    //     }
+    //     let uri = article.featuredImage;
+    //     MediaLibrary.createAssetAsync(uri);
+    // }
 }
 
 const styles = StyleSheet.create({
