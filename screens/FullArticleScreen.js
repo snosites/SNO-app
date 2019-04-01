@@ -10,6 +10,7 @@ import {
     StatusBar,
     ActivityIndicator,
     Image,
+    ImageBackground
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
@@ -38,11 +39,16 @@ export default class FullArticleScreen extends React.Component {
                     // <TouchableItem
                     //     onPress={() => this._downloadImage(article)}
                     // >
-                        <Image
+                        <ImageBackground
                             source={{ uri: article.featuredImage }}
                             style={styles.featuredImage}
-
-                        />
+                        >
+                            <View style={styles.imageInfoContainer}>
+                                <View style={styles.imageInfo}>
+                                    <Text>Test stuff</Text>
+                                </View>
+                            </View>
+                        </ImageBackground>
                     // </TouchableItem>
                 }
                 <Text style={styles.title}>{article.title.rendered}</Text>
@@ -131,6 +137,15 @@ const styles = StyleSheet.create({
     featuredImage: {
         height: 250,
         resizeMode: 'cover'
+    },
+    imageInfoContainer: {
+        flex: 1,
+        justifyContent: 'flex-end'
+    },
+    imageInfo: {
+        backgroundColor: 'rgba(221,221,221,0.55)',
+        padding: 10,
+        flexDirection: 'row'
     },
     title: {
         fontSize: 30,
