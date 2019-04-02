@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     },
     featuredMediaContainer: {
         flex: 1,
-        height: MEDIASIZE
+        // height: MEDIASIZE
     },
     featuredImage: {
         height: 250,

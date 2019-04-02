@@ -8,14 +8,14 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import Colors from '../constants/Colors';
 import TouchableItem from '../constants/TouchableItem';
 
 
 const IS_IOS = Platform.OS === 'ios';
-const SLIDER_1_FIRST_ITEM = 1;
+const SLIDER_FIRST_ITEM = 1;
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -34,27 +34,50 @@ const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 
 export default class Slideshow extends React.Component {
+
+    state = {
+        activeSlide: SLIDER_FIRST_ITEM
+    }
+
     render() {
+        const { activeSlide } = this.state;
         return (
-            <Carousel
-                // layout={'stack'}
-                // layoutCardOffset={18}
-                ref={(c) => { this._carousel = c; }}
-                data={this.props.images}
-                renderItem={this._renderItem}
-                sliderWidth={sliderWidth}
-                itemWidth={itemWidth}
-                firstItem={SLIDER_1_FIRST_ITEM}
-                loop={true}
-                loopClonesPerSide={2}
-                autoplay={true}
-                autoplayDelay={1000}
-                autoplayInterval={3000}
-                inactiveSlideScale={0.94}
-                inactiveSlideOpacity={0.7}
-                containerCustomStyle={styles.slider}
-            // contentContainerCustomStyle={styles.sliderContentContainer}
-            />
+            <View style={{flex: 1}}>
+                <Carousel
+                    // layout={'stack'}
+                    // layoutCardOffset={18}
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.props.images}
+                    renderItem={this._renderItem}
+                    sliderWidth={sliderWidth}
+                    itemWidth={itemWidth}
+                    firstItem={SLIDER_FIRST_ITEM}
+                    loop={true}
+                    loopClonesPerSide={2}
+                    autoplay={true}
+                    autoplayDelay={1000}
+                    autoplayInterval={3000}
+                    inactiveSlideScale={0.94}
+                    inactiveSlideOpacity={0.7}
+                    containerCustomStyle={styles.slider}
+                    onSnapToItem={(index) => this.setState({ 
+                        activeSlide: index 
+                    }) }
+                />
+                <Pagination
+                    dotsLength={this.props.images.length}
+                    activeDotIndex={activeSlide}
+                    containerStyle={styles.paginationContainer}
+                    dotColor={Colors.tintColor}
+                    dotStyle={styles.paginationDot}
+                    inactiveDotColor={Colors.black}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                    carouselRef={this._carousel}
+                    tappableDots={!!this._carousel}
+                />
+            </View>
+
         )
     }
 
@@ -163,7 +186,13 @@ const styles = StyleSheet.create({
         marginTop: 15,
         // overflow: 'visible' // for custom animations
     },
-    sliderContentContainer: {
-        // paddingVertical: 10 // for custom animation
+    paginationContainer: {
+        paddingVertical: 8
     },
+    paginationDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginHorizontal: 8
+    }
 });
