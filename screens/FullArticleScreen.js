@@ -12,6 +12,7 @@ import {
     ActivityIndicator,
     Image,
     ImageBackground,
+    Dimensions
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
@@ -25,7 +26,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import TouchableItem from '../constants/TouchableItem';
 
 
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
+const MEDIASIZE = viewportHeight * 0.39;
 
 export default class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -84,21 +87,18 @@ export default class FullArticleScreen extends React.Component {
     
 
     _renderFeaturedMedia = (article) => {
+        console.log('article', article)
         if (article.slideshow) {
-            console.log('article slideshow present')
             return (
-                // <Text style={{fontSize: 35, padding: 35, textAlign: 'center'}}>
-                //     Image slideshow here
-                // </Text>
                 <Slideshow images={article.slideshow} />
             )
         }
-        // else if (featuredMediaType == 'video') {
-        //     return <WebView
-        //         style={{ flex: 1 }}
-        //         source={{ uri: featuredMedia }}
-        //     />
-        // }
+        else if (article.custom_fields.video) {
+            return <WebView
+                style={{ flex: 1 }}
+                source={{ uri: article.custom_fields.video[0] }}
+            />
+        }
         else {
             return (
                 <ImageBackground
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     },
     featuredMediaContainer: {
         flex: 1,
-        // height: 250
+        height: MEDIASIZE
     },
     featuredImage: {
         height: 250,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     imageInfo: {
-        backgroundColor: 'rgba(221,221,221,0.55)',
+        backgroundColor: '#1a1917',
         padding: 10,
         flexDirection: 'row'
     },
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         textAlign: 'center',
-        paddingTop: 20,
+        paddingTop: 10,
         paddingBottom: 5
 
     },

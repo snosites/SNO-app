@@ -24,9 +24,9 @@ function wp(percentage) {
     return Math.round(value);
 }
 
-const slideHeight = viewportHeight * 0.36;
-const slideWidth = wp(75);
-const itemHorizontalMargin = wp(2);
+const slideHeight = viewportHeight * 0.39;
+const slideWidth = wp(80);
+const itemHorizontalMargin = wp(0.5);
 
 const sliderWidth = viewportWidth;
 const itemWidth = slideWidth + itemHorizontalMargin * 2;
@@ -35,8 +35,6 @@ const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default class Slideshow extends React.Component {
     render() {
-        console.log('in slideshow comp', this.props.images)
-        console.log('sliderWidth:', sliderWidth, 'slideWidth:', slideWidth, 'itemwidth:', itemWidth)
         return (
             <Carousel
                 // layout={'stack'}
@@ -111,10 +109,10 @@ const styles = StyleSheet.create({
         left: itemHorizontalMargin,
         right: itemHorizontalMargin,
         bottom: 18,
-        shadowColor: Colors.black,
+        shadowColor: 'red',
         shadowOpacity: 0.25,
         shadowOffset: { width: 0, height: 10 },
-        shadowRadius: 10,
+        shadowRadius: 50,
         borderRadius: entryBorderRadius
     },
     imageContainer: {
