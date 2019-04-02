@@ -111,7 +111,6 @@ export default class CustomDrawerComponent extends React.Component {
                 const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
                 const featuredImage = await imgResponse.json();
                 story.featuredImage = featuredImage.media_details.sizes.full.source_url;
-                console.log('featured image', story.featuredImage)
             }
             catch (err) {
                 console.log('error getting featured image', err)

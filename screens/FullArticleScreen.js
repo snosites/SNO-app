@@ -45,7 +45,7 @@ export default class FullArticleScreen extends React.Component {
                         >
                             <View style={styles.imageInfoContainer}>
                                 <View style={styles.imageInfo}>
-                                    <Text>Test stuff</Text>
+                                    <Text style={{color: '#515151'}}>Test stuff</Text>
                                 </View>
                             </View>
                         </ImageBackground>

@@ -81,7 +81,6 @@ export default class ListScreen extends React.Component {
         return (
             <ScrollView style={{ flex: 1, marginVertical: 5 }}>
                 {stories.map(story => {
-                    console.log('story title', story.title.rendered)
                     return (
                         <TouchableOpacity
                             key={story.id}
@@ -114,24 +113,33 @@ export default class ListScreen extends React.Component {
         );
     }
 
-    _fetchCategoryStories = async () => {
-        console.log('in fetchcatstories', this.props.navigation.getParam('categoryId'))
-        try {
-            const userDomain = await AsyncStorage.getItem('userDomain');
-            const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?categories=${this.props.navigation.getParam('categoryId')}`)
-            const stories = await response.json();
-        }
-        catch (error) {
-            console.log('error saving users org', error)
-        }
-    }
+    // _fetchCategoryStories = async () => {
+    //     try {
+    //         const userDomain = await AsyncStorage.getItem('userDomain');
+    //         const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?categories=${this.props.navigation.getParam('categoryId')}`)
+    //         const stories = await response.json();
+    //     }
+    //     catch (error) {
+    //         console.log('error saving users org', error)
+    //     }
+    // }
 
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
         Haptic.selection();
+        let featuredMedia = 'none';
+        
+        if(article.custom_fields.video){
+            featuredMedia = article.custom_fields.video[0];
+        }
+        else if(article.custom_fields.featuredImage[0] == 'Slideshow of All Attached Images'){
+            // get all attached images
+            featuredMedia = 'slideshow'
+        }
         navigation.push('FullArticle', {
             articleId: article.id,
-            article
+            article,
+            featuredMedia
         })
     }
 
