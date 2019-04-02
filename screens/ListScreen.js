@@ -127,20 +127,21 @@ export default class ListScreen extends React.Component {
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
         Haptic.selection();
-        let featuredMedia = 'none';
-        
-        if(article.custom_fields.video){
-            featuredMedia = article.custom_fields.video[0];
-        }
-        else if(article.custom_fields.featuredImage[0] == 'Slideshow of All Attached Images'){
-            // get all attached images
-            featuredMedia = 'slideshow'
+
+        // check if there is a slidehsow
+        if(article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'){
+            article.slideshow = await this._getAttachmentsAync(article);
         }
         navigation.push('FullArticle', {
             articleId: article.id,
             article,
-            featuredMedia
         })
+    }
+
+    _getAttachmentsAync = async (article) => {
+        const response = await fetch(article._links['wp:attachment'][0].href);
+        const imageAttachments = await response.json();
+        return imageAttachments;
     }
 
     _playAnimation = () => {

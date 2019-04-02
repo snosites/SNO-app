@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     View,
+    WebView,
     AsyncStorage,
     StatusBar,
     ActivityIndicator,
@@ -35,21 +36,10 @@ export default class FullArticleScreen extends React.Component {
         console.log('in full article', article)
         return (
             <ScrollView style={styles.storyContainer}>
-                {article.featuredImage &&
-                    // <TouchableItem
-                    //     onPress={() => this._downloadImage(article)}
-                    // >
-                        <ImageBackground
-                            source={{ uri: article.featuredImage }}
-                            style={styles.featuredImage}
-                        >
-                            <View style={styles.imageInfoContainer}>
-                                <View style={styles.imageInfo}>
-                                    <Text style={{color: '#515151'}}>Test stuff</Text>
-                                </View>
-                            </View>
-                        </ImageBackground>
-                    // </TouchableItem>
+                {article !== 'loading' &&
+                    <View style={styles.featuredMediaContainer}>
+                        {this._renderFeaturedMedia(article)}
+                    </View>
                 }
                 <Text style={styles.title}>{article.title.rendered}</Text>
                 <Text style={styles.byLine}>{this._getArticleAuthor()}
@@ -84,6 +74,33 @@ export default class FullArticleScreen extends React.Component {
                 </View>
             </ScrollView>
         );
+    }
+
+    _renderFeaturedMedia = (article) => {
+        if (article.slideshow) {
+            return <Text style={{padding: 30, fontSize: 35, textAlign: 'center'}}>Image Slideshow Here</Text>
+        }
+        // else if (featuredMediaType == 'video') {
+        //     return <WebView
+        //         style={{ flex: 1 }}
+        //         source={{ uri: featuredMedia }}
+        //     />
+        // }
+        else {
+            return (
+                <ImageBackground
+                    source={{ uri: article.featuredImage }}
+                    style={styles.featuredImage}
+                >
+                    <View style={styles.imageInfoContainer}>
+                        <View style={styles.imageInfo}>
+                            <Text style={{ color: '#515151' }}>Test stuff</Text>
+                        </View>
+                    </View>
+                </ImageBackground>
+            )
+
+        }
     }
 
     _getArticleAuthor = () => {
@@ -133,6 +150,10 @@ const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
         height: 400,
+    },
+    featuredMediaContainer: {
+        height: 250,
+        width: '100%'
     },
     featuredImage: {
         height: 250,
