@@ -11,16 +11,21 @@ import {
     StatusBar,
     ActivityIndicator,
     Image,
-    ImageBackground
+    ImageBackground,
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
+import Slideshow from '../constants/Slideshow';
+
 import { Permissions, MediaLibrary, WebBrowser } from 'expo';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import TouchableItem from '../constants/TouchableItem';
+
+
+
 
 export default class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -33,7 +38,7 @@ export default class FullArticleScreen extends React.Component {
     render() {
         const { navigation } = this.props;
         let article = navigation.getParam('article', 'loading')
-        console.log('in full article', article)
+        // console.log('in full article', article)
         return (
             <ScrollView style={styles.storyContainer}>
                 {article !== 'loading' &&
@@ -76,9 +81,17 @@ export default class FullArticleScreen extends React.Component {
         );
     }
 
+    
+
     _renderFeaturedMedia = (article) => {
         if (article.slideshow) {
-            return <Text style={{padding: 30, fontSize: 35, textAlign: 'center'}}>Image Slideshow Here</Text>
+            console.log('article slideshow present')
+            return (
+                // <Text style={{fontSize: 35, padding: 35, textAlign: 'center'}}>
+                //     Image slideshow here
+                // </Text>
+                <Slideshow images={article.slideshow} />
+            )
         }
         // else if (featuredMediaType == 'video') {
         //     return <WebView
@@ -122,25 +135,6 @@ export default class FullArticleScreen extends React.Component {
     _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href);
     }
-
-
-    //work on later
-    // _downloadImage = async (article) => {
-    //     console.log('in image press func')
-    //     const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
-    //     if (status !== 'granted') {
-    //         const { updatedStatus } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-    //         if (updatedStatus === 'granted') {
-    //             let uri = article.featuredImage;
-    //             MediaLibrary.createAssetAsync(uri);
-    //         }
-    //         else {
-    //             alert('sorry cant save you denied the permission')
-    //         }
-    //     }
-    //     let uri = article.featuredImage;
-    //     MediaLibrary.createAssetAsync(uri);
-    // }
 }
 
 const styles = StyleSheet.create({
@@ -152,8 +146,8 @@ const styles = StyleSheet.create({
         height: 400,
     },
     featuredMediaContainer: {
-        height: 250,
-        width: '100%'
+        flex: 1,
+        // height: 250
     },
     featuredImage: {
         height: 250,
@@ -210,5 +204,5 @@ const styles = StyleSheet.create({
     articleContents: {
         padding: 20,
         marginTop: 20
-    }
+    },
 })
