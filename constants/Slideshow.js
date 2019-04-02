@@ -190,9 +190,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8
     },
     paginationDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        width: 10,
+        height: 10,
+        borderRadius: 5,
         marginHorizontal: 8
     }
 });
