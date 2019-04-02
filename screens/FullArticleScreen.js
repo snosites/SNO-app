@@ -102,12 +102,13 @@ export default class FullArticleScreen extends React.Component {
         else {
             return (
                 <ImageBackground
-                    source={{ uri: article.featuredImage }}
+                    source={{ uri: article.featuredImage.uri }}
                     style={styles.featuredImage}
                 >
                     <View style={styles.imageInfoContainer}>
                         <View style={styles.imageInfo}>
-                            <Text style={{ color: '#515151' }}>Test stuff</Text>
+                            <Text style={{ color: 'white' }}>{article.featuredImage.caption.toUpperCase()}</Text>
+                            <Text style={{ color: 'grey' }}>{article.featuredImage.photographer}</Text>
                         </View>
                     </View>
                 </ImageBackground>
@@ -158,9 +159,8 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     imageInfo: {
-        backgroundColor: '#1a1917',
+        backgroundColor: 'rgba(0,0,0,0.55)',
         padding: 10,
-        flexDirection: 'row'
     },
     title: {
         fontSize: 30,

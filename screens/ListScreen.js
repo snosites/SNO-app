@@ -87,7 +87,7 @@ export default class ListScreen extends React.Component {
                             onPress={this._handleArticlePress(story)}
                         >
                             <View style={styles.storyContainer}>
-                                <Image source={{ uri: story.featuredImage }} style={styles.featuredImage} />
+                                <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
                                 <View style={styles.storyInfo}>
                                     <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                     <View style={styles.extraInfo}>
