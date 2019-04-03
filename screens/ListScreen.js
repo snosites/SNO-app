@@ -117,7 +117,6 @@ export default class ListScreen extends React.Component {
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
         Haptic.selection();
-
         // check if there is a slidehsow
         if(article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'){
             article.slideshow = await this._getAttachmentsAync(article);

@@ -18,7 +18,7 @@ import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import Slideshow from '../constants/Slideshow';
 
-import { Permissions, MediaLibrary, WebBrowser } from 'expo';
+import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -86,7 +86,7 @@ export default class FullArticleScreen extends React.Component {
         );
     }
 
-    
+
 
     _renderFeaturedMedia = (article) => {
         if (article.slideshow) {
@@ -140,11 +140,11 @@ export default class FullArticleScreen extends React.Component {
 
     _handleProfilePress = async (article) => {
         const { navigation } = this.props;
-        navigation.push('Profile', {
-            article,
+        Haptic.selection();
+        const writer = article.custom_fields.writer && article.custom_fields.writer[0];
+        navigation.navigate('Profile', {
+            writerName: writer
         })
-        
-        
     }
 }
 

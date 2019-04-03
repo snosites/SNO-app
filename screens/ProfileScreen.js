@@ -9,6 +9,12 @@ import {
     AsyncStorage
 } from 'react-native';
 
+import { WebBrowser } from 'expo';
+
+import HTML from 'react-native-render-html';
+import Colors from '../constants/Colors';
+import { NavigationEvents } from 'react-navigation';
+
 export default class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
@@ -16,58 +22,98 @@ export default class ProfileScreen extends React.Component {
         };
     };
 
-    componentDidMount() {
-        this._getProfile()
-        this._getProfileImage()
-    }
-
-    componentDidUpdate() {
-        this._getProfileImage()
-    }
-
     render() {
         const { navigation } = this.props;
         const profile = navigation.getParam('profile', 'loading');
-        if(profile == 'loading') {
-            return (
-                <View style={{flex: 1, paddingTop: 20, alignItems: 'center'}}>
-                    <ActivityIndicator />
-                </View>
-            )
-        }
         return (
             <ScrollView style={styles.container}>
-                <View style={styles.profileInfoContainer}>
-                    <View style={styles.profileImageContainer}>
-                        {this._renderProfileImage()}
+                <NavigationEvents
+                    onWillFocus={payload => this._loadProfile(payload)}
+                />
+                {profile == 'loading' ?
+                    <View style={{ flex: 1, paddingTop: 20, alignItems: 'center' }}>
+                        <ActivityIndicator />
                     </View>
-                    
-                </View>
+                    :
+                    <View style={styles.profileInfoContainer}>
+                        <View style={styles.profileImageContainer}>
+                            {this._renderProfileImage(profile)}
+                        </View>
+                        <Text style={styles.title}>{profile.title.rendered}</Text>
+                        <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
+                        <HTML
+                            html={profile.content.rendered}
+                            textSelectable={true}
+                            containerStyle={styles.textContainer}
+                            onLinkPress={(e, href) => this._viewLink(href)}
+                            tagsStyles={{
+                                p: {
+                                    fontSize: 18,
+                                }
+                            }}
+                        />
+                        <View style={{flex: 1, alignItems: 'center', paddingBottom: 45}}>
+                            <Text style={{fontSize: 24, textAlign: 'center'}}>School Years:</Text>
+                            {profile.custom_fields.readableyears.map(year => {
+                                return (
+                                    <Text style={styles.schoolyear}>{year}</Text>
+                                )
+                            })}
+                        </View>
+                    </View>
+                }
+
             </ScrollView>
         );
     }
 
-    _getProfile = async () => {
+    _loadProfile = async (payload) => {
         const { navigation } = this.props;
-        const article = navigation.getParam('article', 'loading');
-        const userDomain = await AsyncStorage.getItem('userDomain');
-        if(article !== 'loading') {
-            const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?search=${article.custom_fields.writer[0]}`)
-            const profiles = await response.json();
-            console.log('profile results', profiles)
+        try {
+            const userDomain = await AsyncStorage.getItem('userDomain');
+            const writerName = navigation.getParam('writerName', 'unknown');
+            if (writerName !== 'unknown') {
+                const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?search=${writerName}`)
+                const profiles = await response.json();
+                const profileMatches = profiles.filter(profile => {
+                    if (profile.custom_fields.name) {
+                        return profile.custom_fields.name[0] == writerName;
+                    }
+                })
+                // if more than one matches uses first one
+                if (profileMatches.length > 0) {
+                    // get profile image
+                    console.log('profileMatches', profileMatches);
+                    if (profileMatches[0]._links['wp:featuredmedia']) {
+                        const response = await fetch(profileMatches[0]._links['wp:featuredmedia'][0].href);
+                        const profileImage = await response.json();
+                        console.log('profile matches', profileImage)
+                        profileMatches[0].profileImage = profileImage.media_details.sizes.full.source_url;
+                    }
+                    navigation.setParams({ profile: profileMatches[0] })
+                    console.log('loaded profile')
+                }
+                else {
+                    navigation.setParams({ profile: 'none' })
+                }
+            }
         }
-        
+        catch (err) {
+            console.log('error fetching profile page', err)
+        }
     }
 
-    _renderProfileImage = () => {
-        const { navigation } = this.props;
-        const profileImage = navigation.getParam('profileImage', 'loading');
-        if (profileImage == 'loading') {
+    _renderProfileImage = (profile) => {
+        console.log('in render profile image')
+        if (profile.profileImage) {
             return (
-                <ActivityIndicator />
+                <Image
+                    style={styles.profileImage}
+                    source={{ uri: profile.profileImage }}
+                />
             )
         }
-        else if (profileImage == 'none') {
+        else {
             return (
                 <Image
                     style={styles.profileImage}
@@ -75,27 +121,10 @@ export default class ProfileScreen extends React.Component {
                 />
             )
         }
-        else {
-            return (
-                <Image
-                    style={styles.profileImage}
-                    source={{ uri: profileImage.media_details.sizes.full.source_url }}
-                />
-            )
-        }
     }
 
-    _getProfileImage = async () => {
-        const { navigation } = this.props;
-        const article = navigation.getParam('article', 'loading');
-        if (article._links['wp:featuredmedia']) {
-            const response = await fetch(article._links['wp:featuredmedia'][0].href);
-            const profileImage = await response.json();
-            navigation.setParams({ profileImage })
-        }
-        else {
-            navigation.setParams({ profileImage: 'none' })
-        }
+    _viewLink = async (href) => {
+        let result = await WebBrowser.openBrowserAsync(href);
     }
 
 }
@@ -103,23 +132,42 @@ export default class ProfileScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 15,
+        padding: 20,
         backgroundColor: '#fff',
     },
     profileInfoContainer: {
         alignItems: 'center',
-        padding: 10
+        paddingTop: 25
     },
     profileImageContainer: {
         width: 200,
         height: 200,
         borderRadius: 100,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingBottom: 25
     },
     profileImage: {
         width: 200,
         height: 200,
         borderRadius: 100,
+    },
+    title: {
+        fontSize: 30,
+        textAlign: 'center'
+    },
+    position: {
+        fontSize: 21,
+        textAlign: 'center',
+        color: Colors.gray
+    },
+    textContainer: {
+        paddingVertical: 20
+    },
+    schoolyear: {
+        fontSize: 21,
+        textAlign: 'center',
+        color: Colors.tintColor,
+        padding: 5
     }
 });
