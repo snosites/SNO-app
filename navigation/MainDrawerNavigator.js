@@ -22,6 +22,7 @@ import DrawerNavIcon from '../components/DrawerNavIcon';
 import CustomDrawer from './CustomDrawer';
 import ListScreen from '../screens/ListScreen';
 import FullArticleScreen from '../screens/FullArticleScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -33,6 +34,7 @@ const IoniconsHeaderButton = passMeFurther => (
 const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
+    Profile: ProfileScreen
 });
 
 ArticleStack.navigationOptions = {

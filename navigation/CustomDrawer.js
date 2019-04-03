@@ -28,7 +28,6 @@ export default class CustomDrawerComponent extends React.Component {
     }
 
     render() {
-        // console.log('items', this.props)
         return (
             <ScrollView style={styles.container}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
@@ -110,7 +109,6 @@ export default class CustomDrawerComponent extends React.Component {
             try {
                 const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
                 const featuredImage = await imgResponse.json();
-                console.log('featured image', featuredImage)
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.full.source_url,
                     photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',

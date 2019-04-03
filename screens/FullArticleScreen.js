@@ -28,7 +28,7 @@ import TouchableItem from '../constants/TouchableItem';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-const MEDIASIZE = viewportHeight * 0.36;
+const MEDIASIZE = viewportHeight * 0.32;
 
 export default class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -41,7 +41,6 @@ export default class FullArticleScreen extends React.Component {
     render() {
         const { navigation } = this.props;
         let article = navigation.getParam('article', 'loading')
-        // console.log('in full article', article)
         return (
             <ScrollView style={styles.storyContainer}>
                 {article !== 'loading' &&
@@ -50,8 +49,11 @@ export default class FullArticleScreen extends React.Component {
                     </View>
                 }
                 <Text style={styles.title}>{article.title.rendered}</Text>
-                <Text style={styles.byLine}>{this._getArticleAuthor()}
-                </Text>
+                <TouchableItem onPress={() => this._handleProfilePress(article)}>
+                    <Text style={styles.byLine}>
+                        {this._getArticleAuthor()}
+                    </Text>
+                </TouchableItem>
                 <View style={styles.socialContainer}>
                     <TouchableItem style={styles.socialButton}>
                         <View style={styles.socialButtonInner}>
@@ -87,7 +89,6 @@ export default class FullArticleScreen extends React.Component {
     
 
     _renderFeaturedMedia = (article) => {
-        console.log('article', article)
         if (article.slideshow) {
             return (
                 <Slideshow images={article.slideshow} />
@@ -135,6 +136,15 @@ export default class FullArticleScreen extends React.Component {
 
     _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href);
+    }
+
+    _handleProfilePress = async (article) => {
+        const { navigation } = this.props;
+        navigation.push('Profile', {
+            article,
+        })
+        
+        
     }
 }
 

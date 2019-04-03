@@ -113,16 +113,6 @@ export default class ListScreen extends React.Component {
         );
     }
 
-    // _fetchCategoryStories = async () => {
-    //     try {
-    //         const userDomain = await AsyncStorage.getItem('userDomain');
-    //         const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?categories=${this.props.navigation.getParam('categoryId')}`)
-    //         const stories = await response.json();
-    //     }
-    //     catch (error) {
-    //         console.log('error saving users org', error)
-    //     }
-    // }
 
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;

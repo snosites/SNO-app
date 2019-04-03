@@ -113,8 +113,7 @@ export default class Slideshow extends React.Component {
                         style={styles.title}
                         numberOfLines={2}
                     >
-                        {/* {item.caption ? item.caption.rendered.toUpperCase() : 'UNKNOWN'}  */}
-                        UNKNOWN
+                        {item.caption ? item.caption.rendered.toUpperCase() : 'UNKNOWN'}
                     </Text>
                     <Text
                         style={styles.subtitle}
