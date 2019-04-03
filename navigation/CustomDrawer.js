@@ -114,7 +114,7 @@ export default class CustomDrawerComponent extends React.Component {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.full.source_url,
                     photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-                    caption: featuredImage.caption && featuredImage.caption.rendered
+                    caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
                 }
             }
             catch (err) {

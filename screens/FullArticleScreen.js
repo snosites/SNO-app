@@ -28,7 +28,7 @@ import TouchableItem from '../constants/TouchableItem';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-const MEDIASIZE = viewportHeight * 0.39;
+const MEDIASIZE = viewportHeight * 0.36;
 
 export default class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -95,7 +95,7 @@ export default class FullArticleScreen extends React.Component {
         }
         else if (article.custom_fields.video) {
             return <WebView
-                style={{ flex: 1 }}
+                style={{ flex: 1, height: MEDIASIZE }}
                 source={{ uri: article.custom_fields.video[0] }}
             />
         }
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
         // height: MEDIASIZE
     },
     featuredImage: {
-        height: 250,
+        height: MEDIASIZE,
         resizeMode: 'cover'
     },
     imageInfoContainer: {
@@ -166,8 +166,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         textAlign: 'center',
-        paddingTop: 10,
-        paddingBottom: 5
+        paddingVertical: 5
 
     },
     byLine: {

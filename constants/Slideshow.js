@@ -8,14 +8,14 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel';
 
 import Colors from '../constants/Colors';
 import TouchableItem from '../constants/TouchableItem';
 
 
 const IS_IOS = Platform.OS === 'ios';
-const SLIDER_FIRST_ITEM = 1;
+const SLIDER_FIRST_ITEM = 0;
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -42,7 +42,7 @@ export default class Slideshow extends React.Component {
     render() {
         const { activeSlide } = this.state;
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <Carousel
                     // layout={'stack'}
                     // layoutCardOffset={18}
@@ -52,6 +52,7 @@ export default class Slideshow extends React.Component {
                     sliderWidth={sliderWidth}
                     itemWidth={itemWidth}
                     firstItem={SLIDER_FIRST_ITEM}
+                    hasParallaxImages={true}
                     loop={true}
                     loopClonesPerSide={2}
                     autoplay={true}
@@ -60,9 +61,9 @@ export default class Slideshow extends React.Component {
                     inactiveSlideScale={0.94}
                     inactiveSlideOpacity={0.7}
                     containerCustomStyle={styles.slider}
-                    onSnapToItem={(index) => this.setState({ 
-                        activeSlide: index 
-                    }) }
+                    onSnapToItem={(index) => this.setState({
+                        activeSlide: index
+                    })}
                 />
                 <Pagination
                     dotsLength={this.props.images.length}
@@ -81,7 +82,7 @@ export default class Slideshow extends React.Component {
         )
     }
 
-    _renderItem({ item, index }) {
+    _renderItem({ item, index }, parallaxProps) {
         console.log('in renderItem', item.media_details.sizes.full.source_url)
         const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : 'Unknown';
         return (
@@ -92,6 +93,15 @@ export default class Slideshow extends React.Component {
             >
                 <View style={styles.shadow} />
                 <View style={styles.imageContainer}>
+                    {/* <ParallaxImage
+                        source={{ uri: item.media_details.sizes.full.source_url }}
+                        containerStyle={styles.imageContainer}
+                        style={styles.image}
+                        parallaxFactor={0.35}
+                        showSpinner={true}
+                        spinnerColor={'rgba(255, 255, 255, 0.4)'}
+                        {...parallaxProps}
+                    /> */}
                     <Image
                         source={{ uri: item.media_details.sizes.full.source_url }}
                         style={styles.image}
@@ -103,7 +113,8 @@ export default class Slideshow extends React.Component {
                         style={styles.title}
                         numberOfLines={2}
                     >
-                        {item.caption ? item.caption.rendered.toUpperCase() : 'UNKNOWN'}
+                        {/* {item.caption ? item.caption.rendered.toUpperCase() : 'UNKNOWN'}  */}
+                        UNKNOWN
                     </Text>
                     <Text
                         style={styles.subtitle}
@@ -132,11 +143,12 @@ const styles = StyleSheet.create({
         left: itemHorizontalMargin,
         right: itemHorizontalMargin,
         bottom: 18,
-        shadowColor: 'red',
-        shadowOpacity: 0.25,
-        shadowOffset: { width: 0, height: 10 },
-        shadowRadius: 50,
-        borderRadius: entryBorderRadius
+        backgroundColor: 'white',
+        shadowColor: Colors.black,
+        shadowOpacity: 0.45,
+        shadowOffset: { width: 10, height: 10 },
+        shadowRadius: 10,
+        borderRadius: entryBorderRadius,
     },
     imageContainer: {
         flex: 1,
@@ -164,7 +176,7 @@ const styles = StyleSheet.create({
     textContainer: {
         justifyContent: 'center',
         paddingTop: 4,
-        paddingBottom: 4,
+        paddingBottom: 4 + entryBorderRadius,
         paddingHorizontal: 16,
         backgroundColor: Colors.black,
         borderBottomLeftRadius: entryBorderRadius,
@@ -184,15 +196,15 @@ const styles = StyleSheet.create({
     },
     slider: {
         marginTop: 15,
-        // overflow: 'visible' // for custom animations
+        overflow: 'visible' // for custom animations
     },
     paginationContainer: {
         paddingVertical: 8
     },
     paginationDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
+        width: 8,
+        height: 8,
+        borderRadius: 4,
         marginHorizontal: 8
     }
 });
