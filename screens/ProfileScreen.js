@@ -35,32 +35,43 @@ export default class ProfileScreen extends React.Component {
                         <ActivityIndicator />
                     </View>
                     :
-                    <View style={styles.profileInfoContainer}>
-                        <View style={styles.profileImageContainer}>
-                            {this._renderProfileImage(profile)}
+                    profile == 'none' ?
+                        <View style={{ flex: 1, alignItems: 'center' }}>
+                            <Image
+                                style={styles.profileImage}
+                                source={require('../assets/images/anon.png')}
+                            />
+                            <Text style={{ fontSize: 35, textAlign: 'center', paddingVertical: 20 }}>
+                                This person does not appear to have a profile page
+                            </Text>
                         </View>
-                        <Text style={styles.title}>{profile.title.rendered}</Text>
-                        <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
-                        <HTML
-                            html={profile.content.rendered}
-                            textSelectable={true}
-                            containerStyle={styles.textContainer}
-                            onLinkPress={(e, href) => this._viewLink(href)}
-                            tagsStyles={{
-                                p: {
-                                    fontSize: 18,
-                                }
-                            }}
-                        />
-                        <View style={{flex: 1, alignItems: 'center', paddingBottom: 45}}>
-                            <Text style={{fontSize: 24, textAlign: 'center'}}>School Years:</Text>
-                            {profile.custom_fields.readableyears.map(year => {
-                                return (
-                                    <Text style={styles.schoolyear}>{year}</Text>
-                                )
-                            })}
+                        :
+                        <View style={styles.profileInfoContainer}>
+                            <View style={styles.profileImageContainer}>
+                                {this._renderProfileImage(profile)}
+                            </View>
+                            <Text style={styles.title}>{profile.title.rendered}</Text>
+                            <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
+                            <HTML
+                                html={profile.content.rendered}
+                                textSelectable={true}
+                                containerStyle={styles.textContainer}
+                                onLinkPress={(e, href) => this._viewLink(href)}
+                                tagsStyles={{
+                                    p: {
+                                        fontSize: 18,
+                                    }
+                                }}
+                            />
+                            <View style={{ flex: 1, alignItems: 'center', paddingBottom: 45 }}>
+                                <Text style={{ fontSize: 24, textAlign: 'center' }}>School Years:</Text>
+                                {profile.custom_fields.readableyears.map((year, i) => {
+                                    return (
+                                        <Text key={i} style={styles.schoolyear}>{year}</Text>
+                                    )
+                                })}
+                            </View>
                         </View>
-                    </View>
                 }
 
             </ScrollView>

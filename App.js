@@ -4,7 +4,7 @@ import { AppLoading, Asset, Font, Icon } from 'expo';
 import { Provider, connect } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import AppNavigator from './navigation/AppNavigator';
-import { ThemeProvider } from 'react-native-elements';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 const theme = {
 
@@ -29,12 +29,12 @@ export default class App extends React.Component {
             );
         } else {
             return (
-                <ThemeProvider theme={theme}>
+                <PaperProvider>
                     <View style={styles.container}>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
                         <AppNavigator />
                     </View>
-                </ThemeProvider>
+                </PaperProvider>
             );
         }
     }
