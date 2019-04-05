@@ -11,25 +11,21 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator } from 'react-navigation';
+import { connect } from 'react-redux';
 
-import TouchableItem from '../constants/TouchableItem';
-
-import { Feather } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
 import TabBarIcon from '../components/TabBarIcon';
-import DrawerNavIcon from '../components/DrawerNavIcon';
 
 import CustomDrawer from './CustomDrawer';
 import ListScreen from '../screens/ListScreen';
 import FullArticleScreen from '../screens/FullArticleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+// import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
-// header icon native look component
-const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
-);
+// // header icon native look component
+// const IoniconsHeaderButton = passMeFurther => (
+//     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
+// );
 
 const ArticleStack = createStackNavigator({
     List: ListScreen,
@@ -66,13 +62,17 @@ class HomeLoadingScreen extends React.Component {
     }
 }
 
+const mapStateToProps = state => ({
+    activeDomain: state.activeDomain
+})
+
 
 const MyDrawerNavigator = createDrawerNavigator(
     {
         Home: ArticleStack,
     },
     {
-        contentComponent: CustomDrawer
+        contentComponent: connect(mapStateToProps)(CustomDrawer)
     }
 );
 

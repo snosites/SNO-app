@@ -1,14 +1,14 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
-import { Provider, connect } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
+
+import { Provider as ReduxProvider, connect } from 'react-redux';
+
+
+
 import AppNavigator from './navigation/AppNavigator';
 import { Provider as PaperProvider } from 'react-native-paper';
-
-const theme = {
-
-};
+import { store } from './redux/configureStore';
 
 export default class App extends React.Component {
     state = {
@@ -29,12 +29,14 @@ export default class App extends React.Component {
             );
         } else {
             return (
-                <PaperProvider>
-                    <View style={styles.container}>
-                        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                        <AppNavigator />
-                    </View>
-                </PaperProvider>
+                <ReduxProvider store={store}>
+                    <PaperProvider>
+                        <View style={styles.container}>
+                            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                            <AppNavigator />
+                        </View>
+                    </PaperProvider>
+                </ReduxProvider>
             );
         }
     }
@@ -71,3 +73,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
 });
+

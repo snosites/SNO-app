@@ -104,13 +104,13 @@ export default class InitScreen extends React.Component {
             isLoading: true
         })
         let location = await Location.getCurrentPositionAsync({});
-        console.log('location obj', location)
+        // console.log('location obj', location)
         let locationObj = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude
         }
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
-        console.log('city location', cityLocation)
+        // console.log('city location', cityLocation)
         this.setState({ cityLocation });
         this.props.navigation.navigate('Select', {
             location: this.state.cityLocation

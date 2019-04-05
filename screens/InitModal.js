@@ -58,7 +58,6 @@ export default class initModal extends Component {
                             onPress={() => {
                                 Haptic.selection();
                                 this.props.handleDismiss();
-                                this.props.navigation.navigate('App')
                             }}
                             titleStyle={{ color: 'white' }}
                         />
