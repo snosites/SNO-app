@@ -1,0 +1,44 @@
+import {
+    ADD_DOMAIN,
+    DELETE_DOMAIN,
+    TOGGLE_NOTIFICATIONS
+} from '../actions/actions';
+
+export function domains(state = [], action) {
+    switch (action.type) {
+        case ADD_DOMAIN:
+            return [
+                ...state,
+                {
+                    ...action.payload
+                }
+
+            ]
+        case 'CHANGE_ACTIVE_DOMAIN':
+            return state.map(domain => {
+                if(domain.id === action.id){
+                    return {
+                        ...domain,
+                        active: true
+                    }
+                }
+                return {
+                    ...domain,
+                    active: false
+                }
+            })
+        default:
+            return state
+    }
+}
+
+export function activeDomain(state = {}, action) {
+    switch (action.type) {
+        case 'SET_ACTIVE_DOMAIN':
+            return action.domainObj
+        default:
+            return state
+    }
+}
+
+

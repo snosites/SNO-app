@@ -73,7 +73,8 @@ export default class CustomDrawerComponent extends React.Component {
     }
 
     _asyncLoadMenus = async () => {
-        const userDomain = await AsyncStorage.getItem('userDomain');
+        const userDomain = this.props.activeDomain.url;
+        console.log('active domain', this.props.activeDomain);
         // pull in menus
         const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = await response.json();

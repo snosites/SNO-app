@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     featuredImage: {
         width: 125,
         height: 90,
-        borderRadius: 15
+        borderRadius: 8
     },
     storyInfo: {
         flex: 1,
