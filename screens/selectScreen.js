@@ -47,6 +47,44 @@ class SelectScreen extends React.Component {
                 .then((response) => response.json())
                 // filter out parties that don't have fields
                 .then((responseJson) => {
+                    console.log('capsule', responseJson)
+                    return responseJson.parties.filter(item => {
+                        return item.fields.length > 0;
+                    })
+                })
+                // filter out parties that don't have a domain
+                .then(filteredArr => {
+                    return filteredArr.filter(item => {
+                        for (let field of item.fields) {
+                            if (field.definition.id == 309073) {
+                                return true;
+                            }
+                        }
+                    })
+                })
+                .then(newFilteredArr => {
+                    this.setState({
+                        isLoading: false,
+                        orgs: newFilteredArr,
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+        if(orgName){
+            return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${orgName}&embed=fields,tags`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${secrets.CAPSULEBEARER}`
+                }
+            })
+                .then((response) => response.json())
+                // filter out parties that don't have fields
+                .then((responseJson) => {
+                    console.log('capsule', responseJson)
                     return responseJson.parties.filter(item => {
                         return item.fields.length > 0;
                     })
@@ -75,7 +113,6 @@ class SelectScreen extends React.Component {
 
     render() {
         const { navigation } = this.props;
-        console.log('nav', navigation)
         const cityLocation = navigation.getParam('location', null);
         if (this.state.isLoading) {
             return (

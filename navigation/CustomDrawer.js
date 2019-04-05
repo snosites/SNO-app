@@ -19,7 +19,6 @@ import DrawerNavIcon from '../components/DrawerNavIcon';
 
 export default class CustomDrawerComponent extends React.Component {
     state = {
-        userDomain: '',
         menus: [],
         activeMenu: null
     }
@@ -74,12 +73,10 @@ export default class CustomDrawerComponent extends React.Component {
 
     _asyncLoadMenus = async () => {
         const userDomain = this.props.activeDomain.url;
-        console.log('active domain', this.props.activeDomain);
         // pull in menus
         const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = await response.json();
         this.setState({
-            userDomain,
             menus
         })
         // pass inital category to screen
@@ -104,7 +101,7 @@ export default class CustomDrawerComponent extends React.Component {
 
 
     _getArticles = async (category) => {
-        const response = await fetch(`${this.state.userDomain}/wp-json/wp/v2/posts?categories=${category}`)
+        const response = await fetch(`${this.props.activeDomain.url}/wp-json/wp/v2/posts?categories=${category}`)
         const stories = await response.json();
         await Promise.all(stories.map(async story => {
             try {

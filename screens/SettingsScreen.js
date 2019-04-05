@@ -8,8 +8,9 @@ import {
     ActivityIndicator,
     AsyncStorage
 } from 'react-native';
-import Colors from '../constants/Colors';
-import { List, Divider, Switch, Checkbox } from 'react-native-paper';
+// import Colors from '../constants/Colors';
+import { List, Divider, Switch, IconButton, Colors } from 'react-native-paper';
+import {addDomain, changeActiveDomain} from '../redux/actions/actions';
 
 const testData = [
     {
@@ -29,6 +30,29 @@ const testData = [
     }
 ]
 
+const DeleteButton = () => (
+    <IconButton
+      icon="delete"
+      color={Colors.red700}
+      size={20}
+      onPress={() => console.log('Pressed')}
+    />
+  );
+
+const ActiveDomainIcon = () => (
+    <List.Icon 
+        icon={`star`} 
+        color={Colors.blue500}
+    />
+)
+
+const NotificationIcon = ({item}) => (
+    <List.Icon 
+        icon={`notifications${!item.notifications ? '-off' : ''}`} 
+        color={Colors.yellow700}
+    />
+)
+
 export default class SettingsScreen extends React.Component {
     static navigationOptions = {
         title: 'Settings',
@@ -42,6 +66,7 @@ export default class SettingsScreen extends React.Component {
     };
 
     render() {
+        const domains = this.props.domains;
         const { isSwitchOn, } = this.state;
         return (
             <ScrollView style={styles.container}>
@@ -51,15 +76,19 @@ export default class SettingsScreen extends React.Component {
                         return (
                             <List.Item
                                 title={item.name}
+                                style={!item.active ? styles.inactiveItem : null}
                                 description={item.active ? 'active' : null}
                                 left={() => {
-                                    return (
-                                        <List.Icon icon={`star${!item.active ? '-border' : ''}`} />
-                                    )
+                                    if(item.active){
+                                        return <ActiveDomainIcon />
+                                    }
+                                    else {
+                                        return null
+                                    }
                                 }}
                                 right={() => {
                                     return (
-                                        <List.Icon icon={`delete`} />
+                                        <DeleteButton />
                                     )
                                 }}
                                 onPress={() => { alert('toggle') }}
@@ -71,7 +100,7 @@ export default class SettingsScreen extends React.Component {
                 <List.Item style={{ paddingVertical: 0 }}
                     title='Add New Organization'
                     left={() => <List.Icon icon={`add`} />}
-                    
+                    onPress={this._handleAddNewOrg}
                 />
                 <Divider />
                 <List.Section>
@@ -80,7 +109,7 @@ export default class SettingsScreen extends React.Component {
                         return (
                             <List.Item style={{ paddingVertical: 0 }}
                                 title={item.name}
-                                left={() => <List.Icon icon={`notifications${!item.notifications ? '-off' : ''}`} />}
+                                left={() => <NotificationIcon item={item} />}
                                 right={() => {
                                     return (
                                         <Switch
@@ -98,6 +127,12 @@ export default class SettingsScreen extends React.Component {
             </ScrollView>
         )
     }
+
+    _handleAddNewOrg = () => {
+        this.props.navigation.navigate('Auth')
+    }
+
+
 }
 
 
@@ -106,19 +141,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    headerContainer: {
-        padding: 10,
-        backgroundColor: '#e2e2e2'
-    },
-    settingsContainer: {
-        flex: 1,
-        padding: 20
-    },
-    header: {
-        fontSize: 20
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end'
+    inactiveItem: {
+        paddingLeft: 60
     }
 })

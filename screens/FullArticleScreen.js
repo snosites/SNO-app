@@ -1,16 +1,10 @@
 import React from 'react';
 import {
-    Platform,
-    Button,
     ScrollView,
     StyleSheet,
     Text,
     View,
     WebView,
-    AsyncStorage,
-    StatusBar,
-    ActivityIndicator,
-    Image,
     ImageBackground,
     Dimensions
 } from 'react-native';
@@ -20,7 +14,6 @@ import Slideshow from '../constants/Slideshow';
 
 import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 
-import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import TouchableItem from '../constants/TouchableItem';

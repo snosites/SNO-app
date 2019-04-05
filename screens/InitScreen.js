@@ -6,7 +6,8 @@ import {
     Text,
     View,
     ScrollView,
-    ActivityIndicator
+    ActivityIndicator,
+    KeyboardAvoidingView
 } from 'react-native';
 import { Constants, Location, Permissions, Haptic } from 'expo';
 
@@ -27,59 +28,64 @@ export default class InitScreen extends React.Component {
     }
 
     render() {
-        if(this.state.isLoading){
-            return(
-              <View style={{flex: 1, paddingVertical: 40}}>
-                <ActivityIndicator color="#9A1D20" />
-              </View>
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, paddingVertical: 40 }}>
+                    <ActivityIndicator color="#9A1D20" />
+                </View>
             )
-          }
+        }
         return (
             <ScrollView>
-                <View style={styles.container}>
-                    <View style={styles.logoContainer}>
-                        <Image
-                            source={require('../assets/images/snologo-dev.png')}
-                            style={styles.logoImage}
-                        />
-                    </View>
-                    <View style={styles.getStartedContainer}>
-                        <Text style={styles.getStartedText}>Get started by finding your organization
-                        </Text>
-                    </View>
-                    <View style={styles.locationContainer}>
-                        <Button
-                            title='Use Your Current Location'
-                            raised
-                            buttonStyle={{ width: 300, backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                            onPress={this._handleUseLocation}
-                            titleStyle={{ color: 'white' }}
-                        />
-                        <Text>{this.state.errorMessage}</Text>
-                        <Text style={styles.locationContainerText}>Or enter your organization's name below</Text>
-                        <View style={styles.formContainer}>
-                            <Input
-                                inputStyle={{borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20}}
-                                inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10}}
-                                value={this.state.orgName}
-                                placeholder='Organization Name'
-                                onChangeText={(text) => this.setState({ orgName: text })}
+                <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
+                    <View style={styles.container}>
+                        <View style={styles.logoContainer}>
+                            <Image
+                                source={require('../assets/images/snologo-dev.png')}
+                                style={styles.logoImage}
                             />
+                        </View>
+                        <View style={styles.getStartedContainer}>
+                            <Text style={styles.getStartedText}>Get started by finding your organization
+                        </Text>
+                        </View>
+                        <View style={styles.locationContainer}>
                             <Button
-                                title='Search'
-                                buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
-                                onPress={this._handleSubmit}
+                                title='Use Your Current Location'
+                                raised
+                                buttonStyle={{ width: 300, backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                onPress={this._handleUseLocation}
                                 titleStyle={{ color: 'white' }}
+                            />
+                            <Text>{this.state.errorMessage}</Text>
+                            <Text style={styles.locationContainerText}>Or enter your organization's name below</Text>
+                            <View style={styles.formContainer}>
+                                <Input
+                                    inputStyle={{ borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20 }}
+                                    inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
+                                    value={this.state.orgName}
+                                    placeholder='Organization Name'
+                                    onChangeText={(text) => this.setState({ orgName: text })}
                                 />
+                                <Button
+                                    title='Search'
+                                    buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                    onPress={this._handleSubmit}
+                                    titleStyle={{ color: 'white' }}
+                                />
+                            </View>
                         </View>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </ScrollView>
         );
     }
 
     _handleSubmit = text => {
         console.log(this.state);
+        this.props.navigation.navigate('Select', {
+            orgName: this.state.orgName
+        })
     }
 
     _handleUseLocation = () => {
