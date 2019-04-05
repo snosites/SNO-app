@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 // import Colors from '../constants/Colors';
 import { List, Divider, Switch, IconButton, Colors } from 'react-native-paper';
-import {addDomain, changeActiveDomain} from '../redux/actions/actions';
+import { addDomain, changeActiveDomain } from '../redux/actions/actions';
 
 const testData = [
     {
@@ -32,23 +32,23 @@ const testData = [
 
 const DeleteButton = () => (
     <IconButton
-      icon="delete"
-      color={Colors.red700}
-      size={20}
-      onPress={() => console.log('Pressed')}
+        icon="delete"
+        color={Colors.red700}
+        size={20}
+        onPress={() => console.log('Pressed')}
     />
-  );
+);
 
 const ActiveDomainIcon = () => (
-    <List.Icon 
-        icon={`star`} 
+    <List.Icon
+        icon={`star`}
         color={Colors.blue500}
     />
 )
 
-const NotificationIcon = ({item}) => (
-    <List.Icon 
-        icon={`notifications${!item.notifications ? '-off' : ''}`} 
+const NotificationIcon = ({ item }) => (
+    <List.Icon
+        icon={`notifications${!item.notifications ? '-off' : ''}`}
         color={Colors.yellow700}
     />
 )
@@ -58,28 +58,21 @@ export default class SettingsScreen extends React.Component {
         title: 'Settings',
     };
 
-    state = {
-        isSwitchOn: false,
-        isSwitchOn2: false,
-        activeDomain: 1,
-
-    };
-
     render() {
         const domains = this.props.domains;
-        const { isSwitchOn, } = this.state;
         return (
             <ScrollView style={styles.container}>
                 <List.Section>
                     <List.Subheader>Saved Organizations</List.Subheader>
-                    {testData.map(item => {
+                    {domains.map(item => {
                         return (
                             <List.Item
+                                key={item.id}
                                 title={item.name}
                                 style={!item.active ? styles.inactiveItem : null}
                                 description={item.active ? 'active' : null}
                                 left={() => {
-                                    if(item.active){
+                                    if (item.active) {
                                         return <ActiveDomainIcon />
                                     }
                                     else {
@@ -105,17 +98,19 @@ export default class SettingsScreen extends React.Component {
                 <Divider />
                 <List.Section>
                     <List.Subheader>Push Notifications</List.Subheader>
-                    {testData.map(item => {
+                    {domains.map(item => {
                         return (
-                            <List.Item style={{ paddingVertical: 0 }}
+                            <List.Item
+                                key={item.id}
+                                style={{ paddingVertical: 0 }}
                                 title={item.name}
                                 left={() => <NotificationIcon item={item} />}
                                 right={() => {
                                     return (
                                         <Switch
                                             style={{ margin: 10 }}
-                                            value={isSwitchOn}
-                                            onValueChange={() => { this.setState({ isSwitchOn: !isSwitchOn }); }
+                                            value={item.notifications}
+                                            onValueChange={() => { alert('changed notifications') }
                                             }
                                         />
                                     )

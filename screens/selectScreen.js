@@ -10,7 +10,7 @@ import {
     Modal
 } from 'react-native';
 import { connect } from 'react-redux';
-import { addDomain } from '../redux/actions/actions';
+import { addDomain, changeActiveDomain } from '../redux/actions/actions';
 
 import { ListItem, Button, Icon } from 'react-native-elements'
 import { Haptic } from 'expo';
@@ -72,7 +72,7 @@ class SelectScreen extends React.Component {
                     console.error(error);
                 });
         }
-        if(orgName){
+        if (orgName) {
             return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${orgName}&embed=fields,tags`, {
                 method: 'GET',
                 headers: {
@@ -130,7 +130,7 @@ class SelectScreen extends React.Component {
                         title={item.name}
                         bottomDivider
                         chevron
-                        onPress={() => this._handleSelect(item.id, item.fields)}
+                        onPress={() => this._handleSelect(item.id, item)}
                     />
                 ))
                 }
@@ -144,37 +144,41 @@ class SelectScreen extends React.Component {
         );
     }
 
-    _handleSelect = async (orgId, fields) => {
+    _handleSelect = async (orgId, item) => {
+        const domains = this.props.domains;
         Haptic.selection();
         let domain = '';
-        for (let field of fields) {
+        for (let field of item.fields) {
             if (field.definition.id == 3747) {
                 domain = field.value;
             }
         }
         try {
-            // always sets selected as active -- work on later
+            // save new domain
             this.props.dispatch(addDomain({
                 id: orgId,
+                name: item.name,
                 active: true,
                 notifications: false,
                 url: String(domain)
             }))
+            // set new domain as active
+            this.props.dispatch(changeActiveDomain(orgId))
             this.setState({
-                modalVisible: true
-            })
-        }
-        catch (error) {
-            console.log('error saving users org')
-        }
-    }
-    // dismiss modal and redirect back to auth loading
-    _handleModalDismiss = () => {
-        this.setState({
-            modalVisible: false
+            modalVisible: true
         })
-        this.props.navigation.navigate('AuthLoading');
     }
+    catch(error) {
+        console.log('error saving users org')
+    }
+}
+// dismiss modal and redirect back to auth loading
+_handleModalDismiss = () => {
+    this.setState({
+        modalVisible: false
+    })
+    this.props.navigation.navigate('AuthLoading');
+}
 
 }
 

@@ -59,7 +59,7 @@ const mapStateToProps = state => ({
 
 const AuthStack = createStackNavigator({
     Init: InitScreen,
-    Select: SelectScreen
+    Select: connect(mapStateToProps)(SelectScreen)
 });
 
 const AppContainer = createAppContainer(createSwitchNavigator(
