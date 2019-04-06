@@ -3,12 +3,19 @@ import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-nativ
 import { AppLoading, Asset, Font, Icon } from 'expo';
 
 import { Provider as ReduxProvider, connect } from 'react-redux';
-
-
-
 import AppNavigator from './navigation/AppNavigator';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider, DefaultTheme, Colors } from 'react-native-paper';
 import { store } from './redux/configureStore';
+
+const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: Colors.blue500,
+      accent: Colors.blue800,
+    }
+  };
 
 export default class App extends React.Component {
     state = {
@@ -16,9 +23,6 @@ export default class App extends React.Component {
     };
 
     render() {
-        // clears storage for dev testing
-        // AsyncStorage.clear();
-
         if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
             return (
                 <AppLoading
@@ -30,7 +34,7 @@ export default class App extends React.Component {
         } else {
             return (
                 <ReduxProvider store={store}>
-                    <PaperProvider>
+                    <PaperProvider theme={theme}>
                         <View style={styles.container}>
                             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
                             <AppNavigator />

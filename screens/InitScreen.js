@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView
 } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
 
 import { Button, colors, Input } from 'react-native-elements';

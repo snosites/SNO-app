@@ -9,26 +9,8 @@ import {
     AsyncStorage
 } from 'react-native';
 // import Colors from '../constants/Colors';
-import { List, Divider, Switch, IconButton, Colors } from 'react-native-paper';
-import { addDomain, changeActiveDomain } from '../redux/actions/actions';
-
-const testData = [
-    {
-        name: 'Travis Demo',
-        active: true,
-        notifications: true
-    },
-    {
-        name: 'Blitzer Test',
-        active: false,
-        notifications: false
-    },
-    {
-        name: 'Buffalo High School',
-        active: false,
-        notifications: true
-    }
-]
+import { List, Divider, Switch, IconButton, Colors, Snackbar } from 'react-native-paper';
+import { toggleNotifications } from '../redux/actions/actions';
 
 const DeleteButton = () => (
     <IconButton
@@ -42,14 +24,14 @@ const DeleteButton = () => (
 const ActiveDomainIcon = () => (
     <List.Icon
         icon={`star`}
-        color={Colors.blue500}
+        color={Colors.blue800}
     />
 )
 
 const NotificationIcon = ({ item }) => (
     <List.Icon
         icon={`notifications${!item.notifications ? '-off' : ''}`}
-        color={Colors.yellow700}
+        color={Colors.yellow600}
     />
 )
 
@@ -58,67 +40,92 @@ export default class SettingsScreen extends React.Component {
         title: 'Settings',
     };
 
+    state = {
+        snackbarVisible: false,
+    };
+
     render() {
+        const { snackbarVisible } = this.state;
         const domains = this.props.domains;
         return (
-            <ScrollView style={styles.container}>
-                <List.Section>
-                    <List.Subheader>Saved Organizations</List.Subheader>
-                    {domains.map(item => {
-                        return (
-                            <List.Item
-                                key={item.id}
-                                title={item.name}
-                                style={!item.active ? styles.inactiveItem : null}
-                                description={item.active ? 'active' : null}
-                                left={() => {
-                                    if (item.active) {
-                                        return <ActiveDomainIcon />
-                                    }
-                                    else {
-                                        return null
-                                    }
-                                }}
-                                right={() => {
-                                    return (
-                                        <DeleteButton />
-                                    )
-                                }}
-                                onPress={() => { alert('toggle') }}
-                            />
-                        )
-                    })}
-                </List.Section>
-                <Divider />
-                <List.Item style={{ paddingVertical: 0 }}
-                    title='Add New Organization'
-                    left={() => <List.Icon icon={`add`} />}
-                    onPress={this._handleAddNewOrg}
-                />
-                <Divider />
-                <List.Section>
-                    <List.Subheader>Push Notifications</List.Subheader>
-                    {domains.map(item => {
-                        return (
-                            <List.Item
-                                key={item.id}
-                                style={{ paddingVertical: 0 }}
-                                title={item.name}
-                                left={() => <NotificationIcon item={item} />}
-                                right={() => {
-                                    return (
-                                        <Switch
-                                            style={{ margin: 10 }}
-                                            value={item.notifications}
-                                            onValueChange={() => { alert('changed notifications') }
-                                            }
-                                        />
-                                    )
-                                }}
-                            />
-                        )
-                    })}
-                </List.Section>
+            <ScrollView contentContainerStyle={styles.container}>
+                <View>
+                    <List.Section>
+                        <List.Subheader>Saved Organizations</List.Subheader>
+                        {domains.map(item => {
+                            return (
+                                <List.Item
+                                    key={item.id}
+                                    title={item.name}
+                                    style={!item.active ? styles.inactiveItem : null}
+                                    description={item.active ? 'active' : null}
+                                    left={() => {
+                                        if (item.active) {
+                                            return <ActiveDomainIcon />
+                                        }
+                                        else {
+                                            return null
+                                        }
+                                    }}
+                                    right={() => {
+                                        return (
+                                            <IconButton
+                                                icon="delete"
+                                                color={Colors.red700}
+                                                size={20}
+                                                onPress={() => this._handleDeleteOrg(item.id)}
+                                            />
+                                        )
+                                    }}
+                                    onPress={() => { alert('toggle') }}
+                                />
+                            )
+                        })}
+                    </List.Section>
+                    <Divider />
+                    <List.Item style={{ paddingVertical: 0 }}
+                        title='Add New Organization'
+                        left={() => <List.Icon icon={`add`} />}
+                        onPress={this._handleAddNewOrg}
+                    />
+                    <Divider />
+                    <List.Section>
+                        <List.Subheader>Push Notifications</List.Subheader>
+                        {domains.map(item => {
+                            return (
+                                <List.Item
+                                    key={item.id}
+                                    style={{ paddingVertical: 0 }}
+                                    title={item.name}
+                                    left={() => <NotificationIcon item={item} />}
+                                    right={() => {
+                                        return (
+                                            <Switch
+                                                style={{ margin: 10 }}
+                                                value={item.notifications}
+                                                onValueChange={() => {this._toggleNotifications(item.id)}
+                                                }
+                                            />
+                                        )
+                                    }}
+                                />
+                            )
+                        })}
+                    </List.Section>
+                </View>
+                <Snackbar
+                    visible={snackbarVisible}
+                    duration={3000}
+                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            this.setState({ snackbarVisible: false })
+                        }
+                    }}
+                >
+                    Organization Removed
+                </Snackbar>
             </ScrollView>
         )
     }
@@ -127,6 +134,15 @@ export default class SettingsScreen extends React.Component {
         this.props.navigation.navigate('Auth')
     }
 
+    _handleDeleteOrg = () => {
+        this.setState({
+            snackbarVisible: true
+        })
+    }
+
+    _toggleNotifications = (orgId) => {
+        this.props.dispatch(toggleNotifications(orgId))
+    }
 
 }
 
@@ -135,6 +151,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        justifyContent: 'space-between',
     },
     inactiveItem: {
         paddingLeft: 60

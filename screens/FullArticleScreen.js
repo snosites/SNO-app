@@ -134,9 +134,9 @@ export default class FullArticleScreen extends React.Component {
     _handleProfilePress = async (article) => {
         const { navigation } = this.props;
         Haptic.selection();
-        const writer = article.custom_fields.writer && article.custom_fields.writer[0];
+        const writerName = article.custom_fields.writer && article.custom_fields.writer[0];
         navigation.navigate('Profile', {
-            writerName: writer
+            writerName
         })
     }
 }

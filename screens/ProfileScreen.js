@@ -77,11 +77,11 @@ export default class ProfileScreen extends React.Component {
             </ScrollView>
         );
     }
-
+    // bug could be introduced here because wp API doesnt search custom fields -- name has to be in title or body
     _loadProfile = async (payload) => {
-        const { navigation } = this.props;
+        const { navigation, activeDomain } = this.props;
         try {
-            const userDomain = await AsyncStorage.getItem('userDomain');
+            const userDomain = activeDomain.url;
             const writerName = navigation.getParam('writerName', 'unknown');
             if (writerName !== 'unknown') {
                 const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?search=${writerName}`)
@@ -94,7 +94,7 @@ export default class ProfileScreen extends React.Component {
                 // if more than one matches uses first one
                 if (profileMatches.length > 0) {
                     // get profile image
-                    console.log('profileMatches', profileMatches);
+                    
                     if (profileMatches[0]._links['wp:featuredmedia']) {
                         const response = await fetch(profileMatches[0]._links['wp:featuredmedia'][0].href);
                         const profileImage = await response.json();

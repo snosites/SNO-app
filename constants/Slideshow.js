@@ -83,7 +83,6 @@ export default class Slideshow extends React.Component {
     }
 
     _renderItem({ item, index }, parallaxProps) {
-        console.log('in renderItem', item.media_details.sizes.full.source_url)
         const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : 'Unknown';
         return (
             <TouchableOpacity

@@ -47,7 +47,6 @@ class SelectScreen extends React.Component {
                 .then((response) => response.json())
                 // filter out parties that don't have fields
                 .then((responseJson) => {
-                    console.log('capsule', responseJson)
                     return responseJson.parties.filter(item => {
                         return item.fields.length > 0;
                     })
@@ -84,7 +83,6 @@ class SelectScreen extends React.Component {
                 .then((response) => response.json())
                 // filter out parties that don't have fields
                 .then((responseJson) => {
-                    console.log('capsule', responseJson)
                     return responseJson.parties.filter(item => {
                         return item.fields.length > 0;
                     })

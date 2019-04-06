@@ -16,7 +16,7 @@ export function domains(state = [], action) {
             ]
         case 'CHANGE_ACTIVE_DOMAIN':
             return state.map(domain => {
-                if(domain.id === action.id){
+                if (domain.id === action.id) {
                     return {
                         ...domain,
                         active: true
@@ -25,6 +25,18 @@ export function domains(state = [], action) {
                 return {
                     ...domain,
                     active: false
+                }
+            })
+        case 'TOGGLE_NOTIFICATIONS':
+            return state.map(domain => {
+                if (domain.id === action.id) {
+                    return {
+                        ...domain,
+                        notifications: !domain.notifications
+                    }
+                }
+                return {
+                    ...domain,
                 }
             })
         default:

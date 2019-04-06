@@ -24,8 +24,8 @@ export function setActiveDomain(domainObj) {
     return { type: 'SET_ACTIVE_DOMAIN', domainObj}
 }
 
-export function toggleNotifications(index) {
-    return { type: TOGGLE_NOTIFICATIONS, index}
+export function toggleNotifications(id) {
+    return { type: TOGGLE_NOTIFICATIONS, id}
 }
 
 export function setDomains(payload){
