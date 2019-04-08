@@ -87,14 +87,10 @@ export default class CustomDrawerComponent extends React.Component {
 
     _handleMenuPress = async (item) => {
         this.props.navigation.closeDrawer();
+        this._getArticles(item.object_id);
         this.props.navigation.navigate('List', {
-            content: 'loading'
-        })
-        const stories = await this._getArticles(item.object_id)
-        this.props.navigation.navigate("List", {
             menuTitle: item.title,
-            categoryId: item.object_id,
-            content: stories
+            categoryId: item.object_id
         })
         this.setState({
             activeMenu: item.object_id
@@ -107,23 +103,6 @@ export default class CustomDrawerComponent extends React.Component {
             domain: this.props.activeDomain.url,
             category
         }))
-        const response = await fetch(`${this.props.activeDomain.url}/wp-json/wp/v2/posts?categories=${category}`)
-        const stories = await response.json();
-        await Promise.all(stories.map(async story => {
-            try {
-                const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
-                const featuredImage = await imgResponse.json();
-                story.featuredImage = {
-                    uri: featuredImage.media_details.sizes.full.source_url,
-                    photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-                    caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-                }
-            }
-            catch (err) {
-                console.log('error getting featured image', err)
-            }
-        }))
-        return stories;
     }
 }
 

@@ -62,10 +62,9 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation, articlesByCategory } = this.props;
+        const { navigation, articlesByCategory, category } = this.props;
         const { snackbarVisible } = this.state;
-        let category = navigation.getParam('category', 'loading')
-        if (stories === 'loading') {
+        if (!category || category.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -87,9 +86,9 @@ class ListScreen extends React.Component {
             )
         }
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, marginVertical: 5 }}>
-                    {stories.map(story => {
+                    {articlesByCategory.map(story => {
                         return (
                             <TouchableOpacity
                                 key={story.id}
@@ -234,8 +233,23 @@ const styles = StyleSheet.create({
 
 });
 
-const mapStateToProps = state => ({
-    articlesByCategory: state.articlesByCategory
-})
+const mapStateToProps = (state, ownProps) => {
+    console.log('own props', ownProps)
+    if (ownProps.navigation.state.params) {
+        const { categoryId } = ownProps.navigation.state.params;
+        console.log('category id', categoryId)
+        return {
+            category: state.articlesByCategory[categoryId],
+            articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
+                return state.entities.articles[articleId]
+            })
+        }
+    }
+    return {
+        state
+    }
+
+
+}
 
 export default connect(mapStateToProps)(ListScreen);
