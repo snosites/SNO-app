@@ -11,20 +11,20 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
-import Colors from '../constants/Colors'
-import TouchableItem from '../constants/TouchableItem';
-
-import { EvilIcons } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-
-import { Colors, Snackbar } from 'react-native-paper';
-
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
-
 import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
+
+import Colors from '../constants/Colors'
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Snackbar } from 'react-native-paper';
+
+import { saveArticle } from '../redux/actions/actions';
+
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+
+
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
@@ -61,6 +61,7 @@ export default class ListScreen extends React.Component {
 
     render() {
         const { navigation } = this.props;
+        const { snackbarVisible } = this.state;
         let stories = navigation.getParam('content', 'loading')
         if (stories === 'loading') {
             return (
@@ -84,46 +85,50 @@ export default class ListScreen extends React.Component {
             )
         }
         return (
-            <ScrollView style={{ flex: 1, marginVertical: 5 }}>
-                {stories.map(story => {
-                    return (
-                        <TouchableOpacity
-                            key={story.id}
-                            onPress={this._handleArticlePress(story)}
-                        >
-                            <View style={styles.storyContainer}>
-                                <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
-                                <View style={styles.storyInfo}>
-                                    <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
-                                    <View style={styles.extraInfo}>
-                                        <View style={{ flex: 1 }}>
-                                            <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                            <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
-                                        </View>
+            <View style={{flex: 1}}>
+                <ScrollView style={{ flex: 1, marginVertical: 5 }}>
+                    {stories.map(story => {
+                        return (
+                            <TouchableOpacity
+                                key={story.id}
+                                onPress={this._handleArticlePress(story)}
+                            >
+                                <View style={styles.storyContainer}>
+                                    <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                                    <View style={styles.storyInfo}>
+                                        <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
+                                        <View style={styles.extraInfo}>
+                                            <View style={{ flex: 1 }}>
+                                                <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                            </View>
 
-                                        <View style={styles.socialIconsContainer}>
+                                            <View style={styles.socialIconsContainer}>
 
-                                            <MaterialIcons
-                                                onPress={() => {
-                                                    alert('share')
-                                                }}
-                                                style={styles.socialIcon} name='share' size={28} 
-                                                color={Colors.tintColor} />
-                                            <MaterialIcons
-                                                onPress={() => {
-                                                    this._handleArticleSave(story)
-                                                }}
-                                                style={styles.socialIcon} name='bookmark-border' size={28}
-                                                color={Colors.tintColor} />
+                                                <MaterialIcons
+                                                    onPress={() => {
+                                                        alert('share')
+                                                    }}
+                                                    style={styles.socialIcon} name='share' size={28}
+                                                    color={Colors.tintColor} />
+                                                <MaterialIcons
+                                                    onPress={() => {
+                                                        this._handleArticleSave(story)
+                                                    }}
+                                                    style={styles.socialIcon} name='bookmark-border' size={28}
+                                                    color={Colors.tintColor} />
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
-                            </View>
-                        </TouchableOpacity>
-                    )
-                })}
+                            </TouchableOpacity>
+                        )
+                    })}
+
+                </ScrollView>
                 <Snackbar
                     visible={snackbarVisible}
+                    style={styles.snackbar}
                     duration={3000}
                     onDismiss={() => this.setState({ snackbarVisible: false })}
                     action={{
@@ -133,9 +138,10 @@ export default class ListScreen extends React.Component {
                         }
                     }}
                 >
-                    Organization Removed
+                    Article Saved
                 </Snackbar>
-            </ScrollView>
+            </View>
+
         );
     }
 
@@ -152,8 +158,12 @@ export default class ListScreen extends React.Component {
         })
     }
 
-    _handleArticleSave = id => {
-
+    _handleArticleSave = article => {
+        console.log('in article save')
+        this.props.dispatch(saveArticle(article))
+        this.setState({
+            snackbarVisible: true
+        })
     }
 
     _getAttachmentsAync = async (article) => {
@@ -213,5 +223,11 @@ const styles = StyleSheet.create({
     socialIcon: {
         paddingHorizontal: 5
     },
+    snackbar: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0
+    }
 
 });

@@ -32,7 +32,7 @@ const mapStateToProps = state => ({
 })
 
 const ArticleStack = createStackNavigator({
-    List: ListScreen,
+    List: connect()(ListScreen),
     FullArticle: FullArticleScreen,
     Profile: connect(mapStateToProps)(ProfileScreen)
 });
