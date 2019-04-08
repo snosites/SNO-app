@@ -1,8 +1,10 @@
+import merge from 'lodash/merge';
 import {
     ADD_DOMAIN,
     DELETE_DOMAIN,
     TOGGLE_NOTIFICATIONS
 } from '../actions/actions';
+import FullArticleScreen from '../../screens/FullArticleScreen';
 
 export function domains(state = [], action) {
     switch (action.type) {
@@ -60,6 +62,49 @@ export function savedArticles(state = [], action) {
                 ...state,
                 action.article
             ]
+        default:
+            return state
+    }
+}
+
+// ARTICLES REDUCERS //
+
+// runs every time an action is sent
+export function entities(state = { articles: {} }, action) {
+    if (action.response && action.response.entities) {
+        return merge({}, state, action.response.entities)
+    }
+    return state
+}
+
+export function posts(
+    state = {
+        isFetching: false,
+        didInvalidate: false,
+        items: []
+    },
+    action
+) {
+    switch (action.type) {
+        case INVALIDATE_SUBREDDIT:
+            return {
+                ...state,
+                didInvalidate: true
+            }
+        case REQUEST_POSTS:
+            return {
+                ...state,
+                isFetching: true,
+                didInvalidate: false
+            }
+        case RECEIVE_POSTS:
+            return {
+                isFetching: false,
+                didInvalidate: false,
+                lastUpdated: action.receivedAt,
+                items: action.posts,
+                
+            }
         default:
             return state
     }

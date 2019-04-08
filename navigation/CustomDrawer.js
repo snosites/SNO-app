@@ -8,10 +8,12 @@ import {
     StatusBar,
     ActivityIndicator,
 } from 'react-native';
+
+import { fetchArticles } from '../redux/actions/actions';
+
 import { SafeAreaView } from 'react-navigation';
 
 import TouchableItem from '../constants/TouchableItem';
-
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
@@ -101,23 +103,27 @@ export default class CustomDrawerComponent extends React.Component {
 
 
     _getArticles = async (category) => {
-        const response = await fetch(`${this.props.activeDomain.url}/wp-json/wp/v2/posts?categories=${category}`)
-        const stories = await response.json();
-        await Promise.all(stories.map(async story => {
-            try {
-                const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
-                const featuredImage = await imgResponse.json();
-                story.featuredImage = {
-                    uri: featuredImage.media_details.sizes.full.source_url,
-                    photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-                    caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-                }
-            }
-            catch (err) {
-                console.log('error getting featured image', err)
-            }
+        this.props.dispatch(fetchArticles({
+            domain: this.props.activeDomain.url,
+            category
         }))
-        return stories;
+        // const response = await fetch(`${this.props.activeDomain.url}/wp-json/wp/v2/posts?categories=${category}`)
+        // const stories = await response.json();
+        // await Promise.all(stories.map(async story => {
+        //     try {
+        //         const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
+        //         const featuredImage = await imgResponse.json();
+        //         story.featuredImage = {
+        //             uri: featuredImage.media_details.sizes.full.source_url,
+        //             photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
+        //             caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        //         }
+        //     }
+        //     catch (err) {
+        //         console.log('error getting featured image', err)
+        //     }
+        // }))
+        // return stories;
     }
 }
 
