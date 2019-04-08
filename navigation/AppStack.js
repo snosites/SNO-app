@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import TabBarIcon from '../components/TabBarIcon';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import SavedScreen from '../screens/SavedScreen';
+
 import MainDrawerNavigator from './MainDrawerNavigator';
 
 const LinksStack = createStackNavigator({
@@ -23,7 +25,7 @@ LinksStack.navigationOptions = {
 };
 
 const BookmarkStack = createStackNavigator({
-    Links: LinksScreen,
+    Saved: SavedScreen
 });
 
 BookmarkStack.navigationOptions = {
