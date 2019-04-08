@@ -53,4 +53,16 @@ export function activeDomain(state = {}, action) {
     }
 }
 
+export function savedArticles(state = [], action) {
+    switch (action.type) {
+        case 'SAVE_ARTICLE':
+            return [
+                ...state,
+                action.article
+            ]
+        default:
+            return state
+    }
+}
+
 

@@ -18,6 +18,7 @@ import { EvilIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { Colors, Snackbar } from 'react-native-paper';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -42,14 +43,18 @@ export default class ListScreen extends React.Component {
         };
     };
 
-    componentDidMount(){
-        if(this.animation){
+    state = {
+        snackbarVisible: false
+    }
+
+    componentDidMount() {
+        if (this.animation) {
             this._playAnimation();
         }
     }
 
-    componentDidUpdate(){
-        if(this.animation){
+    componentDidUpdate() {
+        if (this.animation) {
             this._playAnimation();
         }
     }
@@ -91,17 +96,25 @@ export default class ListScreen extends React.Component {
                                 <View style={styles.storyInfo}>
                                     <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                     <View style={styles.extraInfo}>
-                                        <View style={{flex: 1}}>
-                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                        <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                        <View style={{ flex: 1 }}>
+                                            <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                            <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
                                         </View>
-                                        
+
                                         <View style={styles.socialIconsContainer}>
 
-                                            <MaterialIcons onPress={() => {
-                                                alert('share')
-                                            }} style={styles.socialIcon} name='share' size={28} color={Colors.tintColor} />
-                                            <MaterialIcons style={styles.socialIcon} name='bookmark-border' size={28} color={Colors.tintColor} />
+                                            <MaterialIcons
+                                                onPress={() => {
+                                                    alert('share')
+                                                }}
+                                                style={styles.socialIcon} name='share' size={28} 
+                                                color={Colors.tintColor} />
+                                            <MaterialIcons
+                                                onPress={() => {
+                                                    this._handleArticleSave(story)
+                                                }}
+                                                style={styles.socialIcon} name='bookmark-border' size={28}
+                                                color={Colors.tintColor} />
                                         </View>
                                     </View>
                                 </View>
@@ -109,22 +122,38 @@ export default class ListScreen extends React.Component {
                         </TouchableOpacity>
                     )
                 })}
+                <Snackbar
+                    visible={snackbarVisible}
+                    duration={3000}
+                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            this.setState({ snackbarVisible: false })
+                        }
+                    }}
+                >
+                    Organization Removed
+                </Snackbar>
             </ScrollView>
         );
     }
-
 
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
         Haptic.selection();
         // check if there is a slidehsow
-        if(article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'){
+        if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
             article.slideshow = await this._getAttachmentsAync(article);
         }
         navigation.push('FullArticle', {
             articleId: article.id,
             article,
         })
+    }
+
+    _handleArticleSave = id => {
+
     }
 
     _getAttachmentsAync = async (article) => {

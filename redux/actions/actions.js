@@ -28,10 +28,14 @@ export function toggleNotifications(id) {
     return { type: TOGGLE_NOTIFICATIONS, id}
 }
 
-export function setDomains(payload){
-    return { type: 'SET_DOMAINS', payload}
+export function saveArticle(article) {
+    return { type: 'SAVE_ARTICLE', article}
 }
 
-export function fetchDomains(payload){
-    return { type: 'FETCH_DOMAINS'}
-}
+// export function setDomains(payload){
+//     return { type: 'SET_DOMAINS', payload}
+// }
+
+// export function fetchDomains(payload){
+//     return { type: 'FETCH_DOMAINS'}
+// }
