@@ -8,6 +8,7 @@ import FullArticleScreen from '../../screens/FullArticleScreen';
 
 export function domains(state = [], action) {
     switch (action.type) {
+
         case ADD_DOMAIN:
             return [
                 ...state,
@@ -77,33 +78,44 @@ export function entities(state = { articles: {} }, action) {
     return state
 }
 
-export function posts(
+function articles(
     state = {
-        isFetching: false,
-        didInvalidate: false,
-        items: []
+      isFetching: false,
+      didInvalidate: false,
+      items: []
     },
     action
-) {
+  ) {
     switch (action.type) {
-        case INVALIDATE_SUBREDDIT:
+      case 'INVALIDATE_ARTICLE':
+        return Object.assign({}, state, {
+          didInvalidate: true
+        })
+      case 'REQUEST_ARTICLES':
+        return Object.assign({}, state, {
+          isFetching: true,
+          didInvalidate: false
+        })
+      case 'RECEIVE_ARTICLES':
+        return Object.assign({}, state, {
+          isFetching: false,
+          didInvalidate: false,
+          items: action.response.result,
+          lastUpdated: action.receivedAt
+        })
+      default:
+        return state
+    }
+  }
+
+export function articlesByCategory(state = {}, action) {
+    switch (action.type) {
+        case 'INVALIDATE_CATEGORY':
+        case 'REQUEST_ARTICLES':
+        case 'RECEIVE_ARTICLES':
             return {
                 ...state,
-                didInvalidate: true
-            }
-        case REQUEST_POSTS:
-            return {
-                ...state,
-                isFetching: true,
-                didInvalidate: false
-            }
-        case RECEIVE_POSTS:
-            return {
-                isFetching: false,
-                didInvalidate: false,
-                lastUpdated: action.receivedAt,
-                items: action.posts,
-                
+                [action.category]: articles(state[action.category], action)
             }
         default:
             return state

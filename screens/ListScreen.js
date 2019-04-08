@@ -11,6 +11,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import { connect } from 'react-redux';
 import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
@@ -26,12 +27,13 @@ import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-butto
 
 
 
+
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
-export default class ListScreen extends React.Component {
+class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: navigation.getParam('menuTitle', 'Stories'),
@@ -60,9 +62,9 @@ export default class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation } = this.props;
+        const { navigation, articlesByCategory } = this.props;
         const { snackbarVisible } = this.state;
-        let stories = navigation.getParam('content', 'loading')
+        let category = navigation.getParam('category', 'loading')
         if (stories === 'loading') {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -231,3 +233,9 @@ const styles = StyleSheet.create({
     }
 
 });
+
+const mapStateToProps = state => ({
+    articlesByCategory: state.articlesByCategory
+})
+
+export default connect(mapStateToProps)(ListScreen);

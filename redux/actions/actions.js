@@ -55,11 +55,20 @@ export function fetchArticles(payload) {
     }
 }
 
-export function setArticles(category, response) {
+export function requestArticles(category) {
+    console.log('request articles')
     return {
-        type: 'SET_ARTICLES',
+        type: 'REQUEST_ARTICLES',
+        category
+    }
+}
+
+export function recieveArticles(category, response) {
+    console.log('recieve articles')
+    return {
+        type: 'RECIEVE_ARTICLES',
         category,
-        articles: response,
+        response,
         recievedAt: Date.now()
     }
 }
