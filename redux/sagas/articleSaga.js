@@ -1,13 +1,12 @@
 import { put, call, takeLatest } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestArticles, recieveArticles } from '../actions/actions';
+import { requestArticles, receiveArticles } from '../actions/actions';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
 
 function* fetchArticles(action){
-    console.log('in fetch articles saga')
     const { domain, category } = action.payload;
     try {
         yield put(requestArticles(category))
@@ -15,7 +14,7 @@ function* fetchArticles(action){
         const stories = yield response.json();
         const normalizedData = normalize(stories, articleListSchema);
         // console.log('normalized data', normalizedData)
-        yield put(recieveArticles(category, normalizedData))
+        yield put(receiveArticles(category, normalizedData))
     }
     catch(err) {
         console.log('error fetching articles in saga')

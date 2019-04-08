@@ -85,17 +85,25 @@ class ListScreen extends React.Component {
                 </View>
             )
         }
+        
         return (
             <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, marginVertical: 5 }}>
                     {articlesByCategory.map(story => {
+                        this._getFeaturedImage(story);
+                        console.log('featured image', story.featuredImage)
                         return (
                             <TouchableOpacity
                                 key={story.id}
                                 onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
-                                    <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                                    {story.featuredImage ? 
+                                    <Image source={{ uri: story.featuredImage.uri}} style={styles.featuredImage} />
+                                    :
+                                    <View style={[styles.featuredImage, styles.imagePlaceholder]} />
+                                }
+                                    
                                     <View style={styles.storyInfo}>
                                         <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                         <View style={styles.extraInfo}>
@@ -167,11 +175,28 @@ class ListScreen extends React.Component {
         })
     }
 
+    _getFeaturedImage = async (story) => {
+        try {
+            const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
+            const featuredImage = await imgResponse.json();
+            story.featuredImage = {
+                uri: featuredImage.media_details.sizes.full.source_url,
+                photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
+                caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+            }
+        }
+        catch(err) {
+            console.log('error getting featured image')
+        }
+    }
+
     _getAttachmentsAync = async (article) => {
         const response = await fetch(article._links['wp:attachment'][0].href);
         const imageAttachments = await response.json();
         return imageAttachments;
     }
+
+
 
     _playAnimation = () => {
         this.animation.reset();
@@ -194,6 +219,9 @@ const styles = StyleSheet.create({
         width: 125,
         height: 90,
         borderRadius: 8
+    },
+    imagePlaceholder: {
+        backgroundColor: 'grey'
     },
     storyInfo: {
         flex: 1,
@@ -234,10 +262,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, ownProps) => {
-    console.log('own props', ownProps)
     if (ownProps.navigation.state.params) {
         const { categoryId } = ownProps.navigation.state.params;
-        console.log('category id', categoryId)
         return {
             category: state.articlesByCategory[categoryId],
             articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {

@@ -56,20 +56,19 @@ export function fetchArticles(payload) {
 }
 
 export function requestArticles(category) {
-    console.log('request articles')
     return {
         type: 'REQUEST_ARTICLES',
         category
     }
 }
 
-export function recieveArticles(category, response) {
+export function receiveArticles(category, response) {
     console.log('recieve articles')
     return {
-        type: 'RECIEVE_ARTICLES',
+        type: 'RECEIVE_ARTICLES',
         category,
         response,
-        recievedAt: Date.now()
+        receivedAt: Date.now()
     }
 }
 
