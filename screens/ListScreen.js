@@ -93,7 +93,7 @@ class ListScreen extends React.Component {
                         return (
                             <TouchableOpacity
                                 key={story.id}
-                                onPress={() => this._handleArticlePress(story)}
+                                onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
                                     {story.featuredImage ?
@@ -155,6 +155,7 @@ class ListScreen extends React.Component {
     }
 
     _handleArticlePress = article => async () => {
+        console.log('in article press')
         const { navigation } = this.props;
         Haptic.selection();
         // check if there is a slidehsow

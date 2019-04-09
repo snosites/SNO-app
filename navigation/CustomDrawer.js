@@ -8,6 +8,14 @@ import {
     StatusBar,
     ActivityIndicator,
 } from 'react-native';
+import {
+    Drawer,
+    withTheme,
+    Switch,
+    TouchableRipple,
+    Text as PaperText,
+    Colors,
+} from 'react-native-paper';
 
 import { fetchArticles } from '../redux/actions/actions';
 
@@ -22,49 +30,38 @@ import { connect } from 'react-redux';
 
 class CustomDrawerComponent extends React.Component {
     state = {
-        activeMenu: null
+        activeMenuIndex: 0
     }
 
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <View style={styles.rootContainer}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
-                    <ScrollView >
-                        {this.props.menus.items.map((item, i) => {
-                            return (
-                                <TouchableItem
-                                    key={i}
-                                    accessible
-                                    accessibilityLabel={item.title}
-                                    onPress={() => {
-                                        this._handleMenuPress(item);
-                                    }}
-                                    delayPressIn={0}
-                                >
-                                    <View style={[styles.item, this.state.activeMenu == item.object_id ? { backgroundColor: '#f2f2f2' } : null]}>
-                                        <View
-                                            style={[
-                                                styles.icon,
-                                                this.state.activeMenu == item.object_id ? null : styles.inactiveIcon
-                                            ]}
-                                        >
-                                            <DrawerNavIcon
-                                                style={item.menu_icon_dir}
-                                                name={item.menu_icon_name}
-                                            />
-                                        </View>
-                                        <Text
-                                            style={[styles.label, this.state.activeMenu == item.object_id ? { color: '#727272' } : null]}
-                                        >
-                                            {item.title}
-                                        </Text>
-                                    </View>
-                                </TouchableItem>
-                            )
-                        })}
+                    <ScrollView style={styles.container}>
+                        <Drawer.Section title="Categories">
+                            {this.props.menus.items.map((item, index) => {
+                                return (
+                                    <Drawer.Item
+                                        key={item.id}
+                                        // theme={
+                                        //     props.key === 3
+                                        //         ? { colors: { primary: Colors.tealA200 } }
+                                        //         : undefined
+                                        // }
+                                        active={this.state.activeMenuIndex === index}
+                                        onPress={() => this._handleMenuPress(item)}
+                                        icon={passedProps => {
+                                            return DrawerNavIcon({
+                                                ...passedProps, 
+                                                style: item.menu_icon_dir, name: item.menu_icon_name})
+                                        }}
+                                    />
+                                )
+                            })}
+                        </Drawer.Section>
                     </ScrollView>
                 </SafeAreaView>
-            </ScrollView>
+            </View>
         )
     }
 
@@ -105,9 +102,12 @@ class CustomDrawerComponent extends React.Component {
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
+
     },
     container: {
-        paddingVertical: 10,
+        flex: 1,
+        paddingVertical: 50,
+        backgroundColor: Colors.surface
     },
     item: {
         flexDirection: 'row',
