@@ -29,42 +29,40 @@ class CustomDrawerComponent extends React.Component {
         return (
             <ScrollView style={styles.container}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
-                    {this.state.menus &&
-                        <ScrollView >
-                            {this.state.menus.map((item, i) => {
-                                return (
-                                    <TouchableItem
-                                        key={i}
-                                        accessible
-                                        accessibilityLabel={item.title}
-                                        onPress={() => {
-                                            this._handleMenuPress(item);
-                                        }}
-                                        delayPressIn={0}
-                                    >
-                                        <View style={[styles.item, this.state.activeMenu == item.object_id ? { backgroundColor: '#f2f2f2' } : null]}>
-                                            <View
-                                                style={[
-                                                    styles.icon,
-                                                    this.state.activeMenu == item.object_id ? null : styles.inactiveIcon
-                                                ]}
-                                            >
-                                                <DrawerNavIcon
-                                                    style={item.menu_icon_dir}
-                                                    name={item.menu_icon_name}
-                                                />
-                                            </View>
-                                            <Text
-                                                style={[styles.label, this.state.activeMenu == item.object_id ? { color: '#727272' } : null]}
-                                            >
-                                                {item.title}
-                                            </Text>
+                    <ScrollView >
+                        {this.props.menus.items.map((item, i) => {
+                            return (
+                                <TouchableItem
+                                    key={i}
+                                    accessible
+                                    accessibilityLabel={item.title}
+                                    onPress={() => {
+                                        this._handleMenuPress(item);
+                                    }}
+                                    delayPressIn={0}
+                                >
+                                    <View style={[styles.item, this.state.activeMenu == item.object_id ? { backgroundColor: '#f2f2f2' } : null]}>
+                                        <View
+                                            style={[
+                                                styles.icon,
+                                                this.state.activeMenu == item.object_id ? null : styles.inactiveIcon
+                                            ]}
+                                        >
+                                            <DrawerNavIcon
+                                                style={item.menu_icon_dir}
+                                                name={item.menu_icon_name}
+                                            />
                                         </View>
-                                    </TouchableItem>
-                                )
-                            })}
-                        </ScrollView>
-                    }
+                                        <Text
+                                            style={[styles.label, this.state.activeMenu == item.object_id ? { color: '#727272' } : null]}
+                                        >
+                                            {item.title}
+                                        </Text>
+                                    </View>
+                                </TouchableItem>
+                            )
+                        })}
+                    </ScrollView>
                 </SafeAreaView>
             </ScrollView>
         )

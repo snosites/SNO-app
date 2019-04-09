@@ -1,6 +1,6 @@
 import { put, call, takeLatest } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticles } from '../actions/actions';
 
 function* fetchMenus(action){
     const { domain } = action;
@@ -9,9 +9,13 @@ function* fetchMenus(action){
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = yield response.json();
         yield put(receiveMenus(menus))
+        yield put(fetchArticles({
+            domain,
+            category: menus[0].object_id
+        }))
     }
     catch(err) {
-        console.log('error fetching menus in saga')
+        console.log('error fetching menus in saga', err)
     }
 }
 

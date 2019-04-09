@@ -8,6 +8,7 @@ import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SavedScreen from '../screens/SavedScreen';
 
+import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';
 
 const LinksStack = createStackNavigator({
@@ -64,7 +65,12 @@ const AppNav = createBottomTabNavigator({
     SettingsStack,
 });
 
-export default createSwitchNavigator({
-    AppSetup: AppSetupScreen,
-    App: AppNav
-})
+export default createSwitchNavigator(
+    {
+        AppSetup: AppSetupScreen,
+        MainApp: AppNav
+    },
+    {
+        initialRouteName: 'AppSetup',
+    }
+)

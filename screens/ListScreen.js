@@ -85,31 +85,31 @@ class ListScreen extends React.Component {
                 </View>
             )
         }
-        
+
         return (
             <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, marginVertical: 5 }}>
                     {articlesByCategory.map(story => {
-                        this._getFeaturedImage(story);
-                        console.log('featured image', story.featuredImage)
                         return (
                             <TouchableOpacity
                                 key={story.id}
-                                onPress={this._handleArticlePress(story)}
+                                onPress={() => this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
-                                    {story.featuredImage ? 
-                                    <Image source={{ uri: story.featuredImage.uri}} style={styles.featuredImage} />
-                                    :
-                                    <View style={[styles.featuredImage, styles.imagePlaceholder]} />
-                                }
-                                    
+                                    {story.featuredImage ?
+                                        <Image
+                                            source={{ uri: story.featuredImage.uri }}
+                                            style={styles.featuredImage}
+                                        />
+                                        :
+                                        null
+                                    }
                                     <View style={styles.storyInfo}>
                                         <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                         <View style={styles.extraInfo}>
                                             <View style={{ flex: 1 }}>
                                                 <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
                                             </View>
 
                                             <View style={styles.socialIconsContainer}>
@@ -173,21 +173,6 @@ class ListScreen extends React.Component {
         this.setState({
             snackbarVisible: true
         })
-    }
-
-    _getFeaturedImage = async (story) => {
-        try {
-            const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
-            const featuredImage = await imgResponse.json();
-            story.featuredImage = {
-                uri: featuredImage.media_details.sizes.full.source_url,
-                photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-                caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-            }
-        }
-        catch(err) {
-            console.log('error getting featured image')
-        }
     }
 
     _getAttachmentsAync = async (article) => {
@@ -262,20 +247,14 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, ownProps) => {
-    if (ownProps.navigation.state.params) {
-        const { categoryId } = ownProps.navigation.state.params;
-        return {
-            category: state.articlesByCategory[categoryId],
-            articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
-                return state.entities.articles[articleId]
-            })
-        }
-    }
+    // gets category ID from navigation params or defaults to first item in the list
+    const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
-        state
+        category: state.articlesByCategory[categoryId],
+        articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
+            return state.entities.articles[articleId]
+        })
     }
-
-
 }
 
 export default connect(mapStateToProps)(ListScreen);

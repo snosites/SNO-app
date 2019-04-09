@@ -57,19 +57,19 @@ export function activeDomain(state = {}, action) {
 }
 
 export function menus(state = {
-    isFetching: false,
+    isLoaded: false,
     items: []
 }, action) {
     switch (action.type) {
         case 'REQUEST_MENUS':
             return {
                 ...state,
-                isFetching: true
+                isLoaded: false
             }
         case 'RECEIVE_MENUS':
             return {
                 ...state,
-                isFetching: false,
+                isLoaded: true,
                 items: action.response
             }
         default:

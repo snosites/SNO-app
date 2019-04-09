@@ -10,7 +10,7 @@ import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import { connect } from 'react-redux';
-import { fetchArticles } from '../redux/actions/actions';
+import { fetchArticles, fetchMenus } from '../redux/actions/actions';
 
 
 
@@ -23,44 +23,41 @@ class AppSetupScreen extends React.Component {
         this._loadSettings();
     }
 
+    componentDidUpdate() {
+        const { menus, articlesByCategory, navigation } = this.props;
+        if (menus.isLoaded) {
+            if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+                console.log('finished loading menus and articles')
+                navigation.navigate('MainApp');
+            }
+        }
+    }
+
     render() {
         return (
             <View style={styles.rootContainer}>
-                    <View style={styles.animationContainer}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 400,
-                                height: 400,
-                            }}
-                            loop={true}
-                            speed={1}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/square-loader.json')}
-                        />
-                    </View>
+                <View style={styles.animationContainer}>
+                    <Lottie
+                        ref={animation => {
+                            this.animation = animation;
+                        }}
+                        style={{
+                            width: 200,
+                            height: 200,
+                        }}
+                        loop={true}
+                        speed={1}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/square-loader.json')}
+                    />
                 </View>
+            </View>
         );
     }
 
     _loadSettings = async () => {
-        const activeDomain = this.props.domains.filter(domain => {
-            if(domain.active){
-                return domain
-            }
-        })
-        // sets active domain for app and then navigates to app
-        if(activeDomain.length > 0) {
-            this.props.dispatch(setActiveDomain(activeDomain[0]))
-            this.props.navigation.navigate('App')
-        }
-        // no active domain navigate to auth
-        else {
-            this.props.navigation.navigate('Auth')
-        }
-        
+        const { url } = this.props.activeDomain;
+        this.props.dispatch(fetchMenus(url));
     };
 
     _playAnimation = () => {
@@ -71,17 +68,20 @@ class AppSetupScreen extends React.Component {
 
 const styles = StyleSheet.create({
     rootContainer: {
-        flex: 1, 
-        justifyContent: 'center' 
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     animationContainer: {
-        width: 400,
-        height: 400,
+        width: 200,
+        height: 200,
     },
 })
 
 const mapStateToProps = store => ({
-    activeDomain: store.activeDomain
+    activeDomain: store.activeDomain,
+    menus: store.menus,
+    articlesByCategory: store.articlesByCategory
 })
 
-export default connect()(AppSetupScreen);
+export default connect(mapStateToProps)(AppSetupScreen);
