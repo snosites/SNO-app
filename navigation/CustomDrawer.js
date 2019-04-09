@@ -75,9 +75,14 @@ class CustomDrawerComponent extends React.Component {
 
 
     _getArticles = (category) => {
+        const { articlesByCategory } = this.props;
+        if(articlesByCategory[category] && articlesByCategory[category].items.length > 0) {
+            return
+        }
         this.props.dispatch(fetchArticles({
             domain: this.props.activeDomain.url,
-            category
+            category,
+            page: 1
         }))
     }
 }
@@ -116,7 +121,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
-    menus: store.menus
+    menus: store.menus,
+    articlesByCategory: store.articlesByCategory
 })
 
 

@@ -191,7 +191,8 @@ class ListScreen extends React.Component {
 
     _loadMore = (category) => {
         const { activeDomain, categoryId } = this.props;
-        if(category.page !== 'max'){
+        console.log('in loadmore', category, categoryId)
+        if(category.page != 'max'){
             console.log('fetching more articles')
             fetchArticles({
                 domain: activeDomain.url,

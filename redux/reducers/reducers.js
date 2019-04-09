@@ -125,6 +125,7 @@ function articles(
                 updatedPage = state.page + 1
             };
             return Object.assign({}, state, {
+                categoryId: action.category,
                 isFetching: false,
                 didInvalidate: false,
                 items: action.response.result,
