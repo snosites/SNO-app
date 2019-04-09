@@ -63,7 +63,6 @@ export function requestArticles(category) {
 }
 
 export function receiveArticles(category, response) {
-    console.log('recieve articles')
     return {
         type: 'RECEIVE_ARTICLES',
         category,
@@ -80,6 +79,30 @@ export function fetchArticlesFailure(category, error) {
         recievedAt: Date.now()
     }
 }
+
+// MENU ACTIONS
+
+export function fetchMenus(domain) {
+    return {
+        type: 'FETCH_MENUS',
+        domain
+    }
+}
+
+export function requestMenus() {
+    return {
+        type: 'REQUEST_MENUS',
+    }
+}
+
+export function receiveMenus(response) {
+    return {
+        type: 'RECEIVE_MENUS',
+        response,
+    }
+}
+
+
 
 export function saveArticle(article) {
     return { type: 'SAVE_ARTICLE', article}

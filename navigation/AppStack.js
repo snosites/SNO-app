@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import TabBarIcon from '../components/TabBarIcon';
@@ -57,9 +57,14 @@ SettingsStack.navigationOptions = {
     ),
 };
 
-export default createBottomTabNavigator({
+const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
     BookmarkStack,
     LinksStack,
     SettingsStack,
 });
+
+export default createSwitchNavigator({
+    AppSetup: AppSetupScreen,
+    App: AppNav
+})

@@ -17,15 +17,12 @@ import TouchableItem from '../constants/TouchableItem';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
+import { connect } from 'react-redux';
 
 
-export default class CustomDrawerComponent extends React.Component {
+class CustomDrawerComponent extends React.Component {
     state = {
-        menus: [],
         activeMenu: null
-    }
-    componentDidMount() {
-        this._asyncLoadMenus();
     }
 
     render() {
@@ -73,19 +70,20 @@ export default class CustomDrawerComponent extends React.Component {
         )
     }
 
-    _asyncLoadMenus = async () => {
-        const userDomain = this.props.activeDomain.url;
-        // pull in menus
-        const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
-        const menus = await response.json();
-        this.setState({
-            menus
-        })
-        // pass inital category to screen
-        this._handleMenuPress(this.state.menus[0]);
-    };
+    // _asyncLoadMenus = async () => {
+    //     const userDomain = this.props.activeDomain.url;
+    //     // pull in menus
+    //     const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
+    //     const menus = await response.json();
+    //     this.setState({
+    //         menus
+    //     })
+    //     // pass inital category to screen
+    //     this._handleMenuPress(this.state.menus[0]);
+    // };
 
     _handleMenuPress = async (item) => {
+        // this._handleMenuPress(this.state.menus[0]);
         this.props.navigation.closeDrawer();
         this._getArticles(item.object_id);
         this.props.navigation.navigate('List', {
@@ -135,3 +133,10 @@ const styles = StyleSheet.create({
         fontSize: 21
     },
 });
+
+const mapStateToProps = store => ({
+    menus: store.menus
+})
+
+
+export default connect(mapStateToProps)(CustomDrawerComponent);

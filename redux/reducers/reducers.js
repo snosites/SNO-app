@@ -56,6 +56,27 @@ export function activeDomain(state = {}, action) {
     }
 }
 
+export function menus(state = {
+    isFetching: false,
+    items: []
+}, action) {
+    switch (action.type) {
+        case 'REQUEST_MENUS':
+            return {
+                ...state,
+                isFetching: true
+            }
+        case 'RECEIVE_MENUS':
+            return {
+                ...state,
+                isFetching: false,
+                items: action.response
+            }
+        default:
+            return state
+    }
+}
+
 export function savedArticles(state = [], action) {
     switch (action.type) {
         case 'SAVE_ARTICLE':
