@@ -101,33 +101,40 @@ export function entities(state = { articles: {} }, action) {
 
 function articles(
     state = {
-      isFetching: false,
-      didInvalidate: false,
-      items: []
+        isFetching: false,
+        didInvalidate: false,
+        page: 1,
+        items: []
     },
     action
-  ) {
+) {
     switch (action.type) {
-      case 'INVALIDATE_ARTICLE':
-        return Object.assign({}, state, {
-          didInvalidate: true
-        })
-      case 'REQUEST_ARTICLES':
-        return Object.assign({}, state, {
-          isFetching: true,
-          didInvalidate: false
-        })
-      case 'RECEIVE_ARTICLES':
-        return Object.assign({}, state, {
-          isFetching: false,
-          didInvalidate: false,
-          items: action.response.result,
-          lastUpdated: action.receivedAt
-        })
-      default:
-        return state
+        case 'INVALIDATE_ARTICLE':
+            return Object.assign({}, state, {
+                didInvalidate: true,
+                page: 1
+            })
+        case 'REQUEST_ARTICLES':
+            return Object.assign({}, state, {
+                isFetching: true,
+                didInvalidate: false
+            })
+        case 'RECEIVE_ARTICLES':
+            let updatedPage = 'max';
+            if (action.response.result.length == 10) {
+                updatedPage = state.page + 1
+            };
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                items: action.response.result,
+                lastUpdated: action.receivedAt,
+                page: updatedPage
+            })
+        default:
+            return state
     }
-  }
+}
 
 export function articlesByCategory(state = {}, action) {
     switch (action.type) {

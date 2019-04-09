@@ -11,7 +11,8 @@ function* fetchMenus(action){
         yield put(receiveMenus(menus))
         yield put(fetchArticles({
             domain,
-            category: menus[0].object_id
+            category: menus[0].object_id,
+            page: 1
         }))
     }
     catch(err) {

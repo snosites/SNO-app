@@ -18,16 +18,15 @@ function* fetchFeaturedImage(url, story) {
 
 
 function* fetchArticles(action) {
-    const { domain, category } = action.payload;
+    const { domain, category, page } = action.payload;
     try {
         yield put(requestArticles(category))
-        const response = yield fetch(`${domain}/wp-json/wp/v2/posts?categories=${category}`)
+        const response = yield fetch(`${domain}/wp-json/wp/v2/posts?categories=${category}&page=${page}`)
         const stories = yield response.json();
         yield all(stories.map(story => {
             return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
         }))
         const normalizedData = normalize(stories, articleListSchema);
-        console.log('normalized data', normalizedData)
         yield put(receiveArticles(category, normalizedData))
     }
     catch (err) {

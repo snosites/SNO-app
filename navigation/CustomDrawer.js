@@ -42,14 +42,10 @@ class CustomDrawerComponent extends React.Component {
                             {this.props.menus.items.map((item, index) => {
                                 return (
                                     <Drawer.Item
-                                        key={item.id}
-                                        // theme={
-                                        //     props.key === 3
-                                        //         ? { colors: { primary: Colors.tealA200 } }
-                                        //         : undefined
-                                        // }
+                                        key={item.ID}
+                                        label={item.title}
                                         active={this.state.activeMenuIndex === index}
-                                        onPress={() => this._handleMenuPress(item)}
+                                        onPress={() => this._handleMenuPress(item, index)}
                                         icon={passedProps => {
                                             return DrawerNavIcon({
                                                 ...passedProps, 
@@ -65,20 +61,7 @@ class CustomDrawerComponent extends React.Component {
         )
     }
 
-    // _asyncLoadMenus = async () => {
-    //     const userDomain = this.props.activeDomain.url;
-    //     // pull in menus
-    //     const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
-    //     const menus = await response.json();
-    //     this.setState({
-    //         menus
-    //     })
-    //     // pass inital category to screen
-    //     this._handleMenuPress(this.state.menus[0]);
-    // };
-
-    _handleMenuPress = async (item) => {
-        // this._handleMenuPress(this.state.menus[0]);
+    _handleMenuPress = (item, index) => {
         this.props.navigation.closeDrawer();
         this._getArticles(item.object_id);
         this.props.navigation.navigate('List', {
@@ -86,12 +69,12 @@ class CustomDrawerComponent extends React.Component {
             categoryId: item.object_id
         })
         this.setState({
-            activeMenu: item.object_id
+            activeMenuIndex: index
         })
     }
 
 
-    _getArticles = async (category) => {
+    _getArticles = (category) => {
         this.props.dispatch(fetchArticles({
             domain: this.props.activeDomain.url,
             category

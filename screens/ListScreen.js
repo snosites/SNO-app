@@ -4,6 +4,7 @@ import {
     AsyncStorage,
     View,
     ScrollView,
+    FlatList,
     Text,
     Image,
     ActivityIndicator,
@@ -21,7 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
-import { saveArticle } from '../redux/actions/actions';
+import { saveArticle, fetchArticles } from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -88,11 +89,17 @@ class ListScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <ScrollView style={{ flex: 1, marginVertical: 5 }}>
-                    {articlesByCategory.map(story => {
+                <FlatList
+                    Style={{ flex: 1, marginVertical: 5}}
+                    data={articlesByCategory}
+                    keyExtractor={item => item.id.toString()}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => this._loadMore(category)}
+                    renderItem={(props) => {
+                        const story = props.item;
                         return (
                             <TouchableOpacity
-                                key={story.id}
+                                style={{ flex: 1}}
                                 onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
@@ -131,10 +138,10 @@ class ListScreen extends React.Component {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-                        )
-                    })}
 
-                </ScrollView>
+                        )
+                    }}
+                />
                 <Snackbar
                     visible={snackbarVisible}
                     style={styles.snackbar}
@@ -182,7 +189,17 @@ class ListScreen extends React.Component {
         return imageAttachments;
     }
 
-
+    _loadMore = (category) => {
+        const { activeDomain, categoryId } = this.props;
+        if(category.page !== 'max'){
+            console.log('fetching more articles')
+            fetchArticles({
+                domain: activeDomain.url,
+                category: categoryId,
+                page: category.page
+            })
+        }
+    }
 
     _playAnimation = () => {
         this.animation.reset();
@@ -251,6 +268,8 @@ const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
+        categoryId: ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id),
+        activeDomain: state.activeDomain,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
             return state.entities.articles[articleId]

@@ -58,7 +58,7 @@ export function fetchArticles(payload) {
 export function requestArticles(category) {
     return {
         type: 'REQUEST_ARTICLES',
-        category
+        category,
     }
 }
 
