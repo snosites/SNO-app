@@ -70,7 +70,7 @@ class ListScreen extends React.Component {
     render() {
         const { navigation, articlesByCategory, category } = this.props;
         const { snackbarVisible } = this.state;
-        if (!category || category.isFetching) {
+        if (!category) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -99,7 +99,9 @@ class ListScreen extends React.Component {
                     data={articlesByCategory}
                     keyExtractor={item => item.id.toString()}
                     onEndReachedThreshold={0.25}
-                    onEndReached={() => this._loadMore(category)}
+                    onEndReached={this._loadMore}
+                    onRefresh={this._handleRefresh}
+                    refreshing={category.isFetching}
                     ListFooterComponent={() => {
                         if (!category.isFetching) {
                             return null
@@ -204,16 +206,21 @@ class ListScreen extends React.Component {
         return imageAttachments;
     }
 
-    _loadMore = (category) => {
-        const { activeDomain, categoryId } = this.props;
+    _loadMore = () => {
+        const { activeDomain, category } = this.props;
         this.props.dispatch(fetchMoreArticlesIfNeeded({
             domain: activeDomain.url,
-            category: categoryId,
+            category: category.categoryId,
         }))
     }
 
     _handleRefresh = () => {
-
+        const { dispatch, activeDomain, category } = this.props;
+        dispatch(invalidateArticles(category.categoryId));
+        dispatch(fetchArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: category.categoryId,
+        }))
     }
 
     _playAnimation = () => {
@@ -289,7 +296,6 @@ const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
-        categoryId: ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id),
         activeDomain: state.activeDomain,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {

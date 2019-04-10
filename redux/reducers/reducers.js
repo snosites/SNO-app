@@ -119,18 +119,24 @@ function articles(
         case 'REQUEST_ARTICLES':
             return Object.assign({}, state, {
                 isFetching: true,
-                didInvalidate: false
             })
         case 'RECEIVE_ARTICLES':
             let updatedPage = 'max';
+            let newItems = [];
             if (action.response.result.length == 10) {
                 updatedPage = state.page + 1
             };
+            if(state.didInvalidate){
+                newItems = action.response.result;
+            }
+            else if(!state.didInvalidate) {
+                newItems = union(state.items, action.response.result);
+            }
             return Object.assign({}, state, {
                 categoryId: action.category,
                 isFetching: false,
                 didInvalidate: false,
-                items: union(state.items, action.response.result),
+                items: newItems,
                 lastUpdated: action.receivedAt,
                 page: updatedPage
             })
