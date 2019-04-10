@@ -1,4 +1,6 @@
 import merge from 'lodash/merge';
+import union from 'lodash/union';
+
 import {
     ADD_DOMAIN,
     DELETE_DOMAIN,
@@ -109,10 +111,10 @@ function articles(
     action
 ) {
     switch (action.type) {
-        case 'INVALIDATE_ARTICLE':
+        case 'INVALIDATE_ARTICLES':
             return Object.assign({}, state, {
                 didInvalidate: true,
-                page: 1
+                page: 1,
             })
         case 'REQUEST_ARTICLES':
             return Object.assign({}, state, {
@@ -128,7 +130,7 @@ function articles(
                 categoryId: action.category,
                 isFetching: false,
                 didInvalidate: false,
-                items: action.response.result,
+                items: union(state.items, action.response.result),
                 lastUpdated: action.receivedAt,
                 page: updatedPage
             })
@@ -139,7 +141,7 @@ function articles(
 
 export function articlesByCategory(state = {}, action) {
     switch (action.type) {
-        case 'INVALIDATE_CATEGORY':
+        case 'INVALIDATE_ARTICLES':
         case 'REQUEST_ARTICLES':
         case 'RECEIVE_ARTICLES':
             return {

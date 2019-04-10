@@ -17,7 +17,7 @@ import {
     Colors,
 } from 'react-native-paper';
 
-import { fetchArticles } from '../redux/actions/actions';
+import { fetchArticlesIfNeeded } from '../redux/actions/actions';
 
 import { SafeAreaView } from 'react-navigation';
 
@@ -76,13 +76,9 @@ class CustomDrawerComponent extends React.Component {
 
     _getArticles = (category) => {
         const { articlesByCategory } = this.props;
-        if(articlesByCategory[category] && articlesByCategory[category].items.length > 0) {
-            return
-        }
-        this.props.dispatch(fetchArticles({
+        this.props.dispatch(fetchArticlesIfNeeded({
             domain: this.props.activeDomain.url,
             category,
-            page: 1
         }))
     }
 }

@@ -22,7 +22,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
-import { saveArticle, fetchArticles } from '../redux/actions/actions';
+import {
+    saveArticle,
+    fetchArticlesIfNeeded,
+    fetchMoreArticlesIfNeeded,
+    invalidateArticles
+} from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -90,16 +95,26 @@ class ListScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
-                    Style={{ flex: 1, marginVertical: 5}}
+                    Style={{ flex: 1, marginVertical: 5 }}
                     data={articlesByCategory}
                     keyExtractor={item => item.id.toString()}
-                    onEndReachedThreshold={0.5}
+                    onEndReachedThreshold={0.25}
                     onEndReached={() => this._loadMore(category)}
+                    ListFooterComponent={() => {
+                        if (!category.isFetching) {
+                            return null
+                        }
+                        return (
+                            <View style={styles.loadingMore}>
+                                <ActivityIndicator />
+                            </View>
+                        )
+                    }}
                     renderItem={(props) => {
                         const story = props.item;
                         return (
                             <TouchableOpacity
-                                style={{ flex: 1}}
+                                style={{ flex: 1 }}
                                 onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
@@ -191,15 +206,14 @@ class ListScreen extends React.Component {
 
     _loadMore = (category) => {
         const { activeDomain, categoryId } = this.props;
-        console.log('in loadmore', category, categoryId)
-        if(category.page != 'max'){
-            console.log('fetching more articles')
-            fetchArticles({
-                domain: activeDomain.url,
-                category: categoryId,
-                page: category.page
-            })
-        }
+        this.props.dispatch(fetchMoreArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: categoryId,
+        }))
+    }
+
+    _handleRefresh = () => {
+
     }
 
     _playAnimation = () => {
@@ -261,6 +275,12 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0
+    },
+    loadingMore: {
+        flex: 1,
+        paddingTop: 20,
+        paddingBottom: 30,
+        alignItems: 'center'
     }
 
 });

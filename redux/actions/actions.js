@@ -41,16 +41,23 @@ export function selectCategory(category) {
     }
 }
 
-export function invalidateCategory(category) {
+export function invalidateArticles(category) {
     return {
-        type: 'INVALIDATE_CATEGORY',
+        type: 'INVALIDATE_ARTICLES',
         category
     }
 }
 
-export function fetchArticles(payload) {
+export function fetchArticlesIfNeeded(payload) {
     return {
-        type: 'FETCH_ARTICLES',
+        type: 'FETCH_ARTICLES_IF_NEEDED',
+        payload
+    }
+}
+
+export function fetchMoreArticlesIfNeeded(payload) {
+    return {
+        type: 'FETCH_MORE_ARTICLES_IF_NEEDED',
         payload
     }
 }
