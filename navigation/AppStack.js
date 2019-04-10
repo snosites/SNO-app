@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import TabBarIcon from '../components/TabBarIcon';
@@ -8,6 +8,7 @@ import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SavedScreen from '../screens/SavedScreen';
 
+import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';
 
 const LinksStack = createStackNavigator({
@@ -57,9 +58,19 @@ SettingsStack.navigationOptions = {
     ),
 };
 
-export default createBottomTabNavigator({
+const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
     BookmarkStack,
     LinksStack,
     SettingsStack,
 });
+
+export default createSwitchNavigator(
+    {
+        AppSetup: AppSetupScreen,
+        MainApp: AppNav
+    },
+    {
+        initialRouteName: 'AppSetup',
+    }
+)

@@ -8,125 +8,90 @@ import {
     StatusBar,
     ActivityIndicator,
 } from 'react-native';
+import {
+    Drawer,
+    withTheme,
+    Switch,
+    TouchableRipple,
+    Text as PaperText,
+    Colors,
+} from 'react-native-paper';
+
+import { fetchArticlesIfNeeded } from '../redux/actions/actions';
+
 import { SafeAreaView } from 'react-navigation';
 
 import TouchableItem from '../constants/TouchableItem';
-
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
+import { connect } from 'react-redux';
 
 
-export default class CustomDrawerComponent extends React.Component {
+class CustomDrawerComponent extends React.Component {
     state = {
-        menus: [],
-        activeMenu: null
-    }
-    componentDidMount() {
-        this._asyncLoadMenus();
+        activeMenuIndex: 0
     }
 
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <View style={styles.rootContainer}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
-                    {this.state.menus &&
-                        <ScrollView >
-                            {this.state.menus.map((item, i) => {
+                    <ScrollView style={styles.container}>
+                        <Drawer.Section title="Categories">
+                            {this.props.menus.items.map((item, index) => {
                                 return (
-                                    <TouchableItem
-                                        key={i}
-                                        accessible
-                                        accessibilityLabel={item.title}
-                                        onPress={() => {
-                                            this._handleMenuPress(item);
+                                    <Drawer.Item
+                                        key={item.ID}
+                                        label={item.title}
+                                        active={this.state.activeMenuIndex === index}
+                                        onPress={() => this._handleMenuPress(item, index)}
+                                        icon={passedProps => {
+                                            return DrawerNavIcon({
+                                                ...passedProps, 
+                                                style: item.menu_icon_dir, name: item.menu_icon_name})
                                         }}
-                                        delayPressIn={0}
-                                    >
-                                        <View style={[styles.item, this.state.activeMenu == item.object_id ? { backgroundColor: '#f2f2f2' } : null]}>
-                                            <View
-                                                style={[
-                                                    styles.icon,
-                                                    this.state.activeMenu == item.object_id ? null : styles.inactiveIcon
-                                                ]}
-                                            >
-                                                <DrawerNavIcon
-                                                    style={item.menu_icon_dir}
-                                                    name={item.menu_icon_name}
-                                                />
-                                            </View>
-                                            <Text
-                                                style={[styles.label, this.state.activeMenu == item.object_id ? { color: '#727272' } : null]}
-                                            >
-                                                {item.title}
-                                            </Text>
-                                        </View>
-                                    </TouchableItem>
+                                    />
                                 )
                             })}
-                        </ScrollView>
-                    }
+                        </Drawer.Section>
+                    </ScrollView>
                 </SafeAreaView>
-            </ScrollView>
+            </View>
         )
     }
 
-    _asyncLoadMenus = async () => {
-        const userDomain = this.props.activeDomain.url;
-        // pull in menus
-        const response = await fetch(`${userDomain}/wp-json/custom/menus/mobile-app-menu`)
-        const menus = await response.json();
-        this.setState({
-            menus
-        })
-        // pass inital category to screen
-        this._handleMenuPress(this.state.menus[0]);
-    };
-
-    _handleMenuPress = async (item) => {
+    _handleMenuPress = (item, index) => {
         this.props.navigation.closeDrawer();
+        this._getArticles(item.object_id);
         this.props.navigation.navigate('List', {
-            content: 'loading'
-        })
-        const stories = await this._getArticles(item.object_id)
-        this.props.navigation.navigate("List", {
             menuTitle: item.title,
-            categoryId: item.object_id,
-            content: stories
+            categoryId: item.object_id
         })
         this.setState({
-            activeMenu: item.object_id
+            activeMenuIndex: index
         })
     }
 
 
-    _getArticles = async (category) => {
-        const response = await fetch(`${this.props.activeDomain.url}/wp-json/wp/v2/posts?categories=${category}`)
-        const stories = await response.json();
-        await Promise.all(stories.map(async story => {
-            try {
-                const imgResponse = await fetch(`${story._links['wp:featuredmedia'][0].href}`)
-                const featuredImage = await imgResponse.json();
-                story.featuredImage = {
-                    uri: featuredImage.media_details.sizes.full.source_url,
-                    photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-                    caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-                }
-            }
-            catch (err) {
-                console.log('error getting featured image', err)
-            }
+    _getArticles = (category) => {
+        const { articlesByCategory } = this.props;
+        this.props.dispatch(fetchArticlesIfNeeded({
+            domain: this.props.activeDomain.url,
+            category,
         }))
-        return stories;
     }
 }
 
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
+
     },
     container: {
-        paddingVertical: 10,
+        flex: 1,
+        paddingVertical: 50,
+        backgroundColor: Colors.surface
     },
     item: {
         flexDirection: 'row',
@@ -150,3 +115,11 @@ const styles = StyleSheet.create({
         fontSize: 21
     },
 });
+
+const mapStateToProps = store => ({
+    menus: store.menus,
+    articlesByCategory: store.articlesByCategory
+})
+
+
+export default connect(mapStateToProps)(CustomDrawerComponent);

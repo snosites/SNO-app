@@ -1,11 +1,16 @@
+import merge from 'lodash/merge';
+import union from 'lodash/union';
+
 import {
     ADD_DOMAIN,
     DELETE_DOMAIN,
     TOGGLE_NOTIFICATIONS
 } from '../actions/actions';
+import FullArticleScreen from '../../screens/FullArticleScreen';
 
 export function domains(state = [], action) {
     switch (action.type) {
+
         case ADD_DOMAIN:
             return [
                 ...state,
@@ -53,6 +58,27 @@ export function activeDomain(state = {}, action) {
     }
 }
 
+export function menus(state = {
+    isLoaded: false,
+    items: []
+}, action) {
+    switch (action.type) {
+        case 'REQUEST_MENUS':
+            return {
+                ...state,
+                isLoaded: false
+            }
+        case 'RECEIVE_MENUS':
+            return {
+                ...state,
+                isLoaded: true,
+                items: action.response
+            }
+        default:
+            return state
+    }
+}
+
 export function savedArticles(state = [], action) {
     switch (action.type) {
         case 'SAVE_ARTICLE':
@@ -60,6 +86,68 @@ export function savedArticles(state = [], action) {
                 ...state,
                 action.article
             ]
+        default:
+            return state
+    }
+}
+
+// ARTICLES REDUCERS //
+
+// runs every time an action is sent
+export function entities(state = { articles: {} }, action) {
+    if (action.response && action.response.entities) {
+        return merge({}, state, action.response.entities)
+    }
+    return state
+}
+
+function articles(
+    state = {
+        isFetching: false,
+        didInvalidate: false,
+        page: 1,
+        items: []
+    },
+    action
+) {
+    switch (action.type) {
+        case 'INVALIDATE_ARTICLES':
+            return Object.assign({}, state, {
+                didInvalidate: true,
+                page: 1,
+            })
+        case 'REQUEST_ARTICLES':
+            return Object.assign({}, state, {
+                isFetching: true,
+                didInvalidate: false
+            })
+        case 'RECEIVE_ARTICLES':
+            let updatedPage = 'max';
+            if (action.response.result.length == 10) {
+                updatedPage = state.page + 1
+            };
+            return Object.assign({}, state, {
+                categoryId: action.category,
+                isFetching: false,
+                didInvalidate: false,
+                items: union(state.items, action.response.result),
+                lastUpdated: action.receivedAt,
+                page: updatedPage
+            })
+        default:
+            return state
+    }
+}
+
+export function articlesByCategory(state = {}, action) {
+    switch (action.type) {
+        case 'INVALIDATE_ARTICLES':
+        case 'REQUEST_ARTICLES':
+        case 'RECEIVE_ARTICLES':
+            return {
+                ...state,
+                [action.category]: articles(state[action.category], action)
+            }
         default:
             return state
     }

@@ -28,7 +28,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 // );
 
 const mapStateToProps = state => ({
-    activeDomain: state.activeDomain
+    activeDomain: state.activeDomain,
+    
 })
 
 const ArticleStack = createStackNavigator({

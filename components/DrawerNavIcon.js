@@ -1,40 +1,40 @@
 import React from 'react';
+import { View } from 'react-native'
 import { Icon } from 'expo';
 import { FontAwesome, Foundation } from '@expo/vector-icons';
 
-import Colors from '../constants/Colors';
-
-
-export default class DrawerNavIcon extends React.Component {
-    
-    render() {
-        const { style, name } = this.props;
-        let iconName = '';
-        if (name) {
-            let splitName = name.split('-');
-            iconName = splitName[1];
-        }
-        if(!name) {
-            iconName = 'play'
-        }
-        
-        if (style == 'fa') {
-            return (
+export default DrawerNavIcon = (props) => {
+    const { style, name, size, color } = props;
+    let iconName = '';
+    if (name) {
+        let splitName = name.split('-');
+        iconName = splitName[1];
+    }
+    if (!name) {
+        iconName = 'play'
+    }
+    if (style == 'fa') {
+        return (
+            <View style={{ width: 40, alignItems: 'center', justifyContent: 'center' }}>
                 <FontAwesome
                     name={iconName}
-                    size={29}
-                    color={Colors.tabIconSelected}
+                    size={size}
+                    color={color}
                 />
-            )
-        }
-        else {
-            return (
+            </View>
+
+        )
+    }
+    else {
+        return (
+            <View style={{ width: 40, alignItems: 'center', justifyContent: 'center' }}>
                 <Foundation
                     name={iconName}
-                    size={29}
-                    color={Colors.tabIconSelected}
+                    size={size}
+                    color={color}
                 />
-            );
-        }
+            </View>
+
+        );
     }
 }

@@ -4,6 +4,7 @@ import {
     AsyncStorage,
     View,
     ScrollView,
+    FlatList,
     Text,
     Image,
     ActivityIndicator,
@@ -11,6 +12,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import { connect } from 'react-redux';
 import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
@@ -20,9 +22,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
-import { saveArticle } from '../redux/actions/actions';
+import {
+    saveArticle,
+    fetchArticlesIfNeeded,
+    fetchMoreArticlesIfNeeded,
+    invalidateArticles
+} from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+
 
 
 
@@ -31,7 +39,7 @@ const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
-export default class ListScreen extends React.Component {
+class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: navigation.getParam('menuTitle', 'Stories'),
@@ -60,10 +68,9 @@ export default class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation } = this.props;
+        const { navigation, articlesByCategory, category } = this.props;
         const { snackbarVisible } = this.state;
-        let stories = navigation.getParam('content', 'loading')
-        if (stories === 'loading') {
+        if (!category || category.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -84,23 +91,47 @@ export default class ListScreen extends React.Component {
                 </View>
             )
         }
+
         return (
-            <View style={{flex: 1}}>
-                <ScrollView style={{ flex: 1, marginVertical: 5 }}>
-                    {stories.map(story => {
+            <View style={{ flex: 1 }}>
+                <FlatList
+                    Style={{ flex: 1, marginVertical: 5 }}
+                    data={articlesByCategory}
+                    keyExtractor={item => item.id.toString()}
+                    onEndReachedThreshold={0.25}
+                    onEndReached={() => this._loadMore(category)}
+                    ListFooterComponent={() => {
+                        if (!category.isFetching) {
+                            return null
+                        }
+                        return (
+                            <View style={styles.loadingMore}>
+                                <ActivityIndicator />
+                            </View>
+                        )
+                    }}
+                    renderItem={(props) => {
+                        const story = props.item;
                         return (
                             <TouchableOpacity
-                                key={story.id}
+                                style={{ flex: 1 }}
                                 onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
-                                    <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                                    {story.featuredImage ?
+                                        <Image
+                                            source={{ uri: story.featuredImage.uri }}
+                                            style={styles.featuredImage}
+                                        />
+                                        :
+                                        null
+                                    }
                                     <View style={styles.storyInfo}>
                                         <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                         <View style={styles.extraInfo}>
                                             <View style={{ flex: 1 }}>
                                                 <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
                                             </View>
 
                                             <View style={styles.socialIconsContainer}>
@@ -122,10 +153,10 @@ export default class ListScreen extends React.Component {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-                        )
-                    })}
 
-                </ScrollView>
+                        )
+                    }}
+                />
                 <Snackbar
                     visible={snackbarVisible}
                     style={styles.snackbar}
@@ -146,6 +177,7 @@ export default class ListScreen extends React.Component {
     }
 
     _handleArticlePress = article => async () => {
+        console.log('in article press')
         const { navigation } = this.props;
         Haptic.selection();
         // check if there is a slidehsow
@@ -172,6 +204,18 @@ export default class ListScreen extends React.Component {
         return imageAttachments;
     }
 
+    _loadMore = (category) => {
+        const { activeDomain, categoryId } = this.props;
+        this.props.dispatch(fetchMoreArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: categoryId,
+        }))
+    }
+
+    _handleRefresh = () => {
+
+    }
+
     _playAnimation = () => {
         this.animation.reset();
         this.animation.play();
@@ -193,6 +237,9 @@ const styles = StyleSheet.create({
         width: 125,
         height: 90,
         borderRadius: 8
+    },
+    imagePlaceholder: {
+        backgroundColor: 'grey'
     },
     storyInfo: {
         flex: 1,
@@ -228,6 +275,27 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0
+    },
+    loadingMore: {
+        flex: 1,
+        paddingTop: 20,
+        paddingBottom: 30,
+        alignItems: 'center'
     }
 
 });
+
+const mapStateToProps = (state, ownProps) => {
+    // gets category ID from navigation params or defaults to first item in the list
+    const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
+    return {
+        categoryId: ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id),
+        activeDomain: state.activeDomain,
+        category: state.articlesByCategory[categoryId],
+        articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
+            return state.entities.articles[articleId]
+        })
+    }
+}
+
+export default connect(mapStateToProps)(ListScreen);
