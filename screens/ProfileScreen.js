@@ -22,6 +22,10 @@ export default class ProfileScreen extends React.Component {
         };
     };
 
+    state = {
+        articlesByWriter =[]
+    }
+
     render() {
         const { navigation } = this.props;
         const profile = navigation.getParam('profile', 'loading');
@@ -63,14 +67,16 @@ export default class ProfileScreen extends React.Component {
                                     }
                                 }}
                             />
-                            <View style={{ flex: 1, alignItems: 'center', paddingBottom: 45 }}>
-                                <Text style={{ fontSize: 24, textAlign: 'center' }}>School Years:</Text>
-                                {profile.custom_fields.readableyears.map((year, i) => {
-                                    return (
-                                        <Text key={i} style={styles.schoolyear}>{year}</Text>
-                                    )
-                                })}
-                            </View>
+                            <FlatList
+                                Style={{ flex: 1, marginVertical: 5 }}
+                                data={articlesByCategory}
+                                keyExtractor={item => item.id.toString()}
+                                onEndReachedThreshold={0.25}
+                                onEndReached={this._loadMore}
+                                onRefresh={this._handleRefresh}
+                                refreshing={category.isFetching}
+
+                            />
                         </View>
                 }
 
@@ -89,14 +95,17 @@ export default class ProfileScreen extends React.Component {
                 if (profile.length > 0) {
                     // if more than one matches uses first one
                     const profileId = profile[0].ID;
-                    const newResponse = await fetch(`http://travislang.snodemo.com/wp-json/wp/v2/posts/${profileId}`)
+                    const newResponse = await fetch(`${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
                     console.log('respq', writerProfile)
+                    // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
                         const profileImage = await response.json();
                         writerProfile.profileImage = profileImage.media_details.sizes.full.source_url;
                     }
+                    // get list of articles written by writer
+                    const articlesByWriter = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}`)
                     navigation.setParams({ profile: writerProfile })
                     console.log('loaded profile')
                 }
