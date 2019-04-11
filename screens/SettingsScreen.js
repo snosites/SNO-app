@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 // import Colors from '../constants/Colors';
 import { List, Divider, Switch, IconButton, Colors, Snackbar } from 'react-native-paper';
-import { toggleNotifications } from '../redux/actions/actions';
+import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
 
 const DeleteButton = () => (
     <IconButton
@@ -77,7 +77,7 @@ export default class SettingsScreen extends React.Component {
                                             />
                                         )
                                     }}
-                                    onPress={() => { alert('toggle') }}
+                                    onPress={() => { this._switchDomain(item.id) }}
                                 />
                             )
                         })}
@@ -142,6 +142,12 @@ export default class SettingsScreen extends React.Component {
 
     _toggleNotifications = (orgId) => {
         this.props.dispatch(toggleNotifications(orgId))
+    }
+
+    _switchDomain = (id) => {
+        const { dispatch, navigation } = this.props;
+        dispatch(changeActiveDomain(id))
+        navigation.navigate('AuthLoading');
     }
 
 }
