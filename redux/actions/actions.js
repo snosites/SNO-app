@@ -110,6 +110,50 @@ export function receiveMenus(response) {
     }
 }
 
+// RECENT ARTICLES
+
+export function invalidateRecentArticles() {
+    return {
+        type: 'INVALIDATE_RECENT_ARTICLES',
+    }
+}
+
+export function fetchRecentArticlesIfNeeded(domain) {
+    return {
+        type: 'FETCH_RECENT_ARTICLES_IF_NEEDED',
+        domain
+    }
+}
+
+export function fetchMoreRecentArticlesIfNeeded(domain) {
+    return {
+        type: 'FETCH_MORE_RECENT_ARTICLES_IF_NEEDED',
+        domain
+    }
+}
+
+export function requestRecentArticles() {
+    return {
+        type: 'REQUEST_RECENT_ARTICLES',
+    }
+}
+
+export function receiveRecentArticles(response) {
+    return {
+        type: 'RECEIVE_RECENT_ARTICLES',
+        response,
+        receivedAt: Date.now()
+    }
+}
+
+export function fetchRecentArticlesFailure(error) {
+    return {
+        type: 'FETCH_RECENT_ARTICLES_FAILURE',
+        error,
+        recievedAt: Date.now()
+    }
+}
+
 
 
 export function saveArticle(article) {

@@ -7,6 +7,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SavedScreen from '../screens/SavedScreen';
+import RecentScreen from '../screens/RecentScreen';
 
 import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';
@@ -23,6 +24,21 @@ LinksStack.navigationOptions = {
             name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
         />
     ),
+};
+
+const RecentStack = createStackNavigator({
+    Recent: RecentScreen,
+});
+
+RecentStack.navigationOptions = {
+    tabBarLabel: 'Recent',
+            tabBarIcon: ({ focused }) => (
+                <TabBarIcon
+                    focused={focused}
+                    // name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+                    name={'md-funnel'}
+                />
+            ),
 };
 
 const BookmarkStack = createStackNavigator({
@@ -60,6 +76,7 @@ SettingsStack.navigationOptions = {
 
 const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
+    RecentStack,
     BookmarkStack,
     LinksStack,
     SettingsStack,

@@ -14,8 +14,9 @@ import {
 import Moment from 'moment';
 import { connect } from 'react-redux';
 import { Haptic, DangerZone } from 'expo';
-
 const { Lottie } = DangerZone;
+
+import TabBarIcon from '../components/TabBarIcon';
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
@@ -24,31 +25,19 @@ import { Snackbar } from 'react-native-paper';
 
 import {
     saveArticle,
-    fetchArticlesIfNeeded,
-    fetchMoreArticlesIfNeeded,
-    invalidateArticles
+    fetchRecentArticlesIfNeeded,
+    fetchMoreRecentArticlesIfNeeded,
+    invalidateRecentArticles
 } from '../redux/actions/actions';
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
 import { FlatList as NavFlatList } from 'react-navigation';
 
-
-
-// header icon native look component
-const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
-);
-
-class ListScreen extends React.Component {
+class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: navigation.getParam('menuTitle', 'Stories'),
-            headerRight: (
-                <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
-                </HeaderButtons>
-            ),
+            title: 'Recent Articles',
+            
         };
     };
 
@@ -57,9 +46,16 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
+        const { dispatch, activeDomain } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
+        const willFocusSubscription = this.props.navigation.addListener(
+            'willFocus',
+            () => {
+                dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
+            }
+          );
     }
 
     componentDidUpdate() {
@@ -68,10 +64,14 @@ class ListScreen extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        willFocusSubscription.remove();
+    }
+
     render() {
-        const { navigation, articlesByCategory, category } = this.props;
+        const { navigation, recentArticles, recent } = this.props;
         const { snackbarVisible } = this.state;
-        if (!category) {
+        if (recentArticles.length === 0) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -97,14 +97,14 @@ class ListScreen extends React.Component {
             <View style={{ flex: 1 }}>
                 <NavFlatList
                     Style={{ flex: 1, marginVertical: 5 }}
-                    data={articlesByCategory}
+                    data={recentArticles}
                     keyExtractor={item => item.id.toString()}
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
                     onRefresh={this._handleRefresh}
-                    refreshing={category.isFetching}
+                    refreshing={recent.isFetching}
                     ListFooterComponent={() => {
-                        if (!category.isFetching) {
+                        if (!recent.isFetching) {
                             return null
                         }
                         return (
@@ -156,7 +156,6 @@ class ListScreen extends React.Component {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-
                         )
                     }}
                 />
@@ -187,7 +186,7 @@ class ListScreen extends React.Component {
         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
             article.slideshow = await this._getAttachmentsAync(article);
         }
-        navigation.push('FullArticle', {
+        navigation.navigate('FullArticle', {
             articleId: article.id,
             article,
         })
@@ -201,26 +200,22 @@ class ListScreen extends React.Component {
         })
     }
 
-    _getAttachmentsAync = async (article) => {
-        const response = await fetch(article._links['wp:attachment'][0].href);
-        const imageAttachments = await response.json();
-        return imageAttachments;
-    }
+    // _getAttachmentsAync = async (article) => {
+    //     const response = await fetch(article._links['wp:attachment'][0].href);
+    //     const imageAttachments = await response.json();
+    //     return imageAttachments;
+    // }
 
     _loadMore = () => {
-        const { activeDomain, category } = this.props;
-        this.props.dispatch(fetchMoreArticlesIfNeeded({
-            domain: activeDomain.url,
-            category: category.categoryId,
-        }))
+        const { activeDomain } = this.props;
+        this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
     }
 
     _handleRefresh = () => {
-        const { dispatch, activeDomain, category } = this.props;
-        dispatch(invalidateArticles(category.categoryId));
-        dispatch(fetchArticlesIfNeeded({
+        const { dispatch, activeDomain } = this.props;
+        dispatch(invalidateRecentArticles());
+        dispatch(fetchRecentArticlesIfNeeded({
             domain: activeDomain.url,
-            category: category.categoryId,
         }))
     }
 
@@ -290,19 +285,16 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
         alignItems: 'center'
     }
-
 });
 
-const mapStateToProps = (state, ownProps) => {
-    // gets category ID from navigation params or defaults to first item in the list
-    const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
+const mapStateToProps = (state) => {
     return {
         activeDomain: state.activeDomain,
-        category: state.articlesByCategory[categoryId],
-        articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
+        recent: state.recentArticles,
+        recentArticles: state.recentArticles.items.map(articleId => {
             return state.entities.articles[articleId]
         })
     }
 }
 
-export default connect(mapStateToProps)(ListScreen);
+export default connect(mapStateToProps)(RecentScreen);
