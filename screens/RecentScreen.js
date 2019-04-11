@@ -30,9 +30,6 @@ import {
     invalidateRecentArticles
 } from '../redux/actions/actions';
 
-
-import { FlatList as NavFlatList } from 'react-navigation';
-
 class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
@@ -95,7 +92,7 @@ class RecentScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <NavFlatList
+                <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={recentArticles}
                     keyExtractor={item => item.id.toString()}

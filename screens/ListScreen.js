@@ -31,7 +31,6 @@ import {
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
-import { FlatList as NavFlatList } from 'react-navigation';
 
 
 
@@ -95,7 +94,7 @@ class ListScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <NavFlatList
+                <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articlesByCategory}
                     keyExtractor={item => item.id.toString()}

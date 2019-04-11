@@ -84,24 +84,20 @@ export default class ProfileScreen extends React.Component {
             const userDomain = activeDomain.url;
             const writerName = navigation.getParam('writerName', 'unknown');
             if (writerName !== 'unknown') {
-                const response = await fetch(`${userDomain}/wp-json/wp/v2/posts?search=${writerName}`)
-                const profiles = await response.json();
-                const profileMatches = profiles.filter(profile => {
-                    if (profile.custom_fields.name) {
-                        return profile.custom_fields.name[0] == writerName;
-                    }
-                })
-                // if more than one matches uses first one
-                if (profileMatches.length > 0) {
-                    // get profile image
-                    
-                    if (profileMatches[0]._links['wp:featuredmedia']) {
-                        const response = await fetch(profileMatches[0]._links['wp:featuredmedia'][0].href);
+                const response = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
+                const profile = await response.json();
+                if (profile.length > 0) {
+                    // if more than one matches uses first one
+                    const profileId = profile[0].ID;
+                    const newResponse = await fetch(`http://travislang.snodemo.com/wp-json/wp/v2/posts/${profileId}`)
+                    const writerProfile = await newResponse.json();
+                    console.log('respq', writerProfile)
+                    if (writerProfile._links['wp:featuredmedia']) {
+                        const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
                         const profileImage = await response.json();
-                        console.log('profile matches', profileImage)
-                        profileMatches[0].profileImage = profileImage.media_details.sizes.full.source_url;
+                        writerProfile.profileImage = profileImage.media_details.sizes.full.source_url;
                     }
-                    navigation.setParams({ profile: profileMatches[0] })
+                    navigation.setParams({ profile: writerProfile })
                     console.log('loaded profile')
                 }
                 else {
