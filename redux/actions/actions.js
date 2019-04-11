@@ -26,6 +26,12 @@ export function setActiveDomain(domainObj) {
     return { type: 'SET_ACTIVE_DOMAIN', domainObj}
 }
 
+export function clearArticleState(){
+    return {
+        type: 'CLEAR_ARTICLE_STATE'
+    }
+}
+
 // NOTIFICATIONS
 
 export function toggleNotifications(id) {
