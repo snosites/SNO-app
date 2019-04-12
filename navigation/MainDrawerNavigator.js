@@ -27,15 +27,11 @@ import ProfileScreen from '../screens/ProfileScreen';
 //     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
 // );
 
-const mapStateToProps = state => ({
-    activeDomain: state.activeDomain,
-    
-})
 
 const ArticleStack = createStackNavigator({
-    List: connect()(ListScreen),
+    List: ListScreen,
     FullArticle: FullArticleScreen,
-    Profile: connect(mapStateToProps)(ProfileScreen)
+    Profile: ProfileScreen
 });
 
 ArticleStack.navigationOptions = {
@@ -75,7 +71,7 @@ const MyDrawerNavigator = createDrawerNavigator(
         Home: ArticleStack,
     },
     {
-        contentComponent: connect(mapStateToProps)(CustomDrawer)
+        contentComponent: CustomDrawer
     }
 );
 

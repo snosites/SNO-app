@@ -6,16 +6,21 @@ import {
     View,
     Image,
     ActivityIndicator,
-    AsyncStorage
+    AsyncStorage,
+    FlatList,
+    TouchableOpacity
 } from 'react-native';
-
+import Moment from 'moment';
+import { connect } from 'react-redux';
 import { WebBrowser } from 'expo';
 
 import HTML from 'react-native-render-html';
 import Colors from '../constants/Colors';
 import { NavigationEvents } from 'react-navigation';
 
-export default class ProfileScreen extends React.Component {
+import { Divider } from 'react-native-paper';
+
+class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Profile' //navigation.getParam('menuTitle', 'Stories'),
@@ -65,27 +70,49 @@ export default class ProfileScreen extends React.Component {
                                 onLinkPress={(e, href) => this._viewLink(href)}
                                 tagsStyles={{
                                     p: {
-                                        fontSize: 18,
+                                        fontSize: 15,
                                     }
                                 }}
                             />
-                            <FlatList
-                                Style={{ flex: 1, marginVertical: 5 }}
-                                data={articlesByWriter}
-                                keyExtractor={item => item.id.toString()}
-                                onEndReachedThreshold={0.25}
-                                onEndReached={this._loadMore}
-                                onRefresh={this._handleRefresh}
-                                refreshing={category.isFetching}
-
-                            />
+                            <View style={{ flex: 1 }}>
+                                <FlatList
+                                    Style={{ flex: 1, marginVertical: 5 }}
+                                    data={articlesByWriter}
+                                    keyExtractor={item => item.id.toString()}
+                                    ItemSeparatorComponent={() => (<Divider />)}
+                                    // onEndReachedThreshold={0.25}
+                                    // onEndReached={this._loadMore}
+                                    // onRefresh={this._handleRefresh}
+                                    // refreshing={category.isFetching}
+                                    ListHeaderComponent={() => (
+                                        <Text style={{padding: 10, textAlign:'center', fontSize: 19}}>
+                                            {`Articles Authored By ${profile.custom_fields.name[0]}`}
+                                        </Text>
+                                    )}
+                                    renderItem={(props) => {
+                                        const story = props.item;
+                                        return (
+                                            <TouchableOpacity
+                                                style={{ flex: 1 }}
+                                                onPress={this._handleArticlePress(story)}
+                                            >
+                                                <View style={styles.storyContainer}>
+                                                    <Text ellipsizeMode='tail' numberOfLines={2} style={styles.articleTitle}>{story.title.rendered}
+                                                    </Text>
+                                                    <Text style={styles.date}>{String(Moment(story.date).fromNow())}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        )
+                                    }}
+                                />
+                            </View>
                         </View>
                 }
-
             </ScrollView>
         );
     }
-    
+
     _loadProfile = async (payload) => {
         const { navigation, activeDomain } = this.props;
         try {
@@ -118,7 +145,7 @@ export default class ProfileScreen extends React.Component {
                     }))
 
                     //set those articles as param
-                    navigation.setParams({ 
+                    navigation.setParams({
                         profile: writerProfile,
                         articlesByWriter: updatedArticlesByWriter
                     })
@@ -154,6 +181,20 @@ export default class ProfileScreen extends React.Component {
         }
     }
 
+    _handleArticlePress = article => async () => {
+        console.log('in article press')
+        // const { navigation } = this.props;
+        // Haptic.selection();
+        // // check if there is a slidehsow
+        // if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
+        //     article.slideshow = await this._getAttachmentsAync(article);
+        // }
+        // navigation.push('FullArticle', {
+        //     articleId: article.id,
+        //     article,
+        // })
+    }
+
     _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href);
     }
@@ -184,21 +225,35 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     title: {
-        fontSize: 30,
+        fontSize: 25,
         textAlign: 'center'
     },
     position: {
-        fontSize: 21,
+        fontSize: 19,
         textAlign: 'center',
         color: Colors.gray
     },
     textContainer: {
         paddingVertical: 20
     },
-    schoolyear: {
-        fontSize: 21,
-        textAlign: 'center',
-        color: Colors.tintColor,
-        padding: 5
-    }
+    storyContainer: {
+        flex: 1,
+        marginHorizontal: 20,
+        marginVertical: 15,
+    },
+    articleTitle: {
+        fontSize: 19,
+    },
+    date: {
+        fontSize: 12,
+        color: 'grey'
+    },
 });
+
+const mapStateToProps = (state) => {
+    return {
+        activeDomain: state.activeDomain,
+    }
+}
+
+export default connect(mapStateToProps)(ProfileScreen);
