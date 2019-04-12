@@ -12,13 +12,14 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
-import { WebBrowser } from 'expo';
+import { WebBrowser, LinearGradient } from 'expo';
+import { Feather } from '@expo/vector-icons';
 
 import HTML from 'react-native-render-html';
-import Colors from '../constants/Colors';
+// import Colors from '../constants/Colors';
 import { NavigationEvents } from 'react-navigation';
 
-import { Divider } from 'react-native-paper';
+import { Divider, Colors } from 'react-native-paper';
 
 class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -37,7 +38,7 @@ class ProfileScreen extends React.Component {
         const articlesByWriter = navigation.getParam('articlesByWriter', []);
 
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
                 <NavigationEvents
                     onWillFocus={payload => this._loadProfile(payload)}
                 />
@@ -47,7 +48,7 @@ class ProfileScreen extends React.Component {
                     </View>
                     :
                     profile == 'none' ?
-                        <View style={{ flex: 1, alignItems: 'center' }}>
+                        <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
                             <Image
                                 style={styles.profileImage}
                                 source={require('../assets/images/anon.png')}
@@ -57,26 +58,47 @@ class ProfileScreen extends React.Component {
                             </Text>
                         </View>
                         :
-                        <View style={styles.profileInfoContainer}>
-                            <View style={styles.profileImageContainer}>
-                                {this._renderProfileImage(profile)}
+                        <View style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.profileImageContainer}>
+                                    {this._renderProfileImage(profile)}
+                                </View>
+                                <Text style={styles.title}>{profile.title.rendered}</Text>
+                                <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
+                                <HTML
+                                    html={profile.content.rendered}
+                                    textSelectable={true}
+                                    containerStyle={styles.textContainer}
+                                    onLinkPress={(e, href) => this._viewLink(href)}
+                                    tagsStyles={{
+                                        p: {
+                                            fontSize: 17,
+                                        }
+                                    }}
+                                />
                             </View>
-                            <Text style={styles.title}>{profile.title.rendered}</Text>
-                            <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
-                            <HTML
-                                html={profile.content.rendered}
-                                textSelectable={true}
-                                containerStyle={styles.textContainer}
-                                onLinkPress={(e, href) => this._viewLink(href)}
-                                tagsStyles={{
-                                    p: {
-                                        fontSize: 15,
-                                    }
-                                }}
-                            />
-                            <View style={{ flex: 1 }}>
+                            <View style={{ flex: 1, paddingBottom: 20, backgroundColor: Colors.indigo200 }}>
+                                <View style={{ flex: 1, alignItems: 'center' }}>
+                                    <LinearGradient
+                                        colors={['#7e57c2', '#673ab7', '#3949ab']}
+                                        start={[0, 0.5]}
+                                        end={[1, 0.5]}
+                                        style={styles.listHeader}>
+                                        <Text
+                                            numberOfLines={2}
+                                            ellipsizeMode='middle'
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                fontSize: 19,
+                                                color: '#fff',
+                                                textAlign: 'center',
+                                            }}>
+                                            {`Articles Authored By ${profile.custom_fields.name[0]}`}
+                                        </Text>
+                                    </LinearGradient>
+                                </View>
                                 <FlatList
-                                    Style={{ flex: 1, marginVertical: 5 }}
+                                    contentContainerStyle={{ flex: 1, marginTop: 40, backgrondColor: 'red' }}
                                     data={articlesByWriter}
                                     keyExtractor={item => item.id.toString()}
                                     ItemSeparatorComponent={() => (<Divider />)}
@@ -84,24 +106,32 @@ class ProfileScreen extends React.Component {
                                     // onEndReached={this._loadMore}
                                     // onRefresh={this._handleRefresh}
                                     // refreshing={category.isFetching}
-                                    ListHeaderComponent={() => (
-                                        <Text style={{padding: 10, textAlign:'center', fontSize: 19}}>
-                                            {`Articles Authored By ${profile.custom_fields.name[0]}`}
-                                        </Text>
-                                    )}
+
                                     renderItem={(props) => {
                                         const story = props.item;
+                                        console.log('story', story)
                                         return (
                                             <TouchableOpacity
-                                                style={{ flex: 1 }}
+                                                style={styles.storyContainer}
                                                 onPress={this._handleArticlePress(story)}
                                             >
-                                                <View style={styles.storyContainer}>
-                                                    <Text ellipsizeMode='tail' numberOfLines={2} style={styles.articleTitle}>{story.title.rendered}
+                                                <View style={{ flex: 1 }}>
+                                                    <Text
+                                                        ellipsizeMode='tail' numberOfLines={2}
+                                                        style={styles.articleTitle}
+                                                    >
+                                                        {story.title.rendered}
                                                     </Text>
-                                                    <Text style={styles.date}>{String(Moment(story.date).fromNow())}
+                                                    <Text
+                                                        style={styles.date}>
+                                                        {String(Moment(story.date).fromNow())}
                                                     </Text>
                                                 </View>
+                                                <Feather
+                                                    style={{ marginLeft: 20 }}
+                                                    name="chevron-right"
+                                                    size={32}
+                                                    color={Colors.grey100} />
                                             </TouchableOpacity>
                                         )
                                     }}
@@ -202,22 +232,13 @@ class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#fff',
-    },
-    profileInfoContainer: {
-        alignItems: 'center',
-        paddingTop: 25
-    },
     profileImageContainer: {
         width: 200,
         height: 200,
-        borderRadius: 100,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 25
+        marginTop: 15,
+        marginBottom: 5
     },
     profileImage: {
         width: 200,
@@ -226,28 +247,49 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        textAlign: 'center'
+        textAlign: 'center',
+        letterSpacing: 1
     },
     position: {
         fontSize: 19,
         textAlign: 'center',
-        color: Colors.gray
+        color: Colors.grey400
     },
     textContainer: {
-        paddingVertical: 20
+        paddingTop: 20,
+        paddingBottom: 70,
+        paddingHorizontal: 20
     },
     storyContainer: {
+        // height: 70,
+        // width: 300,
         flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         marginHorizontal: 20,
         marginVertical: 15,
     },
     articleTitle: {
+        flex: 1,
         fontSize: 19,
+        textAlign: 'left'
     },
     date: {
         fontSize: 12,
-        color: 'grey'
+        color: Colors.grey200
     },
+    listHeader: {
+        padding: 15,
+        paddingHorizontal: 25,
+        justifyContent: 'center',
+        height: 80,
+        alignItems: 'center',
+        borderRadius: 10,
+        position: 'absolute',
+        marginHorizontal: 30,
+        top: -40
+    }
 });
 
 const mapStateToProps = (state) => {
