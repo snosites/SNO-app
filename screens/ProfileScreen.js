@@ -23,12 +23,14 @@ export default class ProfileScreen extends React.Component {
     };
 
     state = {
-        articlesByWriter =[]
+        articlesByWriter: []
     }
 
     render() {
         const { navigation } = this.props;
         const profile = navigation.getParam('profile', 'loading');
+        const articlesByWriter = navigation.getParam('articlesByWriter', []);
+
         return (
             <ScrollView style={styles.container}>
                 <NavigationEvents
@@ -69,7 +71,7 @@ export default class ProfileScreen extends React.Component {
                             />
                             <FlatList
                                 Style={{ flex: 1, marginVertical: 5 }}
-                                data={articlesByCategory}
+                                data={articlesByWriter}
                                 keyExtractor={item => item.id.toString()}
                                 onEndReachedThreshold={0.25}
                                 onEndReached={this._loadMore}
@@ -83,7 +85,7 @@ export default class ProfileScreen extends React.Component {
             </ScrollView>
         );
     }
-    // bug could be introduced here because wp API doesnt search custom fields -- name has to be in title or body
+    
     _loadProfile = async (payload) => {
         const { navigation, activeDomain } = this.props;
         try {
@@ -98,6 +100,7 @@ export default class ProfileScreen extends React.Component {
                     const newResponse = await fetch(`${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
                     console.log('respq', writerProfile)
+
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
@@ -105,8 +108,20 @@ export default class ProfileScreen extends React.Component {
                         writerProfile.profileImage = profileImage.media_details.sizes.full.source_url;
                     }
                     // get list of articles written by writer
-                    const articlesByWriter = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}`)
-                    navigation.setParams({ profile: writerProfile })
+                    const query = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
+                    const articlesByWriter = await query.json();
+
+                    // get the full posts for all articles
+                    const updatedArticlesByWriter = await Promise.all(articlesByWriter.map(async article => {
+                        const response = await fetch(`${userDomain}/wp-json/wp/v2/posts/${article.ID}`)
+                        return await response.json();
+                    }))
+
+                    //set those articles as param
+                    navigation.setParams({ 
+                        profile: writerProfile,
+                        articlesByWriter: updatedArticlesByWriter
+                    })
                     console.log('loaded profile')
                 }
                 else {
