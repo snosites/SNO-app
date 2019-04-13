@@ -1,4 +1,4 @@
-import { put, call, takeLatest } from 'redux-saga/effects';
+import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestMenus, receiveMenus, fetchArticlesIfNeeded } from '../actions/actions';
 
@@ -8,12 +8,17 @@ function* fetchMenus(action){
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = yield response.json();
-        const result = yield fetch(`${domain}/wp-json/custom/header_image`);
+        const [result, result2] = yield all([
+            call(fetch, `${domain}/wp-json/custom/header_image?type=header-image-small`),
+            call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`)
+        ]);
         const headerImage = yield result.json();
+        const headerSmall = yield result2.json();
         console.log('header img', headerImage)
         yield put(receiveMenus({
             menus,
-            header: headerImage.image
+            header: headerImage.image,
+            headerSmall: headerSmall.image
         }))
         yield put(fetchArticlesIfNeeded({
             domain,

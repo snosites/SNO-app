@@ -30,7 +30,7 @@ const ArticleStack = createStackNavigator({
     FullArticle: FullArticleScreen,
     Profile: ProfileScreen,
     Comments: CommentsScreen
-}, );
+},);
 
 
 class HomeLoadingScreen extends React.Component {

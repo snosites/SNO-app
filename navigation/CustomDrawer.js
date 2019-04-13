@@ -38,22 +38,29 @@ class CustomDrawerComponent extends React.Component {
         const {menus} = this.props;
         this.props.navigation.navigate('List', {
             menuTitle: menus.items[0].title,
-            categoryId: menus.items[0].object_id
+            categoryId: menus.items[0].object_id,
         })
     }
 
     render() {
-        const {menus} = this.props;
+        const {menus, activeDomain} = this.props;
         return (
             <View style={styles.rootContainer}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
                     <ScrollView style={styles.container}>
-                        {menus.header && 
+                        {menus.header ? 
                         <Image 
                             source={{uri: menus.header}}
                             style={{width: 280, height: 70}}
                             resizeMode='cover'
                         />
+                        :
+                        <Text 
+                            numberOfLines={2} 
+                            ellipsizeMode='tail'
+                            style={{fontSize: 20, fontWeight: 'bold', padding: 20}}>
+                            {activeDomain.name}
+                        </Text>
                         }
                         <Drawer.Section title="Categories">
                             {this.props.menus.items.map((item, index) => {

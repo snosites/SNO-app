@@ -41,12 +41,21 @@ const IoniconsHeaderButton = passMeFurther => (
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
+        const logo = navigation.getParam('headerLogo', null)
         return {
             title: navigation.getParam('menuTitle', 'Stories'),
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
+            ),
+            headerLeft: (
+                logo &&
+                <Image
+                    source={{uri: logo}}
+                    style={{width: 60, height: 30, borderRadius: 7, marginLeft: 10}}
+                    resizeMode='cover'
+                />
             ),
             headerBackTitle: null
         };
@@ -57,9 +66,13 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
+        const { menus, navigation } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
+        navigation.setParams({
+            headerLogo: menus.headerSmall
+        })
     }
 
     componentDidUpdate() {
@@ -298,6 +311,7 @@ const mapStateToProps = (state, ownProps) => {
     const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
         activeDomain: state.activeDomain,
+        menus: state.menus,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
             return state.entities.articles[articleId]
