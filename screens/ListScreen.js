@@ -48,6 +48,7 @@ class ListScreen extends React.Component {
                     <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
             ),
+            headerBackTitle: null
         };
     };
 

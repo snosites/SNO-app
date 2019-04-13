@@ -26,7 +26,11 @@ function* fetchRecentArticles(action) {
         const stories = yield response.json();
         console.log('story response', stories)
         yield all(stories.map(story => {
-            return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
+            if(story._links['wp:featuredmedia']){
+                return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
+            } else {
+                return call(Promise.resolve)
+            }
         }))
         const normalizedData = normalize(stories, articleListSchema);
         yield put(receiveRecentArticles(normalizedData))

@@ -11,7 +11,6 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator } from 'react-navigation';
-import { connect } from 'react-redux';
 
 import TabBarIcon from '../components/TabBarIcon';
 
@@ -20,23 +19,19 @@ import ListScreen from '../screens/ListScreen';
 import FullArticleScreen from '../screens/FullArticleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
-// import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+import CommentsScreen from '../screens/CommentsScreen';
 
-// // header icon native look component
-// const IoniconsHeaderButton = passMeFurther => (
-//     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color="blue" />
-// );
+
+
 
 
 const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
-    Profile: ProfileScreen
-});
+    Profile: ProfileScreen,
+    Comments: CommentsScreen
+}, );
 
-ArticleStack.navigationOptions = {
-
-};
 
 class HomeLoadingScreen extends React.Component {
     constructor(props) {

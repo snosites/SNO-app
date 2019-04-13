@@ -6,29 +6,78 @@ import {
     View,
     WebView,
     ImageBackground,
-    Dimensions
+    Dimensions,
+    Share,
+    TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import Slideshow from '../constants/Slideshow';
-
+import { withTheme } from 'react-native-paper';
 import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 
+import { FAB, Portal } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
-
 import TouchableItem from '../constants/TouchableItem';
-
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
 
+const ArticleHeader = (props) => {
+    console.log('article header props', props)
+    const { navigation, state } = props;
+    return (
+        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity
+                onPress={() => {
+                    navigation.navigate('FullArticle')
+                }}
+
+            >
+                <Text
+                    style={{
+                        paddingHorizontal: 5,
+                        color: state.routeName === 'FullArticle' ? props.theme.colors.primary : props.theme.colors.disabled,
+                        fontSize: 19
+                    }}>Article</Text>
+            </TouchableOpacity>
+            <Text
+                style={{
+                    color: 'black',
+                    fontSize: 19
+                }}
+            >
+                |
+            </Text>
+            <TouchableOpacity
+                onPress={() => {
+                    navigation.navigate('Comments')
+                }}
+
+            >
+                <Text
+                    style={{
+                        paddingHorizontal: 5,
+                        color: state.routeName === 'Comments' ? props.theme.colors.primary : props.theme.colors.disabled,
+                        fontSize: 19
+                    }}>Comments</Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+export const WithThemeArticleHeader = withTheme(ArticleHeader);
+
 export default class FullArticleScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const story = navigation.getParam('article', 'Full Article')
+    static navigationOptions = ({ navigation, navigation: { state } }) => {
         return {
-            title: story.title.rendered,
+            headerTitle: <WithThemeArticleHeader state={state} navigation={navigation} />
         };
+    };
+
+    state = {
+        fabOpen: false,
     };
 
     render() {
@@ -47,7 +96,7 @@ export default class FullArticleScreen extends React.Component {
                         {this._getArticleAuthor()}
                     </Text>
                 </TouchableItem>
-                <View style={styles.socialContainer}>
+                {/* <View style={styles.socialContainer}>
                     <TouchableItem style={styles.socialButton}>
                         <View style={styles.socialButtonInner}>
                             <MaterialIcons style={styles.socialIcon} name='bookmark-border' size={28} color='white' />
@@ -60,7 +109,7 @@ export default class FullArticleScreen extends React.Component {
                             <Text style={styles.socialButtonText}>Share</Text>
                         </View>
                     </TouchableItem>
-                </View>
+                </View> */}
                 <Text style={styles.date}>Published: {Moment(article.modified).fromNow()}</Text>
                 <View style={styles.articleContents}>
                     <HTML
@@ -75,11 +124,42 @@ export default class FullArticleScreen extends React.Component {
                         }}
                     />
                 </View>
+                <Portal>
+                    <FAB.Group
+                        style={{ marginBottom: 50 }}
+                        open={this.state.fabOpen}
+                        icon={this.state.fabOpen ? 'clear' : 'add'}
+                        actions={[
+                            { icon: 'comment', label: 'Comment', onPress: () => console.log('Pressed Comment') },
+                            {
+                                icon: 'send', label: 'Share', onPress: () => {
+                                    this._shareArticle(article)
+                                }
+                            },
+                            { icon: 'bookmark', label: 'Save', onPress: () => console.log('Pressed email') },
+                        ]}
+                        onStateChange={({ open }) => this.setState({
+                            fabOpen: open
+                        })}
+                        onPress={() => {
+                            if (this.state.open) {
+                                // do something if the speed dial is open
+                            }
+                        }}
+                    />
+                </Portal>
             </ScrollView>
         );
     }
 
-
+    _shareArticle = article => {
+        console.log('sharing', article)
+        Share.share({
+            title: article.title.rendered,
+            message: article.title.rendered,
+            url: article.link
+        })
+    }
 
     _renderFeaturedMedia = (article) => {
         if (article.slideshow) {
@@ -169,7 +249,8 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         textAlign: 'center',
-        paddingVertical: 5
+        paddingVertical: 5,
+        paddingHorizontal: 10
 
     },
     byLine: {
@@ -177,34 +258,34 @@ const styles = StyleSheet.create({
         color: '#9e9e9e',
         textAlign: 'center'
     },
-    socialContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingVertical: 10
-    },
-    socialButton: {
-        borderRadius: 10,
-        margin: 5,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        backgroundColor: '#5c6bc0',
-    },
-    socialButtonInner: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    socialButtonText: {
-        fontSize: 19,
-        color: 'white',
-        paddingLeft: 5
-    },
+    // socialContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-around',
+    //     paddingVertical: 10
+    // },
+    // socialButton: {
+    //     borderRadius: 10,
+    //     margin: 5,
+    //     paddingVertical: 10,
+    //     paddingHorizontal: 20,
+    //     backgroundColor: '#5c6bc0',
+    // },
+    // socialButtonInner: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center'
+    // },
+    // socialButtonText: {
+    //     fontSize: 19,
+    //     color: 'white',
+    //     paddingLeft: 5
+    // },
     date: {
+        padding: 5,
         fontSize: 17,
         color: '#9e9e9e',
         textAlign: 'center'
     },
     articleContents: {
         padding: 20,
-        marginTop: 20
     },
 })
