@@ -11,6 +11,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import { NavigationEvents } from 'react-navigation';
 import HTML from 'react-native-render-html';
 import Slideshow from '../constants/Slideshow';
 import { withTheme } from 'react-native-paper';
@@ -78,13 +79,22 @@ export default class FullArticleScreen extends React.Component {
 
     state = {
         fabOpen: false,
+        showPortal: true
     };
-
+ 
     render() {
         const { navigation } = this.props;
         let article = navigation.getParam('article', 'loading')
         return (
             <ScrollView style={styles.storyContainer}>
+                <NavigationEvents
+                    onDidFocus={() => this.setState({
+                        showPortal: true
+                    })}
+                    onWillBlur={() => this.setState({
+                        showPortal: false
+                    })}
+                />
                 {article !== 'loading' &&
                     <View style={styles.featuredMediaContainer}>
                         {this._renderFeaturedMedia(article)}
@@ -96,20 +106,6 @@ export default class FullArticleScreen extends React.Component {
                         {this._getArticleAuthor()}
                     </Text>
                 </TouchableItem>
-                {/* <View style={styles.socialContainer}>
-                    <TouchableItem style={styles.socialButton}>
-                        <View style={styles.socialButtonInner}>
-                            <MaterialIcons style={styles.socialIcon} name='bookmark-border' size={28} color='white' />
-                            <Text style={styles.socialButtonText}>Save</Text>
-                        </View>
-                    </TouchableItem>
-                    <TouchableItem style={styles.socialButton}>
-                        <View style={styles.socialButtonInner}>
-                            <MaterialIcons style={styles.socialIcon} name='share' size={28} color='white' />
-                            <Text style={styles.socialButtonText}>Share</Text>
-                        </View>
-                    </TouchableItem>
-                </View> */}
                 <Text style={styles.date}>Published: {Moment(article.modified).fromNow()}</Text>
                 <View style={styles.articleContents}>
                     <HTML
@@ -124,7 +120,7 @@ export default class FullArticleScreen extends React.Component {
                         }}
                     />
                 </View>
-                <Portal>
+                {this.state.showPortal && <Portal>
                     <FAB.Group
                         style={{ marginBottom: 50 }}
                         open={this.state.fabOpen}
@@ -147,7 +143,7 @@ export default class FullArticleScreen extends React.Component {
                             }
                         }}
                     />
-                </Portal>
+                </Portal>}
             </ScrollView>
         );
     }

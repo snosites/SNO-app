@@ -7,6 +7,7 @@ import {
     AsyncStorage,
     StatusBar,
     ActivityIndicator,
+    Image
 } from 'react-native';
 import {
     Drawer,
@@ -42,10 +43,18 @@ class CustomDrawerComponent extends React.Component {
     }
 
     render() {
+        const {menus} = this.props;
         return (
             <View style={styles.rootContainer}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
                     <ScrollView style={styles.container}>
+                        {menus.header && 
+                        <Image 
+                            source={{uri: menus.header}}
+                            style={{width: 280, height: 70}}
+                            resizeMode='cover'
+                        />
+                        }
                         <Drawer.Section title="Categories">
                             {this.props.menus.items.map((item, index) => {
                                 return (
@@ -98,7 +107,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        paddingVertical: 50,
         backgroundColor: Colors.surface
     },
     item: {
@@ -125,6 +133,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
+    activeDomain: store.activeDomain,
     menus: store.menus,
     articlesByCategory: store.articlesByCategory
 })

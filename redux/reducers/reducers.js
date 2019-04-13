@@ -72,7 +72,8 @@ export function menus(state = {
             return {
                 ...state,
                 isLoaded: true,
-                items: action.response
+                items: action.response.menus,
+                header: action.response.header
             }
         default:
             return state

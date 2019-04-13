@@ -8,7 +8,13 @@ function* fetchMenus(action){
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = yield response.json();
-        yield put(receiveMenus(menus))
+        const result = yield fetch(`${domain}/wp-json/custom/header_image`);
+        const headerImage = yield result.json();
+        console.log('header img', headerImage)
+        yield put(receiveMenus({
+            menus,
+            header: headerImage.image
+        }))
         yield put(fetchArticlesIfNeeded({
             domain,
             category: menus[0].object_id,
