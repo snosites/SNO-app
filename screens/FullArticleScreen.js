@@ -20,7 +20,7 @@ import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 import { FAB, Portal } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import TouchableItem from '../constants/TouchableItem';
-import CustomArticleHeader from '../components/ArticleHeader';
+import { CustomArticleHeader } from '../components/ArticleHeader';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -38,7 +38,7 @@ export default class FullArticleScreen extends React.Component {
         fabOpen: false,
         showPortal: true
     };
- 
+
     render() {
         const { navigation } = this.props;
         let article = navigation.getParam('article', 'loading')
@@ -135,7 +135,10 @@ export default class FullArticleScreen extends React.Component {
                     <View style={styles.imageInfoContainer}>
                         <View style={styles.imageInfo}>
                             <Text style={{ color: 'white' }}>{article.featuredImage.caption.toUpperCase()}</Text>
-                            <Text style={{ color: 'grey' }}>{article.featuredImage.photographer}</Text>
+                            <TouchableOpacity onPress={this._handleProfilePress}>
+                                <Text style={{ color: 'grey' }}>{article.featuredImage.photographer}</Text>
+                            </TouchableOpacity>
+
                         </View>
                     </View>
                 </ImageBackground>

@@ -21,10 +21,12 @@ import { NavigationEvents } from 'react-navigation';
 
 import { Divider, Colors } from 'react-native-paper';
 
+
 class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Profile' //navigation.getParam('menuTitle', 'Stories'),
+            
         };
     };
 

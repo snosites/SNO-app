@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
     AsyncStorage
 } from 'react-native';
-import { WithThemeArticleHeader } from './FullArticleScreen';
+import { CustomArticleHeader } from '../components/ArticleHeader';
 import { Ionicons } from '@expo/vector-icons';
 
 import { HeaderBackButton } from 'react-navigation';
@@ -29,7 +29,7 @@ export default class CommentsScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
         console.log('navis', navigation, state)
         return {
-            headerTitle: <WithThemeArticleHeader state={state} navigation={navigation} />,
+            headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
             headerLeft: <HeaderBackButton onPress={() => {
                 navigation.navigate('List')
             }}
@@ -41,7 +41,7 @@ export default class CommentsScreen extends React.Component {
     render() {
         return (
             <ScrollView contentContainerStyle={styles.container}>
-                <Text>Comment screen</Text>
+                <Text style={{fontSize: 30, textAlign: 'center', padding: 20}}>Comment screen</Text>
             </ScrollView>
         )
     }

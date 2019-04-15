@@ -4,10 +4,10 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
-import { withTheme } from 'react-native-paper';
+import { withTheme, Badge, Colors } from 'react-native-paper';
 
-export const ArticleHeader = (props) => {
-    const { navigation, state } = props;
+const ArticleHeader = (props) => {
+    const { navigation, state, theme } = props;
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
@@ -18,7 +18,7 @@ export const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'FullArticle' ? props.theme.colors.primary : props.theme.colors.disabled,
+                        color: state.routeName === 'FullArticle' ? theme.colors.primary : theme.colors.disabled,
                         fontSize: 19
                     }}>Article</Text>
             </TouchableOpacity>
@@ -31,6 +31,7 @@ export const ArticleHeader = (props) => {
                 |
             </Text>
             <TouchableOpacity
+                
                 onPress={() => {
                     navigation.navigate('Comments')
                 }}
@@ -41,7 +42,14 @@ export const ArticleHeader = (props) => {
                         paddingHorizontal: 5,
                         color: state.routeName === 'Comments' ? props.theme.colors.primary : props.theme.colors.disabled,
                         fontSize: 19
-                    }}>Comments</Text>
+                    }}>
+                    Comments
+                </Text>
+                <Badge style={{
+                    position: 'absolute',
+                    top: -10,
+                    right: -10,
+                }}>8</Badge>
             </TouchableOpacity>
         </View>
     )

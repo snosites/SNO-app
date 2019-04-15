@@ -110,6 +110,28 @@ export function receiveMenus(response) {
     }
 }
 
+// PROFILE ACTIONS
+
+export function fetchProfiles(domain) {
+    return {
+        type: 'FETCH_PROFILES',
+        domain
+    }
+}
+
+export function requestProfiles() {
+    return {
+        type: 'REQUEST_PROFILES',
+    }
+}
+
+export function receiveProfiles(profiles) {
+    return {
+        type: 'RECEIVE_PROFILES',
+        profiles
+    }
+}
+
 // RECENT ARTICLES
 
 export function invalidateRecentArticles() {

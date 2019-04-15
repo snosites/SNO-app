@@ -35,7 +35,7 @@ class CustomDrawerComponent extends React.Component {
     }
 
     componentDidMount() {
-        const {menus} = this.props;
+        const { menus } = this.props;
         this.props.navigation.navigate('List', {
             menuTitle: menus.items[0].title,
             categoryId: menus.items[0].object_id,
@@ -43,24 +43,24 @@ class CustomDrawerComponent extends React.Component {
     }
 
     render() {
-        const {menus, activeDomain} = this.props;
+        const { menus, activeDomain } = this.props;
         return (
             <View style={styles.rootContainer}>
                 <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
                     <ScrollView style={styles.container}>
-                        {menus.header ? 
-                        <Image 
-                            source={{uri: menus.header}}
-                            style={{width: 280, height: 70}}
-                            resizeMode='cover'
-                        />
-                        :
-                        <Text 
-                            numberOfLines={2} 
-                            ellipsizeMode='tail'
-                            style={{fontSize: 20, fontWeight: 'bold', padding: 20}}>
-                            {activeDomain.name}
-                        </Text>
+                        {menus.header ?
+                            <Image
+                                source={{ uri: menus.header }}
+                                style={{ width: 280, height: 70 }}
+                                resizeMode='cover'
+                            />
+                            :
+                            <Text
+                                numberOfLines={2}
+                                ellipsizeMode='tail'
+                                style={{ fontSize: 20, fontWeight: 'bold', padding: 20 }}>
+                                {activeDomain.name}
+                            </Text>
                         }
                         <Drawer.Section title="Categories">
                             {this.props.menus.items.map((item, index) => {
@@ -72,8 +72,9 @@ class CustomDrawerComponent extends React.Component {
                                         onPress={() => this._handleMenuPress(item, index)}
                                         icon={passedProps => {
                                             return DrawerNavIcon({
-                                                ...passedProps, 
-                                                style: item.menu_icon_dir, name: item.menu_icon_name})
+                                                ...passedProps,
+                                                style: item.menu_icon_dir, name: item.menu_icon_name
+                                            })
                                         }}
                                     />
                                 )
@@ -87,14 +88,31 @@ class CustomDrawerComponent extends React.Component {
 
     _handleMenuPress = (item, index) => {
         this.props.navigation.closeDrawer();
-        this._getArticles(item.object_id);
-        this.props.navigation.navigate('List', {
-            menuTitle: item.title,
-            categoryId: item.object_id
-        })
-        this.setState({
-            activeMenuIndex: index
-        })
+        if (item.object === 'category') {
+            this._getArticles(item.object_id);
+            this.props.navigation.navigate('List', {
+                menuTitle: item.title,
+                categoryId: item.object_id
+            })
+            this.setState({
+                activeMenuIndex: index
+            })
+        }
+        else if(item.object === 'page') {
+            if(item.template === 'snostaff.php'){
+                this.props.navigation.navigate('Staff', {
+                    menuTitle: item.title
+                })
+                this.setState({
+                    activeMenuIndex: index
+                })
+            }
+            else {
+                // redirect to page not found screen
+                console.log('page not found');
+            }
+        }
+
     }
 
 

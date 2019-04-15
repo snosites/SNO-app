@@ -20,7 +20,7 @@ import FullArticleScreen from '../screens/FullArticleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 import CommentsScreen from '../screens/CommentsScreen';
-
+import StaffScreen from '../screens/StaffScreen';
 
 
 
@@ -29,7 +29,8 @@ const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
     Profile: ProfileScreen,
-    Comments: CommentsScreen
+    Comments: CommentsScreen,
+    Staff: StaffScreen
 },);
 
 
