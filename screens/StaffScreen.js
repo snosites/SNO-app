@@ -60,23 +60,39 @@ class StaffScreen extends React.Component {
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
+        let years = navigation.getParam('activeYears', null);
+        let sortedYears = years.sort();
+        let indexNum = sortedYears.length - 2;
         this.setState({
-            activeYears: navigation.getParam('activeYears', null)
+            activeYears: sortedYears,
+            selectedIndex: indexNum
         })
+
+        // needed for ref of flatlist to be available in did mount
+        setTimeout(() => {
+            this._scrollToIndex(indexNum);
+        }, 500)
         this._getProfiles();
     }
 
     render() {
+
         const { navigation, profiles } = this.props;
         const { activeYears, selectedIndex } = this.state;
+        console.log('active years', activeYears);
         return (
             <View style={{ flex: 1 }}>
                 <View>
                     <FlatList
                         data={activeYears}
                         extraData={this.state.selectedIndex}
+                        ref={(ref) => { this.flatListRef = ref; }}
+                        keyExtractor={item => item}
                         horizontal={true}
                         renderItem={this._renderItem}
+                        getItemLayout={(data, index) => (
+                            { length: 135, offset: 135 * index, index }
+                        )}
                     />
                 </View>
 
@@ -115,8 +131,8 @@ class StaffScreen extends React.Component {
                                                 }}
                                             />
                                         }
-                                        <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 10}}
-                                        numberOfLines={2} ellipsizeMode='tail' 
+                                        <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 10 }}
+                                            numberOfLines={2} ellipsizeMode='tail'
                                         >{profile.customFields.name[0]}</Text>
                                         <Text style={{ fontSize: 18, color: 'grey' }}>{profile.customFields.staffposition[0]}</Text>
                                     </View>
@@ -137,6 +153,10 @@ class StaffScreen extends React.Component {
         dispatch(fetchProfiles(url));
     }
 
+    _scrollToIndex = (index) => {
+        this.flatListRef.scrollToIndex({ animated: true, index: index, viewPosition: 0.5 });
+    }
+
     _renderItem = ({ item, index }) => {
         const { selectedIndex } = this.state;
         return (
@@ -147,6 +167,7 @@ class StaffScreen extends React.Component {
                     this.setState({
                         selectedIndex: index
                     })
+                    this._scrollToIndex(index)
                 }}
             >
                 <Card.Content>
@@ -163,6 +184,7 @@ class StaffScreen extends React.Component {
 
 const styles = StyleSheet.create({
     yearContainer: {
+        width: 125,
         margin: 5,
         borderRadius: 5,
         justifyContent: 'center'
