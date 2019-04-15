@@ -20,60 +20,17 @@ import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 import { FAB, Portal } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import TouchableItem from '../constants/TouchableItem';
+import CustomArticleHeader from '../components/ArticleHeader';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
 
-const ArticleHeader = (props) => {
-    console.log('article header props', props)
-    const { navigation, state } = props;
-    return (
-        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.navigate('FullArticle')
-                }}
-
-            >
-                <Text
-                    style={{
-                        paddingHorizontal: 5,
-                        color: state.routeName === 'FullArticle' ? props.theme.colors.primary : props.theme.colors.disabled,
-                        fontSize: 19
-                    }}>Article</Text>
-            </TouchableOpacity>
-            <Text
-                style={{
-                    color: 'black',
-                    fontSize: 19
-                }}
-            >
-                |
-            </Text>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.navigate('Comments')
-                }}
-
-            >
-                <Text
-                    style={{
-                        paddingHorizontal: 5,
-                        color: state.routeName === 'Comments' ? props.theme.colors.primary : props.theme.colors.disabled,
-                        fontSize: 19
-                    }}>Comments</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
-
-export const WithThemeArticleHeader = withTheme(ArticleHeader);
 
 export default class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
         return {
-            headerTitle: <WithThemeArticleHeader state={state} navigation={navigation} />
+            headerTitle: <CustomArticleHeader state={state} navigation={navigation} />
         };
     };
 
