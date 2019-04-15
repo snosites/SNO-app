@@ -14,7 +14,6 @@ function* fetchMenus(action){
         ]);
         const headerImage = yield result.json();
         const headerSmall = yield result2.json();
-        console.log('header img', headerImage)
         yield put(receiveMenus({
             menus,
             header: headerImage.image,
