@@ -1,21 +1,23 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, AsyncStorage, ActivityIndicator } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import AppNavigator from './navigation/AppNavigator';
 import { Provider as PaperProvider, DefaultTheme, Colors } from 'react-native-paper';
-import { store } from './redux/configureStore';
+
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { persistor, store } from './redux/configureStore';
 
 const theme = {
     ...DefaultTheme,
     roundness: 2,
     colors: {
-      ...DefaultTheme.colors,
-      primary: Colors.blue500,
-      accent: Colors.blue800,
+        ...DefaultTheme.colors,
+        primary: Colors.blue500,
+        accent: Colors.blue800,
     }
-  };
+};
 
 export default class App extends React.Component {
     state = {
@@ -34,12 +36,14 @@ export default class App extends React.Component {
         } else {
             return (
                 <ReduxProvider store={store}>
-                    <PaperProvider theme={theme}>
-                        <View style={styles.container}>
-                            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                            <AppNavigator />
-                        </View>
-                    </PaperProvider>
+                    <PersistGate loading={<ActivityIndicator style={{padding: 50}} />} persistor={persistor}>
+                        <PaperProvider theme={theme}>
+                            <View style={styles.container}>
+                                {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                                <AppNavigator />
+                            </View>
+                        </PaperProvider>
+                    </PersistGate>
                 </ReduxProvider>
             );
         }

@@ -101,7 +101,8 @@ class CustomDrawerComponent extends React.Component {
         else if(item.object === 'page') {
             if(item.template === 'snostaff.php'){
                 this.props.navigation.navigate('Staff', {
-                    menuTitle: item.title
+                    menuTitle: item.title,
+                    activeYears: item.active_years
                 })
                 this.setState({
                     activeMenuIndex: index

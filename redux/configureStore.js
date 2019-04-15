@@ -8,29 +8,35 @@ import logger from 'redux-logger';
 import rootReducer from './reducers/rootReducer';
 import rootSaga from './sagas/rootSaga';
 
+import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+
+
 const sagaMiddleware = createSagaMiddleWare();
 
 const middlewareList = __DEV__ ? [sagaMiddleware, logger] : [sagaMiddleware]
 
 // used to persist redux state to async storage
 const persistConfig = {
-    key: 'root',
+    key: 'primary',
     storage,
+    whitelist: ['domains', 'savedArticles'],
+    debug: true,
+    timeout: 10000,
+    stateReconciler: autoMergeLevel2
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 
 
-export default () => {
-    let store = createStore(persistedReducer, applyMiddleware(...middlewareList))
-    let persistor = persistStore(store)
-    return { store, persistor }
-}
+export const store = createStore(persistedReducer, {}, applyMiddleware(...middlewareList));
 
-export const store = createStore(
-    rootReducer,
-    applyMiddleware(...middlewareList)
-)
+export const persistor = persistStore(store);
+
+// export const nonPersistStore = createStore(
+//     rootReducer,
+//     applyMiddleware(...middlewareList)
+// )
 
 sagaMiddleware.run(rootSaga);
