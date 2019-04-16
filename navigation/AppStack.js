@@ -12,16 +12,16 @@ import RecentScreen from '../screens/RecentScreen';
 import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';
 
-const LinksStack = createStackNavigator({
+const SearchStack = createStackNavigator({
     Links: LinksScreen,
 });
 
-LinksStack.navigationOptions = {
-    tabBarLabel: 'Links',
+SearchStack.navigationOptions = {
+    tabBarLabel: 'Search',
     tabBarIcon: ({ focused }) => (
         <TabBarIcon
             focused={focused}
-            name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+            name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
         />
     ),
 };
@@ -78,7 +78,7 @@ const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
     RecentStack,
     BookmarkStack,
-    LinksStack,
+    SearchStack,
     SettingsStack,
 });
 

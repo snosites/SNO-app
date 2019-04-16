@@ -14,8 +14,10 @@ import { connect } from 'react-redux';
 import { fetchProfiles } from '../redux/actions/actions';
 
 import { NavigationEvents } from 'react-navigation';
+import { Haptic, DangerZone } from 'expo';
 
-import { Divider, Colors as PaperColors, Card } from 'react-native-paper';
+const { Lottie } = DangerZone;
+import { Divider, Colors as PaperColors, Card, Button } from 'react-native-paper';
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -49,7 +51,8 @@ class StaffScreen extends React.Component {
 
     state = {
         activeYears: [],
-        selectedIndex: 0
+        selectedIndex: 0,
+        doneLoading: false
     }
 
     componentDidMount() {
@@ -67,19 +70,48 @@ class StaffScreen extends React.Component {
             activeYears: sortedYears,
             selectedIndex: indexNum
         })
-
+        if (this.animation) {
+            this._playAnimation();
+        }
         // needed for ref of flatlist to be available in did mount
+        // setTimeout(() => {
+        //     this._scrollToIndex(indexNum);
+        // }, 500)
         setTimeout(() => {
-            this._scrollToIndex(indexNum);
-        }, 500)
+            this.setState({
+                doneLoading: true
+            })
+        }, 2000)
         this._getProfiles();
     }
 
     render() {
 
         const { navigation, profiles } = this.props;
-        const { activeYears, selectedIndex } = this.state;
-        console.log('active years', activeYears);
+        const { activeYears, selectedIndex, doneLoading } = this.state;
+        console.log('testing', doneLoading, profiles.isLoaded);
+        // console.log('active years', activeYears);
+        if (!doneLoading || !profiles.isLoaded) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.animationContainer}>
+                        <Lottie
+                            ref={animation => {
+                                this.animation = animation;
+                            }}
+                            style={{
+                                width: 300,
+                                height: 300,
+                            }}
+                            loop={true}
+                            speed={1}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/profile-loader')}
+                        />
+                    </View>
+                </View>
+            )
+        }
         return (
             <View style={{ flex: 1 }}>
                 <View>
@@ -87,6 +119,7 @@ class StaffScreen extends React.Component {
                         data={activeYears}
                         extraData={this.state.selectedIndex}
                         ref={(ref) => { this.flatListRef = ref; }}
+                        initialScrollIndex={selectedIndex}
                         keyExtractor={item => item}
                         horizontal={true}
                         renderItem={this._renderItem}
@@ -98,17 +131,16 @@ class StaffScreen extends React.Component {
 
                 <ScrollView style={{ flex: 1 }}>
                     <NavigationEvents
-                        onWillFocus={payload => this._loadProfile(payload)}
+                    // onWillFocus={payload => this._loadProfile(payload)}
                     />
                     <Text style={{ fontSize: 30, textAlign: 'center', paddingTop: 20, paddingBottom: 10 }}>
                         Staff Profiles
-                    </Text>
+                        </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
                         {profiles.items.map(profile => {
                             const temp = profile.schoolYears.filter(schoolyear => {
                                 return schoolyear === activeYears[selectedIndex]
                             })
-                            console.log('temp', temp)
                             if (temp.length > 0) {
                                 return (
                                     <View key={profile.ID} style={{ padding: 20, alignItems: 'center', width: 175 }}>
@@ -135,6 +167,14 @@ class StaffScreen extends React.Component {
                                             numberOfLines={2} ellipsizeMode='tail'
                                         >{profile.customFields.name[0]}</Text>
                                         <Text style={{ fontSize: 18, color: 'grey' }}>{profile.customFields.staffposition[0]}</Text>
+                                        <Button 
+                                            mode="contained"
+                                            color='#0277bd' 
+                                            style={{borderRadius: 4,
+                                            margin: 5}}
+                                            onPress={() => this._handleProfileClick(profile.customFields.name[0])}>
+                                            View
+                                        </Button>
                                     </View>
                                 )
                             }
@@ -143,7 +183,6 @@ class StaffScreen extends React.Component {
                     </View>
                 </ScrollView>
             </View>
-
         );
     }
 
@@ -155,6 +194,13 @@ class StaffScreen extends React.Component {
 
     _scrollToIndex = (index) => {
         this.flatListRef.scrollToIndex({ animated: true, index: index, viewPosition: 0.5 });
+    }
+
+    _handleProfileClick = (name) => {
+        const { navigation } = this.props;
+        navigation.navigate('Profile', {
+            writerName: name
+        })
     }
 
     _renderItem = ({ item, index }) => {
@@ -178,6 +224,11 @@ class StaffScreen extends React.Component {
         )
     }
 
+    _playAnimation = () => {
+        this.animation.reset();
+        this.animation.play();
+    };
+
 }
 
 
@@ -197,7 +248,12 @@ const styles = StyleSheet.create({
     selectedYear: {
         backgroundColor: '#0277bd',
         color: 'white'
-    }
+    },
+    animationContainer: {
+        width: 300,
+        height: 300,
+        alignItems: 'center',
+    },
 });
 
 const mapStateToProps = (state) => {
