@@ -1,36 +1,24 @@
 import React from 'react';
 import {
-    ScrollView,
     StyleSheet,
     Text,
     View,
     Image,
-    ActivityIndicator,
-    AsyncStorage,
     Platform,
     FlatList,
     TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    Modal,
+    SafeAreaView
 } from 'react-native';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import { Ionicons } from '@expo/vector-icons';
+import { Button, TextInput as PaperTextInput } from 'react-native-paper';
 
 import { HeaderBackButton } from 'react-navigation';
-
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
-
-
-const IoniconsHeaderButton = passMeFurther => (
-    // the `passMeFurther` variable here contains props from <Item .../> as well as <HeaderButtons ... />
-    // and it is important to pass those props to `HeaderButton`
-    // then you may add some information like icon size or color (if you use icons)
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={28} color="#2f95dc" />
-);
-
-
 
 export default class CommentsScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
@@ -44,57 +32,101 @@ export default class CommentsScreen extends React.Component {
     };
 
     state = {
-        commentInput: ''
+        commentInput: '',
+        modalVisible: false,
+        username: '',
+        email: ''
     }
 
     render() {
         const { navigation } = this.props;
+        const { modalVisible, username, email } = this.state;
         let comments = navigation.getParam('comments', null)
         console.log('comments', comments)
         return (
-            <KeyboardAvoidingView
-                contentContainerStyle={{ flex: 1,  }}
-                style={{ flex: 1,  }}
-                behavior="position"
-                keyboardVerticalOffset={60}
-                enabled
-            >
-                <View style={{ flex: 1, paddingBottom: 60 }}>
-                    <FlatList
-                        Style={{ flex: 1, marginVertical: 5 }}
-                        data={comments}
-                        keyExtractor={item => item.id.toString()}
-                        // onEndReachedThreshold={0.25}
-                        // onEndReached={this._loadMore}
-                        // onRefresh={this._handleRefresh}
-                        // refreshing={category.isFetching}
-                        renderItem={this._renderItem}
-                    />
-
-                    <View style={styles.commentContainer}>
-                        <Ionicons name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'} size={45} color="#eeeeee" style={{ paddingHorizontal: 20 }} />
-                        <TextInput
-                            style={{ height: 60, flex: 1, fontSize: 19 }}
-                            placeholder="Write a comment"
-                            onSubmitEditing={() => console.log('pressed', this.state.commentInput)}
-                            returnKeyType='send'
-                            onChangeText={(text) => this.setState({ commentInput: text })}
+            <View style={{ flex: 1 }}>
+                <KeyboardAvoidingView
+                    contentContainerStyle={{ flex: 1, }}
+                    style={{ flex: 1, }}
+                    behavior="position"
+                    keyboardVerticalOffset={60}
+                    enabled
+                >
+                    <View style={{ flex: 1, paddingBottom: 60 }}>
+                        <FlatList
+                            Style={{ flex: 1, marginVertical: 5 }}
+                            data={comments}
+                            keyExtractor={item => item.id.toString()}
+                            renderItem={this._renderItem}
                         />
-
-                        <View style={styles.sendContainer}>
-                            <TouchableOpacity
-                                style={styles.sendContainer}
-                                onPress={() => console.log('pressed', this.state.commentInput)}
-                            >
-                                <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color="white" />
-                            </TouchableOpacity>
-
+                        <View style={styles.commentContainer}>
+                            <Ionicons name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'} size={45} color="#eeeeee" style={{ paddingHorizontal: 20 }} />
+                            <TextInput
+                                style={{ height: 60, flex: 1, fontSize: 19 }}
+                                placeholder="Write a comment"
+                                onSubmitEditing={() => console.log('pressed', this.state.commentInput)}
+                                returnKeyType='send'
+                                onChangeText={(text) => this.setState({ commentInput: text })}
+                            />
+                            <View style={styles.sendContainer}>
+                                <TouchableOpacity
+                                    style={styles.sendContainer}
+                                    onPress={() => this.setState({
+                                        modalVisible: !modalVisible
+                                    })}
+                                >
+                                    <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color="white" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </KeyboardAvoidingView>
+
+                </KeyboardAvoidingView>
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={modalVisible}
+                    onDismiss={this._hideModal}
+                >
+                    <SafeAreaView style={{ flex: 1, alignItems: 'center', padding: 20, backgroundColor: '#f6f6f6' }}>
+                        <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
+                            You need to enter some information before you can post comments.  You will only have to do this once.
+                        </Text>
+                        <View style={{ flex: 1, alignItems: 'center' }}>
+                            <PaperTextInput
+                                label='Username'
+                                style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
+                                placeholder='This is what will display publicly'
+                                mode='outlined'
+                                value={username}
+                                onChangeText={text => this.setState({ username: text })}
+                            />
+                            <PaperTextInput
+                                label='Email'
+                                placeholder='We need this for verification purposes'
+                                keyboardType='email-address'
+                                style={{ width: 300, borderRadius: 10 }}
+                                mode='outlined'
+                                value={email}
+                                onChangeText={text => this.setState({ email: text })}
+                            />
+                            <View style={{ flexDirection: 'row' }}>
+                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10, backgroundColor: '#f44336' }} onPress={this._hideModal}>
+                                    <Text>Cancel</Text>
+                                </Button>
+                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10 }} onPress={() => console.log('Pressed', this.state)}>
+                                    <Text>Save</Text>
+                                </Button>
+                            </View>
+                        </View>
+                    </SafeAreaView>
+                </Modal>
+            </View>
         )
     }
+
+    _showModal = () => this.setState({ modalVisible: true });
+    _hideModal = () => this.setState({ modalVisible: false });
 
     _renderItem = ({ item, index }) => {
         return (
@@ -108,7 +140,7 @@ export default class CommentsScreen extends React.Component {
                             // marginRight: 20
                         }}
                     />
-                    <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20}}>
+                    <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{item.author_name}</Text>
                         <Text style={{ color: 'grey' }}>{String(Moment(item.date).fromNow())}</Text>
                     </View>
@@ -117,13 +149,13 @@ export default class CommentsScreen extends React.Component {
                     <HTML
                         html={item.content.rendered}
                         textSelectable={true}
-                        // onLinkPress={(e, href) => this._viewLink(href)}
-                        // tagsStyles={{
-                        //     p: {
-                        //         fontSize: 18,
-                        //         marginBottom: 15
-                        //     }
-                        // }}
+                    // onLinkPress={(e, href) => this._viewLink(href)}
+                    // tagsStyles={{
+                    //     p: {
+                    //         fontSize: 18,
+                    //         marginBottom: 15
+                    //     }
+                    // }}
                     />
                     {/* <Text>{item.content.rendered}</Text> */}
                 </View>
