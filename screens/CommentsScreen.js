@@ -12,6 +12,8 @@ import {
     Modal,
     SafeAreaView
 } from 'react-native';
+import { connect } from 'react-redux';
+import { saveUserInfo } from '../redux/actions/actions';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import { CustomArticleHeader } from '../components/ArticleHeader';
@@ -20,7 +22,7 @@ import { Button, TextInput as PaperTextInput } from 'react-native-paper';
 
 import { HeaderBackButton } from 'react-navigation';
 
-export default class CommentsScreen extends React.Component {
+class CommentsScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
         return {
             headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
@@ -39,7 +41,7 @@ export default class CommentsScreen extends React.Component {
     }
 
     render() {
-        const { navigation } = this.props;
+        const { navigation, userInfo, dispatch } = this.props;
         const { modalVisible, username, email } = this.state;
         let comments = navigation.getParam('comments', null)
         console.log('comments', comments)
@@ -71,9 +73,13 @@ export default class CommentsScreen extends React.Component {
                             <View style={styles.sendContainer}>
                                 <TouchableOpacity
                                     style={styles.sendContainer}
-                                    onPress={() => this.setState({
-                                        modalVisible: !modalVisible
-                                    })}
+                                    onPress={() => {
+                                        if(!userInfo.username) {
+                                            this._showModal();
+                                        } else {
+                                            console.log('submitted')
+                                        }
+                                    }}
                                 >
                                     <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color="white" />
                                 </TouchableOpacity>
@@ -114,7 +120,14 @@ export default class CommentsScreen extends React.Component {
                                 <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10, backgroundColor: '#f44336' }} onPress={this._hideModal}>
                                     <Text>Cancel</Text>
                                 </Button>
-                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10 }} onPress={() => console.log('Pressed', this.state)}>
+                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10 }} 
+                                onPress={() => {
+                                    dispatch(saveUserInfo({
+                                        username,
+                                        email
+                                    }))
+                                    this._hideModal();
+                                }}>
                                     <Text>Save</Text>
                                 </Button>
                             </View>
@@ -195,3 +208,11 @@ const styles = StyleSheet.create({
         paddingBottom: 10
     },
 })
+
+mapStateToProps = state => {
+    return {
+        userInfo: state.userInfo
+    }
+}
+
+export default connect(mapStateToProps)(CommentsScreen);

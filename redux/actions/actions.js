@@ -176,7 +176,12 @@ export function fetchRecentArticlesFailure(error) {
     }
 }
 
-
+export function saveUserInfo(payload) {
+    return {
+        type: 'SAVE_USERINFO', 
+        payload
+    }
+}
 
 export function saveArticle(article) {
     return { type: 'SAVE_ARTICLE', article}

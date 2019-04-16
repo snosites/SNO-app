@@ -114,6 +114,18 @@ export function savedArticles(state = [], action) {
     }
 }
 
+export function userInfo(state = {}, action) {
+    switch(action.type) {
+        case 'SAVE_USERINFO':
+            return {
+                username: action.payload.username,
+                email: action.payload.email
+            }
+        default:
+            return state
+    }
+}
+
 // ARTICLES REDUCERS //
 
 // runs every time an action is sent
