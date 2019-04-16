@@ -8,6 +8,11 @@ import { withTheme, Badge, Colors } from 'react-native-paper';
 
 const ArticleHeader = (props) => {
     const { navigation, state, theme } = props;
+    let commentNumber = navigation.getParam('commentNumber', null)
+    let comments = navigation.getParam('comments', null)
+    let article = navigation.getParam('article', null)
+    let articleId = navigation.getParam('articleId', null)
+
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
@@ -31,9 +36,11 @@ const ArticleHeader = (props) => {
                 |
             </Text>
             <TouchableOpacity
-                
+
                 onPress={() => {
-                    navigation.navigate('Comments')
+                    navigation.navigate('Comments', {
+                        comments
+                    })
                 }}
 
             >
@@ -45,11 +52,13 @@ const ArticleHeader = (props) => {
                     }}>
                     Comments
                 </Text>
-                <Badge style={{
-                    position: 'absolute',
-                    top: -10,
-                    right: -10,
-                }}>8</Badge>
+                {commentNumber &&
+                    <Badge style={{
+                        position: 'absolute',
+                        top: -10,
+                        right: -10,
+                    }}>{commentNumber}</Badge>
+                }
             </TouchableOpacity>
         </View>
     )

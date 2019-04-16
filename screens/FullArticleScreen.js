@@ -83,7 +83,10 @@ export default class FullArticleScreen extends React.Component {
                         open={this.state.fabOpen}
                         icon={this.state.fabOpen ? 'clear' : 'add'}
                         actions={[
-                            { icon: 'comment', label: 'Comment', onPress: () => console.log('Pressed Comment') },
+                            { icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
+                                    comments: article.comments
+                                })
+                            },
                             {
                                 icon: 'send', label: 'Share', onPress: () => {
                                     this._shareArticle(article)

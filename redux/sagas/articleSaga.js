@@ -16,6 +16,12 @@ function* fetchFeaturedImage(url, story) {
     }
 }
 
+function* fetchComments(url, story) {
+    const response = yield fetch(`${url}//wp-json/wp/v2/comments?post=${story.id}`);
+    const comments = yield response.json();
+    story.comments = comments
+}
+
 
 function* fetchArticles(action) {
     const { domain, category, page } = action;
@@ -25,6 +31,9 @@ function* fetchArticles(action) {
         const stories = yield response.json();
         yield all(stories.map(story => {
             return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
+        }))
+        yield all(stories.map(story => {
+            return call(fetchComments, domain, story)
         }))
         const normalizedData = normalize(stories, articleListSchema);
         yield put(receiveArticles(category, normalizedData))
