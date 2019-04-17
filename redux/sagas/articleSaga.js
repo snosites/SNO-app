@@ -19,7 +19,7 @@ function* fetchFeaturedImage(url, story) {
 }
 
 function* fetchComments(url, story) {
-    const response = yield fetch(`${url}//wp-json/wp/v2/comments?post=${story.id}`);
+    const response = yield fetch(`${url}/wp-json/wp/v2/comments?post=${story.id}`);
     const comments = yield response.json();
     story.comments = comments
     return;
@@ -28,7 +28,7 @@ function* fetchComments(url, story) {
 function* refetchComments(action) {
     const { domain, articleId } = action;
     try {
-        const response = yield fetch(`${domain}//wp-json/wp/v2/comments?post=${articleId}`);
+        const response = yield fetch(`${domain}/wp-json/wp/v2/comments?post=${articleId}`);
         const comments = yield response.json();
         yield put(updateComments({
             articleId,
@@ -41,22 +41,24 @@ function* refetchComments(action) {
 }
 
 function* addComment(action) {
+    console.log('date', String(Moment.now()));
     const { domain, articleId, username, email, comment } = action.payload;
     let objToSend = {
         author_email: email,
         author_name: username,
         content: comment,
-        date: String(Moment.now()),
+        // date: String(Moment.now()),
         post: articleId
     }
     try {
-        yield call(fetch, domain, {
+        const temp = yield call(fetch, `${domain}/wp-json/wp/v2/comments`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(objToSend),
         })
+        console.log('temp', temp)
         yield call(refetchComments, {
             domain,
             articleId

@@ -36,7 +36,6 @@ const ArticleHeader = (props) => {
                 |
             </Text>
             <TouchableOpacity
-
                 onPress={() => {
                     navigation.navigate('Comments', {
                         comments,

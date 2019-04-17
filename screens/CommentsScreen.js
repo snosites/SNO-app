@@ -18,7 +18,7 @@ import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, TextInput as PaperTextInput } from 'react-native-paper';
+import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper';
 
 import { HeaderBackButton } from 'react-navigation';
 
@@ -36,15 +36,15 @@ class CommentsScreen extends React.Component {
     state = {
         commentInput: '',
         modalVisible: false,
+        snackbarVisible: false,
         username: '',
         email: ''
     }
 
     render() {
         const { navigation, userInfo, dispatch } = this.props;
-        const { modalVisible, username, email } = this.state;
+        const { modalVisible, username, email, commentInput } = this.state;
         let comments = navigation.getParam('comments', null)
-        console.log('comments', comments)
         return (
             <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView
@@ -66,15 +66,22 @@ class CommentsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 60, flex: 1, fontSize: 19 }}
                                 placeholder="Write a comment"
-                                onSubmitEditing={this._addComment}
+                                onSubmitEditing={() => {
+                                    if (!userInfo.username) {
+                                        this._showModal();
+                                    } else {
+                                        this._addComment();
+                                    }
+                                }}
                                 returnKeyType='send'
+                                value={commentInput}
                                 onChangeText={(text) => this.setState({ commentInput: text })}
                             />
                             <View style={styles.sendContainer}>
                                 <TouchableOpacity
                                     style={styles.sendContainer}
                                     onPress={() => {
-                                        if(!userInfo.username) {
+                                        if (!userInfo.username) {
                                             this._showModal();
                                         } else {
                                             this._addComment();
@@ -101,7 +108,7 @@ class CommentsScreen extends React.Component {
                         <View style={{ flex: 1, alignItems: 'center' }}>
                             <PaperTextInput
                                 label='Username'
-                                theme={{ roundness: 7 }}
+                                theme={{ roundness: 10 }}
                                 style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
                                 placeholder='This is what will display publicly'
                                 mode='outlined'
@@ -113,37 +120,50 @@ class CommentsScreen extends React.Component {
                                 placeholder='We need this for verification purposes'
                                 keyboardType='email-address'
                                 style={{ width: 300, borderRadius: 10 }}
-                                theme={{ roundness: 7 }}
+                                theme={{ roundness: 10 }}
                                 mode='outlined'
                                 value={email}
                                 onChangeText={text => this.setState({ email: text })}
                             />
                             <View style={{ flexDirection: 'row' }}>
-                                <Button 
-                                    mode="contained" 
-                                    theme={{ roundness: 7 }}
-                                    style={{ paddingHorizontal: 30, margin: 20, backgroundColor: '#f44336' }} 
+                                <Button
+                                    mode="contained"
+                                    theme={{ roundness: 10 }}
+                                    style={{ paddingHorizontal: 20, margin: 20, backgroundColor: '#f44336', fontSize: 20 }}
                                     onPress={this._hideModal}
                                 >
-                                    <Text>Cancel</Text>
+                                    Cancel
                                 </Button>
-                                <Button 
-                                    mode="contained" 
-                                    theme={{ roundness: 7 }}
-                                    style={{ paddingHorizontal: 30, margin: 20}}
+                                <Button
+                                    mode="contained"
+                                    theme={{ roundness: 10 }}
+                                    style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
                                     onPress={() => {
-                                    dispatch(saveUserInfo({
-                                        username,
-                                        email
-                                    }))
-                                    this._hideModal();
-                                }}>
-                                    <Text>Save</Text>
+                                        dispatch(saveUserInfo({
+                                            username,
+                                            email
+                                        }))
+                                        this._hideModal();
+                                    }}>
+                                    Save
                                 </Button>
                             </View>
                         </View>
                     </SafeAreaView>
                 </Modal>
+                <Snackbar
+                    visible={this.state.snackbarVisible}
+                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    duration={3000}
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            this.setState({ snackbarVisible: false })
+                        },
+                    }}
+                >
+                    Success!  Your comment is awaiting review
+                </Snackbar>
             </View>
         )
     }
@@ -152,16 +172,18 @@ class CommentsScreen extends React.Component {
     _hideModal = () => this.setState({ modalVisible: false });
 
     _addComment = () => {
-        const { activeDomain, userInfo, articleId, dispatch } = this.props;
+        const { activeDomain, userInfo, dispatch, navigation } = this.props;
+        const articleId = navigation.getParam('articleId', null);
         dispatch(addComment({
-            domain: activeDomain.url, 
-            articleId, 
-            username: userInfo.username, 
-            email: userInfo.email, 
+            domain: activeDomain.url,
+            articleId,
+            username: userInfo.username,
+            email: userInfo.email,
             comment: this.state.commentInput
         }))
         this.setState({
-            commentInput: ''
+            commentInput: '',
+            snackbarVisible: true
         })
     }
 
@@ -172,8 +194,10 @@ class CommentsScreen extends React.Component {
                     <Image
                         source={{ uri: item.author_avatar_urls[48] }}
                         style={{
-                            width: 48,
-                            height: 48,
+                            width: 50,
+                            height: 50,
+                            resizeMode: 'cover',
+                            borderRadius: 25
                         }}
                     />
                     <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
@@ -224,11 +248,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     commentInfoContainer: {
-        padding: 20
+        padding: 15
     },
     authorContainer: {
         flexDirection: 'row',
-        paddingBottom: 10
+        paddingBottom: 8
     },
 })
 
