@@ -6,9 +6,11 @@ import {
     View,
     Image,
     ActivityIndicator,
-    AsyncStorage
+    AsyncStorage,
+    TextInput
 } from 'react-native';
-// import Colors from '../constants/Colors';
+import { connect } from 'react-redux';
+import { saveUserInfo } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar } from 'react-native-paper';
 import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
 
@@ -35,21 +37,105 @@ const NotificationIcon = ({ item }) => (
     />
 )
 
-export default class SettingsScreen extends React.Component {
+class SettingsScreen extends React.Component {
     static navigationOptions = {
         title: 'Settings',
     };
 
     state = {
         snackbarVisible: false,
+        editingUsername: false,
+        editingEmail: false,
+        username: '',
+        email: ''
     };
 
+    componentDidMount() {
+        this.setState({
+            username: this.props.userInfo.username,
+            email: this.props.userInfo.email
+        })
+    }
+
     render() {
-        const { snackbarVisible } = this.state;
-        const domains = this.props.domains;
+        const { snackbarVisible, editingUsername, editingEmail, username, email } = this.state;
+        const { domains, userInfo, dispatch } = this.props;
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <View>
+                    <List.Section>
+                        <List.Subheader>User Preferences</List.Subheader>
+                        {editingUsername ?
+                            <TextInput
+                                style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
+                                onBlur={(text) => {
+                                    dispatch(saveUserInfo({
+                                        username: username,
+                                        email: email
+                                    }))
+                                    this.setState({
+                                        editingUsername: false,
+                                    })
+                                }}
+                                autoFocus={true}
+                                returnKeyType='done'
+                                value={username}
+                                onChangeText={(text) => this.setState({ username: text })}
+                            />
+                            :
+                            <List.Item
+                                title={userInfo.username || 'Not Set'}
+                                description={'Username'}
+                                style={styles.inactiveItem}
+                                right={() => {
+                                    return (
+                                        <IconButton
+                                            icon="create"
+                                            color={Colors.grey300}
+                                            size={28}
+                                            onPress={() => this._handleUserInfoEdit('username')}
+                                        />
+                                    )
+                                }}
+                            />
+                        }
+                        {
+                            editingEmail ?
+                                <TextInput
+                                    style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
+                                    onBlur={() => {
+                                        dispatch(saveUserInfo({
+                                            username: username,
+                                            email: email
+                                        }))
+                                        this.setState({
+                                            editingEmail: false,
+                                        })
+                                    }}
+                                    autoFocus={true}
+                                    returnKeyType='done'
+                                    value={email}
+                                    onChangeText={(text) => this.setState({ email: text })}
+                                />
+                                :
+                                <List.Item
+                                    title={userInfo.email || 'Not Set'}
+                                    description={'email'}
+                                    style={styles.inactiveItem}
+                                    right={() => {
+                                        return (
+                                            <IconButton
+                                                icon="create"
+                                                color={Colors.grey300}
+                                                size={28}
+                                                onPress={() => this._handleUserInfoEdit('email')}
+                                            />
+                                        )
+                                    }}
+                                />
+                        }
+                    </List.Section>
+                    <Divider />
                     <List.Section>
                         <List.Subheader>Saved Organizations</List.Subheader>
                         {domains.map(item => {
@@ -72,7 +158,7 @@ export default class SettingsScreen extends React.Component {
                                             <IconButton
                                                 icon="delete"
                                                 color={Colors.red700}
-                                                size={20}
+                                                size={28}
                                                 onPress={() => this._handleDeleteOrg(item.id)}
                                             />
                                         )
@@ -103,7 +189,7 @@ export default class SettingsScreen extends React.Component {
                                             <Switch
                                                 style={{ margin: 10 }}
                                                 value={item.notifications}
-                                                onValueChange={() => {this._toggleNotifications(item.id)}
+                                                onValueChange={() => { this._toggleNotifications(item.id) }
                                                 }
                                             />
                                         )
@@ -140,6 +226,19 @@ export default class SettingsScreen extends React.Component {
         })
     }
 
+    _handleUserInfoEdit = (userPref) => {
+        if (userPref === 'username') {
+            this.setState({
+                editingUsername: true
+            })
+        }
+        else if (userPref === 'email') {
+            this.setState({
+                editingEmail: true
+            })
+        }
+    }
+
     _toggleNotifications = (orgId) => {
         this.props.dispatch(toggleNotifications(orgId))
     }
@@ -163,3 +262,10 @@ const styles = StyleSheet.create({
         paddingLeft: 60
     }
 })
+
+const mapStateToProps = store => ({
+    domains: store.domains,
+    userInfo: store.userInfo
+})
+
+export default connect(mapStateToProps)(SettingsScreen)

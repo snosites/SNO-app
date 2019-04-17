@@ -10,7 +10,8 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     Modal,
-    SafeAreaView
+    SafeAreaView,
+    Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
 import { saveUserInfo, addComment } from '../redux/actions/actions';
@@ -81,6 +82,7 @@ class CommentsScreen extends React.Component {
                                 <TouchableOpacity
                                     style={styles.sendContainer}
                                     onPress={() => {
+                                        Keyboard.dismiss();
                                         if (!userInfo.username) {
                                             this._showModal();
                                         } else {

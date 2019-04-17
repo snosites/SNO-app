@@ -20,7 +20,7 @@ const middlewareList = __DEV__ ? [sagaMiddleware, logger] : [sagaMiddleware]
 const persistConfig = {
     key: 'primary',
     storage,
-    whitelist: ['domains', 'savedArticles'],
+    whitelist: ['domains', 'savedArticles', 'userInfo'],
     debug: true,
     timeout: 10000,
     stateReconciler: autoMergeLevel2

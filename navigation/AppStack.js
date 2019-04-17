@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
-import { connect } from 'react-redux';
+
 
 import TabBarIcon from '../components/TabBarIcon';
 import LinksScreen from '../screens/LinksScreen';
@@ -55,13 +55,8 @@ BookmarkStack.navigationOptions = {
     ),
 };
 
-// give settings screen access to redux store
-const mapStateToProps = store => ({
-    domains: store.domains
-})
-
 const SettingsStack = createStackNavigator({
-    Settings: connect(mapStateToProps)(SettingsScreen),
+    Settings: SettingsScreen,
 });
 
 SettingsStack.navigationOptions = {
