@@ -1,6 +1,8 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestArticles, receiveArticles } from '../actions/actions';
+import { requestArticles, receiveArticles, updateComments } from '../actions/actions';
+
+import Moment from 'moment';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
@@ -20,6 +22,49 @@ function* fetchComments(url, story) {
     const response = yield fetch(`${url}//wp-json/wp/v2/comments?post=${story.id}`);
     const comments = yield response.json();
     story.comments = comments
+    return;
+}
+
+function* refetchComments(action) {
+    const { domain, articleId } = action;
+    try {
+        const response = yield fetch(`${domain}//wp-json/wp/v2/comments?post=${articleId}`);
+        const comments = yield response.json();
+        yield put(updateComments({
+            articleId,
+            comments
+        }))
+    }
+    catch (err) {
+        console.log('error refetching comments in saga', err)
+    }
+}
+
+function* addComment(action) {
+    const { domain, articleId, username, email, comment } = action.payload;
+    let objToSend = {
+        author_email: email,
+        author_name: username,
+        content: comment,
+        date: String(Moment.now()),
+        post: articleId
+    }
+    try {
+        yield call(fetch, domain, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(objToSend),
+        })
+        yield call(refetchComments, {
+            domain,
+            articleId
+        })
+    }
+    catch (err) {
+        console.log('error adding comment in saga', err)
+    }
 }
 
 
@@ -45,13 +90,13 @@ function* fetchArticles(action) {
 
 function shouldFetchArticles(articles) {
     // if category doesnt exist fetch
-    if(!articles){
+    if (!articles) {
         return true
     }
     // if already fetching dont fetch
-    else if(articles.isFetching){
+    else if (articles.isFetching) {
         return false
-    } 
+    }
     // if didInvalidate is true then fetch
     else {
         return articles.didInvalidate
@@ -60,7 +105,7 @@ function shouldFetchArticles(articles) {
 
 function shouldFetchMoreArticles(articles) {
     // if page is not at max fetch more
-    if(articles.page !== 'max') {
+    if (articles.page !== 'max') {
         return true
     } else {
         return false
@@ -73,7 +118,7 @@ function* fetchArticlesIfNeeded(action) {
     const { domain, category } = action.payload;
     const articlesByCategory = yield select(getArticlesByCategory);
     const articles = articlesByCategory[category];
-    if(shouldFetchArticles(articles)) {
+    if (shouldFetchArticles(articles)) {
         yield call(fetchArticles, {
             domain,
             category,
@@ -86,7 +131,7 @@ function* fetchMoreArticlesIfNeeded(action) {
     const { domain, category } = action.payload;
     const articlesByCategory = yield select(getArticlesByCategory);
     const articles = articlesByCategory[category];
-    if(shouldFetchMoreArticles(articles)) {
+    if (shouldFetchMoreArticles(articles)) {
         yield call(fetchArticles, {
             domain,
             category,
@@ -98,6 +143,8 @@ function* fetchMoreArticlesIfNeeded(action) {
 function* articleSaga() {
     yield takeLatest('FETCH_ARTICLES_IF_NEEDED', fetchArticlesIfNeeded);
     yield takeLatest('FETCH_MORE_ARTICLES_IF_NEEDED', fetchMoreArticlesIfNeeded);
+    yield takeLatest('REFETCH_COMMENTS', refetchComments);
+    yield takeLatest('ADD_COMMENT', addComment)
 
 }
 

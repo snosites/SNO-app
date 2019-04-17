@@ -1,4 +1,6 @@
 import merge from 'lodash/merge';
+import assign from 'lodash/assign';
+
 import union from 'lodash/union';
 
 import {
@@ -132,6 +134,9 @@ export function userInfo(state = {}, action) {
 export function entities(state = { articles: {} }, action) {
     if (action.response && action.response.entities) {
         return merge({}, state, action.response.entities)
+    }
+    else if (action.type === 'UPDATE_COMMENTS') {
+        return merge({}, state, {[action.payload.articleId]: {comments: action.payload.comments}})
     }
     return state
 }

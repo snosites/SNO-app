@@ -39,7 +39,8 @@ const ArticleHeader = (props) => {
 
                 onPress={() => {
                     navigation.navigate('Comments', {
-                        comments
+                        comments,
+                        articleId
                     })
                 }}
 

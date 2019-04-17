@@ -13,7 +13,7 @@ import {
     SafeAreaView
 } from 'react-native';
 import { connect } from 'react-redux';
-import { saveUserInfo } from '../redux/actions/actions';
+import { saveUserInfo, addComment } from '../redux/actions/actions';
 import Moment from 'moment';
 import HTML from 'react-native-render-html';
 import { CustomArticleHeader } from '../components/ArticleHeader';
@@ -66,7 +66,7 @@ class CommentsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 60, flex: 1, fontSize: 19 }}
                                 placeholder="Write a comment"
-                                onSubmitEditing={() => console.log('pressed', this.state.commentInput)}
+                                onSubmitEditing={this._addComment}
                                 returnKeyType='send'
                                 onChangeText={(text) => this.setState({ commentInput: text })}
                             />
@@ -77,7 +77,7 @@ class CommentsScreen extends React.Component {
                                         if(!userInfo.username) {
                                             this._showModal();
                                         } else {
-                                            console.log('submitted')
+                                            this._addComment();
                                         }
                                     }}
                                 >
@@ -101,6 +101,7 @@ class CommentsScreen extends React.Component {
                         <View style={{ flex: 1, alignItems: 'center' }}>
                             <PaperTextInput
                                 label='Username'
+                                theme={{ roundness: 7 }}
                                 style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
                                 placeholder='This is what will display publicly'
                                 mode='outlined'
@@ -112,16 +113,25 @@ class CommentsScreen extends React.Component {
                                 placeholder='We need this for verification purposes'
                                 keyboardType='email-address'
                                 style={{ width: 300, borderRadius: 10 }}
+                                theme={{ roundness: 7 }}
                                 mode='outlined'
                                 value={email}
                                 onChangeText={text => this.setState({ email: text })}
                             />
                             <View style={{ flexDirection: 'row' }}>
-                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10, backgroundColor: '#f44336' }} onPress={this._hideModal}>
+                                <Button 
+                                    mode="contained" 
+                                    theme={{ roundness: 7 }}
+                                    style={{ paddingHorizontal: 30, margin: 20, backgroundColor: '#f44336' }} 
+                                    onPress={this._hideModal}
+                                >
                                     <Text>Cancel</Text>
                                 </Button>
-                                <Button mode="contained" style={{ paddingHorizontal: 30, margin: 20, borderRadius: 10 }} 
-                                onPress={() => {
+                                <Button 
+                                    mode="contained" 
+                                    theme={{ roundness: 7 }}
+                                    style={{ paddingHorizontal: 30, margin: 20}}
+                                    onPress={() => {
                                     dispatch(saveUserInfo({
                                         username,
                                         email
@@ -141,6 +151,20 @@ class CommentsScreen extends React.Component {
     _showModal = () => this.setState({ modalVisible: true });
     _hideModal = () => this.setState({ modalVisible: false });
 
+    _addComment = () => {
+        const { activeDomain, userInfo, articleId, dispatch } = this.props;
+        dispatch(addComment({
+            domain: activeDomain.url, 
+            articleId, 
+            username: userInfo.username, 
+            email: userInfo.email, 
+            comment: this.state.commentInput
+        }))
+        this.setState({
+            commentInput: ''
+        })
+    }
+
     _renderItem = ({ item, index }) => {
         return (
             <View style={styles.commentInfoContainer}>
@@ -150,7 +174,6 @@ class CommentsScreen extends React.Component {
                         style={{
                             width: 48,
                             height: 48,
-                            // marginRight: 20
                         }}
                     />
                     <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
@@ -211,6 +234,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => {
     return {
+        activeDomain: state.activeDomain,
         userInfo: state.userInfo
     }
 }

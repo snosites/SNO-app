@@ -176,6 +176,30 @@ export function fetchRecentArticlesFailure(error) {
     }
 }
 
+// COMMENTS
+
+export function updateComments(payload) {
+    return {
+        type: 'UPDATE_COMMENTS',
+        payload
+    }
+}
+
+export function refetchComments(domain, articleId) {
+    return {
+        type: 'REFETCH_COMMENTS',
+        domain,
+        articleId
+    }
+}
+
+export function addComment(payload) {
+    return {
+        type: 'ADD_COMMENT',
+        payload
+    }
+}
+
 export function saveUserInfo(payload) {
     return {
         type: 'SAVE_USERINFO', 
