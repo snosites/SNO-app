@@ -8,7 +8,7 @@ import { withTheme, Badge, Colors } from 'react-native-paper';
 
 const ArticleHeader = (props) => {
     const { navigation, state, theme } = props;
-    let commentNumber = navigation.getParam('commentNumber', null)
+    let commentNumber = navigation.getParam('commentNumber', 0)
     let comments = navigation.getParam('comments', null)
     let article = navigation.getParam('article', null)
     let articleId = navigation.getParam('articleId', null)
@@ -42,7 +42,6 @@ const ArticleHeader = (props) => {
                         articleId
                     })
                 }}
-
             >
                 <Text
                     style={{
@@ -52,12 +51,14 @@ const ArticleHeader = (props) => {
                     }}>
                     Comments
                 </Text>
-                {commentNumber &&
+                {commentNumber ?
                     <Badge style={{
                         position: 'absolute',
                         top: -10,
                         right: -10,
                     }}>{commentNumber}</Badge>
+                    :
+                    null
                 }
             </TouchableOpacity>
         </View>

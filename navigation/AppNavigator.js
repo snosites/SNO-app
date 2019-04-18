@@ -19,6 +19,10 @@ import { setActiveDomain } from '../redux/actions/actions';
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
         super(props);
+        
+    }
+
+    componentDidMount() {
         this._getDomainAsync();
     }
 
@@ -34,6 +38,7 @@ class AuthLoadingScreen extends React.Component {
     }
 
     _getDomainAsync = async () => {
+        console.log('in get dom async')
         const activeDomain = this.props.domains.filter(domain => {
             if(domain.active){
                 return domain

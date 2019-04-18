@@ -157,7 +157,11 @@ class SelectScreen extends React.Component {
                 id: orgId,
                 name: item.name,
                 active: true,
-                notifications: false,
+                notifications: {
+                    all: false,
+                    categories: []
+                },
+                notificationCategories: {},
                 url: String(domain)
             }))
             // set new domain as active

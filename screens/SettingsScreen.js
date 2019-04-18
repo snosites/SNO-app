@@ -59,10 +59,10 @@ class SettingsScreen extends React.Component {
 
     render() {
         const { snackbarVisible, editingUsername, editingEmail, username, email } = this.state;
-        const { domains, userInfo, dispatch } = this.props;
+        const { domains, userInfo, menus, dispatch } = this.props;
         return (
-            <ScrollView contentContainerStyle={styles.container}>
-                <View>
+            <ScrollView style={styles.container}>
+                <View style={{flex: 1}}>
                     <List.Section>
                         <List.Subheader>User Preferences</List.Subheader>
                         {editingUsername ?
@@ -177,24 +177,43 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {domains.map(item => {
+                        {domains.map(domain => {
                             return (
-                                <List.Item
-                                    key={item.id}
-                                    style={{ paddingVertical: 0 }}
-                                    title={item.name}
-                                    left={() => <NotificationIcon item={item} />}
+                                <List.Accordion
+                                    key={domain.id}
+                                    title={domain.name}
+                                    left={props => <List.Icon {...props} icon="expand-more" />}
                                     right={() => {
                                         return (
                                             <Switch
                                                 style={{ margin: 10 }}
-                                                value={item.notifications}
-                                                onValueChange={() => { this._toggleNotifications(item.id) }
-                                                }
+                                                // value={item.notifications}
+                                                value={true}
+                                                // onValueChange={() => { this._toggleNotifications('all') }
+                                                // }
                                             />
                                         )
                                     }}
-                                />
+                                >
+                                    {menus.items.map(item => (
+                                        <List.Item
+                                        key={item.ID}
+                                        style={{ paddingVertical: 0 }}
+                                        title={item.title}
+                                        left={() => <NotificationIcon item={item} />}
+                                        right={() => {
+                                            return (
+                                                <Switch
+                                                    style={{ margin: 10 }}
+                                                    value={false}
+                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
+                                                    // }
+                                                />
+                                            )
+                                        }}
+                                    />
+                                    ))}
+                                </List.Accordion>
                             )
                         })}
                     </List.Section>
@@ -256,7 +275,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
     },
     inactiveItem: {
         paddingLeft: 60
@@ -265,7 +284,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = store => ({
     domains: store.domains,
-    userInfo: store.userInfo
+    userInfo: store.userInfo,
+    menus: store.menus
 })
 
 export default connect(mapStateToProps)(SettingsScreen)

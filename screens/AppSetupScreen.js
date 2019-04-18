@@ -26,6 +26,7 @@ class AppSetupScreen extends React.Component {
     componentDidUpdate() {
         const { menus, articlesByCategory, navigation } = this.props;
         if (menus.isLoaded) {
+            
             if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
                 console.log('finished loading menus and articles')
                 navigation.navigate('MainApp');

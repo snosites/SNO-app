@@ -16,6 +16,8 @@ import {
     TouchableRipple,
     Text as PaperText,
     Colors,
+    Divider,
+    Searchbar
 } from 'react-native-paper';
 
 import { fetchArticlesIfNeeded } from '../redux/actions/actions';
@@ -62,6 +64,11 @@ class CustomDrawerComponent extends React.Component {
                                 {activeDomain.name}
                             </Text>
                         }
+                        <Searchbar
+                            placeholder="Search Articles"
+                            // onChangeText={query => { this.setState({ firstQuery: query }); }}
+                            // value={firstQuery}
+                        />
                         <Drawer.Section title="Categories">
                             {this.props.menus.items.map((item, index) => {
                                 return (
@@ -80,6 +87,7 @@ class CustomDrawerComponent extends React.Component {
                                 )
                             })}
                         </Drawer.Section>
+                        
                     </ScrollView>
                 </SafeAreaView>
             </View>
@@ -98,8 +106,8 @@ class CustomDrawerComponent extends React.Component {
                 activeMenuIndex: index
             })
         }
-        else if(item.object === 'page') {
-            if(item.template === 'snostaff.php'){
+        else if (item.object === 'page') {
+            if (item.template === 'snostaff.php') {
                 this.props.navigation.navigate('Staff', {
                     menuTitle: item.title,
                     activeYears: item.active_years

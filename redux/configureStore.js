@@ -11,7 +11,6 @@ import rootSaga from './sagas/rootSaga';
 import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
-
 const sagaMiddleware = createSagaMiddleWare();
 
 const middlewareList = __DEV__ ? [sagaMiddleware, logger] : [sagaMiddleware]
@@ -27,7 +26,6 @@ const persistConfig = {
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
-
 
 
 export const store = createStore(persistedReducer, {}, applyMiddleware(...middlewareList));

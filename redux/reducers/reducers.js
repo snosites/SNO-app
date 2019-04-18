@@ -1,7 +1,7 @@
 import merge from 'lodash/merge';
-import assign from 'lodash/assign';
-
 import union from 'lodash/union';
+import defaults from 'lodash/defaults';
+import keyBy from 'lodash/keyBy';
 
 import {
     ADD_DOMAIN,
@@ -40,6 +40,33 @@ export function domains(state = [], action) {
                     return {
                         ...domain,
                         notifications: !domain.notifications
+                    }
+                }
+                return {
+                    ...domain,
+                }
+            })
+        case 'SET_NOTIFICATION_CATEGORIES':
+            return state.map(domain => {
+                
+                  console.log('keyby', menusObj)
+                if (domain.url === action.payload.url) {
+                    let menusObj = keyBy(action.payload.menus, function(o) {
+                        return o.ID;
+                      });
+                    // get rid of categories that arent in menu anymore
+                    let pickedObj = pick(domain.notifications.categories, action.payload.categories);
+                    // let newCategories = mapValues(action.payload.categories, function(o) { return {o.age}; });
+                    // // add any categories that arent there
+                    // let mergedObj = defaults(pickedObj, action.payload.categories);
+                    return {
+                        ...domain,
+                        notifications: {
+                            ...domain.notifications,
+                            categories: {
+
+                            }
+                        }
                     }
                 }
                 return {
@@ -117,7 +144,7 @@ export function savedArticles(state = [], action) {
 }
 
 export function userInfo(state = {}, action) {
-    switch(action.type) {
+    switch (action.type) {
         case 'SAVE_USERINFO':
             return {
                 username: action.payload.username,
@@ -136,7 +163,7 @@ export function entities(state = { articles: {} }, action) {
         return merge({}, state, action.response.entities)
     }
     else if (action.type === 'UPDATE_COMMENTS') {
-        return merge({}, state, {articles: {[action.payload.articleId]: {comments: action.payload.comments}}})
+        return merge({}, state, { articles: { [action.payload.articleId]: { comments: action.payload.comments } } })
     }
     return state
 }
@@ -166,10 +193,10 @@ function articles(
             if (action.response.result.length == 10) {
                 updatedPage = state.page + 1
             };
-            if(state.didInvalidate){
+            if (state.didInvalidate) {
                 newItems = action.response.result;
             }
-            else if(!state.didInvalidate) {
+            else if (!state.didInvalidate) {
                 newItems = union(state.items, action.response.result);
             }
             return Object.assign({}, state, {
@@ -223,10 +250,10 @@ export function recentArticles(state = {
             if (action.response.result.length == 10) {
                 updatedPage = state.page + 1
             };
-            if(state.didInvalidate){
+            if (state.didInvalidate) {
                 newItems = action.response.result;
             }
-            else if(!state.didInvalidate) {
+            else if (!state.didInvalidate) {
                 newItems = union(state.items, action.response.result);
             }
             return Object.assign({}, state, {

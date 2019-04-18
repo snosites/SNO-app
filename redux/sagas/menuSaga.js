@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories } from '../actions/actions';
 
 function* fetchMenus(action){
     const { domain } = action;
@@ -8,6 +8,10 @@ function* fetchMenus(action){
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         const menus = yield response.json();
+        // yield put(setNotificationCategories({
+        //     url: domain,
+        //     menus
+        // }))
         const [result, result2] = yield all([
             call(fetch, `${domain}/wp-json/custom/header_image?type=header-image-small`),
             call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`)

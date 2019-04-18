@@ -29,6 +29,13 @@ export function setActiveDomain(domainObj) {
 
 // NOTIFICATIONS
 
+export function setNotificationCategories(payload) {
+    return {
+        type: 'SET_NOTIFICATION_CATEGORIES',
+        payload
+    }
+}
+
 export function toggleNotifications(id) {
     return { type: TOGGLE_NOTIFICATIONS, id}
 }
