@@ -36,8 +36,11 @@ export function setNotificationCategories(payload) {
     }
 }
 
-export function toggleNotifications(id) {
-    return { type: TOGGLE_NOTIFICATIONS, id}
+export function saveTokenId(tokenId) {
+    return {
+        type: 'SAVE_TOKEN_ID',
+        tokenId
+    }
 }
 
 // ARTICLE ACTIONS
@@ -97,10 +100,11 @@ export function fetchArticlesFailure(category, error) {
 
 // MENU ACTIONS
 
-export function fetchMenus(domain) {
+export function fetchMenus(domain, domainId) {
     return {
         type: 'FETCH_MENUS',
-        domain
+        domain,
+        domainId
     }
 }
 

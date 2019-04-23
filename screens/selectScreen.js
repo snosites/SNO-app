@@ -91,7 +91,7 @@ class SelectScreen extends React.Component {
                 .then(filteredArr => {
                     return filteredArr.filter(item => {
                         for (let field of item.fields) {
-                            if (field.definition.id == 309073) {
+                            if (field.definition.id == 534081) {
                                 return true;
                             }
                         }
@@ -157,11 +157,7 @@ class SelectScreen extends React.Component {
                 id: orgId,
                 name: item.name,
                 active: true,
-                notifications: {
-                    all: false,
-                    categories: []
-                },
-                notificationCategories: {},
+                notificationCategories: [],
                 url: String(domain)
             }))
             // set new domain as active

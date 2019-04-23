@@ -83,7 +83,7 @@ class CommentsScreen extends React.Component {
                                     style={styles.sendContainer}
                                     onPress={() => {
                                         Keyboard.dismiss();
-                                        if (!userInfo.username) {
+                                        if (!userInfo.username || userInfo.email) {
                                             this._showModal();
                                         } else {
                                             this._addComment();

@@ -30,13 +30,6 @@ const ActiveDomainIcon = () => (
     />
 )
 
-const NotificationIcon = ({ item }) => (
-    <List.Icon
-        icon={`notifications${!item.notifications ? '-off' : ''}`}
-        color={Colors.yellow600}
-    />
-)
-
 class SettingsScreen extends React.Component {
     static navigationOptions = {
         title: 'Settings',
@@ -182,25 +175,28 @@ class SettingsScreen extends React.Component {
                                 <List.Accordion
                                     key={domain.id}
                                     title={domain.name}
-                                    left={props => <List.Icon {...props} icon="expand-more" />}
-                                    right={() => {
-                                        return (
-                                            <Switch
-                                                style={{ margin: 10 }}
-                                                // value={item.notifications}
-                                                value={true}
-                                                // onValueChange={() => { this._toggleNotifications('all') }
-                                                // }
-                                            />
-                                        )
-                                    }}
+                                    left={props => <List.Icon {...props} icon="folder-open" />}
                                 >
-                                    {menus.items.map(item => (
+                                    <List.Item
+                                        style={{ paddingVertical: 0, paddingLeft: 60}}
+                                        titleStyle={{fontWeight: 'bold'}}
+                                        title={'All Notifications'}
+                                        right={() => {
+                                            return (
+                                                <Switch
+                                                    style={{ margin: 10 }}
+                                                    value={false}
+                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
+                                                    // }
+                                                />
+                                            )
+                                        }}
+                                    />
+                                    {domain.notificationCategories.map(item => (
                                         <List.Item
-                                        key={item.ID}
-                                        style={{ paddingVertical: 0 }}
-                                        title={item.title}
-                                        left={() => <NotificationIcon item={item} />}
+                                        key={item.id}
+                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                        title={item.category_name}
                                         right={() => {
                                             return (
                                                 <Switch

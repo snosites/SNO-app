@@ -1,7 +1,5 @@
 import merge from 'lodash/merge';
 import union from 'lodash/union';
-import defaults from 'lodash/defaults';
-import keyBy from 'lodash/keyBy';
 
 import {
     ADD_DOMAIN,
@@ -12,7 +10,6 @@ import FullArticleScreen from '../../screens/FullArticleScreen';
 
 export function domains(state = [], action) {
     switch (action.type) {
-
         case ADD_DOMAIN:
             return [
                 ...state,
@@ -34,49 +31,23 @@ export function domains(state = [], action) {
                     active: false
                 }
             })
-        case 'TOGGLE_NOTIFICATIONS':
-            return state.map(domain => {
-                if (domain.id === action.id) {
-                    return {
-                        ...domain,
-                        notifications: !domain.notifications
-                    }
-                }
-                return {
-                    ...domain,
-                }
-            })
         case 'SET_NOTIFICATION_CATEGORIES':
             return state.map(domain => {
-                
-                  console.log('keyby', menusObj)
-                if (domain.url === action.payload.url) {
-                    let menusObj = keyBy(action.payload.menus, function(o) {
-                        return o.ID;
-                      });
-                    // get rid of categories that arent in menu anymore
-                    let pickedObj = pick(domain.notifications.categories, action.payload.categories);
-                    // let newCategories = mapValues(action.payload.categories, function(o) { return {o.age}; });
-                    // // add any categories that arent there
-                    // let mergedObj = defaults(pickedObj, action.payload.categories);
+                if (domain.id === action.payload.id) {
                     return {
                         ...domain,
-                        notifications: {
-                            ...domain.notifications,
-                            categories: {
-
-                            }
-                        }
+                        notificationCategories: action.payload.notificationCategories
                     }
                 }
                 return {
-                    ...domain,
+                    ...domain
                 }
             })
         default:
             return state
     }
 }
+
 
 export function activeDomain(state = {}, action) {
     switch (action.type) {
@@ -143,12 +114,23 @@ export function savedArticles(state = [], action) {
     }
 }
 
-export function userInfo(state = {}, action) {
+export function userInfo(state = {
+    notifications: {
+        all: false,
+        categories:[]
+    }
+}, action) {
     switch (action.type) {
         case 'SAVE_USERINFO':
             return {
+                ...state,
                 username: action.payload.username,
-                email: action.payload.email
+                email: action.payload.email,
+            }
+        case 'SAVE_TOKEN_ID':
+            return {
+                ...state,
+                tokenId: action.tokenId
             }
         default:
             return state
