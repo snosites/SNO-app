@@ -10,8 +10,9 @@ import {
     TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
+import { persistor } from '../redux/configureStore';
 import { saveUserInfo } from '../redux/actions/actions';
-import { List, Divider, Switch, IconButton, Colors, Snackbar } from 'react-native-paper';
+import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
 import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
 
 const DeleteButton = () => (
@@ -55,7 +56,7 @@ class SettingsScreen extends React.Component {
         const { domains, userInfo, menus, dispatch } = this.props;
         return (
             <ScrollView style={styles.container}>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                     <List.Section>
                         <List.Subheader>User Preferences</List.Subheader>
                         {editingUsername ?
@@ -178,41 +179,58 @@ class SettingsScreen extends React.Component {
                                     left={props => <List.Icon {...props} icon="folder-open" />}
                                 >
                                     <List.Item
-                                        style={{ paddingVertical: 0, paddingLeft: 60}}
-                                        titleStyle={{fontWeight: 'bold'}}
+                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                        titleStyle={{ fontWeight: 'bold' }}
                                         title={'All Notifications'}
                                         right={() => {
                                             return (
                                                 <Switch
                                                     style={{ margin: 10 }}
                                                     value={false}
-                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                    // }
+                                                // onValueChange={() => { this._toggleNotifications(item.id) }
+                                                // }
                                                 />
                                             )
                                         }}
                                     />
                                     {menus.items.map((item, i) => (
                                         <List.Item
-                                        key={item.ID}
-                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                        title={item.title}
-                                        right={() => {
-                                            return (
-                                                <Switch
-                                                    style={{ margin: 10 }}
-                                                    value={i % 2 ? true : false}
+                                            key={item.ID}
+                                            style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                            title={item.title}
+                                            right={() => {
+                                                return (
+                                                    <Switch
+                                                        style={{ margin: 10 }}
+                                                        value={i % 2 ? true : false}
                                                     // onValueChange={() => { this._toggleNotifications(item.id) }
                                                     // }
-                                                />
-                                            )
-                                        }}
-                                    />
+                                                    />
+                                                )
+                                            }}
+                                        />
                                     ))}
                                 </List.Accordion>
                             )
                         })}
                     </List.Section>
+                    <View>
+                        <Button
+                            icon="delete-forever"
+                            mode="outlined"
+                            color={Colors.red700}
+                            style={{padding: 10, }}
+                            onPress={() => {
+                                persistor.purge();
+                                this.props.dispatch({
+                                    type: 'PURGE_STATE'
+                                })
+                                this.props.navigation.navigate('AuthLoading')
+                            }}
+                        >
+                            Clear All Settings
+                        </Button>
+                    </View>
                 </View>
                 <Snackbar
                     visible={snackbarVisible}
