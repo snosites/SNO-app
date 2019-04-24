@@ -192,11 +192,11 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     />
-                                    {domain.notificationCategories.map((item, i) => (
+                                    {menus.items.map((item, i) => (
                                         <List.Item
-                                        key={item.id}
+                                        key={item.ID}
                                         style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                        title={item.category_name}
+                                        title={item.title}
                                         right={() => {
                                             return (
                                                 <Switch
