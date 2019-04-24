@@ -1,12 +1,14 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories } from '../actions/actions';
-
+import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
 const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
     : `api.example.com`;
+
+const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
@@ -45,7 +47,7 @@ function* fetchMenus(action) {
             })
         })
         // if any are found
-        if(oldCategories.length > 0) {
+        if (oldCategories.length > 0) {
             console.log('found old categories', oldCategories)
             //loop through and remove them
             for (let category of oldCategories) {
@@ -69,6 +71,7 @@ function* fetchMenus(action) {
             id: domainId,
             notificationCategories: updatedDbCategories
         }))
+        yield call(checkNotificationSettings);
 
 
         const [result, result2] = yield all([
@@ -104,6 +107,8 @@ function* fetchCategoriesFromDb(action) {
         console.log('error fetching categories fromm DB', err)
     }
 }
+
+
 
 function* menuSaga() {
     yield takeLatest('FETCH_MENUS', fetchMenus);

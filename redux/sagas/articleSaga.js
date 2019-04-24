@@ -58,7 +58,6 @@ function* addComment(action) {
             },
             body: JSON.stringify(objToSend),
         })
-        console.log('temp', temp)
         yield call(refetchComments, {
             domain,
             articleId

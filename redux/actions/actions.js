@@ -43,6 +43,12 @@ export function saveTokenId(tokenId) {
     }
 }
 
+export function checkNotificationSettings() {
+    return {
+        type: 'CHECK_NOTIFICATION_SETTINGS'
+    }
+}
+
 // ARTICLE ACTIONS
 
 export function selectCategory(category) {
