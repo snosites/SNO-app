@@ -42,6 +42,13 @@ class CommentsScreen extends React.Component {
         email: ''
     }
 
+    componentDidMount() {
+        this.setState({
+            username: this.props.userInfo.username,
+            email: this.props.userInfo.email
+        })
+    }
+
     render() {
         const { navigation, userInfo, dispatch } = this.props;
         const { modalVisible, username, email, commentInput } = this.state;

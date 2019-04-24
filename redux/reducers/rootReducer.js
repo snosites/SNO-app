@@ -14,8 +14,11 @@ const rootReducer = (state, action) => {
           menus: undefined
       }
     }
+    if(action.type === 'PURGE_STATE') {
+        state = undefined
+    }
   
     return appReducer(state, action)
   }
 
-export default appReducer
+export default rootReducer

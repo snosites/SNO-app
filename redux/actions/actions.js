@@ -35,17 +35,35 @@ export function setNotificationCategories(payload) {
         payload
     }
 }
-
 export function saveTokenId(tokenId) {
     return {
         type: 'SAVE_TOKEN_ID',
         tokenId
     }
 }
-
 export function checkNotificationSettings() {
     return {
         type: 'CHECK_NOTIFICATION_SETTINGS'
+    }
+}
+
+export function fetchNotifications(payload) {
+    return {
+        type: 'FETCH_NOTIFICATIONS',
+        payload
+    }
+}
+
+export function setNotifications(notifications) {
+    return {
+        type: 'SET_NOTIFICATIONS',
+        notifications
+    }
+}
+export function addNotification(payload) {
+    return {
+        type: 'ADD_NOTIFICATION',
+        payload
     }
 }
 

@@ -10,9 +10,10 @@ import {
     TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
+import { persistor } from '../redux/configureStore';
 import { saveUserInfo } from '../redux/actions/actions';
-import { List, Divider, Switch, IconButton, Colors, Snackbar } from 'react-native-paper';
-import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
+import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
+import { toggleNotifications, changeActiveDomain, addNotification, fetchNotifications} from '../redux/actions/actions';
 
 const DeleteButton = () => (
     <IconButton
@@ -44,18 +45,24 @@ class SettingsScreen extends React.Component {
     };
 
     componentDidMount() {
+        const { userInfo, dispatch } = this.props;
         this.setState({
-            username: this.props.userInfo.username,
-            email: this.props.userInfo.email
+            username: userInfo.username,
+            email: userInfo.email
         })
+        if(userInfo.tokenId) {
+            dispatch(fetchNotifications({
+                tokenId: userInfo.tokenId
+            }))
+        }
     }
 
     render() {
         const { snackbarVisible, editingUsername, editingEmail, username, email } = this.state;
-        const { domains, userInfo, menus, dispatch } = this.props;
+        const { domains, userInfo, dispatch } = this.props;
         return (
             <ScrollView style={styles.container}>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                     <List.Section>
                         <List.Subheader>User Preferences</List.Subheader>
                         {editingUsername ?
@@ -178,36 +185,36 @@ class SettingsScreen extends React.Component {
                                     left={props => <List.Icon {...props} icon="folder-open" />}
                                 >
                                     <List.Item
-                                        style={{ paddingVertical: 0, paddingLeft: 60}}
-                                        titleStyle={{fontWeight: 'bold'}}
+                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                        titleStyle={{ fontWeight: 'bold' }}
                                         title={'All Notifications'}
                                         right={() => {
                                             return (
                                                 <Switch
                                                     style={{ margin: 10 }}
                                                     value={false}
-                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                    // }
+                                                // onValueChange={() => { this._toggleNotifications(item.id) }
+                                                // }
                                                 />
                                             )
                                         }}
                                     />
                                     {domain.notificationCategories.map(item => (
                                         <List.Item
-                                        key={item.id}
-                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                        title={item.category_name}
-                                        right={() => {
-                                            return (
-                                                <Switch
-                                                    style={{ margin: 10 }}
-                                                    value={false}
+                                            key={item.id}
+                                            style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                            title={item.category_name}
+                                            right={() => {
+                                                return (
+                                                    <Switch
+                                                        style={{ margin: 10 }}
+                                                        value={false}
                                                     // onValueChange={() => { this._toggleNotifications(item.id) }
                                                     // }
-                                                />
-                                            )
-                                        }}
-                                    />
+                                                    />
+                                                )
+                                            }}
+                                        />
                                     ))}
                                 </List.Accordion>
                             )
@@ -227,6 +234,21 @@ class SettingsScreen extends React.Component {
                 >
                     Organization Removed
                 </Snackbar>
+                <Button
+                    icon="delete-forever"
+                    mode="outlined"
+                    color={Colors.red700}
+                    style={{ padding: 10, }}
+                    onPress={() => {
+                        persistor.purge();
+                        this.props.dispatch({
+                            type: 'PURGE_STATE'
+                        })
+                        this.props.navigation.navigate('AuthLoading')
+                    }}
+                >
+                    Clear All Settings
+                </Button>
             </ScrollView>
         )
     }

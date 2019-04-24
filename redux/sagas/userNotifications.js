@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, saveTokenId } from '../actions/actions';
+import { requestMenus, saveTokenId, setNotifications } from '../actions/actions';
 
 import { Permissions, Notifications, Constants } from 'expo';
 const { manifest } = Constants;
@@ -9,22 +9,31 @@ const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts
     : `api.example.com`;
 
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
+const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
+const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 
-function* addNotification(action) {
-
-}
 
 function* fetchNotifications(action) {
-    try {
-        const domainId = action.domainId;
-        console.log('domain ID', domainId, api)
-        const response = yield call(fetch, `http://${api}/api/categories/${domainId}`)
-        const categories = yield response.json();
-        return categories;
-    }
-    catch (err) {
-        console.log('error fetching categories fromm DB', err)
-    }
+    const { tokenId } = action.payload;
+    const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
+    const notifications = yield response.json();
+    yield put(setNotifications(notifications))
+}
+
+function* addNotification(action) {
+    const {tokenId, categoryId } = action.payload;
+    yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tokenId,
+            categoryId
+        }),
+    });
+    yield call(fetchNotifications, tokenId);
 }
 
 const getUserInfo = state => state.userInfo
@@ -66,12 +75,12 @@ function* registerForPushNotifications() {
         }),
     });
     let tokenId = yield response.json();
-    yield put(saveTokenId(tokenId[0]))
+    yield put(saveTokenId(tokenId[0].id))
     return;
 }
 
 function* notificationsSaga() {
-    yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications);
+    yield takeLatest('ADD_NOTIFICATION', addNotification);
     yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
 }
 

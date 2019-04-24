@@ -132,6 +132,14 @@ export function userInfo(state = {
                 ...state,
                 tokenId: action.tokenId
             }
+        case 'SET_NOTIFICATIONS':
+            return {
+                ...state,
+                notifications: {
+                    ...state.notifications,
+                    categories: action.notifications
+                }
+            }
         default:
             return state
     }

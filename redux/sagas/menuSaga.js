@@ -71,6 +71,7 @@ function* fetchMenus(action) {
             id: domainId,
             notificationCategories: updatedDbCategories
         }))
+        // make sure push token has been stored
         yield call(checkNotificationSettings);
 
 
