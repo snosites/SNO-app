@@ -192,7 +192,7 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     />
-                                    {domain.notificationCategories.map(item => (
+                                    {domain.notificationCategories.map((item, i) => (
                                         <List.Item
                                         key={item.id}
                                         style={{ paddingVertical: 0, paddingLeft: 60 }}
@@ -201,7 +201,7 @@ class SettingsScreen extends React.Component {
                                             return (
                                                 <Switch
                                                     style={{ margin: 10 }}
-                                                    value={false}
+                                                    value={i % 2 ? true : false}
                                                     // onValueChange={() => { this._toggleNotifications(item.id) }
                                                     // }
                                                 />
