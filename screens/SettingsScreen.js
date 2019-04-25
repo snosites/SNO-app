@@ -13,7 +13,11 @@ import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
+<<<<<<< HEAD
 import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
+=======
+import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
+>>>>>>> tradeshow-demo
 
 const DeleteButton = () => (
     <IconButton
@@ -197,18 +201,30 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     />
-                                    {domain.notificationCategories.map(item => (
+                                    {menus.items.map((item, i) => (
                                         <List.Item
+<<<<<<< HEAD
                                             key={item.id}
                                             style={{ paddingVertical: 0, paddingLeft: 60 }}
                                             title={item.category_name}
+=======
+                                            key={item.ID}
+                                            style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                            title={item.title}
+>>>>>>> tradeshow-demo
                                             right={() => {
                                                 return (
                                                     <Switch
                                                         style={{ margin: 10 }}
+<<<<<<< HEAD
                                                         value={this._checkIfActive(item.id)}
                                                         onValueChange={(value) => { this._toggleNotifications(item.id, value) }
                                                         }
+=======
+                                                        value={i % 2 ? true : false}
+                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
+                                                    // }
+>>>>>>> tradeshow-demo
                                                     />
                                                 )
                                             }}
@@ -218,6 +234,23 @@ class SettingsScreen extends React.Component {
                             )
                         })}
                     </List.Section>
+                    <View>
+                        <Button
+                            icon="delete-forever"
+                            mode="outlined"
+                            color={Colors.red700}
+                            style={{padding: 10, }}
+                            onPress={() => {
+                                persistor.purge();
+                                this.props.dispatch({
+                                    type: 'PURGE_STATE'
+                                })
+                                this.props.navigation.navigate('AuthLoading')
+                            }}
+                        >
+                            Clear All Settings
+                        </Button>
+                    </View>
                 </View>
                 <Snackbar
                     visible={snackbarVisible}

@@ -9,7 +9,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel';
-
+import HTML from 'react-native-render-html';
 import Colors from '../constants/Colors';
 import TouchableItem from '../constants/TouchableItem';
 
@@ -83,7 +83,7 @@ export default class Slideshow extends React.Component {
     }
 
     _renderItem({ item, index }, parallaxProps) {
-        const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : 'Unknown';
+        const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : '';
         return (
             <TouchableOpacity
                 activeOpacity={1}
@@ -108,12 +108,25 @@ export default class Slideshow extends React.Component {
                     <View style={styles.radiusMask} />
                 </View>
                 <View style={styles.textContainer}>
-                    <Text
+                    {/* <Text
                         style={styles.title}
                         numberOfLines={2}
-                    >
-                        {item.caption ? item.caption.rendered.toUpperCase() : 'UNKNOWN'}
-                    </Text>
+                    > */}
+                    {item.caption ?
+                        <HTML
+                            html={item.caption.rendered.toUpperCase()}
+                            textSelectable={true}
+                            // onLinkPress={(e, href) => this._viewLink(href)}
+                            tagsStyles={{
+                                p: {
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                    letterSpacing: 0.5,
+                                }
+                            }}
+                        /> : null}
+                    {/* </Text> */}
                     <Text
                         style={styles.subtitle}
                         numberOfLines={2}

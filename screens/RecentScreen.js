@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
+import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
@@ -34,7 +35,7 @@ class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Recent Articles',
-            
+
         };
     };
 
@@ -52,7 +53,7 @@ class RecentScreen extends React.Component {
             () => {
                 dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
             }
-          );
+        );
     }
 
     componentDidUpdate() {
@@ -127,7 +128,21 @@ class RecentScreen extends React.Component {
                                         null
                                     }
                                     <View style={styles.storyInfo}>
-                                        <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
+                                        <HTML
+                                            html={story.title.rendered}
+                                            baseFontStyle={{ fontSize: 19 }}
+                                            customWrapper={(text) => {
+                                                return (
+                                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                                )
+                                            }}
+                                            tagsStyles={{
+                                                rawtext: {
+                                                    fontSize: 20,
+                                                    fontWeight: 'bold'
+                                                }
+                                            }}
+                                        />
                                         <View style={styles.extraInfo}>
                                             <View style={{ flex: 1 }}>
                                                 <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>

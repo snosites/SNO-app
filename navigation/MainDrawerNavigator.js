@@ -86,7 +86,7 @@ MyDrawerNavigator.navigationOptions = {
 };
 
 const HomeLoadingStack = createSwitchNavigator({
-    HomeLoading: HomeLoadingScreen,
+    // HomeLoading: HomeLoadingScreen,
     HomeMain: MyDrawerNavigator
 })
 

@@ -54,7 +54,7 @@ class CustomDrawerComponent extends React.Component {
                             <Image
                                 source={{ uri: menus.header }}
                                 style={{ width: 280, height: 70 }}
-                                resizeMode='cover'
+                                resizeMode='contain'
                             />
                             :
                             <Text

@@ -4,6 +4,8 @@ import {
     StatusBar,
     StyleSheet,
     View,
+    Dimensions,
+    Image
 } from 'react-native';
 import { DangerZone, Permissions, Notifications, Constants } from 'expo';
 
@@ -12,6 +14,8 @@ const { manifest } = Constants;
 
 import { connect } from 'react-redux';
 import { fetchArticles, fetchMenus } from '../redux/actions/actions';
+
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 class AppSetupScreen extends React.Component {
 
@@ -34,6 +38,16 @@ class AppSetupScreen extends React.Component {
     }
 
     render() {
+        const { menus } = this.props;
+        if(menus.splashScreen) {
+            return (
+                    <Image
+                        source={{ uri: menus.splashScreen }}
+                        style={{ width: viewportWidth, height: viewportHeight }}
+                        resizeMode='cover'
+                    />
+            )
+        }
         return (
             <View style={styles.rootContainer}>
                 <View style={styles.animationContainer}>

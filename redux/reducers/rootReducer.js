@@ -14,6 +14,10 @@ const rootReducer = (state, action) => {
           menus: undefined
       }
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> tradeshow-demo
     if(action.type === 'PURGE_STATE') {
         state = undefined
     }
