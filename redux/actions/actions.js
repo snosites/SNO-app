@@ -54,10 +54,11 @@ export function fetchNotifications(tokenId) {
     }
 }
 
-export function setNotifications(notifications) {
+export function setNotifications(notifications, domain) {
     return {
         type: 'SET_NOTIFICATIONS',
-        notifications
+        notifications,
+        domain
     }
 }
 export function addNotification(payload) {

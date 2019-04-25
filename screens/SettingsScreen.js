@@ -198,17 +198,16 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     />
-                                    {menus.items.map((item, i) => (
+                                    {domain.notificationCategories.map((item, i) => (
                                         <List.Item
                                             key={item.id}
                                             style={{ paddingVertical: 0, paddingLeft: 60 }}
                                             title={item.category_name}
-
                                             right={() => {
                                                 return (
                                                     <Switch
                                                         style={{ margin: 10 }}
-                                                        value={this._checkIfActive(item.id)}
+                                                        value={item.active}
                                                         onValueChange={(value) => { this._toggleNotifications(item.id, value) }
                                                         }
 
@@ -252,21 +251,6 @@ class SettingsScreen extends React.Component {
                 >
                     Organization Removed
                 </Snackbar>
-                <Button
-                    icon="delete-forever"
-                    mode="outlined"
-                    color={Colors.red700}
-                    style={{ padding: 10, }}
-                    onPress={() => {
-                        persistor.purge();
-                        this.props.dispatch({
-                            type: 'PURGE_STATE'
-                        })
-                        this.props.navigation.navigate('AuthLoading')
-                    }}
-                >
-                    Clear All Settings
-                </Button>
             </ScrollView>
         )
     }

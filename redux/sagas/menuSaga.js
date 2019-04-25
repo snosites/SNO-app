@@ -107,24 +107,24 @@ function* fetchMenus(action) {
     }
 }
 
-// function* fetchCategoriesFromDb(action) {
-//     try {
-//         const domainId = action.domainId;
-//         console.log('domain ID', domainId, api)
-//         const response = yield call(fetch, `http://${api}/api/categories/${domainId}`)
-//         const categories = yield response.json();
-//         return categories;
-//     }
-//     catch (err) {
-//         console.log('error fetching categories fromm DB', err)
-//     }
-// }
+function* fetchCategoriesFromDb(action) {
+    try {
+        const domainId = action.domainId;
+        console.log('domain ID', domainId, api)
+        const response = yield call(fetch, `http://${api}/api/categories/${domainId}`)
+        const categories = yield response.json();
+        return categories;
+    }
+    catch (err) {
+        console.log('error fetching categories fromm DB', err)
+    }
+}
 
 
 
 function* menuSaga() {
     yield takeLatest('FETCH_MENUS', fetchMenus);
-    // yield takeLatest('FETCH_CATEGORIES_FROM_DB', fetchCategoriesFromDb);
+    yield takeLatest('FETCH_CATEGORIES_FROM_DB', fetchCategoriesFromDb);
 
 }
 

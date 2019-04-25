@@ -43,6 +43,27 @@ export function domains(state = [], action) {
                     ...domain
                 }
             })
+        case 'SET_NOTIFICATIONS':
+            return state.map(domain => {
+                if (domain.id === action.domain) {
+                    return {
+                        ...domain,
+                        notificationCategories: domain.notificationCategories.map(notification => {
+                            let found = action.notifications.find(userNotification => {
+                                return notification.id === userNotification.id
+                            })
+                            if (found) {
+                                notification.active = true
+                            } else {
+                                notification.active = false
+                            }
+                        })
+                    }
+                }
+                return {
+                    ...domain
+                }
+            })
         default:
             return state
     }
@@ -118,7 +139,7 @@ export function savedArticles(state = [], action) {
 export function userInfo(state = {
     notifications: {
         all: false,
-        categories:[]
+        categories: []
     }
 }, action) {
     switch (action.type) {
@@ -133,14 +154,14 @@ export function userInfo(state = {
                 ...state,
                 tokenId: action.tokenId
             }
-        case 'SET_NOTIFICATIONS':
-            return {
-                ...state,
-                notifications: {
-                    ...state.notifications,
-                    categories: action.notifications
-                }
-            }
+        // case 'SET_NOTIFICATIONS':
+        //     return {
+        //         ...state,
+        //         notifications: {
+        //             ...state.notifications,
+        //             categories: action.notifications
+        //         }
+        //     }
         default:
             return state
     }
