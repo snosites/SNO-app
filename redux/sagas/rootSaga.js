@@ -5,6 +5,7 @@ import articleSaga from './articleSaga';
 import recentArticleSaga from './recentArticleSaga';
 import menuSaga from './menuSaga';
 import profilesSaga from './ProfilesSaga';
+import notificationsSaga from './userNotifications';
 
 export default function* rootSaga() {
     yield all([
@@ -12,6 +13,7 @@ export default function* rootSaga() {
         articleSaga(),
         recentArticleSaga(),
         menuSaga(),
-        profilesSaga()
+        profilesSaga(),
+        notificationsSaga()
     ])
 }

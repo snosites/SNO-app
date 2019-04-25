@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
-import { toggleNotifications, changeActiveDomain, addNotification, fetchNotifications} from '../redux/actions/actions';
+import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
 
 const DeleteButton = () => (
     <IconButton
@@ -50,10 +50,8 @@ class SettingsScreen extends React.Component {
             username: userInfo.username,
             email: userInfo.email
         })
-        if(userInfo.tokenId) {
-            dispatch(fetchNotifications({
-                tokenId: userInfo.tokenId
-            }))
+        if (userInfo.tokenId) {
+            dispatch(fetchNotifications(userInfo.tokenId))
         }
     }
 
@@ -208,9 +206,9 @@ class SettingsScreen extends React.Component {
                                                 return (
                                                     <Switch
                                                         style={{ margin: 10 }}
-                                                        value={false}
-                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                    // }
+                                                        value={this._checkIfActive(item.id)}
+                                                        onValueChange={(value) => { this._toggleNotifications(item.id, value) }
+                                                        }
                                                     />
                                                 )
                                             }}
@@ -253,6 +251,16 @@ class SettingsScreen extends React.Component {
         )
     }
 
+    _checkIfActive = notificationId => {
+        console.log('in check if active')
+        const { userInfo: { notifications } } = this.props;
+        let found = notifications.categories.find(notification => {
+            return notification.id === notificationId
+        })
+        if(found) {return true}
+        else {return false}
+    }
+
     _handleAddNewOrg = () => {
         this.props.navigation.navigate('Auth')
     }
@@ -276,8 +284,20 @@ class SettingsScreen extends React.Component {
         }
     }
 
-    _toggleNotifications = (orgId) => {
-        this.props.dispatch(toggleNotifications(orgId))
+    _toggleNotifications = (notificationId, value) => {
+        const { dispatch, userInfo } = this.props;
+        if(value) {
+            dispatch(addNotification({
+                tokenId: userInfo.tokenId,
+                categoryId: notificationId
+            }))
+        }
+        else {
+            dispatch(removeNotification({
+                tokenId: userInfo.tokenId,
+                categoryId: notificationId
+            }))
+        }
     }
 
     _switchDomain = (id) => {

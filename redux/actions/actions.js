@@ -47,10 +47,10 @@ export function checkNotificationSettings() {
     }
 }
 
-export function fetchNotifications(payload) {
+export function fetchNotifications(tokenId) {
     return {
         type: 'FETCH_NOTIFICATIONS',
-        payload
+        tokenId
     }
 }
 
@@ -63,6 +63,12 @@ export function setNotifications(notifications) {
 export function addNotification(payload) {
     return {
         type: 'ADD_NOTIFICATION',
+        payload
+    }
+}
+export function removeNotification(payload) {
+    return {
+        type: 'REMOVE_NOTIFICATION',
         payload
     }
 }

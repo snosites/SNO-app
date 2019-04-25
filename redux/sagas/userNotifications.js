@@ -10,18 +10,22 @@ const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts
 
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
+const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
+
 const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 
 
 function* fetchNotifications(action) {
-    const { tokenId } = action.payload;
+    const { tokenId } = action;
+    console.log('in fetch notifications', tokenId)
     const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
     const notifications = yield response.json();
     yield put(setNotifications(notifications))
 }
 
 function* addNotification(action) {
-    const {tokenId, categoryId } = action.payload;
+    const { tokenId, categoryId } = action.payload;
+    console.log('in add notification')
     yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -33,7 +37,23 @@ function* addNotification(action) {
             categoryId
         }),
     });
-    yield call(fetchNotifications, tokenId);
+    yield call(fetchNotifications, {tokenId});
+}
+
+function* removeNotification(action) {
+    const {tokenId, categoryId } = action.payload;
+    yield call(fetch, REMOVE_NOTIFICATION_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tokenId,
+            categoryId
+        }),
+    });
+    yield call(fetchNotifications, {tokenId});
 }
 
 const getUserInfo = state => state.userInfo
@@ -81,6 +101,8 @@ function* registerForPushNotifications() {
 
 function* notificationsSaga() {
     yield takeLatest('ADD_NOTIFICATION', addNotification);
+    yield takeLatest('REMOVE_NOTIFICATION', removeNotification);
+    yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications);
     yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
 }
 
