@@ -13,11 +13,8 @@ import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
-<<<<<<< HEAD
 import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
-=======
-import { toggleNotifications, changeActiveDomain, } from '../redux/actions/actions';
->>>>>>> tradeshow-demo
+
 
 const DeleteButton = () => (
     <IconButton
@@ -203,28 +200,18 @@ class SettingsScreen extends React.Component {
                                     />
                                     {menus.items.map((item, i) => (
                                         <List.Item
-<<<<<<< HEAD
                                             key={item.id}
                                             style={{ paddingVertical: 0, paddingLeft: 60 }}
                                             title={item.category_name}
-=======
-                                            key={item.ID}
-                                            style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                            title={item.title}
->>>>>>> tradeshow-demo
+
                                             right={() => {
                                                 return (
                                                     <Switch
                                                         style={{ margin: 10 }}
-<<<<<<< HEAD
                                                         value={this._checkIfActive(item.id)}
                                                         onValueChange={(value) => { this._toggleNotifications(item.id, value) }
                                                         }
-=======
-                                                        value={i % 2 ? true : false}
-                                                    // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                    // }
->>>>>>> tradeshow-demo
+
                                                     />
                                                 )
                                             }}

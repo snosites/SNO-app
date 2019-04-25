@@ -1,17 +1,1 @@
-{
-  "devToolsPort": 19002,
-  "expoServerPort": 19000,
-<<<<<<< HEAD
-  "packagerPort": 19003,
-  "packagerPid": 98997,
-  "expoServerNgrokUrl": "https://m9-9yu.tjuser23.sno-app.exp.direct",
-  "packagerNgrokUrl": "https://packager.m9-9yu.tjuser23.sno-app.exp.direct",
-  "ngrokPid": 99022
-=======
-  "packagerPort": 19001,
-  "packagerPid": 9773,
-  "expoServerNgrokUrl": "https://m9-9yu.tjuser23.sno-app.exp.direct",
-  "packagerNgrokUrl": "https://packager.m9-9yu.tjuser23.sno-app.exp.direct",
-  "ngrokPid": 9797
->>>>>>> tradeshow-demo
-}
+{}

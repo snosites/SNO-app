@@ -24,53 +24,52 @@ function* fetchMenus(action) {
         })
         console.log('this is menus', menus)
         // get categories from DB
-        // const dbCategories = yield call(fetchCategoriesFromDb, {
-        //     domainId
-        // })
-        // loop through and check if category of menu is in DB -- if not then add it
-        // for (let menu of menus) {
-        //     let foundCategory = dbCategories.find((category) => {
-        //         return Number(menu.object_id) === category.category_id
-        //     })
-        //     if (!foundCategory) {
-        //         yield call(fetch, `http://${api}/api/categories/add`, {
-        //             method: "POST",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify({
-        //                 category: menu.object_id,
-        //                 domain: domainId,
-        //                 categoryName: menu.title
-        //             }),
-        //         })
-        //     }
-        // }
+        const dbCategories = yield call(fetchCategoriesFromDb, {
+            domainId
+        })
+        //loop through and check if category of menu is in DB -- if not then add it
+        for (let menu of menus) {
+            let foundCategory = dbCategories.find((category) => {
+                return Number(menu.object_id) === category.category_id
+            })
+            if (!foundCategory) {
+                yield call(fetch, `http://${api}/api/categories/add`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        category: menu.object_id,
+                        domain: domainId,
+                        categoryName: menu.title
+                    }),
+                })
+            }
+        }
         //check for any old categories
-        // let oldCategories = dbCategories.filter((dbCategory) => {
-        //     return !menus.find(menuItem => {
-        //         return Number(menuItem.object_id) === dbCategory.category_id;
-        //     })
-        // })
-        // if any are found
-        // if (oldCategories.length > 0) {
-        //     console.log('found old categories', oldCategories)
-        //     //loop through and remove them
-        //     for (let category of oldCategories) {
-        //         yield call(fetch, `http://${api}/api/categories/delete`, {
-        //             method: "POST",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify({
-        //                 category: category.category_id,
-        //                 domain: domainId
-        //             }),
-        //         })
-        //     }
-        // }
+        let oldCategories = dbCategories.filter((dbCategory) => {
+            return !menus.find(menuItem => {
+                return Number(menuItem.object_id) === dbCategory.category_id;
+            })
+        })
+        //if any are found
+        if (oldCategories.length > 0) {
+            console.log('found old categories', oldCategories)
+            //loop through and remove them
+            for (let category of oldCategories) {
+                yield call(fetch, `http://${api}/api/categories/delete`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        category: category.category_id,
+                        domain: domainId
+                    }),
+                })
+            }
+        }
         // fetch updated categories list
-<<<<<<< HEAD
         const updatedDbCategories = yield call(fetchCategoriesFromDb, {
             domainId
         })
@@ -80,16 +79,7 @@ function* fetchMenus(action) {
         }))
         // make sure push token has been stored
         yield call(checkNotificationSettings);
-=======
-        // const updatedDbCategories = yield call(fetchCategoriesFromDb, {
-        //     domainId
-        // })
-        // yield put(setNotificationCategories({
-        //     id: domainId,
-        //     notificationCategories: updatedDbCategories
-        // }))
-        // yield call(checkNotificationSettings);
->>>>>>> tradeshow-demo
+
 
 
         const [result, result2, result3] = yield all([
