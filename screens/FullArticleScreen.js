@@ -83,7 +83,8 @@ export default class FullArticleScreen extends React.Component {
                         open={this.state.fabOpen}
                         icon={this.state.fabOpen ? 'clear' : 'add'}
                         actions={[
-                            { icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
+                            {
+                                icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
                                     comments: article.comments
                                 })
                             },
@@ -137,9 +138,31 @@ export default class FullArticleScreen extends React.Component {
                 >
                     <View style={styles.imageInfoContainer}>
                         <View style={styles.imageInfo}>
-                            <Text style={{ color: 'white' }}>{article.featuredImage.caption.toUpperCase()}</Text>
+                            <HTML
+                                html={article.featuredImage.caption.toUpperCase()}
+                                textSelectable={true}
+                                // onLinkPress={(e, href) => this._viewLink(href)}
+                                tagsStyles={{
+                                    p: {
+                                        fontSize: 12,
+                                        color: 'white'
+                                    }
+                                }}
+                            />
+                            {/* <Text style={{ color: 'white' }}>{article.featuredImage.caption.toUpperCase()}</Text> */}
                             <TouchableOpacity onPress={this._handleProfilePress}>
-                                <Text style={{ color: 'grey' }}>{article.featuredImage.photographer}</Text>
+                                {/* <HTML
+                                    html={article.featuredImage.photographer[0]}
+                                    textSelectable={true}
+                                    // onLinkPress={(e, href) => this._viewLink(href)}
+                                    tagsStyles={{
+                                        p: {
+                                            fontSize: 15,
+                                            color: '#bdbdbd'
+                                        }
+                                    }}
+                                /> */}
+                                <Text style={{ color: '#bdbdbd' }}>{article.featuredImage.photographer[0]}</Text>
                             </TouchableOpacity>
 
                         </View>

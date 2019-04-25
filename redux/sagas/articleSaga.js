@@ -13,8 +13,8 @@ function* fetchFeaturedImage(url, story) {
     const featuredImage = yield imgResponse.json();
     story.featuredImage = {
         uri: featuredImage.media_details.sizes.full.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
+        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
 }
 
