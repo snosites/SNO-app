@@ -15,8 +15,14 @@ function* fetchMenus(action) {
     try {
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
-        const menus = yield response.json();
-
+        const originalMenus = yield response.json();
+        console.log('original menus', originalMenus)
+        let menus = originalMenus.filter(menu => {
+            if(menu.object !== 'custom') {
+                return menu
+            }
+        })
+        console.log('this is menus', menus)
         // get categories from DB
         // const dbCategories = yield call(fetchCategoriesFromDb, {
         //     domainId
@@ -74,16 +80,20 @@ function* fetchMenus(action) {
         // yield call(checkNotificationSettings);
 
 
-        const [result, result2] = yield all([
+        const [result, result2, result3] = yield all([
             call(fetch, `${domain}/wp-json/custom/header_image?type=header-image-small`),
-            call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`)
+            call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`),
+            call(fetch, `${domain}/wp-json/custom/header_image?type=snomobile-splash-image`),
+
         ]);
         const headerImage = yield result.json();
         const headerSmall = yield result2.json();
+        const splashScreen = yield result3.json();
         yield put(receiveMenus({
             menus,
             header: headerImage.image,
-            headerSmall: headerSmall.image
+            headerSmall: headerSmall.image,
+            splashScreen: splashScreen.image
         }))
         yield put(fetchArticlesIfNeeded({
             domain,

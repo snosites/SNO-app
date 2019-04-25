@@ -74,7 +74,8 @@ export function menus(state = {
                 isLoaded: true,
                 items: action.response.menus,
                 header: action.response.header,
-                headerSmall: action.response.headerSmall
+                headerSmall: action.response.headerSmall,
+                splashScreen: action.response.splashScreen
             }
         default:
             return state
