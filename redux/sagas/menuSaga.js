@@ -8,6 +8,8 @@ const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts
     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
     : `api.example.com`;
 
+console.log('api', api)
+
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 
 function* fetchMenus(action) {
