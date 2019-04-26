@@ -11,8 +11,9 @@ const articleListSchema = new schema.Array(articleSchema)
 function* fetchFeaturedImage(url, story) {
     const imgResponse = yield fetch(url);
     const featuredImage = yield imgResponse.json();
+    console.log('featuredImage', featuredImage)
     story.featuredImage = {
-        uri: featuredImage.media_details.sizes.full.source_url,
+        uri: featuredImage.source_url,
         photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
         caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
