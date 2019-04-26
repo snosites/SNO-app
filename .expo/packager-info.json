@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerPort": 19000,
+  "packagerPort": 19004,
+  "packagerPid": 38167,
+  "expoServerNgrokUrl": "https://m9-9yu.tjuser23.sno-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.m9-9yu.tjuser23.sno-app.exp.direct",
+  "ngrokPid": 38189
 }

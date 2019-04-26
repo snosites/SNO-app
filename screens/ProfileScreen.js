@@ -102,7 +102,7 @@ class ProfileScreen extends React.Component {
                                 <FlatList
                                     contentContainerStyle={{ flex: 1, marginTop: 40, backgrondColor: 'red' }}
                                     data={articlesByWriter}
-                                    keyExtractor={item => item.id.toString()}
+                                    keyExtractor={item => item.id? item.id.toString(): null}
                                     ItemSeparatorComponent={() => (<Divider />)}
                                     // onEndReachedThreshold={0.25}
                                     // onEndReached={this._loadMore}
@@ -111,7 +111,7 @@ class ProfileScreen extends React.Component {
 
                                     renderItem={(props) => {
                                         const story = props.item;
-                                        console.log('story', story)
+                                        console.log('story', articlesByWriter)
                                         return (
                                             <TouchableOpacity
                                                 style={styles.storyContainer}
@@ -153,13 +153,14 @@ class ProfileScreen extends React.Component {
             if (writerName !== 'unknown') {
                 const response = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
                 const profile = await response.json();
+                console.log('wrter name', writerName, userDomain)
                 if (profile.length > 0) {
                     // if more than one matches uses first one
                     const profileId = profile[0].ID;
                     const newResponse = await fetch(`${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
                     console.log('respq', writerProfile)
-
+                    
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
@@ -168,14 +169,18 @@ class ProfileScreen extends React.Component {
                     }
                     // get list of articles written by writer
                     const query = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
+                    
                     const articlesByWriter = await query.json();
-
+                    console.log('articles by writer', articlesByWriter)
                     // get the full posts for all articles
                     const updatedArticlesByWriter = await Promise.all(articlesByWriter.map(async article => {
                         const response = await fetch(`${userDomain}/wp-json/wp/v2/posts/${article.ID}`)
                         return await response.json();
                     }))
-
+                    console.log('updated articles by writer', updatedArticlesByWriter)
+                    let verifiedArticlesByWriter = updatedArticlesByWriter.filter(article => {
+                        return (!!article.id)
+                    })
                     //set those articles as param
                     navigation.setParams({
                         profile: writerProfile,
