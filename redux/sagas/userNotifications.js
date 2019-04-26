@@ -8,6 +8,7 @@ const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts
     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
     : `api.example.com`;
 
+const GET_TOKENS_ENDPOINT = `http://${api}/api/tokens`;
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
 const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
@@ -60,34 +61,36 @@ function* removeNotification(action) {
     yield call(fetchNotifications, {tokenId});
 }
 
-const getUserInfo = state => state.userInfo
-
 export function* checkNotificationSettings() {
     console.log('in checkNotificationSettings')
-    const userInfo = yield select(getUserInfo);
-    if (!userInfo.tokenId) {
-        yield call(registerForPushNotifications);
-    } else {
-        return;
-    }
-}
-
-function* registerForPushNotifications() {
-    console.log('in registerForPushNotifications')
     const { status: existingStatus } = yield call(Permissions.getAsync, Permissions.NOTIFICATIONS);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
         const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS);
         finalStatus = status;
     }
-    // Stop here if the user did not grant permissions
+    // Stop here if the user did not grant permissions -- save token as undefined
     if (finalStatus !== 'granted') {
-        return;
+        console.log('notification status is not granted')
+        yield put(saveTokenId(undefined));
     }
     // Get the token that uniquely identifies this device
     let token = yield call(Notifications.getExpoPushTokenAsync);
+    console.log('token', token)
+    let response = yield call(fetch, `${GET_TOKENS_ENDPOINT}/${token}`);
+    let tokenResponse = yield response.json();
+    console.log('token repsonse', tokenResponse)
+    // if there is already a token saved in DB update in in redux
+    if(tokenResponse[0]) {
+        yield put(saveTokenId(tokenResponse[0].id));
+    // if not save it in DB and then save in redux
+    } else {
+        yield call(savePushNotifications, token);
+    }
+}
 
-    // POST the token to your backend server from where you can retrieve it to send push notifications.
+function* savePushNotifications(token) {
+    // POST the token to backend server
     let response = yield call(fetch, PUSH_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -99,7 +102,6 @@ function* registerForPushNotifications() {
         }),
     });
     let tokenId = yield response.json();
-    console.log('token ID', tokenId)
     yield put(saveTokenId(Number(tokenId)))
     return;
 }
