@@ -23,6 +23,7 @@ function* fetchNotifications(action) {
     console.log('in fetch notifications', tokenId, activeDomain)
     const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
     const notifications = yield response.json();
+    console.log('fetched notifications', notifications)
     yield put(setNotifications(notifications, activeDomain.id))
 }
 
@@ -98,7 +99,8 @@ function* registerForPushNotifications() {
         }),
     });
     let tokenId = yield response.json();
-    yield put(saveTokenId(tokenId[0].id))
+    console.log('token ID', tokenId)
+    yield put(saveTokenId(Number(tokenId)))
     return;
 }
 

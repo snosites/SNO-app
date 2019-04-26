@@ -198,7 +198,9 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     />
-                                    {domain.notificationCategories.map((item, i) => (
+                                    {domain.notificationCategories.map((item, i) => {
+                                        console.log('not cat', item)
+                                        return (
                                         <List.Item
                                             key={item.id}
                                             style={{ paddingVertical: 0, paddingLeft: 60 }}
@@ -215,7 +217,9 @@ class SettingsScreen extends React.Component {
                                                 )
                                             }}
                                         />
-                                    ))}
+                                    )
+                                        }
+                                    )}
                                 </List.Accordion>
                             )
                         })}
@@ -255,15 +259,15 @@ class SettingsScreen extends React.Component {
         )
     }
 
-    _checkIfActive = notificationId => {
-        console.log('in check if active')
-        const { userInfo: { notifications } } = this.props;
-        let found = notifications.categories.find(notification => {
-            return notification.id === notificationId
-        })
-        if(found) {return true}
-        else {return false}
-    }
+    // _checkIfActive = notificationId => {
+    //     console.log('in check if active')
+    //     const { userInfo: { notifications } } = this.props;
+    //     let found = notifications.categories.find(notification => {
+    //         return notification.id === notificationId
+    //     })
+    //     if(found) {return true}
+    //     else {return false}
+    // }
 
     _handleAddNewOrg = () => {
         this.props.navigation.navigate('Auth')
