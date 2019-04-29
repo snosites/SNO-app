@@ -15,22 +15,21 @@ const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
 
 const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 
-const getActiveDomain = state => state.activeDomain
+// const getActiveDomain = state => state.activeDomain
 
 
 function* fetchNotifications(action) {
-    const activeDomain = yield select(getActiveDomain);
-    const { tokenId } = action;
+    // const activeDomain = yield select(getActiveDomain);
+    const { tokenId, domain } = action.payload;
     console.log('in fetch notifications', tokenId, activeDomain)
     const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
     const notifications = yield response.json();
     console.log('fetched notifications', notifications)
-    yield put(setNotifications(notifications, activeDomain.id))
+    yield put(setNotifications(notifications, domain))
 }
 
 function* addNotification(action) {
-    const { tokenId, categoryId } = action.payload;
-    console.log('in add notification')
+    const { tokenId, categoryId, domain } = action.payload;
     yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -46,7 +45,7 @@ function* addNotification(action) {
 }
 
 function* removeNotification(action) {
-    const {tokenId, categoryId } = action.payload;
+    const {tokenId, categoryId, domain } = action.payload;
     yield call(fetch, REMOVE_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {

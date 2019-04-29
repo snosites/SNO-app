@@ -18,13 +18,11 @@ function* fetchMenus(action) {
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
-        console.log('original menus', originalMenus)
         let menus = originalMenus.filter(menu => {
             if(menu.object !== 'custom') {
                 return menu
             }
         })
-        console.log('this is menus', menus)
         // get categories from DB
         const dbCategories = yield call(fetchCategoriesFromDb, {
             domainId
@@ -35,6 +33,7 @@ function* fetchMenus(action) {
                 return Number(menu.object_id) === category.category_id
             })
             if (!foundCategory) {
+                console.log('adding new category', menu.object_id)
                 yield call(fetch, `http://${api}/api/categories/add`, {
                     method: "POST",
                     headers: {
@@ -57,7 +56,7 @@ function* fetchMenus(action) {
         //if any are found
         if (oldCategories.length > 0) {
             console.log('found old categories', oldCategories)
-            //loop through and remove them
+            //loop through and remove them from DB
             for (let category of oldCategories) {
                 yield call(fetch, `http://${api}/api/categories/delete`, {
                     method: "POST",
@@ -65,8 +64,7 @@ function* fetchMenus(action) {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        category: category.category_id,
-                        domain: domainId
+                        categoriesId: category.id,
                     }),
                 })
             }
@@ -127,7 +125,6 @@ function* fetchCategoriesFromDb(action) {
 function* menuSaga() {
     yield takeLatest('FETCH_MENUS', fetchMenus);
     yield takeLatest('FETCH_CATEGORIES_FROM_DB', fetchCategoriesFromDb);
-
 }
 
 export default menuSaga;

@@ -47,10 +47,10 @@ export function checkNotificationSettings() {
     }
 }
 
-export function fetchNotifications(tokenId) {
+export function fetchNotifications(payload) {
     return {
         type: 'FETCH_NOTIFICATIONS',
-        tokenId
+        payload
     }
 }
 

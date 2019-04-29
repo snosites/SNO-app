@@ -210,7 +210,7 @@ class SettingsScreen extends React.Component {
                                                     <Switch
                                                         style={{ margin: 10 }}
                                                         value={item.active}
-                                                        onValueChange={(value) => { this._toggleNotifications(item.id, value) }
+                                                        onValueChange={(value) => { this._toggleNotifications(item.id, value, domain) }
                                                         }
 
                                                     />
@@ -259,16 +259,6 @@ class SettingsScreen extends React.Component {
         )
     }
 
-    // _checkIfActive = notificationId => {
-    //     console.log('in check if active')
-    //     const { userInfo: { notifications } } = this.props;
-    //     let found = notifications.categories.find(notification => {
-    //         return notification.id === notificationId
-    //     })
-    //     if(found) {return true}
-    //     else {return false}
-    // }
-
     _handleAddNewOrg = () => {
         this.props.navigation.navigate('Auth')
     }
@@ -292,18 +282,20 @@ class SettingsScreen extends React.Component {
         }
     }
 
-    _toggleNotifications = (notificationId, value) => {
+    _toggleNotifications = (notificationId, value, domain) => {
         const { dispatch, userInfo } = this.props;
         if(value) {
             dispatch(addNotification({
                 tokenId: userInfo.tokenId,
-                categoryId: notificationId
+                categoryId: notificationId,
+                domain: domain.id
             }))
         }
         else {
             dispatch(removeNotification({
                 tokenId: userInfo.tokenId,
-                categoryId: notificationId
+                categoryId: notificationId,
+                domain: domain.id
             }))
         }
     }

@@ -46,20 +46,6 @@ export function domains(state = [], action) {
         case 'SET_NOTIFICATIONS':
             return state.map(domain => {
                 if (domain.id === action.domain) {
-                    // let oldCategories = domain.notificationCategories;
-                    // // console.log('in reducer set notifications', domain.notificationCategories, action.notifications)
-                    // let newCategories = oldCategories.map(notification => {
-                    //     let found = action.notifications.find(userNotification => {
-                    //         return notification.id === userNotification.id
-                    //     })
-                    //     if (found) {
-                    //         notification.active = true
-                    //         return notification;
-                    //     } else {
-                    //         notification.active = false
-                    //         return notification;
-                    //     }
-                    // })
                     return {
                         ...domain,
                         notificationCategories: domain.notificationCategories.map(notification => {
