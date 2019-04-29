@@ -21,7 +21,7 @@ const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 function* fetchNotifications(action) {
     // const activeDomain = yield select(getActiveDomain);
     const { tokenId, domain } = action.payload;
-    console.log('in fetch notifications', tokenId, activeDomain)
+    console.log('in fetch notifications', tokenId);
     const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
     const notifications = yield response.json();
     console.log('fetched notifications', notifications)
@@ -30,6 +30,7 @@ function* fetchNotifications(action) {
 
 function* addNotification(action) {
     const { tokenId, categoryId, domain } = action.payload;
+    console.log('token ID', tokenId)
     yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -41,11 +42,16 @@ function* addNotification(action) {
             categoryId
         }),
     });
-    yield call(fetchNotifications, {tokenId});
+    yield call(fetchNotifications, {
+        payload: {
+            tokenId,
+            domain
+        }
+    });
 }
 
 function* removeNotification(action) {
-    const {tokenId, categoryId, domain } = action.payload;
+    const { tokenId, categoryId, domain } = action.payload;
     yield call(fetch, REMOVE_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -57,7 +63,12 @@ function* removeNotification(action) {
             categoryId
         }),
     });
-    yield call(fetchNotifications, {tokenId});
+    yield call(fetchNotifications, {
+        payload: {
+            tokenId,
+            domain
+        }
+    });
 }
 
 export function* checkNotificationSettings() {
@@ -80,9 +91,9 @@ export function* checkNotificationSettings() {
     let tokenResponse = yield response.json();
     console.log('token repsonse', tokenResponse)
     // if there is already a token saved in DB update in in redux
-    if(tokenResponse[0]) {
+    if (tokenResponse[0]) {
         yield put(saveTokenId(tokenResponse[0].id));
-    // if not save it in DB and then save in redux
+        // if not save it in DB and then save in redux
     } else {
         yield call(savePushNotifications, token);
     }

@@ -80,8 +80,6 @@ function* fetchMenus(action) {
         // make sure push token has been stored
         yield call(checkNotificationSettings);
 
-
-
         const [result, result2, result3] = yield all([
             call(fetch, `${domain}/wp-json/custom/header_image?type=header-image-small`),
             call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`),

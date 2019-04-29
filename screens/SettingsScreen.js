@@ -46,13 +46,16 @@ class SettingsScreen extends React.Component {
     };
 
     componentDidMount() {
-        const { userInfo, dispatch } = this.props;
+        const { userInfo, dispatch, activeDomain } = this.props;
         this.setState({
             username: userInfo.username,
             email: userInfo.email
         })
         if (userInfo.tokenId) {
-            dispatch(fetchNotifications(userInfo.tokenId))
+            dispatch(fetchNotifications({
+                tokenId: userInfo.tokenId,
+                domain: activeDomain.id
+            }))
         }
     }
 
@@ -323,7 +326,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = store => ({
     domains: store.domains,
     userInfo: store.userInfo,
-    menus: store.menus
+    menus: store.menus,
+    activeDomain: store.activeDomain
 })
 
 export default connect(mapStateToProps)(SettingsScreen)
