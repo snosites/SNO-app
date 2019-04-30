@@ -4,10 +4,10 @@ import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCateg
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
-const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
-
+// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+//     : `api.example.com`;
+const api = 'mobileapi.snosites.net';
 console.log('api', api)
 
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
@@ -17,7 +17,10 @@ function* fetchMenus(action) {
     try {
         yield put(requestMenus())
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
+        console.log('test', response)
         const originalMenus = yield response.json();
+        console.log('test')
+
         let menus = originalMenus.filter(menu => {
             if(menu.object !== 'custom') {
                 return menu
@@ -114,7 +117,7 @@ function* fetchCategoriesFromDb(action) {
         return categories;
     }
     catch (err) {
-        console.log('error fetching categories fromm DB', err)
+        console.log('error fetching categories from DB', err)
     }
 }
 

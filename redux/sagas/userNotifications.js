@@ -4,9 +4,11 @@ import { requestMenus, saveTokenId, setNotifications } from '../actions/actions'
 
 import { Permissions, Notifications, Constants } from 'expo';
 const { manifest } = Constants;
-const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
+// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+//     : `api.example.com`;
+
+const api = 'mobileapi.snosites.net';
 
 const GET_TOKENS_ENDPOINT = `http://${api}/api/tokens`;
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;

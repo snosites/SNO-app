@@ -76,7 +76,12 @@ function* fetchArticles(action) {
         const response = yield fetch(`${domain}/wp-json/wp/v2/posts?categories=${category}&page=${page}`)
         const stories = yield response.json();
         yield all(stories.map(story => {
-            return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
+            if(story._links['wp:featuredmedia']) {
+                return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
+            } else {
+                return;
+            }
+            
         }))
         yield all(stories.map(story => {
             return call(fetchComments, domain, story)
