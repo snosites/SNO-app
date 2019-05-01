@@ -4,10 +4,10 @@ import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCateg
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
-// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-//     : `api.example.com`;
-const api = 'mobileapi.snosites.net';
+const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    : `api.example.com`;
+// const api = 'mobileapi.snosites.net';
 console.log('api', api)
 
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
@@ -16,8 +16,10 @@ function* fetchMenus(action) {
     const { domain, domainId } = action;
     try {
         yield put(requestMenus())
+        console.log('domain', domain);
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
         console.log('test', response)
+        console.log('test')
         const originalMenus = yield response.json();
         console.log('test')
 
@@ -57,6 +59,7 @@ function* fetchMenus(action) {
             })
         })
         //if any are found
+        // optimize later into one fetch call
         if (oldCategories.length > 0) {
             console.log('found old categories', oldCategories)
             //loop through and remove them from DB

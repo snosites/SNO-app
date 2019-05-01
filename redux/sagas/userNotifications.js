@@ -4,21 +4,17 @@ import { requestMenus, saveTokenId, setNotifications } from '../actions/actions'
 
 import { Permissions, Notifications, Constants } from 'expo';
 const { manifest } = Constants;
-// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-//     : `api.example.com`;
+const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    : `api.example.com`;
 
-const api = 'mobileapi.snosites.net';
+// const api = 'mobileapi.snosites.net';
 
 const GET_TOKENS_ENDPOINT = `http://${api}/api/tokens`;
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
 const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
-
 const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
-
-// const getActiveDomain = state => state.activeDomain
-
 
 function* fetchNotifications(action) {
     // const activeDomain = yield select(getActiveDomain);
@@ -114,7 +110,7 @@ function* savePushNotifications(token) {
         }),
     });
     let tokenId = yield response.json();
-    yield put(saveTokenId(Number(tokenId)))
+    yield put(saveTokenId(Number(tokenId.id)))
     return;
 }
 
