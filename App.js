@@ -1,10 +1,10 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, AsyncStorage, ActivityIndicator } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
+import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import AppNavigator from './navigation/AppNavigator';
-import { Provider as PaperProvider, DefaultTheme, Colors } from 'react-native-paper';
+import { Provider as PaperProvider, DefaultTheme, Colors, Snackbar, Portal } from 'react-native-paper';
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
@@ -18,6 +18,66 @@ const theme = {
         accent: Colors.blue800,
     }
 };
+
+class AppNavigatorContainer extends React.Component {
+    state = {
+        notification: {},
+        visible: false
+    };
+
+    componentDidMount() {
+        const { userInfo } = this.props;
+        if (userInfo.tokenId) {
+            this._notificationSubscription = Notifications.addListener(this._handleNotification);
+        }
+    }
+
+    _handleNotification = (notification) => {
+        console.log('new notification', notification)
+        this.setState({ notification });
+
+        if (notification.origin == 'received') {
+            this.setState({
+                visible: true
+            })
+            setTimeout(() => {
+                this.setState({
+                    visible: false
+                })
+            }, 3000)
+        }
+    };
+
+    render() {
+        const { notification, visible } = this.state;
+        return (
+            <View style={{ flex: 1 }}>
+                <Portal>
+                    <Snackbar
+                        style={{ marginBottom: 60, zIndex: 100 }}
+                        visible={visible}
+                        onDismiss={() => this.setState({ visible: false })}
+                        action={{
+                            label: 'View',
+                            onPress: () => {
+                                // 
+                            },
+                        }}
+                    >
+                        New Article Posted!
+                    </Snackbar>
+                </Portal>
+                <AppNavigator />
+            </View>
+        )
+    }
+}
+
+const mapStateToProps = store => ({
+    userInfo: store.userInfo,
+})
+
+const ConnectedAppNavigator = connect(mapStateToProps)(AppNavigatorContainer);
 
 export default class App extends React.Component {
     state = {
@@ -36,11 +96,11 @@ export default class App extends React.Component {
         } else {
             return (
                 <ReduxProvider store={store}>
-                    <PersistGate loading={<ActivityIndicator style={{padding: 50}} />} persistor={persistor}>
+                    <PersistGate loading={<ActivityIndicator style={{ padding: 50 }} />} persistor={persistor}>
                         <PaperProvider theme={theme}>
                             <View style={styles.container}>
                                 {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                                <AppNavigator />
+                                <ConnectedAppNavigator />
                             </View>
                         </PaperProvider>
                     </PersistGate>
