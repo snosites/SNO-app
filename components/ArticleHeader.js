@@ -56,6 +56,7 @@ const ArticleHeader = (props) => {
                         position: 'absolute',
                         top: -10,
                         right: -10,
+                        backgroundColor: '#4fc3f7'
                     }}>{commentNumber}</Badge>
                     :
                     null

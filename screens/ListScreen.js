@@ -19,9 +19,9 @@ import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Badge } from 'react-native-paper';
 
 import {
     saveArticle,
@@ -144,10 +144,9 @@ class ListScreen extends React.Component {
                                         null
                                     }
                                     <View style={styles.storyInfo}>
-                                        {/* <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text> */}
                                         <HTML
                                             html={story.title.rendered}
-                                            baseFontStyle={{fontSize: 19}}
+                                            baseFontStyle={{ fontSize: 19 }}
                                             customWrapper={(text) => {
                                                 return (
                                                     <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
@@ -168,13 +167,20 @@ class ListScreen extends React.Component {
                                             </View>
 
                                             <View style={styles.socialIconsContainer}>
-
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        alert('share')
-                                                    }}
-                                                    style={styles.socialIcon} name='share' size={28}
-                                                    color={Colors.tintColor} />
+                                                <View style={{ marginRight: 10 }}>
+                                                    <Feather name="message-square" size={28} color={Colors.tintColor} />
+                                                    <Badge
+                                                    size={17}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            bottom: 0,
+                                                            right: -5,
+                                                            backgroundColor: '#4fc3f7'
+                                                        }}
+                                                    >
+                                                        {story.comments.length}
+                                                    </Badge>
+                                                </View>
                                                 <MaterialIcons
                                                     onPress={() => {
                                                         this._handleArticleSave(story)

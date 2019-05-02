@@ -130,7 +130,7 @@ export default class FullArticleScreen extends React.Component {
                 source={{ uri: article.custom_fields.video[0] }}
             />
         }
-        else {
+        else if(article.featuredImage) {
             return (
                 <ImageBackground
                     source={{ uri: article.featuredImage.uri }}
@@ -141,7 +141,6 @@ export default class FullArticleScreen extends React.Component {
                             <HTML
                                 html={article.featuredImage.caption.toUpperCase()}
                                 textSelectable={true}
-                                // onLinkPress={(e, href) => this._viewLink(href)}
                                 tagsStyles={{
                                     p: {
                                         fontSize: 12,
@@ -149,19 +148,7 @@ export default class FullArticleScreen extends React.Component {
                                     }
                                 }}
                             />
-                            {/* <Text style={{ color: 'white' }}>{article.featuredImage.caption.toUpperCase()}</Text> */}
                             <TouchableOpacity onPress={this._handleProfilePress}>
-                                {/* <HTML
-                                    html={article.featuredImage.photographer[0]}
-                                    textSelectable={true}
-                                    // onLinkPress={(e, href) => this._viewLink(href)}
-                                    tagsStyles={{
-                                        p: {
-                                            fontSize: 15,
-                                            color: '#bdbdbd'
-                                        }
-                                    }}
-                                /> */}
                                 <Text style={{ color: '#bdbdbd' }}>{article.featuredImage.photographer[0]}</Text>
                             </TouchableOpacity>
 
@@ -170,6 +157,8 @@ export default class FullArticleScreen extends React.Component {
                 </ImageBackground>
             )
 
+        } else {
+            return;
         }
     }
 
