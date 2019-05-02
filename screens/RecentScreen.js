@@ -1,9 +1,6 @@
 import React from 'react';
 import {
-    Platform,
-    AsyncStorage,
     View,
-    ScrollView,
     FlatList,
     Text,
     Image,
@@ -17,10 +14,7 @@ import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
-import TabBarIcon from '../components/TabBarIcon';
-
 import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
@@ -69,7 +63,7 @@ class RecentScreen extends React.Component {
     render() {
         const { navigation, recentArticles, recent } = this.props;
         const { snackbarVisible } = this.state;
-        if (recentArticles.length === 0) {
+        if (recentArticles.length === 0 && recent.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -100,7 +94,8 @@ class RecentScreen extends React.Component {
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
                     onRefresh={this._handleRefresh}
-                    refreshing={recent.isFetching}
+                    refreshing={recent.didInvalidate}
+                    onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={() => {
                         if (!recent.isFetching) {
                             return null
@@ -219,8 +214,12 @@ class RecentScreen extends React.Component {
     // }
 
     _loadMore = () => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
+        if (!this.onEndReachedCalledDuringMomentum) {
+            const { activeDomain } = this.props;
+            this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
+            this.onEndReachedCalledDuringMomentum = true;
+        }
+
     }
 
     _handleRefresh = () => {

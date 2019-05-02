@@ -1,9 +1,6 @@
 import React from 'react';
 import {
-    Platform,
-    AsyncStorage,
     View,
-    ScrollView,
     FlatList,
     Text,
     Image,
@@ -31,8 +28,6 @@ import {
 } from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
-
-
 
 
 // header icon native look component
@@ -64,8 +59,6 @@ class ListScreen extends React.Component {
 
     state = {
         snackbarVisible: false,
-        loadingMore: false,
-        refreshing: false
     }
 
     componentDidMount() {
@@ -87,7 +80,7 @@ class ListScreen extends React.Component {
     render() {
         const { navigation, articlesByCategory, category } = this.props;
         const { snackbarVisible } = this.state;
-        if (articlesByCategory.length < 1) {
+        if (articlesByCategory.length === 0 && category.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -226,7 +219,7 @@ class ListScreen extends React.Component {
         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
             article.slideshow = await this._getAttachmentsAync(article);
         }
-        navigation.push('FullArticle', {
+        navigation.navigate('FullArticle', {
             articleId: article.id,
             article,
             commentNumber: article.comments.length,
@@ -249,9 +242,8 @@ class ListScreen extends React.Component {
     }
 
     _loadMore = () => {
-        console.log('in load more');
-        const { activeDomain, category } = this.props;
         if (!this.onEndReachedCalledDuringMomentum) {
+            const { activeDomain, category } = this.props;
             this.props.dispatch(fetchMoreArticlesIfNeeded({
                 domain: activeDomain.url,
                 category: category.categoryId,
@@ -262,7 +254,6 @@ class ListScreen extends React.Component {
     }
 
     _handleRefresh = () => {
-        console.log('handling refresh');
         const { dispatch, activeDomain, category } = this.props;
         dispatch(invalidateArticles(category.categoryId));
         dispatch(fetchArticlesIfNeeded({
