@@ -185,6 +185,7 @@ function articles(
     state = {
         isFetching: false,
         didInvalidate: false,
+        refreshing: false,
         page: 1,
         items: []
     },

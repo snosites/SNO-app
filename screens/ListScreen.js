@@ -63,7 +63,9 @@ class ListScreen extends React.Component {
     };
 
     state = {
-        snackbarVisible: false
+        snackbarVisible: false,
+        loadingMore: false,
+        refreshing: false
     }
 
     componentDidMount() {
@@ -85,7 +87,7 @@ class ListScreen extends React.Component {
     render() {
         const { navigation, articlesByCategory, category } = this.props;
         const { snackbarVisible } = this.state;
-        if (!category) {
+        if (articlesByCategory.length < 1) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -116,7 +118,8 @@ class ListScreen extends React.Component {
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
                     onRefresh={this._handleRefresh}
-                    refreshing={category.isFetching}
+                    refreshing={category.didInvalidate}
+                    onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={() => {
                         if (!category.isFetching) {
                             return null
@@ -246,14 +249,20 @@ class ListScreen extends React.Component {
     }
 
     _loadMore = () => {
+        console.log('in load more');
         const { activeDomain, category } = this.props;
-        this.props.dispatch(fetchMoreArticlesIfNeeded({
-            domain: activeDomain.url,
-            category: category.categoryId,
-        }))
+        if (!this.onEndReachedCalledDuringMomentum) {
+            this.props.dispatch(fetchMoreArticlesIfNeeded({
+                domain: activeDomain.url,
+                category: category.categoryId,
+            }))
+            this.onEndReachedCalledDuringMomentum = true;
+        }
+        
     }
 
     _handleRefresh = () => {
+        console.log('handling refresh');
         const { dispatch, activeDomain, category } = this.props;
         dispatch(invalidateArticles(category.categoryId));
         dispatch(fetchArticlesIfNeeded({
