@@ -26,7 +26,7 @@ class FadeInView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            slideAnim: new Animated.Value(0)
+            slideAnim: new Animated.Value(-170)
         }
 
         this._panResponder = PanResponder.create({
@@ -62,12 +62,12 @@ class FadeInView extends React.Component {
     }
 
 
-    // componentDidMount() {
+    componentDidMount() {
 
-    //     if (this.props.visible) {
-    //         this._show();
-    //     }
-    // }
+        if (this.props.visible) {
+            this._show();
+        }
+    }
 
     componentDidUpdate(prevProps) {
         if (prevProps.visible !== this.props.visible) {
@@ -175,7 +175,7 @@ class AppNavigatorContainer extends React.Component {
 
                 <Portal>
                     <FadeInView
-                        visible={true}
+                        visible={visible}
                         style={{
                             position: 'absolute',
                             top: -100,
