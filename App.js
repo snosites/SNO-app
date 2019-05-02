@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, AsyncStorage, ActivityIndicator } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Text, ActivityIndicator, Animated, PanResponder } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 
 import { Provider as ReduxProvider, connect } from 'react-redux';
@@ -8,6 +8,9 @@ import { Provider as PaperProvider, DefaultTheme, Colors, Snackbar, Portal } fro
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
+
+import { Feather } from '@expo/vector-icons';
+import Moment from 'moment';
 
 const theme = {
     ...DefaultTheme,
@@ -18,6 +21,122 @@ const theme = {
         accent: Colors.blue800,
     }
 };
+
+class FadeInView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            slideAnim: new Animated.Value(0)
+        }
+
+        this._panResponder = PanResponder.create({
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onPanResponderTerminationRequest: (evt, gestureState) => true,
+            onPanResponderGrant: (evt, gestureState) => {
+                console.log('pan started')
+            },
+            // on each move event, set slideValue to gestureState.dx -- the 
+            // first value `null` ignores the first `event` argument
+            onPanResponderMove: Animated.event([
+                null, {
+                    dy: this.state.slideAnim
+                }
+            ]),
+            onPanResponderRelease: (e, gestureState) => {
+                if (gestureState.dy < -60) {
+                    this._hide();
+                } else {
+                    this._show();
+                }
+
+            }
+            // onPanResponderMove: (evt, gestureState) => [
+            //     console.log('gesture', gestureState.dx, gestureState.dy)
+            // ]
+
+            // ...rest of your panResponder handlers
+        });
+    }
+
+
+    // componentDidMount() {
+
+    //     if (this.props.visible) {
+    //         this._show();
+    //     }
+    // }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.visible !== this.props.visible) {
+            this._toggle();
+        }
+    }
+
+    _toggle = () => {
+        if (this.props.visible) {
+            this._show();
+        } else {
+            this._hide();
+        }
+    };
+
+    _show = () => {
+        Animated.timing(
+            this.state.slideAnim,
+            {
+                toValue: 0,
+                duration: 300,
+                // useNativeDriver: true,
+            }
+        ).start();
+    }
+
+    _hide = () => {
+        clearTimeout(this._hideTimeout);
+
+        Animated.timing(this.state.slideAnim, {
+            toValue: -170,
+            duration: 300,
+            // useNativeDriver: true,
+        }).start(({ finished }) => {
+            if (finished) {
+                //
+            }
+        });
+    }
+
+
+
+    render() {
+        let { slideAnim } = this.state;
+
+        return (
+            <Animated.View
+                {...this._panResponder.panHandlers}
+                style={{
+                    ...this.props.style,
+                    // opacity: this.state.slideAnim,
+                    transform: [
+                        {
+                            // translateY: slideAnim
+                            translateY: slideAnim.interpolate({
+                                inputRange: [-170, 0],
+                                outputRange: [0, 170],
+                                extrapolateRight: 'clamp'
+                            }),
+                        },
+                        { perspective: 1000 },
+                    ]
+                }}
+            >
+                {this.props.children}
+            </Animated.View>
+        );
+    }
+}
 
 class AppNavigatorContainer extends React.Component {
     state = {
@@ -33,7 +152,8 @@ class AppNavigatorContainer extends React.Component {
     }
 
     _handleNotification = (notification) => {
-        console.log('new notification', notification)
+        console.log('new notification', notification);
+        console.log('notification data', notification.data);
         this.setState({ notification });
 
         if (notification.origin == 'received') {
@@ -44,7 +164,7 @@ class AppNavigatorContainer extends React.Component {
                 this.setState({
                     visible: false
                 })
-            }, 3000)
+            }, 5000)
         }
     };
 
@@ -52,20 +172,57 @@ class AppNavigatorContainer extends React.Component {
         const { notification, visible } = this.state;
         return (
             <View style={{ flex: 1 }}>
+
                 <Portal>
-                    <Snackbar
-                        style={{ marginBottom: 60, zIndex: 100 }}
-                        visible={visible}
-                        onDismiss={() => this.setState({ visible: false })}
-                        action={{
-                            label: 'View',
-                            onPress: () => {
-                                // 
+                    <FadeInView
+                        visible={true}
+                        style={{
+                            position: 'absolute',
+                            top: -100,
+                            right: 10,
+                            left: 10,
+                            height: 75,
+                            paddingHorizontal: 10,
+                            paddingVertical: 5,
+                            justifyContent: 'space-between',
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: 10,
+                            shadowColor: "#000",
+                            shadowOffset: {
+                                width: 0,
+                                height: 2,
                             },
+                            shadowOpacity: 0.23,
+                            shadowRadius: 2.62,
+
+                            elevation: 4,
                         }}
                     >
-                        New Article Posted!
-                    </Snackbar>
+                        <Text style={{ fontSize: 10, paddingLeft: 20, color: '#9e9e9e' }}>
+                            {String(Moment().fromNow())}
+                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Feather name="award" size={14} color="#ffca28" />
+                            <Text style={{
+                                fontSize: 14,
+                                paddingHorizontal: 5,
+                                color: '#757575'
+                            }}
+                            >
+                                {notification.data ?
+                                    `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
+                                    null
+                                }
+                            </Text>
+                        </View>
+                        <Text style={{ fontSize: 17, paddingLeft: 20 }}>
+                            {notification.data ?
+                                notification.data.title
+                                :
+                                null
+                            }
+                        </Text>
+                    </FadeInView>
                 </Portal>
                 <AppNavigator />
             </View>
