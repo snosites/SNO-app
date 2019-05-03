@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 20,
-        marginVertical: 15,
+        marginVertical: 10,
     },
     animationContainer: {
         width: 400,
@@ -221,12 +221,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         justifyContent: 'space-between'
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     date: {
-        fontSize: 15,
+        fontSize: 14,
         color: 'grey'
     },
     author: {

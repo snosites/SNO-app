@@ -138,27 +138,54 @@ class RecentScreen extends React.Component {
                                                 }
                                             }}
                                         />
-                                        <View style={styles.extraInfo}>
-                                            <View style={{ flex: 1 }}>
-                                                <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            paddingTop: 5,
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                        >
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.date}>
+                                                    {Moment(story.date).format('D MMM YYYY')}
+                                                </Text>
+                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                                <View style={{
+                                                    marginHorizontal: 15,
+                                                }}>
+                                                    <FontAwesome name="comment"
+                                                        size={21} color='grey'
+                                                    />
+                                                    <Badge
+                                                        size={16}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            bottom: 2,
+                                                            right: -10,
+                                                            backgroundColor: '#4fc3f7',
+                                                            borderWidth: 1,
+                                                            borderColor: 'white'
+                                                        }}
+                                                    >
+                                                        {story.comments.length}
+                                                    </Badge>
+                                                </View>
                                             </View>
-
-                                            <View style={styles.socialIconsContainer}>
-
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        alert('share')
-                                                    }}
-                                                    style={styles.socialIcon} name='share' size={28}
-                                                    color={Colors.tintColor} />
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        this._handleArticleSave(story)
-                                                    }}
-                                                    style={styles.socialIcon} name='bookmark-border' size={28}
-                                                    color={Colors.tintColor} />
-                                            </View>
+                                            <MaterialIcons
+                                                name={
+                                                    story.saved ? 'bookmark'
+                                                        :
+                                                        'bookmark-border'
+                                                }
+                                                color={Colors.tintColor}
+                                                style={styles.socialIcon}
+                                                size={24}
+                                                onPress={() => {
+                                                    this._saveRemoveToggle(story)
+                                                }}
+                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -241,7 +268,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 20,
-        marginVertical: 15,
+        marginVertical: 10,
     },
     animationContainer: {
         width: 400,
@@ -260,21 +287,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         justifyContent: 'space-between'
     },
-    extraInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        flex: 1,
-    },
-    socialIconsContainer: {
-        flexDirection: 'row',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     date: {
-        fontSize: 15,
+        fontSize: 14,
         color: 'grey'
     },
     author: {

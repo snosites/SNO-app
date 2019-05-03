@@ -337,10 +337,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         justifyContent: 'space-between'
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     date: {
         fontSize: 14,
         color: 'grey'
