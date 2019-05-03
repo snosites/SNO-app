@@ -59,6 +59,9 @@ class RecentScreen extends React.Component {
                 dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
             }
         );
+        navigation.setParams({
+            headerLogo: menus.headerSmall
+        })
     }
 
     componentDidUpdate() {
@@ -351,6 +354,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         activeDomain: state.activeDomain,
+        menus: state.menus,
         recent: state.recentArticles,
         recentArticles: state.recentArticles.items.map(articleId => {
             return state.entities.articles[articleId]

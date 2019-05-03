@@ -45,6 +45,9 @@ class ListScreen extends React.Component {
         if (this.animation) {
             this._playAnimation();
         }
+        navigation.setParams({
+            headerLogo: menus.headerSmall
+        })
     }
 
     componentDidUpdate() {
@@ -248,6 +251,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
+    menus: state.menus,
     savedArticles: store.savedArticles
 })
 
