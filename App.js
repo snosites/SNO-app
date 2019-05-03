@@ -203,11 +203,14 @@ class AppNavigatorContainer extends React.Component {
                         </Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Feather name="award" size={14} color="#ffca28" />
-                            <Text style={{
-                                fontSize: 14,
-                                paddingHorizontal: 5,
-                                color: '#757575'
-                            }}
+                            <Text
+                                ellipsizeMode='tail'
+                                numberOfLines={1}
+                                style={{
+                                    fontSize: 14,
+                                    paddingHorizontal: 5,
+                                    color: '#757575'
+                                }}
                             >
                                 {notification.data ?
                                     `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
@@ -215,7 +218,11 @@ class AppNavigatorContainer extends React.Component {
                                 }
                             </Text>
                         </View>
-                        <Text style={{ fontSize: 17, paddingLeft: 20 }}>
+                        <Text
+                            ellipsizeMode='tail'
+                            numberOfLines={1}
+                            style={{ fontSize: 17, paddingLeft: 20 }}
+                        >
                             {notification.data ?
                                 notification.data.title
                                 :
