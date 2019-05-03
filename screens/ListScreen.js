@@ -24,7 +24,8 @@ import {
     saveArticle,
     fetchArticlesIfNeeded,
     fetchMoreArticlesIfNeeded,
-    invalidateArticles
+    invalidateArticles,
+    removeSavedArticle
 } from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -58,7 +59,8 @@ class ListScreen extends React.Component {
     };
 
     state = {
-        snackbarVisible: false,
+        snackbarSavedVisible: false,
+        snackbarRemovedVisible: false
     }
 
     componentDidMount() {
@@ -79,7 +81,7 @@ class ListScreen extends React.Component {
 
     render() {
         const { navigation, articlesByCategory, category } = this.props;
-        const { snackbarVisible } = this.state;
+        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (articlesByCategory.length === 0 && category.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -200,7 +202,7 @@ class ListScreen extends React.Component {
                                                 style={styles.socialIcon}
                                                 size={24}
                                                 onPress={() => {
-                                                    this._handleArticleSave(story)
+                                                    this._saveRemoveToggle(story)
                                                 }}
                                             />
                                         </View>
@@ -212,18 +214,32 @@ class ListScreen extends React.Component {
                     }}
                 />
                 <Snackbar
-                    visible={snackbarVisible}
+                    visible={snackbarSavedVisible}
                     style={styles.snackbar}
                     duration={3000}
-                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    onDismiss={() => this.setState({ snackbarSavedVisible: false })}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
-                            this.setState({ snackbarVisible: false })
+                            this.setState({ snackbarSavedVisible: false })
                         }
                     }}
                 >
-                    Article Saved
+                    Article Saved For Later
+                </Snackbar>
+                <Snackbar
+                    visible={snackbarRemovedVisible}
+                    style={styles.snackbar}
+                    duration={3000}
+                    onDismiss={() => this.setState({ snackbarRemovedVisible: false })}
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            this.setState({ snackbarRemovedVisible: false })
+                        }
+                    }}
+                >
+                    Article Removed From Saved List
                 </Snackbar>
             </View>
 
@@ -246,11 +262,27 @@ class ListScreen extends React.Component {
         })
     }
 
+    _saveRemoveToggle = article => {
+        if(article.saved) {
+            this._handleArticleRemove(article.id);
+        } else {
+            this._handleArticleSave(article);
+        }
+    }
+
     _handleArticleSave = article => {
         console.log('in article save')
         this.props.dispatch(saveArticle(article))
         this.setState({
-            snackbarVisible: true
+            snackbarSavedVisible: true
+        })
+    }
+
+    _handleArticleRemove = articleId => {
+        console.log('in article remove')
+        this.props.dispatch(removeSavedArticle(articleId))
+        this.setState({
+            snackbarRemovedVisible: true
         })
     }
 
