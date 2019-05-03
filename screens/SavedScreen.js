@@ -194,6 +194,8 @@ class ListScreen extends React.Component {
         navigation.push('FullArticle', {
             articleId: article.id,
             article,
+            commentNumber: article.comments.length,
+            comments: article.comments
         })
     }
 

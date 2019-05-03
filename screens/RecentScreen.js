@@ -253,6 +253,8 @@ class RecentScreen extends React.Component {
         navigation.navigate('FullArticle', {
             articleId: article.id,
             article,
+            commentNumber: article.comments.length,
+            comments: article.comments
         })
     }
 

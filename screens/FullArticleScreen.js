@@ -63,7 +63,13 @@ export default class FullArticleScreen extends React.Component {
                         {this._getArticleAuthor()}
                     </Text>
                 </TouchableItem>
-                <Text style={styles.date}>Published: {Moment(article.modified).fromNow()}</Text>
+                <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 10}}>
+                    <Text style={styles.date}>
+                        {Moment(article.date).format('D MMM YYYY')}
+                    </Text>
+                    <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                    <Text style={styles.date}>{String(Moment(article.date).fromNow())}</Text>
+                </View>
                 <View style={styles.articleContents}>
                     <HTML
                         html={article.content.rendered}
@@ -130,7 +136,7 @@ export default class FullArticleScreen extends React.Component {
                 source={{ uri: article.custom_fields.video[0] }}
             />
         }
-        else if(article.featuredImage) {
+        else if (article.featuredImage) {
             return (
                 <ImageBackground
                     source={{ uri: article.featuredImage.uri }}
@@ -229,32 +235,9 @@ const styles = StyleSheet.create({
         color: '#9e9e9e',
         textAlign: 'center'
     },
-    // socialContainer: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-around',
-    //     paddingVertical: 10
-    // },
-    // socialButton: {
-    //     borderRadius: 10,
-    //     margin: 5,
-    //     paddingVertical: 10,
-    //     paddingHorizontal: 20,
-    //     backgroundColor: '#5c6bc0',
-    // },
-    // socialButtonInner: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center'
-    // },
-    // socialButtonText: {
-    //     fontSize: 19,
-    //     color: 'white',
-    //     paddingLeft: 5
-    // },
     date: {
-        padding: 5,
-        fontSize: 17,
+        fontSize: 15,
         color: '#9e9e9e',
-        textAlign: 'center'
     },
     articleContents: {
         padding: 20,
