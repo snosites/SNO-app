@@ -81,7 +81,7 @@ function* fetchArticles(action) {
                 console.log(story._links['wp:featuredmedia'][0].href)
                 return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
             } else {
-                return;
+                return call(Promise.resolve);
             }
         }))
         yield all(stories.map(story => {

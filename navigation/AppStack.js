@@ -2,17 +2,27 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
 
-
 import TabBarIcon from '../components/TabBarIcon';
+
+import AppSetupScreen from '../screens/AppSetupScreen';
+import MainDrawerNavigator from './MainDrawerNavigator';
 import SettingsScreen from '../screens/SettingsScreen';
 import SavedScreen from '../screens/SavedScreen';
 import RecentScreen from '../screens/RecentScreen';
 
-import AppSetupScreen from '../screens/AppSetupScreen';
-import MainDrawerNavigator from './MainDrawerNavigator';
+import FullArticleScreen from '../screens/FullArticleScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import CommentsScreen from '../screens/CommentsScreen';
+import StaffScreen from '../screens/StaffScreen';
+
+
 
 const RecentStack = createStackNavigator({
     Recent: RecentScreen,
+    FullArticle: FullArticleScreen,
+    Profile: ProfileScreen,
+    Comments: CommentsScreen,
+    Staff: StaffScreen
 });
 
 RecentStack.navigationOptions = {
@@ -20,14 +30,17 @@ RecentStack.navigationOptions = {
             tabBarIcon: ({ focused }) => (
                 <TabBarIcon
                     focused={focused}
-                    // name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
                     name={'md-funnel'}
                 />
             ),
 };
 
 const BookmarkStack = createStackNavigator({
-    Saved: SavedScreen
+    Saved: SavedScreen,
+    FullArticle: FullArticleScreen,
+    Profile: ProfileScreen,
+    Comments: CommentsScreen,
+    Staff: StaffScreen
 });
 
 BookmarkStack.navigationOptions = {

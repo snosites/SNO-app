@@ -13,12 +13,11 @@ import {
 import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-
 import CustomDrawer from './CustomDrawer';
+
 import ListScreen from '../screens/ListScreen';
 import FullArticleScreen from '../screens/FullArticleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-
 import CommentsScreen from '../screens/CommentsScreen';
 import StaffScreen from '../screens/StaffScreen';
 

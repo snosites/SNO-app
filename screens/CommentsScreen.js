@@ -28,7 +28,7 @@ class CommentsScreen extends React.Component {
         return {
             headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
             headerLeft: <HeaderBackButton onPress={() => {
-                navigation.navigate('List')
+                navigation.popToTop();
             }}
             />
         };

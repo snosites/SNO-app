@@ -16,6 +16,12 @@ function* fetchFeaturedImage(url, story) {
     }
 }
 
+function* fetchComments(url, story) {
+    const response = yield fetch(`${url}/wp-json/wp/v2/comments?post=${story.id}`);
+    const comments = yield response.json();
+    story.comments = comments
+    return;
+}
 
 function* fetchRecentArticles(action) {
     const { domain, categories, page } = action;
@@ -24,13 +30,15 @@ function* fetchRecentArticles(action) {
         yield put(requestRecentArticles())
         const response = yield fetch(query)
         const stories = yield response.json();
-        console.log('story response', stories)
         yield all(stories.map(story => {
-            if(story._links['wp:featuredmedia']){
+            if (story._links['wp:featuredmedia']) {
                 return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
             } else {
                 return call(Promise.resolve)
             }
+        }))
+        yield all(stories.map(story => {
+            return call(fetchComments, domain, story)
         }))
         const normalizedData = normalize(stories, articleListSchema);
         yield put(receiveRecentArticles(normalizedData))
@@ -89,6 +97,8 @@ function* fetchRecentArticlesIfNeeded(action) {
         }
     }
 }
+
+
 
 function* fetchMoreRecentArticlesIfNeeded(action) {
     const { domain } = action;

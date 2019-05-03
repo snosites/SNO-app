@@ -18,10 +18,7 @@ function* fetchMenus(action) {
         yield put(requestMenus())
         console.log('domain', domain);
         const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
-        console.log('test', response)
-        console.log('test')
         const originalMenus = yield response.json();
-        console.log('test')
 
         let menus = originalMenus.filter(menu => {
             if(menu.object !== 'custom') {
@@ -114,7 +111,6 @@ function* fetchMenus(action) {
 function* fetchCategoriesFromDb(action) {
     try {
         const domainId = action.domainId;
-        console.log('domain ID', domainId, api)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}`)
         const categories = yield response.json();
         return categories;

@@ -171,8 +171,10 @@ class ListScreen extends React.Component {
                                                 </Text>
                                                 <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                            </View>
+                                            <View style={{flexDirection: 'row'}}>
                                                 <View style={{
-                                                    marginHorizontal: 15,
+                                                    marginRight: 40,
                                                 }}>
                                                     <FontAwesome name="comment"
                                                         size={21} color='grey'
@@ -191,20 +193,20 @@ class ListScreen extends React.Component {
                                                         {story.comments.length}
                                                     </Badge>
                                                 </View>
+                                                <MaterialIcons
+                                                    name={
+                                                        story.saved ? 'bookmark'
+                                                            :
+                                                            'bookmark-border'
+                                                    }
+                                                    color={Colors.tintColor}
+                                                    style={styles.socialIcon}
+                                                    size={24}
+                                                    onPress={() => {
+                                                        this._saveRemoveToggle(story)
+                                                    }}
+                                                />
                                             </View>
-                                            <MaterialIcons
-                                                name={
-                                                    story.saved ? 'bookmark'
-                                                    :
-                                                    'bookmark-border'
-                                                }
-                                                color={Colors.tintColor}
-                                                style={styles.socialIcon}
-                                                size={24}
-                                                onPress={() => {
-                                                    this._saveRemoveToggle(story)
-                                                }}
-                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -225,7 +227,7 @@ class ListScreen extends React.Component {
                         }
                     }}
                 >
-                    Article Saved For Later
+                    Article Added To Saved List
                 </Snackbar>
                 <Snackbar
                     visible={snackbarRemovedVisible}
@@ -263,7 +265,7 @@ class ListScreen extends React.Component {
     }
 
     _saveRemoveToggle = article => {
-        if(article.saved) {
+        if (article.saved) {
             this._handleArticleRemove(article.id);
         } else {
             this._handleArticleSave(article);

@@ -14,6 +14,7 @@ import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
 
+import Colors from '../constants/Colors'
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
 
@@ -21,9 +22,18 @@ import { removeSavedArticle } from '../redux/actions/actions';
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
+        const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Saved Stories',
-
+            headerLeft: (
+                logo &&
+                <Image
+                    source={{ uri: logo }}
+                    style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
+                    resizeMode='cover'
+                />
+            ),
+            headerBackTitle: null
         };
     };
 
@@ -112,8 +122,10 @@ class ListScreen extends React.Component {
                                                 </Text>
                                                 <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row' }}>
                                                 <View style={{
-                                                    marginHorizontal: 15,
+                                                    marginRight: 40,
                                                 }}>
                                                     <FontAwesome name="comment"
                                                         size={21} color='grey'
@@ -132,15 +144,16 @@ class ListScreen extends React.Component {
                                                         {story.comments.length}
                                                     </Badge>
                                                 </View>
+                                                <MaterialIcons
+                                                    name='delete'
+                                                    color='#c62828'
+                                                    style={styles.socialIcon}
+                                                    size={24}
+                                                    onPress={() => {
+                                                        this._handleArticleRemove(story.id)
+                                                    }}
+                                                />
                                             </View>
-                                            <MaterialIcons
-                                                onPress={() => {
-                                                    this._handleArticleRemove(story.id)
-                                                }}
-                                                style={styles.socialIcon} name='delete'
-                                                size={24}
-                                                color={'#c62828'}
-                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -186,12 +199,6 @@ class ListScreen extends React.Component {
         this.setState({
             snackbarVisible: true
         })
-    }
-
-    _getAttachmentsAync = async (article) => {
-        const response = await fetch(article._links['wp:attachment'][0].href);
-        const imageAttachments = await response.json();
-        return imageAttachments;
     }
 
     _playAnimation = () => {

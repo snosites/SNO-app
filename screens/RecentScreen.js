@@ -15,11 +15,12 @@ import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
-import { MaterialIcons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { Snackbar, Badge } from 'react-native-paper';
 
 import {
     saveArticle,
+    removeSavedArticle,
     fetchRecentArticlesIfNeeded,
     fetchMoreRecentArticlesIfNeeded,
     invalidateRecentArticles
@@ -27,14 +28,24 @@ import {
 
 class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
+        const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Recent Articles',
-
+            headerLeft: (
+                logo &&
+                <Image
+                    source={{ uri: logo }}
+                    style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
+                    resizeMode='cover'
+                />
+            ),
+            headerBackTitle: null
         };
     };
 
     state = {
-        snackbarVisible: false
+        snackbarSavedVisible: false,
+        snackbarRemovedVisible: false
     }
 
     componentDidMount() {
@@ -62,8 +73,8 @@ class RecentScreen extends React.Component {
 
     render() {
         const { navigation, recentArticles, recent } = this.props;
-        const { snackbarVisible } = this.state;
-        if (recentArticles.length === 0 && recent.isFetching) {
+        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
+        if (recent.items.length === 0 && recent.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -152,8 +163,10 @@ class RecentScreen extends React.Component {
                                                 </Text>
                                                 <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row' }}>
                                                 <View style={{
-                                                    marginHorizontal: 15,
+                                                    marginRight: 40,
                                                 }}>
                                                     <FontAwesome name="comment"
                                                         size={21} color='grey'
@@ -172,20 +185,20 @@ class RecentScreen extends React.Component {
                                                         {story.comments.length}
                                                     </Badge>
                                                 </View>
+                                                <MaterialIcons
+                                                    name={
+                                                        story.saved ? 'bookmark'
+                                                            :
+                                                            'bookmark-border'
+                                                    }
+                                                    color={Colors.tintColor}
+                                                    style={styles.socialIcon}
+                                                    size={24}
+                                                    onPress={() => {
+                                                        this._saveRemoveToggle(story)
+                                                    }}
+                                                />
                                             </View>
-                                            <MaterialIcons
-                                                name={
-                                                    story.saved ? 'bookmark'
-                                                        :
-                                                        'bookmark-border'
-                                                }
-                                                color={Colors.tintColor}
-                                                style={styles.socialIcon}
-                                                size={24}
-                                                onPress={() => {
-                                                    this._saveRemoveToggle(story)
-                                                }}
-                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -194,18 +207,32 @@ class RecentScreen extends React.Component {
                     }}
                 />
                 <Snackbar
-                    visible={snackbarVisible}
+                    visible={snackbarSavedVisible}
                     style={styles.snackbar}
                     duration={3000}
-                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    onDismiss={() => this.setState({ snackbarSavedVisible: false })}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
-                            this.setState({ snackbarVisible: false })
+                            this.setState({ snackbarSavedVisible: false })
                         }
                     }}
                 >
-                    Article Saved
+                    Article Added To Saved List
+                </Snackbar>
+                <Snackbar
+                    visible={snackbarRemovedVisible}
+                    style={styles.snackbar}
+                    duration={3000}
+                    onDismiss={() => this.setState({ snackbarRemovedVisible: false })}
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            this.setState({ snackbarRemovedVisible: false })
+                        }
+                    }}
+                >
+                    Article Removed From Saved List
                 </Snackbar>
             </View>
 
@@ -226,19 +253,29 @@ class RecentScreen extends React.Component {
         })
     }
 
+    _saveRemoveToggle = article => {
+        if (article.saved) {
+            this._handleArticleRemove(article.id);
+        } else {
+            this._handleArticleSave(article);
+        }
+    }
+
     _handleArticleSave = article => {
         console.log('in article save')
         this.props.dispatch(saveArticle(article))
         this.setState({
-            snackbarVisible: true
+            snackbarSavedVisible: true
         })
     }
 
-    // _getAttachmentsAync = async (article) => {
-    //     const response = await fetch(article._links['wp:attachment'][0].href);
-    //     const imageAttachments = await response.json();
-    //     return imageAttachments;
-    // }
+    _handleArticleRemove = articleId => {
+        console.log('in article remove')
+        this.props.dispatch(removeSavedArticle(articleId))
+        this.setState({
+            snackbarRemovedVisible: true
+        })
+    }
 
     _loadMore = () => {
         if (!this.onEndReachedCalledDuringMomentum) {
@@ -246,7 +283,6 @@ class RecentScreen extends React.Component {
             this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
             this.onEndReachedCalledDuringMomentum = true;
         }
-
     }
 
     _handleRefresh = () => {
