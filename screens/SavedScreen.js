@@ -42,6 +42,7 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
+        const { navigation, menus } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
@@ -137,8 +138,8 @@ class ListScreen extends React.Component {
                                                         size={16}
                                                         style={{
                                                             position: 'absolute',
-                                                            bottom: 2,
-                                                            right: -10,
+                                                            bottom: 5,
+                                                            right: -11,
                                                             backgroundColor: '#4fc3f7',
                                                             borderWidth: 1,
                                                             borderColor: 'white'
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
-    menus: state.menus,
+    menus: store.menus,
     savedArticles: store.savedArticles
 })
 

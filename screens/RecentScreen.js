@@ -49,11 +49,11 @@ class RecentScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, activeDomain } = this.props;
+        const { dispatch, activeDomain, navigation, menus } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
-        const willFocusSubscription = this.props.navigation.addListener(
+        this.willFocusSubscription = navigation.addListener(
             'willFocus',
             () => {
                 dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
@@ -71,7 +71,7 @@ class RecentScreen extends React.Component {
     }
 
     componentWillUnmount() {
-        willFocusSubscription.remove();
+        this.willFocusSubscription.remove();
     }
 
     render() {
@@ -178,8 +178,8 @@ class RecentScreen extends React.Component {
                                                         size={16}
                                                         style={{
                                                             position: 'absolute',
-                                                            bottom: 2,
-                                                            right: -10,
+                                                            bottom: 5,
+                                                            right: -11,
                                                             backgroundColor: '#4fc3f7',
                                                             borderWidth: 1,
                                                             borderColor: 'white'
