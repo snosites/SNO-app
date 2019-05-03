@@ -78,6 +78,7 @@ function* fetchArticles(action) {
         const stories = yield response.json();
         yield all(stories.map(story => {
             if(story._links['wp:featuredmedia']) {
+                console.log(story._links['wp:featuredmedia'][0].href)
                 return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
             } else {
                 return;

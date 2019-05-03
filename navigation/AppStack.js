@@ -4,27 +4,12 @@ import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator }
 
 
 import TabBarIcon from '../components/TabBarIcon';
-import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SavedScreen from '../screens/SavedScreen';
 import RecentScreen from '../screens/RecentScreen';
 
 import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';
-
-const SearchStack = createStackNavigator({
-    Links: LinksScreen,
-});
-
-SearchStack.navigationOptions = {
-    tabBarLabel: 'Search',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon
-            focused={focused}
-            name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
-        />
-    ),
-};
 
 const RecentStack = createStackNavigator({
     Recent: RecentScreen,
@@ -73,7 +58,6 @@ const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
     RecentStack,
     BookmarkStack,
-    SearchStack,
     SettingsStack,
 });
 

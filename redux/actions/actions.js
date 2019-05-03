@@ -249,6 +249,12 @@ export function saveUserInfo(payload) {
     }
 }
 
+// SAVED ARTICLES SCREEN
+
 export function saveArticle(article) {
     return { type: 'SAVE_ARTICLE', article}
+}
+
+export function removeSavedArticle(articleId) {
+    return { type: 'REMOVE_SAVED_ARTICLE', articleId}
 }

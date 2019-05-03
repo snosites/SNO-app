@@ -22,9 +22,6 @@ import ProfileScreen from '../screens/ProfileScreen';
 import CommentsScreen from '../screens/CommentsScreen';
 import StaffScreen from '../screens/StaffScreen';
 
-
-
-
 const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
@@ -32,35 +29,6 @@ const ArticleStack = createStackNavigator({
     Comments: CommentsScreen,
     Staff: StaffScreen
 },);
-
-
-class HomeLoadingScreen extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state={
-            loadingSettings: true
-        }
-    }
-
-    componentDidMount(){
-        setTimeout(() => {
-            this.setState({loadingSettings: false})
-            this.props.navigation.navigate('HomeMain');
-        }, 100)
-    }
-
-    render() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center'}}>
-                <StatusBar barStyle="dark-content" />
-                <ActivityIndicator size="large" color='purple' />
-            </View>
-        );
-    }
-}
-
-
-
 
 const MyDrawerNavigator = createDrawerNavigator(
     {
@@ -85,24 +53,4 @@ MyDrawerNavigator.navigationOptions = {
     ),
 };
 
-const HomeLoadingStack = createSwitchNavigator({
-    // HomeLoading: HomeLoadingScreen,
-    HomeMain: MyDrawerNavigator
-})
-
-HomeLoadingStack.navigationOptions = {
-    tabBarLabel: 'Home',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon
-            focused={focused}
-            name={
-                Platform.OS === 'ios'
-                    ? `ios-home`
-                    : 'md-home'
-            }
-        />
-    ),
-};
-
-
-export default HomeLoadingStack;
+export default MyDrawerNavigator;

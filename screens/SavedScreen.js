@@ -17,11 +17,11 @@ import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Badge } from 'react-native-paper';
 
-import { saveArticle } from '../redux/actions/actions';
+import { removeSavedArticle } from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -36,7 +36,7 @@ class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Saved Stories',
-            
+
         };
     };
 
@@ -57,7 +57,7 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation, savedArticles } = this.props;
+        const { savedArticles } = this.props;
         const { snackbarVisible } = this.state;
         if (savedArticles === 'loading') {
             return (
@@ -81,7 +81,7 @@ class ListScreen extends React.Component {
             )
         }
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, marginVertical: 5 }}>
                     {savedArticles.map(story => {
                         return (
@@ -90,29 +90,40 @@ class ListScreen extends React.Component {
                                 onPress={this._handleArticlePress(story)}
                             >
                                 <View style={styles.storyContainer}>
-                                    <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                                    {story.featuredImage ?
+                                        <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                                        :
+                                        null
+                                    }
                                     <View style={styles.storyInfo}>
                                         <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
                                         <View style={styles.extraInfo}>
                                             <View style={{ flex: 1 }}>
                                                 <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                                <Text style={styles.date}>{Moment(story.modified).fromNow()}</Text>
+                                                <Text style={styles.date}>{Moment(story.date).fromNow()}</Text>
                                             </View>
 
                                             <View style={styles.socialIconsContainer}>
-
+                                                <View style={{ marginRight: 10 }}>
+                                                    <Feather name="message-square" size={28} color={Colors.tintColor} />
+                                                    <Badge
+                                                        size={17}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            bottom: 0,
+                                                            right: -5,
+                                                            backgroundColor: '#4fc3f7'
+                                                        }}
+                                                    >
+                                                        {story.comments.length}
+                                                    </Badge>
+                                                </View>
                                                 <MaterialIcons
                                                     onPress={() => {
-                                                        alert('share')
+                                                        this._handleArticleRemove(story.id)
                                                     }}
-                                                    style={styles.socialIcon} name='share' size={28}
-                                                    color={Colors.tintColor} />
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        this._handleArticleSave(story)
-                                                    }}
-                                                    style={styles.socialIcon} name='bookmark-border' size={28}
-                                                    color={Colors.tintColor} />
+                                                    style={styles.socialIcon} name='delete' size={28}
+                                                    color={'#c62828'} />
                                             </View>
                                         </View>
                                     </View>
@@ -134,7 +145,7 @@ class ListScreen extends React.Component {
                         }
                     }}
                 >
-                    Article Saved
+                    Article Removed
                 </Snackbar>
             </View>
 
@@ -154,9 +165,9 @@ class ListScreen extends React.Component {
         })
     }
 
-    _handleArticleSave = article => {
-        console.log('in article save')
-        this.props.dispatch(saveArticle(article))
+    _handleArticleRemove = articleId => {
+        console.log('in article remove')
+        this.props.dispatch(removeSavedArticle(articleId))
         this.setState({
             snackbarVisible: true
         })

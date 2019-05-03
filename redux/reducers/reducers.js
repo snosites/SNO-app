@@ -132,6 +132,10 @@ export function savedArticles(state = [], action) {
                 ...state,
                 action.article
             ]
+        case 'REMOVE_SAVED_ARTICLE':
+            return state.filter(article => {
+                return article.id !== action.articleId
+            })
         default:
             return state
     }

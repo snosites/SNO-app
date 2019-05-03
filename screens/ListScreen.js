@@ -16,9 +16,9 @@ import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather, FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Snackbar, Badge } from 'react-native-paper';
+import { Snackbar, Badge, IconButton } from 'react-native-paper';
 
 import {
     saveArticle,
@@ -150,40 +150,55 @@ class ListScreen extends React.Component {
                                             }}
                                             tagsStyles={{
                                                 rawtext: {
-                                                    fontSize: 20,
+                                                    fontSize: 19,
                                                     fontWeight: 'bold'
                                                 }
                                             }}
                                         />
-
-                                        <View style={styles.extraInfo}>
-                                            <View style={{ flex: 1 }}>
-                                                <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            paddingTop: 5,
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                        >
+                                            <View style={{ flexDirection: 'row'}}>
+                                                <Text style={styles.date}>
+                                                    {Moment(story.date).format('D MMM YYYY')}
+                                                </Text>
+                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
-                                            </View>
-
-                                            <View style={styles.socialIconsContainer}>
-                                                <View style={{ marginRight: 10 }}>
-                                                    <Feather name="message-square" size={28} color={Colors.tintColor} />
+                                                <View style={{
+                                                    marginHorizontal: 15,
+                                                }}>
+                                                    <FontAwesome name="comment"
+                                                        size={21} color='grey'
+                                                    />
                                                     <Badge
-                                                    size={17}
+                                                        size={16}
                                                         style={{
                                                             position: 'absolute',
-                                                            bottom: 0,
-                                                            right: -5,
-                                                            backgroundColor: '#4fc3f7'
+                                                            bottom: 2,
+                                                            right: -10,
+                                                            backgroundColor: '#4fc3f7',
+                                                            borderWidth: 1,
+                                                            borderColor: 'white'
                                                         }}
                                                     >
                                                         {story.comments.length}
                                                     </Badge>
                                                 </View>
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        this._handleArticleSave(story)
-                                                    }}
-                                                    style={styles.socialIcon} name='bookmark-border' size={28}
-                                                    color={Colors.tintColor} />
                                             </View>
+                                            <MaterialIcons
+                                                name='bookmark-border'
+                                                color={Colors.tintColor}
+                                                style={styles.socialIcon}
+                                                size={24}
+                                                onPress={() => {
+                                                    this._handleArticleSave(story)
+                                                }}
+                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -235,12 +250,6 @@ class ListScreen extends React.Component {
         })
     }
 
-    _getAttachmentsAync = async (article) => {
-        const response = await fetch(article._links['wp:attachment'][0].href);
-        const imageAttachments = await response.json();
-        return imageAttachments;
-    }
-
     _loadMore = () => {
         if (!this.onEndReachedCalledDuringMomentum) {
             const { activeDomain, category } = this.props;
@@ -250,7 +259,7 @@ class ListScreen extends React.Component {
             }))
             this.onEndReachedCalledDuringMomentum = true;
         }
-        
+
     }
 
     _handleRefresh = () => {
@@ -273,7 +282,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 20,
-        marginVertical: 15,
+        marginVertical: 10,
     },
     animationContainer: {
         width: 400,
@@ -292,21 +301,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         justifyContent: 'space-between'
     },
-    extraInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        flex: 1,
-    },
-    socialIconsContainer: {
-        flexDirection: 'row',
-    },
     title: {
         fontSize: 20,
         fontWeight: 'bold'
     },
     date: {
-        fontSize: 15,
+        fontSize: 14,
         color: 'grey'
     },
     author: {
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         color: '#90caf9'
     },
     socialIcon: {
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
     },
     snackbar: {
         position: 'absolute',
