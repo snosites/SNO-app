@@ -1,36 +1,23 @@
 import React from 'react';
 import {
-    Platform,
-    AsyncStorage,
     View,
     ScrollView,
     Text,
     Image,
-    ActivityIndicator,
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
+import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
 
-import Colors from '../constants/Colors'
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
 
 import { removeSavedArticle } from '../redux/actions/actions';
-
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
-
-
-
-// header icon native look component
-const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
-);
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -96,42 +83,70 @@ class ListScreen extends React.Component {
                                         null
                                     }
                                     <View style={styles.storyInfo}>
-                                        <Text ellipsizeMode='tail' numberOfLines={2} style={styles.title}>{story.title.rendered}</Text>
-                                        <View style={styles.extraInfo}>
-                                            <View style={{ flex: 1 }}>
-                                                <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                                <Text style={styles.date}>{Moment(story.date).fromNow()}</Text>
-                                            </View>
-
-                                            <View style={styles.socialIconsContainer}>
-                                                <View style={{ marginRight: 10 }}>
-                                                    <Feather name="message-square" size={28} color={Colors.tintColor} />
+                                        <HTML
+                                            html={story.title.rendered}
+                                            baseFontStyle={{ fontSize: 19 }}
+                                            customWrapper={(text) => {
+                                                return (
+                                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                                )
+                                            }}
+                                            tagsStyles={{
+                                                rawtext: {
+                                                    fontSize: 19,
+                                                    fontWeight: 'bold'
+                                                }
+                                            }}
+                                        />
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            paddingTop: 5,
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                        >
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.date}>
+                                                    {Moment(story.date).format('D MMM YYYY')}
+                                                </Text>
+                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                                <View style={{
+                                                    marginHorizontal: 15,
+                                                }}>
+                                                    <FontAwesome name="comment"
+                                                        size={21} color='grey'
+                                                    />
                                                     <Badge
-                                                        size={17}
+                                                        size={16}
                                                         style={{
                                                             position: 'absolute',
-                                                            bottom: 0,
-                                                            right: -5,
-                                                            backgroundColor: '#4fc3f7'
+                                                            bottom: 2,
+                                                            right: -10,
+                                                            backgroundColor: '#4fc3f7',
+                                                            borderWidth: 1,
+                                                            borderColor: 'white'
                                                         }}
                                                     >
                                                         {story.comments.length}
                                                     </Badge>
                                                 </View>
-                                                <MaterialIcons
-                                                    onPress={() => {
-                                                        this._handleArticleRemove(story.id)
-                                                    }}
-                                                    style={styles.socialIcon} name='delete' size={28}
-                                                    color={'#c62828'} />
                                             </View>
+                                            <MaterialIcons
+                                                onPress={() => {
+                                                    this._handleArticleRemove(story.id)
+                                                }}
+                                                style={styles.socialIcon} name='delete'
+                                                size={24}
+                                                color={'#c62828'}
+                                            />
                                         </View>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         )
                     })}
-
                 </ScrollView>
                 <Snackbar
                     visible={snackbarVisible}
@@ -205,15 +220,6 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
         justifyContent: 'space-between'
-    },
-    extraInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        flex: 1,
-    },
-    socialIconsContainer: {
-        flexDirection: 'row',
     },
     title: {
         fontSize: 20,

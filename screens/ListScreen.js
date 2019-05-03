@@ -163,7 +163,7 @@ class ListScreen extends React.Component {
                                             justifyContent: 'space-between'
                                         }}
                                         >
-                                            <View style={{ flexDirection: 'row'}}>
+                                            <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.date}>
                                                     {Moment(story.date).format('D MMM YYYY')}
                                                 </Text>
@@ -191,7 +191,11 @@ class ListScreen extends React.Component {
                                                 </View>
                                             </View>
                                             <MaterialIcons
-                                                name='bookmark-border'
+                                                name={
+                                                    story.saved ? 'bookmark'
+                                                    :
+                                                    'bookmark-border'
+                                                }
                                                 color={Colors.tintColor}
                                                 style={styles.socialIcon}
                                                 size={24}
@@ -339,6 +343,14 @@ const mapStateToProps = (state, ownProps) => {
         menus: state.menus,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
+            const found = state.savedArticles.find(savedArticle => {
+                return savedArticle.id == articleId;
+            })
+            if (found) {
+                state.entities.articles[articleId].saved = true;
+            } else {
+                state.entities.articles[articleId].saved = false;
+            }
             return state.entities.articles[articleId]
         })
     }

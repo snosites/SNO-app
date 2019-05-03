@@ -164,7 +164,7 @@ class AppNavigatorContainer extends React.Component {
                 this.setState({
                     visible: false
                 })
-            }, 5000)
+            }, 8000)
         }
     };
 
