@@ -7,7 +7,8 @@ import {
     View,
     ScrollView,
     ActivityIndicator,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    SafeAreaView
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
@@ -36,50 +37,78 @@ export default class InitScreen extends React.Component {
             )
         }
         return (
-            <ScrollView>
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
-                    <View style={styles.container}>
-                        <View style={styles.logoContainer}>
-                            <Image
-                                source={require('../assets/images/the-source-logo.png')}
-                                style={styles.logoImage}
-                            />
-                        </View>
-                        <View style={styles.getStartedContainer}>
-                            <Text style={styles.getStartedText}>Get started by finding your organization
-                        </Text>
-                        </View>
-                        <View style={styles.locationContainer}>
-                            <Button
-                                mode="contained"
-                                style={{  color: 'white', backgroundColor: '#9A1D20', borderRadius: 10, padding: 5 }}
-                                onPress={this._handleUseLocation}
-                            >
-                                Use Your Current Location
-                            </Button>
-                            <Text>{this.state.errorMessage}</Text>
-                            <Text style={styles.locationContainerText}>Or enter your organization's name below</Text>
-                            <View style={styles.formContainer}>
-                                <TextInput
-                                    label='Organization Name'
-                                    style={{ width: 300, paddingHorizontal: 20 }}
-                                    theme={{ roundness: 10 }}
-                                    mode='outlined'
-                                    value={this.state.orgName}
-                                    onChangeText={(text) => this.setState({ orgName: text })}
+            <SafeAreaView style={{ flex: 1 }}>
+                <ScrollView>
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
+                        <View style={styles.container}>
+                            <View style={styles.logoContainer}>
+                                <Image
+                                    source={require('../assets/images/the-source-logo.png')}
+                                    style={styles.logoImage}
                                 />
+                            </View>
+                            <View style={styles.getStartedContainer}>
+                                <Text style={styles.getStartedText}>Get started by finding your school
+                                </Text>
+                                {/* <Button
+                                    mode="contained"
+                                    theme={{
+                                        roundness: 7,
+                                        colors: {
+                                        primary: '#2099CE'
+                                    }}}
+                                    style={{ padding: 5, marginBottom: 20 }}
+                                    onPress={this._handleUseLocation}
+                                >
+                                    Use Your Current Location
+                                </Button> */}
                                 <Button
                                     mode="contained"
-                                    style={{ color: 'white', backgroundColor: '#9A1D20', borderRadius: 10, padding: 5 }}
-                                    onPress={this._handleSubmit}
+                                    theme={{
+                                        roundness: 7,
+                                        colors: {
+                                        primary: '#2099CE'
+                                    }}}
+                                    style={{ padding: 10, marginBottom: 50 }}
+                                    onPress={this._handleUseLocation}
                                 >
-                                    Search
+                                    Browse All Schools
                                 </Button>
+                                {/* <Text>{this.state.errorMessage}</Text> */}
+                                <Text style={styles.locationContainerText}>Or enter your school's name below</Text>
+                                <View style={styles.formContainer}>
+                                    <TextInput
+                                        label='School Name'
+                                        style={{ width: 300, marginBottom: 20 }}
+                                        theme={{
+                                            roundness: 7,
+                                            colors: {
+                                                background: 'white',
+                                                primary: '#2099CE'
+                                        }}}
+                                        mode='outlined'
+                                        selectionColor='black'
+                                        value={this.state.orgName}
+                                        onChangeText={(text) => this.setState({ orgName: text })}
+                                    />
+                                    <Button
+                                        mode="contained"
+                                        theme={{
+                                            roundness: 7,
+                                            colors: {
+                                                primary: '#83B33B'
+                                        }}}
+                                        style={{ padding: 10 }}
+                                        onPress={this._handleSubmit}
+                                    >
+                                        Search
+                                </Button>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </KeyboardAvoidingView>
-            </ScrollView>
+                    </KeyboardAvoidingView>
+                </ScrollView>
+            </SafeAreaView>
         );
     }
 
@@ -135,6 +164,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         margin: 30,
+        alignItems: 'center'
     },
     logoContainer: {
         alignItems: 'center',
@@ -147,26 +177,19 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     getStartedContainer: {
+        flex: 1,
         alignItems: 'center',
-        marginHorizontal: 50,
-        marginBottom: 100
+        width: 300
     },
     getStartedText: {
         fontSize: 19,
-        color: 'rgba(96,100,109, 1)',
-        lineHeight: 24,
         textAlign: 'center',
-    },
-    locationContainer: {
-        flex: 1,
-        marginTop: 30,
-        alignItems: 'center',
+        marginBottom: 20
     },
     locationContainerText: {
         fontSize: 19,
-        color: 'rgba(96,100,109, 1)',
         textAlign: 'center',
-        margin: 20
+        marginBottom: 20
     },
     formContainer: {
         flex: 1,
