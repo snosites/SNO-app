@@ -41,7 +41,7 @@ export default class InitScreen extends React.Component {
                     <View style={styles.container}>
                         <View style={styles.logoContainer}>
                             <Image
-                                source={require('../assets/images/snologo-dev.png')}
+                                source={require('../assets/images/the-source-logo.png')}
                                 style={styles.logoImage}
                             />
                         </View>
@@ -131,10 +131,6 @@ export default class InitScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    scrollContainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -142,15 +138,13 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 0,
-        paddingTop: 30,
+        marginTop: 20,
+        marginBottom: 40,
     },
     logoImage: {
-        width: 200,
+        width: 250,
         height: 100,
         resizeMode: 'contain',
-        marginTop: 3,
     },
     getStartedContainer: {
         alignItems: 'center',

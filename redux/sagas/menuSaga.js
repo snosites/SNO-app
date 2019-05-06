@@ -7,10 +7,10 @@ const { manifest } = Constants;
 
 import Sentry from 'sentry-expo';
 
-const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
-// const api = 'error_api';
+// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+//     : `api.example.com`;
+const api = 'http://mobileapi.snosites.net/';
 console.log('api', api)
 
 function* fetchMenus(action) {
@@ -84,20 +84,31 @@ function* fetchMenus(action) {
         // make sure push token has been stored
         yield call(checkNotificationSettings);
 
-        const [result, result2, result3] = yield all([
-            call(fetch, `${domain}/wp-json/custom/header_image?type=header-image-small`),
-            call(fetch, `${domain}/wp-json/custom/header_image?type=mini-logo`),
-            call(fetch, `${domain}/wp-json/custom/header_image?type=snomobile-splash-image`),
+        const [result, result2, result3, result4, result5, result6] = yield all([
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=header-image-small`),
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=mini-logo`),
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-splash-image`),
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-theme`),
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-primary`),
+            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-accent`),
 
         ]);
         const headerImage = yield result.json();
         const headerSmall = yield result2.json();
         const splashScreen = yield result3.json();
+        const theme = yield result4.json();
+        const primary = yield result5.json();
+        const accent = yield result6.json();
+
+
         yield put(receiveMenus({
             menus,
             header: headerImage.image,
             headerSmall: headerSmall.image,
-            splashScreen: splashScreen.image
+            splashScreen: splashScreen.image,
+            theme: theme.image,
+            primary: theme.image,
+            accent: theme.image
         }))
         yield put(fetchArticlesIfNeeded({
             domain,

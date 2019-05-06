@@ -10,10 +10,11 @@
     ],
     "version": "1.2.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/the-source-icon.png",
     "splash": {
-      "image": "./assets/images/snologo-dev.png",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/images/the-source-splash.png",
+      "backgroundColor": "#000000",
+      "resizeMode": "cover"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
