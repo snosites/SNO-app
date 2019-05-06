@@ -19,7 +19,6 @@ import { setActiveDomain } from '../redux/actions/actions';
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
         super(props);
-        
     }
 
     componentDidMount() {
@@ -27,8 +26,6 @@ class AuthLoadingScreen extends React.Component {
     }
 
     render() {
-
-
         return (
             <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
                 <StatusBar barStyle="light-content" />

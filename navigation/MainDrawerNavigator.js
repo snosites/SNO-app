@@ -10,7 +10,7 @@ import {
     StatusBar,
     ActivityIndicator
 } from 'react-native';
-import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator, NavigationActions } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import CustomDrawer from './CustomDrawer';
@@ -50,6 +50,12 @@ MyDrawerNavigator.navigationOptions = {
             }
         />
     ),
+    tabBarOnPress: ({navigation}) => {
+        console.log('pressed tab button home')
+        navigation.navigate('List', {
+            scrollToTop: true
+        })
+    }
 };
 
 export default MyDrawerNavigator;

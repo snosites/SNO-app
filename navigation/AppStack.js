@@ -27,12 +27,18 @@ const RecentStack = createStackNavigator({
 
 RecentStack.navigationOptions = {
     tabBarLabel: 'Recent',
-            tabBarIcon: ({ focused }) => (
-                <TabBarIcon
-                    focused={focused}
-                    name={'md-funnel'}
-                />
-            ),
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon
+            focused={focused}
+            name={'md-funnel'}
+        />
+    ),
+    tabBarOnPress: ({navigation}) => {
+        console.log('pressed tab button home')
+        navigation.navigate('Recent', {
+            scrollToTop: true
+        })
+    }
 };
 
 const BookmarkStack = createStackNavigator({

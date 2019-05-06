@@ -74,8 +74,15 @@ class ListScreen extends React.Component {
     }
 
     componentDidUpdate() {
+        console.log('in component did update')
         if (this.animation) {
             this._playAnimation();
+        }
+        const { navigation } = this.props;
+        if(navigation.state.params && navigation.state.params.scrollToTop) {
+            // scroll list to top
+            this._scrollToTop();
+            navigation.setParams({scrollToTop: false})
         }
     }
 
@@ -110,6 +117,7 @@ class ListScreen extends React.Component {
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articlesByCategory}
                     keyExtractor={item => item.id.toString()}
+                    ref={(ref) => { this.flatListRef = ref; }}
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
                     onRefresh={this._handleRefresh}
@@ -262,6 +270,10 @@ class ListScreen extends React.Component {
             commentNumber: article.comments.length,
             comments: article.comments
         })
+    }
+
+    _scrollToTop = () => {
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
     }
 
     _saveRemoveToggle = article => {

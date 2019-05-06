@@ -65,8 +65,17 @@ class RecentScreen extends React.Component {
     }
 
     componentDidUpdate() {
+        console.log('in component did update')
         if (this.animation) {
             this._playAnimation();
+        }
+        const { navigation } = this.props;
+        if (navigation.state.params && navigation.state.params.scrollToTop) {
+            if (this.flatListRef) {
+                // scroll list to top
+                this._scrollToTop();
+            }
+            navigation.setParams({ scrollToTop: false })
         }
     }
 
@@ -105,6 +114,7 @@ class RecentScreen extends React.Component {
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={recentArticles}
                     keyExtractor={item => item.id.toString()}
+                    ref={(ref) => { this.flatListRef = ref; }}
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
                     onRefresh={this._handleRefresh}
@@ -258,6 +268,10 @@ class RecentScreen extends React.Component {
         })
     }
 
+    _scrollToTop = () => {
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+    }
+
     _saveRemoveToggle = article => {
         if (article.saved) {
             this._handleArticleRemove(article.id);
@@ -362,7 +376,7 @@ const mapStateToProps = (state) => {
             const found = state.savedArticles.find(savedArticle => {
                 return savedArticle.id === articleId;
             })
-            if(found) {
+            if (found) {
                 state.entities.articles[articleId].saved = true;
             } else {
                 state.entities.articles[articleId].saved = false;
