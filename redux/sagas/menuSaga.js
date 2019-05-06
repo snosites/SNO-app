@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme } from '../actions/actions';
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
@@ -10,7 +10,7 @@ import Sentry from 'sentry-expo';
 // const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
 //     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
 //     : `api.example.com`;
-const api = 'http://mobileapi.snosites.net/';
+const api = 'mobileapi.snosites.net/';
 console.log('api', api)
 
 function* fetchMenus(action) {
@@ -99,16 +99,30 @@ function* fetchMenus(action) {
         const theme = yield result4.json();
         const primary = yield result5.json();
         const accent = yield result6.json();
+        console.log('theme', theme)
+        if(!theme.image){
+            theme.image = 'light';
+        }
+        if(!primary.image){
+            const response = call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-accent`);
+            const colorFallback = response.json();
+            primary.image = colorFallback.image;
+        }
+        if(!accent.image){
+            accent.image = colorFallback.image;
+        }
 
+        yield put(saveTheme({
+            theme: theme.image,
+            primary: primary.image,
+            accent: accent.image
+        }))
 
         yield put(receiveMenus({
             menus,
             header: headerImage.image,
             headerSmall: headerSmall.image,
             splashScreen: splashScreen.image,
-            theme: theme.image,
-            primary: theme.image,
-            accent: theme.image
         }))
         yield put(fetchArticlesIfNeeded({
             domain,

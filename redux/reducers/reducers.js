@@ -1,5 +1,6 @@
 import merge from 'lodash/merge';
 import union from 'lodash/union';
+import { DefaultTheme, Colors } from 'react-native-paper';
 
 import {
     ADD_DOMAIN,
@@ -97,7 +98,9 @@ export function menus(state = {
                 items: action.response.menus,
                 header: action.response.header,
                 headerSmall: action.response.headerSmall,
-                splashScreen: action.response.splashScreen
+                splashScreen: action.response.splashScreen,
+
+
             }
         default:
             return state
@@ -328,4 +331,27 @@ export function searchArticles(state = {
     }
 }
 
+// THEME
+
+export function theme(state = {}, action) {
+    switch (action.type) {
+        case 'SAVE_THEME':
+            let mode = true;
+            if(action.theme.theme.toLowerCase() == 'light') {
+                mode = false;
+            }
+            return {
+                ...DefaultTheme,
+                dark: mode,
+                roundness: 2,
+                colors: {
+                    ...DefaultTheme.colors,
+                    primary: action.theme.primary,
+                    accent: action.theme.accent,
+                }
+            };
+        default:
+            return state
+    }
+}
 

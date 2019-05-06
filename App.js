@@ -1,13 +1,13 @@
 import React from 'react';
-import { 
-    Platform, 
-    StatusBar, 
-    StyleSheet, 
-    View, 
-    Text, 
-    ActivityIndicator, 
-    Animated, 
-    PanResponder 
+import {
+    Platform,
+    StatusBar,
+    StyleSheet,
+    View,
+    Text,
+    ActivityIndicator,
+    Animated,
+    PanResponder
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 
@@ -34,16 +34,6 @@ useScreens();
 
 Sentry.config(secrets.SENTRYAPI).install();
 
-
-const theme = {
-    ...DefaultTheme,
-    roundness: 2,
-    colors: {
-        ...DefaultTheme.colors,
-        primary: Colors.blue500,
-        accent: Colors.blue800,
-    }
-};
 
 class FadeInView extends React.Component {
     constructor(props) {
@@ -74,13 +64,7 @@ class FadeInView extends React.Component {
                 } else {
                     this._show();
                 }
-
             }
-            // onPanResponderMove: (evt, gestureState) => [
-            //     console.log('gesture', gestureState.dx, gestureState.dy)
-            // ]
-
-            // ...rest of your panResponder handlers
         });
     }
 
@@ -193,68 +177,73 @@ class AppNavigatorContainer extends React.Component {
 
     render() {
         const { notification, visible } = this.state;
+        const { theme } = this.props;
         return (
             <View style={{ flex: 1 }}>
+                <PaperProvider theme={theme}>
+                    <View style={styles.container}>
+                        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                        <AppNavigator />
+                    </View>
+                    <Portal>
+                        <FadeInView
+                            visible={visible}
+                            style={{
+                                position: 'absolute',
+                                top: -100,
+                                right: 10,
+                                left: 10,
+                                height: 75,
+                                paddingHorizontal: 10,
+                                paddingVertical: 5,
+                                justifyContent: 'space-between',
+                                backgroundColor: '#f5f5f5',
+                                borderRadius: 10,
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                shadowOpacity: 0.23,
+                                shadowRadius: 2.62,
 
-                <Portal>
-                    <FadeInView
-                        visible={visible}
-                        style={{
-                            position: 'absolute',
-                            top: -100,
-                            right: 10,
-                            left: 10,
-                            height: 75,
-                            paddingHorizontal: 10,
-                            paddingVertical: 5,
-                            justifyContent: 'space-between',
-                            backgroundColor: '#f5f5f5',
-                            borderRadius: 10,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.23,
-                            shadowRadius: 2.62,
-
-                            elevation: 4,
-                        }}
-                    >
-                        <Text style={{ fontSize: 10, paddingLeft: 20, color: '#9e9e9e' }}>
-                            {String(Moment().fromNow())}
-                        </Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Feather name="award" size={14} color="#ffca28" />
+                                elevation: 4,
+                            }}
+                        >
+                            <Text style={{ fontSize: 10, paddingLeft: 20, color: '#9e9e9e' }}>
+                                {String(Moment().fromNow())}
+                            </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Feather name="award" size={14} color="#ffca28" />
+                                <Text
+                                    ellipsizeMode='tail'
+                                    numberOfLines={1}
+                                    style={{
+                                        fontSize: 14,
+                                        paddingHorizontal: 5,
+                                        color: '#757575'
+                                    }}
+                                >
+                                    {notification.data ?
+                                        `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
+                                        null
+                                    }
+                                </Text>
+                            </View>
                             <Text
                                 ellipsizeMode='tail'
                                 numberOfLines={1}
-                                style={{
-                                    fontSize: 14,
-                                    paddingHorizontal: 5,
-                                    color: '#757575'
-                                }}
+                                style={{ fontSize: 17, paddingLeft: 20 }}
                             >
                                 {notification.data ?
-                                    `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
+                                    notification.data.title
+                                    :
                                     null
                                 }
                             </Text>
-                        </View>
-                        <Text
-                            ellipsizeMode='tail'
-                            numberOfLines={1}
-                            style={{ fontSize: 17, paddingLeft: 20 }}
-                        >
-                            {notification.data ?
-                                notification.data.title
-                                :
-                                null
-                            }
-                        </Text>
-                    </FadeInView>
-                </Portal>
-                <AppNavigator />
+                        </FadeInView>
+                    </Portal>
+                </PaperProvider>
             </View>
         )
     }
@@ -262,6 +251,7 @@ class AppNavigatorContainer extends React.Component {
 
 const mapStateToProps = store => ({
     userInfo: store.userInfo,
+    theme: store.theme
 })
 
 const ConnectedAppNavigator = connect(mapStateToProps)(AppNavigatorContainer);
@@ -284,12 +274,7 @@ export default class App extends React.Component {
             return (
                 <ReduxProvider store={store}>
                     <PersistGate loading={<ActivityIndicator style={{ padding: 50 }} />} persistor={persistor}>
-                        <PaperProvider theme={theme}>
-                            <View style={styles.container}>
-                                {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                                <ConnectedAppNavigator />
-                            </View>
-                        </PaperProvider>
+                        <ConnectedAppNavigator />
                     </PersistGate>
                 </ReduxProvider>
             );
@@ -304,9 +289,6 @@ export default class App extends React.Component {
             Font.loadAsync({
                 // This is the font that we are using for our tab bar
                 ...Icon.Ionicons.font,
-                // We include SpaceMono because we use it in HomeScreen.js. Feel free
-                // to remove this if you are not using it in your app
-                'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
             }),
         ]);
     };

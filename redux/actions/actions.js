@@ -306,3 +306,9 @@ export function saveArticle(article) {
 export function removeSavedArticle(articleId) {
     return { type: 'REMOVE_SAVED_ARTICLE', articleId}
 }
+
+// THEME
+
+export function saveTheme(theme) {
+    return { type: 'SAVE_THEME', theme}
+}

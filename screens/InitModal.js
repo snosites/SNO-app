@@ -41,7 +41,7 @@ export default class initModal extends Component {
                             loop={false}
                             speed={0.75}
                             duration={1200}
-                            source={require('../assets/lottiefiles/success.json')}
+                            source={require('../assets/lottiefiles/animation-success.json')}
                         />
                     </View>
                     {this.state.showText &&
@@ -51,7 +51,13 @@ export default class initModal extends Component {
                             Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
                             </Text>
                         <Button
-                            style={{ color: 'white', backgroundColor: '#01C885', borderRadius: 10, padding: 5 }}
+                            mode="contained"
+                            theme={{
+                                roundness: 7,
+                                colors: {
+                                primary: '#2099CE'
+                            }}}
+                            style={{ padding: 10 }}
                             onPress={() => {
                                 Haptic.selection();
                                 this.props.handleDismiss();
