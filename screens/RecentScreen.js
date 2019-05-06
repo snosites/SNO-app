@@ -65,7 +65,7 @@ class RecentScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('in component did update')
+        console.log('in component did update recent')
         if (this.animation) {
             this._playAnimation();
         }

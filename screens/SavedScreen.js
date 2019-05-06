@@ -1,11 +1,11 @@
 import React from 'react';
 import {
     View,
-    ScrollView,
     Text,
     Image,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    FlatList
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
@@ -52,8 +52,17 @@ class ListScreen extends React.Component {
     }
 
     componentDidUpdate() {
+        console.log('in component did update saved')
         if (this.animation) {
             this._playAnimation();
+        }
+        const { navigation } = this.props;
+        if (navigation.state.params && navigation.state.params.scrollToTop) {
+            if (this.flatListRef) {
+                // scroll list to top
+                this._scrollToTop();
+            }
+            navigation.setParams({ scrollToTop: false })
         }
     }
 
@@ -83,88 +92,13 @@ class ListScreen extends React.Component {
         }
         return (
             <View style={{ flex: 1 }}>
-                <ScrollView style={{ flex: 1, marginVertical: 5 }}>
-                    {savedArticles.map(story => {
-                        return (
-                            <TouchableOpacity
-                                key={story.id}
-                                onPress={this._handleArticlePress(story)}
-                            >
-                                <View style={styles.storyContainer}>
-                                    {story.featuredImage ?
-                                        <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
-                                        :
-                                        null
-                                    }
-                                    <View style={styles.storyInfo}>
-                                        <HTML
-                                            html={story.title.rendered}
-                                            baseFontStyle={{ fontSize: 19 }}
-                                            customWrapper={(text) => {
-                                                return (
-                                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
-                                                )
-                                            }}
-                                            tagsStyles={{
-                                                rawtext: {
-                                                    fontSize: 19,
-                                                    fontWeight: 'bold'
-                                                }
-                                            }}
-                                        />
-                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            paddingTop: 5,
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between'
-                                        }}
-                                        >
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.date}>
-                                                    {Moment(story.date).format('D MMM YYYY')}
-                                                </Text>
-                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
-                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View style={{
-                                                    marginRight: 40,
-                                                }}>
-                                                    <FontAwesome name="comment"
-                                                        size={21} color='grey'
-                                                    />
-                                                    <Badge
-                                                        size={16}
-                                                        style={{
-                                                            position: 'absolute',
-                                                            bottom: 5,
-                                                            right: -11,
-                                                            backgroundColor: '#4fc3f7',
-                                                            borderWidth: 1,
-                                                            borderColor: 'white'
-                                                        }}
-                                                    >
-                                                        {story.comments.length}
-                                                    </Badge>
-                                                </View>
-                                                <MaterialIcons
-                                                    name='delete'
-                                                    color='#c62828'
-                                                    style={styles.socialIcon}
-                                                    size={24}
-                                                    onPress={() => {
-                                                        this._handleArticleRemove(story.id)
-                                                    }}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })}
-                </ScrollView>
+                <FlatList
+                    Style={{ flex: 1, marginVertical: 5 }}
+                    data={savedArticles}
+                    keyExtractor={item => item.id.toString()}
+                    ref={(ref) => { this.flatListRef = ref; }}
+                    renderItem={this._renderItem}
+                />
                 <Snackbar
                     visible={snackbarVisible}
                     style={styles.snackbar}
@@ -199,6 +133,10 @@ class ListScreen extends React.Component {
         })
     }
 
+    _scrollToTop = () => {
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+    }
+
     _handleArticleRemove = articleId => {
         console.log('in article remove')
         this.props.dispatch(removeSavedArticle(articleId))
@@ -211,6 +149,88 @@ class ListScreen extends React.Component {
         this.animation.reset();
         this.animation.play();
     };
+
+    _renderItem = props => {
+        const story = props.item;
+        return (
+            <TouchableOpacity
+                key={story.id}
+                onPress={this._handleArticlePress(story)}
+            >
+                <View style={styles.storyContainer}>
+                    {story.featuredImage ?
+                        <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
+                        :
+                        null
+                    }
+                    <View style={styles.storyInfo}>
+                        <HTML
+                            html={story.title.rendered}
+                            baseFontStyle={{ fontSize: 19 }}
+                            customWrapper={(text) => {
+                                return (
+                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                )
+                            }}
+                            tagsStyles={{
+                                rawtext: {
+                                    fontSize: 19,
+                                    fontWeight: 'bold'
+                                }
+                            }}
+                        />
+                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                        <View style={{
+                            flexDirection: 'row',
+                            paddingTop: 5,
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                        }}
+                        >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.date}>
+                                    {Moment(story.date).format('D MMM YYYY')}
+                                </Text>
+                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{
+                                    marginRight: 40,
+                                }}>
+                                    <FontAwesome name="comment"
+                                        size={21} color='grey'
+                                    />
+                                    <Badge
+                                        size={16}
+                                        style={{
+                                            position: 'absolute',
+                                            bottom: 5,
+                                            right: -11,
+                                            backgroundColor: '#4fc3f7',
+                                            borderWidth: 1,
+                                            borderColor: 'white'
+                                        }}
+                                    >
+                                        {story.comments.length}
+                                    </Badge>
+                                </View>
+                                <MaterialIcons
+                                    name='delete'
+                                    color='#c62828'
+                                    style={styles.socialIcon}
+                                    size={24}
+                                    onPress={() => {
+                                        this._handleArticleRemove(story.id)
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

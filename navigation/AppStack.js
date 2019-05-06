@@ -57,6 +57,12 @@ BookmarkStack.navigationOptions = {
             name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
         />
     ),
+    tabBarOnPress: ({navigation}) => {
+        console.log('pressed tab button home')
+        navigation.navigate('Saved', {
+            scrollToTop: true
+        })
+    }
 };
 
 const SettingsStack = createStackNavigator({

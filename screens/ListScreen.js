@@ -74,14 +74,16 @@ class ListScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('in component did update')
+        console.log('in component did update list')
         if (this.animation) {
             this._playAnimation();
         }
         const { navigation } = this.props;
         if(navigation.state.params && navigation.state.params.scrollToTop) {
-            // scroll list to top
-            this._scrollToTop();
+            if (this.flatListRef) {
+                // scroll list to top
+                this._scrollToTop();
+            }
             navigation.setParams({scrollToTop: false})
         }
     }
