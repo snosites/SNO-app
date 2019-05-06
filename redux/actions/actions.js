@@ -218,6 +218,54 @@ export function fetchRecentArticlesFailure(error) {
     }
 }
 
+// SEARCH ARTICLES
+
+// RECENT ARTICLES
+
+export function invalidateSearchArticles() {
+    return {
+        type: 'INVALIDATE_SEARCH_ARTICLES',
+    }
+}
+
+export function fetchSearchArticlesIfNeeded(domain, searchTerm) {
+    return {
+        type: 'FETCH_SEARCH_ARTICLES_IF_NEEDED',
+        domain,
+        searchTerm
+    }
+}
+
+export function fetchMoreSearchArticlesIfNeeded(domain, searchTerm) {
+    return {
+        type: 'FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED',
+        domain,
+        searchTerm
+    }
+}
+
+export function requestSearchArticles() {
+    return {
+        type: 'REQUEST_SEARCH_ARTICLES',
+    }
+}
+
+export function receiveSearchArticles(response) {
+    return {
+        type: 'RECEIVE_SEARCH_ARTICLES',
+        response,
+        receivedAt: Date.now()
+    }
+}
+
+export function fetchSearchArticlesFailure(error) {
+    return {
+        type: 'FETCH_SEARCH_ARTICLES_FAILURE',
+        error,
+        recievedAt: Date.now()
+    }
+}
+
 // COMMENTS
 
 export function updateComments(payload) {

@@ -17,6 +17,7 @@ import CustomDrawer from './CustomDrawer';
 
 import ListScreen from '../screens/ListScreen';
 import FullArticleScreen from '../screens/FullArticleScreen';
+import SearchScreen from '../screens/SearchScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import CommentsScreen from '../screens/CommentsScreen';
 import StaffScreen from '../screens/StaffScreen';
@@ -24,7 +25,7 @@ import StaffScreen from '../screens/StaffScreen';
 const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
-    // Search: SearchScreen,
+    Search: SearchScreen,
     Profile: ProfileScreen,
     Comments: CommentsScreen,
     Staff: StaffScreen

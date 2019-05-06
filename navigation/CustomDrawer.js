@@ -30,10 +30,16 @@ import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
 import { connect } from 'react-redux';
 
+import {
+    fetchSearchArticlesIfNeeded,
+    invalidateSearchArticles
+} from '../redux/actions/actions';
+
 
 class CustomDrawerComponent extends React.Component {
     state = {
-        activeMenuIndex: 0
+        activeMenuIndex: 0,
+        searchTerm: ''
     }
 
     componentDidMount() {
@@ -66,8 +72,10 @@ class CustomDrawerComponent extends React.Component {
                         }
                         <Searchbar
                             placeholder="Search Articles"
-                            // onChangeText={query => { this.setState({ firstQuery: query }); }}
-                            // value={firstQuery}
+                            onIconPress={this._searchArticles}
+                            onSubmitEditing={this._searchArticles}
+                            onChangeText={query => { this.setState({ searchTerm: query }); }}
+                            value={this.state.searchTerm}
                         />
                         <Drawer.Section title="Categories">
                             {this.props.menus.items.map((item, index) => {
@@ -92,6 +100,20 @@ class CustomDrawerComponent extends React.Component {
                 </SafeAreaView>
             </View>
         )
+    }
+
+    _searchArticles = () => {
+        const { dispatch, activeDomain, navigation } = this.props;
+        const { searchTerm } = this.state;
+        dispatch(invalidateSearchArticles());
+        navigation.navigate('Search', {
+            searchTerm
+        });
+        navigation.closeDrawer();
+        dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm));
+        this.setState({
+            searchTerm: ''
+        })
     }
 
     _handleMenuPress = (item, index) => {

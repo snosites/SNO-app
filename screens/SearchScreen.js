@@ -15,22 +15,34 @@ import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
 
 import {
     saveArticle,
     removeSavedArticle,
-    fetchRecentArticlesIfNeeded,
-    fetchMoreRecentArticlesIfNeeded,
-    invalidateRecentArticles
+    fetchSearchArticlesIfNeeded,
+    fetchMoreSearchArticlesIfNeeded,
+    invalidateSearchArticles
 } from '../redux/actions/actions';
 
-class RecentScreen extends React.Component {
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+
+// header icon native look component
+const IoniconsHeaderButton = passMeFurther => (
+    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
+);
+
+class SearchScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Search Results',
+            headerRight: (
+                <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
+                </HeaderButtons>
+            ),
             headerLeft: (
                 logo &&
                 <Image
@@ -50,15 +62,10 @@ class RecentScreen extends React.Component {
 
     componentDidMount() {
         const { dispatch, activeDomain, navigation, menus } = this.props;
+        const searchTerm = navigation.getParam('searchTerm', null);
         if (this.animation) {
             this._playAnimation();
         }
-        // this.willFocusSubscription = navigation.addListener(
-        //     'willFocus',
-        //     () => {
-        //         dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
-        //     }
-        // );
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
@@ -79,17 +86,12 @@ class RecentScreen extends React.Component {
         // }
     }
 
-    // componentWillUnmount() {
-    //     this.willFocusSubscription.remove();
-    // }
 
     render() {
-        const { navigation } = this.props;
-        let  finishedLoading = navigation.getParam('isLoading', null);
-        let results = navigation.getParam('results', []);
+        const { navigation, searchArticles, search } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
 
-        if (!finishedLoading) {
+        if (search.didInvalidate === true && search.isFetching) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -104,7 +106,7 @@ class RecentScreen extends React.Component {
                             loop={true}
                             speed={1}
                             autoPlay={true}
-                            source={require('../assets/lottiefiles/article-loading-animation')}
+                            source={require('../assets/lottiefiles/search-processing')}
                         />
                     </View>
                 </View>
@@ -115,24 +117,24 @@ class RecentScreen extends React.Component {
             <View style={{ flex: 1 }}>
                 <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
-                    data={results}
+                    data={searchArticles}
                     keyExtractor={item => item.id.toString()}
                     ref={(ref) => { this.flatListRef = ref; }}
-                    // onEndReachedThreshold={0.25}
-                    // onEndReached={this._loadMore}
-                    // onRefresh={this._handleRefresh}
-                    // refreshing={recent.didInvalidate}
-                    // onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-                    // ListFooterComponent={() => {
-                    //     if (!recent.isFetching) {
-                    //         return null
-                    //     }
-                    //     return (
-                    //         <View style={styles.loadingMore}>
-                    //             <ActivityIndicator />
-                    //         </View>
-                    //     )
-                    // }}
+                    onEndReachedThreshold={0.25}
+                    onEndReached={this._loadMore}
+                    onRefresh={this._handleRefresh}
+                    refreshing={search.didInvalidate}
+                    onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+                    ListFooterComponent={() => {
+                        if (!search.isFetching) {
+                            return null
+                        }
+                        return (
+                            <View style={styles.loadingMore}>
+                                <ActivityIndicator />
+                            </View>
+                        )
+                    }}
                     renderItem={(props) => {
                         const story = props.item;
                         return (
@@ -301,18 +303,19 @@ class RecentScreen extends React.Component {
 
     _loadMore = () => {
         if (!this.onEndReachedCalledDuringMomentum) {
-            const { activeDomain } = this.props;
-            this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
+            const { activeDomain, navigation } = this.props;
+            const searchTerm = navigation.getParam('searchTerm', '');
+            this.props.dispatch(fetchMoreSearchArticlesIfNeeded(activeDomain.url, searchTerm))
             this.onEndReachedCalledDuringMomentum = true;
         }
     }
 
     _handleRefresh = () => {
-        const { dispatch, activeDomain } = this.props;
-        dispatch(invalidateRecentArticles());
-        dispatch(fetchRecentArticlesIfNeeded({
-            domain: activeDomain.url,
-        }))
+        const { dispatch, activeDomain, navigation } = this.props;
+        const searchTerm = navigation.getParam('searchTerm', '');
+        console.log('search term', searchTerm)
+        dispatch(invalidateSearchArticles());
+        dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm))
     }
 
     _playAnimation = () => {
@@ -373,8 +376,20 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         activeDomain: state.activeDomain,
+        search: state.searchArticles,
         menus: state.menus,
+        searchArticles: state.searchArticles.items.map(articleId => {
+            const found = state.savedArticles.find(savedArticle => {
+                return savedArticle.id === articleId;
+            })
+            if (found) {
+                state.entities.articles[articleId].saved = true;
+            } else {
+                state.entities.articles[articleId].saved = false;
+            }
+            return state.entities.articles[articleId]
+        })
     }
 }
 
-export default connect(mapStateToProps)(RecentScreen);
+export default connect(mapStateToProps)(SearchScreen);

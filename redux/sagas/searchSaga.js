@@ -1,6 +1,6 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestRecentArticles, receiveRecentArticles } from '../actions/actions';
+import { requestSearchArticles, receiveSearchArticles } from '../actions/actions';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
@@ -68,9 +68,9 @@ function shouldFetchMoreSearchArticles(articles) {
     }
 }
 
-const getSearchArticleState = state => state.SearchArticles
+const getSearchArticleState = state => state.searchArticles
 
-function* fetchRecentArticlesIfNeeded(action) {
+function* fetchSearchArticlesIfNeeded(action) {
     const { domain, searchTerm } = action;
     const searchArticles = yield select(getSearchArticleState);
     if (shouldFetchSearchArticles(searchArticles)) {
@@ -84,31 +84,22 @@ function* fetchRecentArticlesIfNeeded(action) {
 
 
 
-function* fetchMoreRecentArticlesIfNeeded(action) {
-    const { domain } = action;
-    const recentArticles = yield select(getRecentArticleState);
-    if (shouldFetchMoreRecentArticles(recentArticles)) {
-        const menus = yield select(getMenuState);
-        if (menus) {
-            const filteredMenus = menus.items.filter(item => {
-                return item.object === 'category'
-            })
-            const menuCategories = filteredMenus.map(item => {
-                return Number(item.object_id)
-            })
-            yield call(fetchRecentArticles, {
-                domain,
-                categories: menuCategories,
-                page: recentArticles.page
-            })
-        }
+function* fetchMoreSearchArticlesIfNeeded(action) {
+    const { domain, searchTerm } = action;
+    const searchArticles = yield select(getSearchArticleState);
+    if (shouldFetchMoreSearchArticles(searchArticles)) {
+        yield call(fetchSearchArticles, {
+            domain,
+            searchTerm,
+            page: searchArticles.page
+        })
     }
 }
 
-function* recentArticleSaga() {
-    yield takeLatest('FETCH_RECENT_ARTICLES_IF_NEEDED', fetchRecentArticlesIfNeeded);
-    yield takeLatest('FETCH_MORE_RECENT_ARTICLES_IF_NEEDED', fetchMoreRecentArticlesIfNeeded);
+function* searchArticleSaga() {
+    yield takeLatest('FETCH_SEARCH_ARTICLES_IF_NEEDED', fetchSearchArticlesIfNeeded);
+    yield takeLatest('FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED', fetchMoreSearchArticlesIfNeeded);
 
 }
 
-export default recentArticleSaga;
+export default searchArticleSaga;
