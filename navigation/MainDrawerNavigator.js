@@ -24,6 +24,7 @@ import StaffScreen from '../screens/StaffScreen';
 const ArticleStack = createStackNavigator({
     List: ListScreen,
     FullArticle: FullArticleScreen,
+    // Search: SearchScreen,
     Profile: ProfileScreen,
     Comments: CommentsScreen,
     Staff: StaffScreen

@@ -286,4 +286,46 @@ export function recentArticles(state = {
     }
 }
 
+// SEARCH ARTICLES
+
+export function searchArticles(state = {
+    isFetching: false,
+    didInvalidate: false,
+    page: 1,
+    items: []
+}, action) {
+    switch (action.type) {
+        case 'INVALIDATE_SEARCH_ARTICLES':
+            return Object.assign({}, state, {
+                didInvalidate: true,
+                page: 1,
+            })
+        case 'REQUEST_SEARCH_ARTICLES':
+            return Object.assign({}, state, {
+                isFetching: true,
+            })
+        case 'RECEIVE_SEARCH_ARTICLES':
+            let updatedPage = 'max';
+            let newItems = [];
+            if (action.response.result.length == 10) {
+                updatedPage = state.page + 1
+            };
+            if (state.didInvalidate) {
+                newItems = action.response.result;
+            }
+            else if (!state.didInvalidate) {
+                newItems = union(state.items, action.response.result);
+            }
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                items: newItems,
+                lastUpdated: action.receivedAt,
+                page: updatedPage
+            })
+        default:
+            return state
+    }
+}
+
 

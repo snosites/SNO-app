@@ -10,6 +10,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
 
 import Sentry from 'sentry-expo';
+import { secrets } from './env';
 
 import { Feather } from '@expo/vector-icons';
 import Moment from 'moment';
@@ -17,7 +18,7 @@ import Moment from 'moment';
 // Remove this once Sentry is correctly setup.
 // Sentry.enableInExpoDevelopment = true;
 
-Sentry.config('https://26b4550459464bb083d0eb11a3c8e3b1@sentry.io/1452190').install();
+Sentry.config(secrets.SENTRYAPI).install();
 
 
 const theme = {
