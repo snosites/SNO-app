@@ -122,8 +122,8 @@ class SearchScreen extends React.Component {
                     ref={(ref) => { this.flatListRef = ref; }}
                     onEndReachedThreshold={0.25}
                     onEndReached={this._loadMore}
-                    onRefresh={this._handleRefresh}
-                    refreshing={search.didInvalidate}
+                    // onRefresh={this._handleRefresh}
+                    // refreshing={search.didInvalidate}
                     onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={() => {
                         if (!search.isFetching) {
@@ -310,13 +310,13 @@ class SearchScreen extends React.Component {
         }
     }
 
-    _handleRefresh = () => {
-        const { dispatch, activeDomain, navigation } = this.props;
-        const searchTerm = navigation.getParam('searchTerm', '');
-        console.log('search term', searchTerm)
-        dispatch(invalidateSearchArticles());
-        dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm))
-    }
+    // _handleRefresh = () => {
+    //     const { dispatch, activeDomain, navigation } = this.props;
+    //     const searchTerm = navigation.getParam('searchTerm', '');
+    //     console.log('search term', searchTerm)
+    //     dispatch(invalidateSearchArticles());
+    //     dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm))
+    // }
 
     _playAnimation = () => {
         this.animation.reset();

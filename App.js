@@ -1,5 +1,14 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Text, ActivityIndicator, Animated, PanResponder } from 'react-native';
+import { 
+    Platform, 
+    StatusBar, 
+    StyleSheet, 
+    View, 
+    Text, 
+    ActivityIndicator, 
+    Animated, 
+    PanResponder 
+} from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 
 import { Provider as ReduxProvider, connect } from 'react-redux';
@@ -15,7 +24,12 @@ import { secrets } from './env';
 import { Feather } from '@expo/vector-icons';
 import Moment from 'moment';
 
-// Remove this once Sentry is correctly setup.
+import { useScreens } from 'react-native-screens';
+
+// performance optimization for navigations creens
+useScreens();
+
+// sentry setup
 // Sentry.enableInExpoDevelopment = true;
 
 Sentry.config(secrets.SENTRYAPI).install();
