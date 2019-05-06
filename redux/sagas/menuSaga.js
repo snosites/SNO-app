@@ -4,13 +4,14 @@ import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCateg
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
+
+import Sentry from 'sentry-expo';
+
 const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
     : `api.example.com`;
-// const api = 'mobileapi.snosites.net';
+// const api = 'error_api';
 console.log('api', api)
-
-const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
@@ -105,6 +106,7 @@ function* fetchMenus(action) {
     }
     catch (err) {
         console.log('error fetching menus in saga', err)
+        Sentry.captureException(err)
     }
 }
 

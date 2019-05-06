@@ -2,17 +2,13 @@ import React from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text,
-    TouchableHighlight,
     ActivityIndicator,
     View,
-    AsyncStorage,
-    Modal
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain } from '../redux/actions/actions';
 
-import { ListItem, Button, Icon } from 'react-native-elements'
+import { List, Divider } from 'react-native-paper'
 import { Haptic } from 'expo';
 import { secrets } from '../env';
 
@@ -121,17 +117,20 @@ class SelectScreen extends React.Component {
         }
         return (
             <ScrollView style={styles.container}>
-                {this.state.orgs.map(item => (
-                    item.name &&
-                    <ListItem
-                        key={item.id}
-                        title={item.name}
-                        bottomDivider
-                        chevron
-                        onPress={() => this._handleSelect(item.id, item)}
-                    />
-                ))
-                }
+                {this.state.orgs.map(item => {
+                    return (
+                        item.name &&
+                        <View key={item.id}>
+                            <List.Item
+                                title={item.name}
+                                style={{ paddingVertical: 0 }}
+                                left={props => <List.Icon {...props} icon="chevron-right" />}
+                                onPress={() => this._handleSelect(item.id, item)}
+                            />
+                            <Divider />
+                        </View>
+                    )
+                })}
                 <InitModal
                     modalVisible={this.state.modalVisible}
                     handleDismiss={this._handleModalDismiss}
@@ -163,20 +162,20 @@ class SelectScreen extends React.Component {
             // set new domain as active
             this.props.dispatch(changeActiveDomain(orgId))
             this.setState({
-            modalVisible: true
+                modalVisible: true
+            })
+        }
+        catch (error) {
+            console.log('error saving users org')
+        }
+    }
+    // dismiss modal and redirect back to auth loading
+    _handleModalDismiss = () => {
+        this.setState({
+            modalVisible: false
         })
+        this.props.navigation.navigate('AuthLoading');
     }
-    catch(error) {
-        console.log('error saving users org')
-    }
-}
-// dismiss modal and redirect back to auth loading
-_handleModalDismiss = () => {
-    this.setState({
-        modalVisible: false
-    })
-    this.props.navigation.navigate('AuthLoading');
-}
 
 }
 

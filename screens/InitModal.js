@@ -3,14 +3,12 @@ import {
     StyleSheet,
     Text,
     View,
-    AsyncStorage,
     Modal
 } from 'react-native';
-import { Button, Icon } from 'react-native-elements'
+import { Button } from 'react-native-paper'
 import { Haptic, DangerZone } from 'expo';
 
 const { Lottie } = DangerZone;
-
 
 export default class initModal extends Component {
     state = {
@@ -53,14 +51,14 @@ export default class initModal extends Component {
                             Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
                             </Text>
                         <Button
-                            title='Dismiss'
-                            buttonStyle={{ backgroundColor: '#01C885', borderRadius: 10, paddingHorizontal: 30 }}
+                            style={{ color: 'white', backgroundColor: '#01C885', borderRadius: 10, padding: 5 }}
                             onPress={() => {
                                 Haptic.selection();
                                 this.props.handleDismiss();
                             }}
-                            titleStyle={{ color: 'white' }}
-                        />
+                        >
+                            Dismiss
+                        </Button>
                     </View>}
                 </View>
             </Modal>

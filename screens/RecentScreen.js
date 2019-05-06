@@ -359,6 +359,14 @@ const mapStateToProps = (state) => {
         menus: state.menus,
         recent: state.recentArticles,
         recentArticles: state.recentArticles.items.map(articleId => {
+            const found = state.savedArticles.find(savedArticle => {
+                return savedArticle.id === articleId;
+            })
+            if(found) {
+                state.entities.articles[articleId].saved = true;
+            } else {
+                state.entities.articles[articleId].saved = false;
+            }
             return state.entities.articles[articleId]
         })
     }

@@ -9,10 +9,9 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView
 } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
 
-import { Button, colors, Input } from 'react-native-elements';
 
 
 export default class InitScreen extends React.Component {
@@ -52,28 +51,30 @@ export default class InitScreen extends React.Component {
                         </View>
                         <View style={styles.locationContainer}>
                             <Button
-                                title='Use Your Current Location'
-                                raised
-                                buttonStyle={{ width: 300, backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                mode="contained"
+                                style={{  color: 'white', backgroundColor: '#9A1D20', borderRadius: 10, padding: 5 }}
                                 onPress={this._handleUseLocation}
-                                titleStyle={{ color: 'white' }}
-                            />
+                            >
+                                Use Your Current Location
+                            </Button>
                             <Text>{this.state.errorMessage}</Text>
                             <Text style={styles.locationContainerText}>Or enter your organization's name below</Text>
                             <View style={styles.formContainer}>
-                                <Input
-                                    inputStyle={{ borderWidth: 1.25, borderColor: '#D17931', borderRadius: 10, paddingHorizontal: 20 }}
-                                    inputContainerStyle={{ width: 300, borderBottomWidth: 0, marginVertical: 10 }}
+                                <TextInput
+                                    label='Organization Name'
+                                    style={{ width: 300, paddingHorizontal: 20 }}
+                                    theme={{ roundness: 10 }}
+                                    mode='outlined'
                                     value={this.state.orgName}
-                                    placeholder='Organization Name'
                                     onChangeText={(text) => this.setState({ orgName: text })}
                                 />
                                 <Button
-                                    title='Search'
-                                    buttonStyle={{ backgroundColor: '#9A1D20', borderRadius: 10, paddingHorizontal: 30 }}
+                                    mode="contained"
+                                    style={{ color: 'white', backgroundColor: '#9A1D20', borderRadius: 10, padding: 5 }}
                                     onPress={this._handleSubmit}
-                                    titleStyle={{ color: 'white' }}
-                                />
+                                >
+                                    Search
+                                </Button>
                             </View>
                         </View>
                     </View>
