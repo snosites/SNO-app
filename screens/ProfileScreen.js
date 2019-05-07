@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
-import { WebBrowser, LinearGradient } from 'expo';
+import { WebBrowser, LinearGradient, Haptic } from 'expo';
 import { Feather } from '@expo/vector-icons';
 
 import HTML from 'react-native-render-html';
@@ -220,16 +220,16 @@ class ProfileScreen extends React.Component {
 
     _handleArticlePress = article => async () => {
         console.log('in article press')
-        // const { navigation } = this.props;
-        // Haptic.selection();
-        // // check if there is a slidehsow
-        // if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-        //     article.slideshow = await this._getAttachmentsAync(article);
-        // }
-        // navigation.push('FullArticle', {
-        //     articleId: article.id,
-        //     article,
-        // })
+        const { navigation } = this.props;
+        Haptic.selection();
+        // check if there is a slidehsow
+        if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
+            article.slideshow = await this._getAttachmentsAync(article);
+        }
+        navigation.push('FullArticle', {
+            articleId: article.id,
+            article,
+        })
     }
 
     _viewLink = async (href) => {

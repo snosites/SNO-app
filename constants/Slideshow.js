@@ -69,9 +69,9 @@ export default class Slideshow extends React.Component {
                     dotsLength={this.props.images.length}
                     activeDotIndex={activeSlide}
                     containerStyle={styles.paginationContainer}
-                    dotColor={Colors.tintColor}
+                    dotColor={this.props.accentColor}
                     dotStyle={styles.paginationDot}
-                    inactiveDotColor={Colors.black}
+                    inactiveDotColor={'#1a1917'}
                     inactiveDotOpacity={0.4}
                     inactiveDotScale={0.6}
                     carouselRef={this._carousel}
@@ -88,19 +88,9 @@ export default class Slideshow extends React.Component {
             <TouchableOpacity
                 activeOpacity={1}
                 style={styles.slideInnerContainer}
-                onPress={() => { alert(`You've clicked`); }}
             >
                 <View style={styles.shadow} />
                 <View style={styles.imageContainer}>
-                    {/* <ParallaxImage
-                        source={{ uri: item.media_details.sizes.full.source_url }}
-                        containerStyle={styles.imageContainer}
-                        style={styles.image}
-                        parallaxFactor={0.35}
-                        showSpinner={true}
-                        spinnerColor={'rgba(255, 255, 255, 0.4)'}
-                        {...parallaxProps}
-                    /> */}
                     <Image
                         source={{ uri: item.media_details.sizes.full.source_url }}
                         style={styles.image}

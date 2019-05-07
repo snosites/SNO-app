@@ -11,23 +11,26 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
-import { NavigationEvents } from 'react-navigation';
+import { connect } from 'react-redux';
+import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import HTML from 'react-native-render-html';
 import Slideshow from '../constants/Slideshow';
 import { withTheme } from 'react-native-paper';
 import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
+import { saveArticle } from '../redux/actions/actions';
 
-import { FAB, Portal } from 'react-native-paper';
+import { FAB, Portal, Snackbar } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import TouchableItem from '../constants/TouchableItem';
 import { CustomArticleHeader } from '../components/ArticleHeader';
+import { theme } from '../redux/reducers/reducers';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
 
 
-export default class FullArticleScreen extends React.Component {
+class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
         return {
             headerTitle: <CustomArticleHeader state={state} navigation={navigation} />
@@ -36,11 +39,13 @@ export default class FullArticleScreen extends React.Component {
 
     state = {
         fabOpen: false,
-        showPortal: true
+        showPortal: true,
+        snackbarSavedVisible: false
     };
 
     render() {
-        const { navigation } = this.props;
+        const { navigation, theme } = this.props;
+        const { snackbarSavedVisible } = this.state;
         let article = navigation.getParam('article', 'loading')
         return (
             <ScrollView style={styles.storyContainer}>
@@ -59,11 +64,15 @@ export default class FullArticleScreen extends React.Component {
                 }
                 <Text style={styles.title}>{article.title.rendered}</Text>
                 <TouchableItem onPress={() => this._handleProfilePress(article)}>
-                    <Text style={styles.byLine}>
+                    <Text style={{
+                        fontSize: 17,
+                        textAlign: 'center',
+                        color: theme.colors.accent
+                    }}>
                         {this._getArticleAuthor()}
                     </Text>
                 </TouchableItem>
-                <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 10}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
                     <Text style={styles.date}>
                         {Moment(article.date).format('D MMM YYYY')}
                     </Text>
@@ -83,40 +92,57 @@ export default class FullArticleScreen extends React.Component {
                         }}
                     />
                 </View>
+
                 {this.state.showPortal && <Portal>
-                    <FAB.Group
-                        style={{ marginBottom: 50 }}
-                        open={this.state.fabOpen}
-                        icon={this.state.fabOpen ? 'clear' : 'add'}
-                        actions={[
-                            {
-                                icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
-                                    comments: article.comments
-                                })
-                            },
-                            {
-                                icon: 'send', label: 'Share', onPress: () => {
-                                    this._shareArticle(article)
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <Snackbar
+                            visible={snackbarSavedVisible}
+                            style={styles.snackbar}
+                            duration={3000}
+                            onDismiss={() => this.setState({ snackbarSavedVisible: false })}
+                            action={{
+                                label: 'Dismiss',
+                                onPress: () => {
+                                    this.setState({ snackbarSavedVisible: false })
                                 }
-                            },
-                            { icon: 'bookmark', label: 'Save', onPress: () => console.log('Pressed email') },
-                        ]}
-                        onStateChange={({ open }) => this.setState({
-                            fabOpen: open
-                        })}
-                        onPress={() => {
-                            if (this.state.open) {
-                                // do something if the speed dial is open
-                            }
-                        }}
-                    />
+                            }}
+                        >
+                            Article Added To Saved List
+                        </Snackbar>
+                        <FAB.Group
+                            style={{ marginBottom: snackbarSavedVisible ? 100 : 50 }}
+                            open={this.state.fabOpen}
+                            icon={this.state.fabOpen ? 'clear' : 'add'}
+                            actions={[
+                                {
+                                    icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
+                                        comments: article.comments
+                                    })
+                                },
+                                {
+                                    icon: 'send', label: 'Share', onPress: () => {
+                                        this._shareArticle(article)
+                                    }
+                                },
+                                { icon: 'bookmark', label: 'Save', onPress: () => this._handleArticleSave(article) },
+                            ]}
+                            onStateChange={({ open }) => this.setState({
+                                fabOpen: open
+                            })}
+                            onPress={() => {
+                                if (this.state.open) {
+                                    // do something if the speed dial is open
+                                }
+                            }}
+                        />
+                    </SafeAreaView>
                 </Portal>}
+
             </ScrollView>
         );
     }
 
     _shareArticle = article => {
-        console.log('sharing', article)
         Share.share({
             title: article.title.rendered,
             message: article.title.rendered,
@@ -124,10 +150,18 @@ export default class FullArticleScreen extends React.Component {
         })
     }
 
+    _handleArticleSave = article => {
+        this.props.dispatch(saveArticle(article))
+        this.setState({
+            snackbarSavedVisible: true
+        })
+    }
+
     _renderFeaturedMedia = (article) => {
+        const { theme } = this.props;
         if (article.slideshow) {
             return (
-                <Slideshow images={article.slideshow} />
+                <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
             )
         }
         else if (article.custom_fields.video) {
@@ -180,7 +214,7 @@ export default class FullArticleScreen extends React.Component {
             }
         }
         else {
-            return 'Unknown'
+            return ''
         }
     }
 
@@ -230,11 +264,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
 
     },
-    byLine: {
-        fontSize: 17,
-        color: '#9e9e9e',
-        textAlign: 'center'
-    },
     date: {
         fontSize: 15,
         color: '#9e9e9e',
@@ -242,4 +271,16 @@ const styles = StyleSheet.create({
     articleContents: {
         padding: 20,
     },
+    snackbar: {
+        position: 'absolute',
+        bottom: 50,
+        left: 0,
+        right: 0
+    },
 })
+
+const mapStateToProps = state => ({
+    theme: state.theme
+})
+
+export default connect(mapStateToProps)(FullArticleScreen);

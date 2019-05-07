@@ -131,6 +131,12 @@ export function profiles(state = {
 export function savedArticles(state = [], action) {
     switch (action.type) {
         case 'SAVE_ARTICLE':
+            let found = state.find(article => {
+                return action.article.id == article.id
+            })
+            if(found){
+                return state
+            }
             return [
                 ...state,
                 action.article

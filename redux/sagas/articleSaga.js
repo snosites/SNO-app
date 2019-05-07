@@ -2,8 +2,6 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestArticles, receiveArticles, updateComments } from '../actions/actions';
 
-import Moment from 'moment';
-
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
@@ -11,7 +9,6 @@ const articleListSchema = new schema.Array(articleSchema)
 function* fetchFeaturedImage(url, story) {
     const imgResponse = yield fetch(url);
     const featuredImage = yield imgResponse.json();
-    console.log('featuredImage', featuredImage)
     story.featuredImage = {
         uri: featuredImage.source_url,
         photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
@@ -42,13 +39,11 @@ function* refetchComments(action) {
 }
 
 function* addComment(action) {
-    console.log('date', String(Moment.now()));
     const { domain, articleId, username, email, comment } = action.payload;
     let objToSend = {
         author_email: email,
         author_name: username,
         content: comment,
-        // date: String(Moment.now()),
         post: articleId
     }
     try {
@@ -78,7 +73,6 @@ function* fetchArticles(action) {
         const stories = yield response.json();
         yield all(stories.map(story => {
             if(story._links['wp:featuredmedia']) {
-                console.log(story._links['wp:featuredmedia'][0].href)
                 return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
             } else {
                 return call(Promise.resolve);

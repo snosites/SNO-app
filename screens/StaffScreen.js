@@ -10,6 +10,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import Color from 'color';
 import { connect } from 'react-redux';
 import { fetchProfiles } from '../redux/actions/actions';
 
@@ -29,13 +30,20 @@ const IoniconsHeaderButton = passMeFurther => (
 );
 
 class StaffScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({ navigation, screenProps }) => {
+        const { theme } = screenProps;
+        let primaryColor = Color(theme.colors.primary);
+        let isDark = primaryColor.isDark();
         const logo = navigation.getParam('headerLogo', null)
         return {
             title: navigation.getParam('menuTitle', 'Staff'),
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
+                    <Item 
+                        title="menu" 
+                        iconName="ios-menu"
+                        buttonStyle={{color: isDark ? 'white' : 'black'}} 
+                        onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
             ),
             headerLeft: (
@@ -87,10 +95,9 @@ class StaffScreen extends React.Component {
 
     render() {
 
-        const { navigation, profiles } = this.props;
+        const { navigation, profiles, theme } = this.props;
         const { activeYears, selectedIndex, doneLoading } = this.state;
-        console.log('testing', doneLoading, profiles.isLoaded);
-        // console.log('active years', activeYears);
+        
         if (!doneLoading || !profiles.isLoaded) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -169,7 +176,7 @@ class StaffScreen extends React.Component {
                                         <Text style={{ fontSize: 18, color: 'grey' }}>{profile.customFields.staffposition[0]}</Text>
                                         <Button 
                                             mode="contained"
-                                            color='#0277bd' 
+                                            color={theme.colors.accent}
                                             style={{borderRadius: 4,
                                             margin: 5}}
                                             onPress={() => this._handleProfileClick(profile.customFields.name[0])}>
@@ -205,10 +212,13 @@ class StaffScreen extends React.Component {
 
     _renderItem = ({ item, index }) => {
         const { selectedIndex } = this.state;
+        const { theme } = this.props;
+        let accentColor = Color(theme.colors.accent);
+        let isDark = accentColor.isDark();
         return (
             <Card
                 key={index}
-                style={selectedIndex === index ? [styles.yearContainer, styles.selectedYear] : styles.yearContainer}
+                style={selectedIndex === index ? [styles.yearContainer, {backgroundColor: accentColor, color: isDark ? 'white' : 'dark'}] : styles.yearContainer}
                 onPress={() => {
                     this.setState({
                         selectedIndex: index
@@ -217,7 +227,7 @@ class StaffScreen extends React.Component {
                 }}
             >
                 <Card.Content>
-                    <Text style={selectedIndex === index ? [styles.year, styles.selectedYear] : styles.year}>{item}</Text>
+                    <Text style={selectedIndex === index ? [{fontSize: 18}, {color: isDark ? 'white' : 'black'}] : {fontSize: 18}}>{item}</Text>
                 </Card.Content>
             </Card>
 
@@ -240,15 +250,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center'
     },
-    year: {
-        // padding: 5,
-        color: '#757575',
-        fontSize: 18
-    },
-    selectedYear: {
-        backgroundColor: '#0277bd',
-        color: 'white'
-    },
     animationContainer: {
         width: 300,
         height: 300,
@@ -258,6 +259,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return {
+        theme: state.theme,
         activeDomain: state.activeDomain,
         menus: state.menus,
         profiles: state.profiles

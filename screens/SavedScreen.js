@@ -118,6 +118,13 @@ class ListScreen extends React.Component {
         );
     }
 
+    _getAttachmentsAync = async (article) => {
+        console.log('article', article)
+        const response = await fetch(article._links['wp:attachment'][0].href);
+        const imageAttachments = await response.json();
+        return imageAttachments;
+    }
+
     _handleArticlePress = article => async () => {
         const { navigation } = this.props;
         Haptic.selection();
