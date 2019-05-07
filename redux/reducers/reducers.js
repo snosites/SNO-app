@@ -333,7 +333,7 @@ export function searchArticles(state = {
 
 // THEME
 
-export function theme(state = {}, action) {
+export function theme(state = {...DefaultTheme,}, action) {
     switch (action.type) {
         case 'SAVE_THEME':
             let mode = true;

@@ -1,18 +1,12 @@
 import React from 'react';
 import {
     Platform,
-    Button,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-    AsyncStorage,
-    StatusBar,
-    ActivityIndicator
 } from 'react-native';
-import { createDrawerNavigator, createStackNavigator, DrawerItems, SafeAreaView, createSwitchNavigator, NavigationActions } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
+import Color from 'color';
 
 import TabBarIcon from '../components/TabBarIcon';
+import TabBarLabel from '../components/TabBarLabel';
 import CustomDrawer from './CustomDrawer';
 
 import ListScreen from '../screens/ListScreen';
@@ -29,7 +23,20 @@ const ArticleStack = createStackNavigator({
     Profile: ProfileScreen,
     Comments: CommentsScreen,
     Staff: StaffScreen
-},);
+},
+    {
+        defaultNavigationOptions: ({ screenProps }) => {
+            let primaryColor = Color(screenProps.theme.colors.primary);
+            let isDark = primaryColor.isDark();
+            return {
+                headerStyle: {
+                    backgroundColor: screenProps.theme.colors.primary,
+                },
+                headerTintColor: isDark ? '#fff' : '#000',
+            }
+        }
+    }
+);
 
 const MyDrawerNavigator = createDrawerNavigator(
     {
@@ -40,24 +47,33 @@ const MyDrawerNavigator = createDrawerNavigator(
     }
 );
 
-MyDrawerNavigator.navigationOptions = {
-    tabBarLabel: 'Home',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon
-            focused={focused}
-            name={
-                Platform.OS === 'ios'
-                    ? `ios-home`
-                    : 'md-home'
-            }
-        />
-    ),
-    tabBarOnPress: ({navigation}) => {
-        console.log('pressed tab button home')
-        navigation.navigate('List', {
-            scrollToTop: true
-        })
-    }
+MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
+    const { theme } = screenProps;
+    return ({
+        tabBarLabel: ({ focused }) => (
+            <TabBarLabel
+                focused={focused}
+                label='Home'
+                color={theme.colors.primary}
+            />
+        ),
+        tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+                focused={focused}
+                color={theme.colors.primary}
+                name={
+                    Platform.OS === 'ios'
+                        ? `ios-home`
+                        : 'md-home'
+                }
+            />
+        ),
+        tabBarOnPress: ({ navigation }) => {
+            navigation.navigate('List', {
+                scrollToTop: true
+            })
+        }
+    })
 };
 
 export default MyDrawerNavigator;

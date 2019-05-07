@@ -10,10 +10,10 @@ import {
     PanResponder
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
-
+import Color from 'color';
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import AppNavigator from './navigation/AppNavigator';
-import { Provider as PaperProvider, DefaultTheme, Colors, Snackbar, Portal } from 'react-native-paper';
+import { Provider as PaperProvider, Portal } from 'react-native-paper';
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
@@ -26,7 +26,7 @@ import Moment from 'moment';
 
 import { useScreens } from 'react-native-screens';
 
-// performance optimization for navigations creens
+// performance optimization for navigations screens
 useScreens();
 
 // sentry setup
@@ -178,12 +178,14 @@ class AppNavigatorContainer extends React.Component {
     render() {
         const { notification, visible } = this.state;
         const { theme } = this.props;
+        let primaryColor = Color(theme.colors.primary);
+        let isDark = primaryColor.isDark();
         return (
             <View style={{ flex: 1 }}>
                 <PaperProvider theme={theme}>
                     <View style={styles.container}>
-                        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                        <AppNavigator />
+                        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+                        <AppNavigator screenProps={{theme: theme}}/>
                     </View>
                     <Portal>
                         <FadeInView
