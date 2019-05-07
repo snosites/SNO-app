@@ -97,7 +97,7 @@ class SearchScreen extends React.Component {
 
 
     render() {
-        const { navigation, searchArticles, search } = this.props;
+        const { navigation, searchArticles, search, theme } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
 
         if (search.didInvalidate === true && search.isFetching) {
@@ -196,7 +196,7 @@ class SearchScreen extends React.Component {
                                     <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
                                         <View>
                                             <FontAwesome name="comment"
-                                                size={21} color='grey'
+                                                size={21} color='#e0e0e0'
                                             />
                                             <Badge
                                                 size={16}

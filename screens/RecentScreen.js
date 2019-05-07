@@ -182,7 +182,7 @@ class RecentScreen extends React.Component {
                                     <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
                                         <View>
                                             <FontAwesome name="comment"
-                                                size={21} color='grey'
+                                                size={21} color='#e0e0e0'
                                             />
                                             <Badge
                                                 size={16}

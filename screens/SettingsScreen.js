@@ -2,11 +2,7 @@ import React from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text,
     View,
-    Image,
-    ActivityIndicator,
-    AsyncStorage,
     TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -16,19 +12,10 @@ import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'rea
 import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
 
 
-const DeleteButton = () => (
-    <IconButton
-        icon="delete"
-        color={Colors.red700}
-        size={20}
-        onPress={() => console.log('Pressed')}
-    />
-);
-
-const ActiveDomainIcon = () => (
+const ActiveDomainIcon = (color) => (
     <List.Icon
         icon={`star`}
-        color={Colors.blue800}
+        color={color}
     />
 )
 
@@ -61,7 +48,7 @@ class SettingsScreen extends React.Component {
 
     render() {
         const { snackbarVisible, editingUsername, editingEmail, username, email } = this.state;
-        const { domains, userInfo, dispatch } = this.props;
+        const { domains, userInfo, dispatch, theme } = this.props;
         return (
             <ScrollView style={styles.container}>
                 <View style={{ flex: 1 }}>
@@ -149,7 +136,7 @@ class SettingsScreen extends React.Component {
                                     description={item.active ? 'active' : null}
                                     left={() => {
                                         if (item.active) {
-                                            return <ActiveDomainIcon />
+                                            return <ActiveDomainIcon color={theme.colors.accent}/>
                                         }
                                         else {
                                             return null
@@ -324,6 +311,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = store => ({
+    theme: store.theme,
     domains: store.domains,
     userInfo: store.userInfo,
     menus: store.menus,

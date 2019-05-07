@@ -151,6 +151,7 @@ class ListScreen extends React.Component {
     };
 
     _renderItem = props => {
+        const { theme } = this.props;
         const story = props.item;
         return (
             <TouchableOpacity
@@ -166,7 +167,7 @@ class ListScreen extends React.Component {
                     <View style={styles.storyInfo}>
                         <HTML
                             html={story.title.rendered}
-                            baseFontStyle={{ fontSize: 19 }}
+                            baseFontStyle={{ fontSize: 17 }}
                             customWrapper={(text) => {
                                 return (
                                     <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
@@ -174,15 +175,15 @@ class ListScreen extends React.Component {
                             }}
                             tagsStyles={{
                                 rawtext: {
-                                    fontSize: 19,
-                                    fontWeight: 'bold'
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    color: theme.dark ? 'white' : 'black'
                                 }
                             }}
                         />
-                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, { color: theme.colors.accent }]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
                         <View style={{
                             flexDirection: 'row',
-                            paddingTop: 5,
                             alignItems: 'center',
                             justifyContent: 'space-between'
                         }}
@@ -191,41 +192,39 @@ class ListScreen extends React.Component {
                                 <Text style={styles.date}>
                                     {Moment(story.date).format('D MMM YYYY')}
                                 </Text>
-                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                                <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{
-                                    marginRight: 40,
-                                }}>
-                                    <FontAwesome name="comment"
-                                        size={21} color='grey'
-                                    />
-                                    <Badge
-                                        size={16}
-                                        style={{
-                                            position: 'absolute',
-                                            bottom: 5,
-                                            right: -11,
-                                            backgroundColor: '#4fc3f7',
-                                            borderWidth: 1,
-                                            borderColor: 'white'
-                                        }}
-                                    >
-                                        {story.comments.length}
-                                    </Badge>
-                                </View>
-                                <MaterialIcons
-                                    name='delete'
-                                    color='#c62828'
-                                    style={styles.socialIcon}
-                                    size={24}
-                                    onPress={() => {
-                                        this._handleArticleRemove(story.id)
-                                    }}
-                                />
-                            </View>
                         </View>
+                    </View>
+                    <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
+                        <View>
+                            <FontAwesome name="comment"
+                                size={21} color='#e0e0e0'
+                            />
+                            <Badge
+                                size={16}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: 2,
+                                    right: 4,
+                                    backgroundColor: theme.colors.accent,
+                                    borderWidth: 1,
+                                    borderColor: 'white'
+                                }}
+                            >
+                                {story.comments.length}
+                            </Badge>
+                        </View>
+                        <MaterialIcons
+                            name='delete'
+                            color='#c62828'
+                            style={styles.socialIcon}
+                            size={24}
+                            onPress={() => {
+                                this._handleArticleRemove(story.id)
+                            }}
+                        />
                     </View>
                 </View>
             </TouchableOpacity>
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         flexDirection: 'row',
         flex: 1,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         marginVertical: 10,
     },
     animationContainer: {
@@ -246,7 +245,7 @@ const styles = StyleSheet.create({
     },
     featuredImage: {
         width: 125,
-        height: 90,
+        height: 80,
         borderRadius: 8
     },
     storyInfo: {
@@ -260,7 +259,6 @@ const styles = StyleSheet.create({
     },
     author: {
         fontSize: 15,
-        color: '#90caf9'
     },
     socialIcon: {
         paddingHorizontal: 5
@@ -274,6 +272,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
+    theme: store.theme,
     menus: store.menus,
     savedArticles: store.savedArticles
 })
