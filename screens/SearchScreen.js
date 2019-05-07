@@ -6,9 +6,11 @@ import {
     Image,
     ActivityIndicator,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    StatusBar
 } from 'react-native';
 import Moment from 'moment';
+import Color from 'color';
 import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
@@ -34,13 +36,20 @@ const IoniconsHeaderButton = passMeFurther => (
 );
 
 class SearchScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({ navigation, screenProps }) => {
+        const { theme } = screenProps;
         const logo = navigation.getParam('headerLogo', null)
+        let primaryColor = Color(theme.colors.primary);
+        let isDark = primaryColor.isDark();
         return {
             title: 'Search Results',
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
+                    <Item
+                        title="menu"
+                        iconName="ios-menu"
+                        buttonStyle={{ color: isDark ? 'white' : 'black' }}
+                        onPress={() => { navigation.openDrawer() }} />
                 </HeaderButtons>
             ),
             headerLeft: (
@@ -61,7 +70,7 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, activeDomain, navigation, menus } = this.props;
+        const { dispatch, activeDomain, navigation, menus, theme } = this.props;
         const searchTerm = navigation.getParam('searchTerm', null);
         if (this.animation) {
             this._playAnimation();
@@ -154,7 +163,7 @@ class SearchScreen extends React.Component {
                                     <View style={styles.storyInfo}>
                                         <HTML
                                             html={story.title.rendered}
-                                            baseFontStyle={{ fontSize: 19 }}
+                                            baseFontStyle={{ fontSize: 17 }}
                                             customWrapper={(text) => {
                                                 return (
                                                     <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
@@ -162,15 +171,15 @@ class SearchScreen extends React.Component {
                                             }}
                                             tagsStyles={{
                                                 rawtext: {
-                                                    fontSize: 20,
-                                                    fontWeight: 'bold'
+                                                    fontSize: 27,
+                                                    fontWeight: 'bold',
+                                                    color: theme.dark ? 'white' : 'black'
                                                 }
                                             }}
                                         />
-                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, { color: theme.colors.accent }]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
                                         <View style={{
                                             flexDirection: 'row',
-                                            paddingTop: 5,
                                             alignItems: 'center',
                                             justifyContent: 'space-between'
                                         }}
@@ -179,45 +188,43 @@ class SearchScreen extends React.Component {
                                                 <Text style={styles.date}>
                                                     {Moment(story.date).format('D MMM YYYY')}
                                                 </Text>
-                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                                                <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
                                             </View>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View style={{
-                                                    marginRight: 40,
-                                                }}>
-                                                    <FontAwesome name="comment"
-                                                        size={21} color='grey'
-                                                    />
-                                                    <Badge
-                                                        size={16}
-                                                        style={{
-                                                            position: 'absolute',
-                                                            bottom: 5,
-                                                            right: -11,
-                                                            backgroundColor: '#4fc3f7',
-                                                            borderWidth: 1,
-                                                            borderColor: 'white'
-                                                        }}
-                                                    >
-                                                        {story.comments.length}
-                                                    </Badge>
-                                                </View>
-                                                <MaterialIcons
-                                                    name={
-                                                        story.saved ? 'bookmark'
-                                                            :
-                                                            'bookmark-border'
-                                                    }
-                                                    color={Colors.tintColor}
-                                                    style={styles.socialIcon}
-                                                    size={24}
-                                                    onPress={() => {
-                                                        this._saveRemoveToggle(story)
-                                                    }}
-                                                />
-                                            </View>
                                         </View>
+                                    </View>
+                                    <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
+                                        <View>
+                                            <FontAwesome name="comment"
+                                                size={21} color='grey'
+                                            />
+                                            <Badge
+                                                size={16}
+                                                style={{
+                                                    position: 'absolute',
+                                                    bottom: 2,
+                                                    right: 4,
+                                                    backgroundColor: theme.colors.accent,
+                                                    borderWidth: 1,
+                                                    borderColor: 'white'
+                                                }}
+                                            >
+                                                {story.comments.length}
+                                            </Badge>
+                                        </View>
+                                        <MaterialIcons
+                                            name={
+                                                story.saved ? 'bookmark'
+                                                    :
+                                                    'bookmark-border'
+                                            }
+                                            color={theme.colors.accent}
+                                            style={styles.socialIcon}
+                                            size={24}
+                                            onPress={() => {
+                                                this._saveRemoveToggle(story)
+                                            }}
+                                        />
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -310,14 +317,6 @@ class SearchScreen extends React.Component {
         }
     }
 
-    // _handleRefresh = () => {
-    //     const { dispatch, activeDomain, navigation } = this.props;
-    //     const searchTerm = navigation.getParam('searchTerm', '');
-    //     console.log('search term', searchTerm)
-    //     dispatch(invalidateSearchArticles());
-    //     dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm))
-    // }
-
     _playAnimation = () => {
         this.animation.reset();
         this.animation.play();
@@ -328,7 +327,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         flexDirection: 'row',
         flex: 1,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         marginVertical: 10,
     },
     animationContainer: {
@@ -337,7 +336,7 @@ const styles = StyleSheet.create({
     },
     featuredImage: {
         width: 125,
-        height: 90,
+        height: 80,
         borderRadius: 8
     },
     imagePlaceholder: {
@@ -353,8 +352,7 @@ const styles = StyleSheet.create({
         color: 'grey'
     },
     author: {
-        fontSize: 15,
-        color: '#90caf9'
+        fontSize: 15
     },
     socialIcon: {
         paddingHorizontal: 5
@@ -375,6 +373,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return {
+        theme: state.theme,
         activeDomain: state.activeDomain,
         search: state.searchArticles,
         menus: state.menus,

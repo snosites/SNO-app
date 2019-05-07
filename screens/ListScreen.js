@@ -9,6 +9,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import Color from 'color';
 import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
@@ -37,13 +38,20 @@ const IoniconsHeaderButton = passMeFurther => (
 );
 
 class ListScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({ navigation, screenProps }) => {
+        const { theme } = screenProps;
         const logo = navigation.getParam('headerLogo', null)
+        let primaryColor = Color(theme.colors.primary);
+        let isDark = primaryColor.isDark();
         return {
             title: navigation.getParam('menuTitle', 'Stories'),
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item title="menu" iconName="ios-menu" onPress={() => navigation.openDrawer()} />
+                    <Item
+                        title="menu"
+                        iconName="ios-menu"
+                        buttonStyle={{color: isDark ? 'white' : 'black'}}
+                        onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
             ),
             headerLeft: (
@@ -168,7 +176,7 @@ class ListScreen extends React.Component {
                                                 }
                                             }}
                                         />
-                                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, {color: theme.colors.accent}]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, { color: theme.colors.accent }]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
                                         <View style={{
                                             flexDirection: 'row',
                                             alignItems: 'center',
@@ -185,9 +193,7 @@ class ListScreen extends React.Component {
                                         </View>
                                     </View>
                                     <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
-                                        <View style={{
-                                            
-                                        }}>
+                                        <View>
                                             <FontAwesome name="comment"
                                                 size={21} color='grey'
                                             />
@@ -358,8 +364,7 @@ const styles = StyleSheet.create({
         color: 'grey'
     },
     author: {
-        fontSize: 15,
-        color: '#90caf9'
+        fontSize: 15
     },
     socialIcon: {
         paddingHorizontal: 5,
