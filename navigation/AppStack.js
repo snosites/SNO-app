@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
+import Color from 'color';
+
 import TabBarIcon from '../components/TabBarIcon';
 import TabBarLabel from '../components/TabBarLabel';
 
@@ -23,6 +25,18 @@ const RecentStack = createStackNavigator({
     Profile: ProfileScreen,
     Comments: CommentsScreen,
     Staff: StaffScreen
+},
+{
+    defaultNavigationOptions: ({ screenProps }) => {
+        let primaryColor = Color(screenProps.theme.colors.primary);
+        let isDark = primaryColor.isDark();
+        return {
+            headerStyle: {
+                backgroundColor: screenProps.theme.colors.primary,
+            },
+            headerTintColor: isDark ? '#fff' : '#000',
+        }
+    }
 });
 
 RecentStack.navigationOptions = ({ screenProps }) => {
@@ -58,6 +72,18 @@ const BookmarkStack = createStackNavigator({
     Profile: ProfileScreen,
     Comments: CommentsScreen,
     Staff: StaffScreen
+},
+{
+    defaultNavigationOptions: ({ screenProps }) => {
+        let primaryColor = Color(screenProps.theme.colors.primary);
+        let isDark = primaryColor.isDark();
+        return {
+            headerStyle: {
+                backgroundColor: screenProps.theme.colors.primary,
+            },
+            headerTintColor: isDark ? '#fff' : '#000',
+        }
+    }
 });
 
 BookmarkStack.navigationOptions = ({ screenProps }) => {
@@ -88,6 +114,18 @@ BookmarkStack.navigationOptions = ({ screenProps }) => {
 
 const SettingsStack = createStackNavigator({
     Settings: SettingsScreen,
+},
+{
+    defaultNavigationOptions: ({ screenProps }) => {
+        let primaryColor = Color(screenProps.theme.colors.primary);
+        let isDark = primaryColor.isDark();
+        return {
+            headerStyle: {
+                backgroundColor: screenProps.theme.colors.primary,
+            },
+            headerTintColor: isDark ? '#fff' : '#000',
+        }
+    }
 });
 
 SettingsStack.navigationOptions = ({ screenProps }) => {

@@ -79,17 +79,17 @@ class ListScreen extends React.Component {
             this._playAnimation();
         }
         const { navigation } = this.props;
-        if(navigation.state.params && navigation.state.params.scrollToTop) {
+        if (navigation.state.params && navigation.state.params.scrollToTop) {
             if (this.flatListRef) {
                 // scroll list to top
                 this._scrollToTop();
             }
-            navigation.setParams({scrollToTop: false})
+            navigation.setParams({ scrollToTop: false })
         }
     }
 
     render() {
-        const { navigation, articlesByCategory, category } = this.props;
+        const { navigation, articlesByCategory, category, theme } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (articlesByCategory.length === 0 && category.isFetching) {
             return (
@@ -154,7 +154,7 @@ class ListScreen extends React.Component {
                                     <View style={styles.storyInfo}>
                                         <HTML
                                             html={story.title.rendered}
-                                            baseFontStyle={{ fontSize: 19 }}
+                                            baseFontStyle={{ fontSize: 17 }}
                                             customWrapper={(text) => {
                                                 return (
                                                     <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
@@ -162,15 +162,15 @@ class ListScreen extends React.Component {
                                             }}
                                             tagsStyles={{
                                                 rawtext: {
-                                                    fontSize: 19,
-                                                    fontWeight: 'bold'
+                                                    fontSize: 17,
+                                                    fontWeight: 'bold',
+                                                    color: theme.dark ? 'white' : 'black'
                                                 }
                                             }}
                                         />
-                                        <Text ellipsizeMode='tail' numberOfLines={1} style={styles.author}>{story.custom_fields.writer ? story.custom_fields.writer : 'Unknown'}</Text>
+                                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, {color: theme.colors.accent}]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
                                         <View style={{
                                             flexDirection: 'row',
-                                            paddingTop: 5,
                                             alignItems: 'center',
                                             justifyContent: 'space-between'
                                         }}
@@ -179,45 +179,45 @@ class ListScreen extends React.Component {
                                                 <Text style={styles.date}>
                                                     {Moment(story.date).format('D MMM YYYY')}
                                                 </Text>
-                                                <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
+                                                <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
                                                 <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
                                             </View>
-                                            <View style={{flexDirection: 'row'}}>
-                                                <View style={{
-                                                    marginRight: 40,
-                                                }}>
-                                                    <FontAwesome name="comment"
-                                                        size={21} color='grey'
-                                                    />
-                                                    <Badge
-                                                        size={16}
-                                                        style={{
-                                                            position: 'absolute',
-                                                            bottom: 5,
-                                                            right: -11,
-                                                            backgroundColor: '#4fc3f7',
-                                                            borderWidth: 1,
-                                                            borderColor: 'white'
-                                                        }}
-                                                    >
-                                                        {story.comments.length}
-                                                    </Badge>
-                                                </View>
-                                                <MaterialIcons
-                                                    name={
-                                                        story.saved ? 'bookmark'
-                                                            :
-                                                            'bookmark-border'
-                                                    }
-                                                    color={Colors.tintColor}
-                                                    style={styles.socialIcon}
-                                                    size={24}
-                                                    onPress={() => {
-                                                        this._saveRemoveToggle(story)
-                                                    }}
-                                                />
-                                            </View>
                                         </View>
+                                    </View>
+                                    <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
+                                        <View style={{
+                                            
+                                        }}>
+                                            <FontAwesome name="comment"
+                                                size={21} color='grey'
+                                            />
+                                            <Badge
+                                                size={16}
+                                                style={{
+                                                    position: 'absolute',
+                                                    bottom: 2,
+                                                    right: 4,
+                                                    backgroundColor: theme.colors.accent,
+                                                    borderWidth: 1,
+                                                    borderColor: 'white'
+                                                }}
+                                            >
+                                                {story.comments.length}
+                                            </Badge>
+                                        </View>
+                                        <MaterialIcons
+                                            name={
+                                                story.saved ? 'bookmark'
+                                                    :
+                                                    'bookmark-border'
+                                            }
+                                            color={theme.colors.accent}
+                                            style={styles.socialIcon}
+                                            size={24}
+                                            onPress={() => {
+                                                this._saveRemoveToggle(story)
+                                            }}
+                                        />
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         flexDirection: 'row',
         flex: 1,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         marginVertical: 10,
     },
     animationContainer: {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     },
     featuredImage: {
         width: 125,
-        height: 90,
+        height: 80,
         borderRadius: 8
     },
     imagePlaceholder: {
@@ -383,6 +383,7 @@ const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
+        theme: state.theme,
         activeDomain: state.activeDomain,
         menus: state.menus,
         category: state.articlesByCategory[categoryId],
