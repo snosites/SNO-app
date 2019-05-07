@@ -12,7 +12,7 @@ import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'rea
 import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
 
 
-const ActiveDomainIcon = (color) => (
+const ActiveDomainIcon = ({color}) => (
     <List.Icon
         icon={`star`}
         color={color}

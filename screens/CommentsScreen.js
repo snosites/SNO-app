@@ -16,6 +16,7 @@ import {
 import { connect } from 'react-redux';
 import { saveUserInfo, addComment } from '../redux/actions/actions';
 import Moment from 'moment';
+import Color from 'color';
 import HTML from 'react-native-render-html';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,10 +25,12 @@ import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-pape
 import { HeaderBackButton } from 'react-navigation';
 
 class CommentsScreen extends React.Component {
-    static navigationOptions = ({ navigation, navigation: { state } }) => {
+    static navigationOptions = ({ navigation, navigation: { state }, screenProps }) => {
+        let primaryColor = Color(screenProps.theme.colors.primary);
+        let isDark = primaryColor.isDark();
         return {
             headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
-            headerLeft: <HeaderBackButton onPress={() => {
+            headerLeft: <HeaderBackButton tintColor={isDark ? 'white' : 'black'} onPress={() => {
                 navigation.popToTop();
             }}
             />
@@ -50,9 +53,13 @@ class CommentsScreen extends React.Component {
     }
 
     render() {
-        const { navigation, userInfo, dispatch } = this.props;
+        const { navigation, userInfo, dispatch, theme } = this.props;
         const { modalVisible, username, email, commentInput } = this.state;
         let comments = navigation.getParam('comments', null)
+
+        let primaryColor = Color(theme.colors.primary);
+        let isDark = primaryColor.isDark();
+
         return (
             <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView
@@ -87,7 +94,7 @@ class CommentsScreen extends React.Component {
                             />
                             <View style={styles.sendContainer}>
                                 <TouchableOpacity
-                                    style={styles.sendContainer}
+                                    style={[styles.sendContainer, {backgroundColor: primaryColor}]}
                                     onPress={() => {
                                         Keyboard.dismiss();
                                         if (!userInfo.username || !userInfo.email) {
@@ -97,7 +104,7 @@ class CommentsScreen extends React.Component {
                                         }
                                     }}
                                 >
-                                    <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color="white" />
+                                    <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color={isDark ? 'white' : 'black'} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -251,8 +258,6 @@ const styles = StyleSheet.create({
     sendContainer: {
         height: 60,
         width: 60,
-        paddingTop: 3,
-        backgroundColor: '#7e57c2',
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -267,6 +272,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => {
     return {
+        theme: state.theme,
         activeDomain: state.activeDomain,
         userInfo: state.userInfo
     }

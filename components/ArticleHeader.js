@@ -5,6 +5,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { withTheme, Badge, Colors } from 'react-native-paper';
+import Color from 'color';
 
 const ArticleHeader = (props) => {
     const { navigation, state, theme } = props;
@@ -12,6 +13,9 @@ const ArticleHeader = (props) => {
     let comments = navigation.getParam('comments', null)
     let article = navigation.getParam('article', null)
     let articleId = navigation.getParam('articleId', null)
+
+    let primaryColor = Color(theme.colors.primary);
+    let isDark = primaryColor.isDark();
 
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -23,13 +27,13 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'FullArticle' ? theme.colors.primary : theme.colors.disabled,
+                        color: state.routeName === 'FullArticle' ? (isDark ? 'white' : 'black') : theme.colors.disabled,
                         fontSize: 19
                     }}>Article</Text>
             </TouchableOpacity>
             <Text
                 style={{
-                    color: 'black',
+                    color: isDark ? 'white' : 'black',
                     fontSize: 19
                 }}
             >
@@ -46,7 +50,7 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'Comments' ? props.theme.colors.primary : props.theme.colors.disabled,
+                        color: state.routeName === 'Comments' ? (isDark ? 'white' : 'black') : theme.colors.disabled,
                         fontSize: 19
                     }}>
                     Comments
@@ -56,7 +60,7 @@ const ArticleHeader = (props) => {
                         position: 'absolute',
                         top: -10,
                         right: -10,
-                        backgroundColor: '#4fc3f7'
+                        backgroundColor: isDark ? 'white' : 'black'
                     }}>{commentNumber}</Badge>
                     :
                     null
