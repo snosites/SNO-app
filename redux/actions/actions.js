@@ -53,12 +53,7 @@ export function setNotificationCategories(payload) {
         payload
     }
 }
-export function saveTokenId(tokenId) {
-    return {
-        type: 'SAVE_TOKEN_ID',
-        tokenId
-    }
-}
+
 export function checkNotificationSettings() {
     return {
         type: 'CHECK_NOTIFICATION_SETTINGS'
@@ -306,10 +301,27 @@ export function addComment(payload) {
     }
 }
 
+// USER INFO
+
 export function saveUserInfo(payload) {
     return {
         type: 'SAVE_USERINFO', 
         payload
+    }
+}
+
+export function saveTokenId(tokenId) {
+    return {
+        type: 'SAVE_TOKEN_ID',
+        tokenId
+    }
+}
+
+export function setAllNotifications(domainId, allNotifications) {
+    return {
+        type: 'SET_ALL_NOTIFICATIONS',
+        domainId,
+        allNotifications
     }
 }
 

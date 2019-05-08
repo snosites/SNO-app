@@ -2,9 +2,9 @@
   "expoServerPort": 19000,
   "expoServerNgrokUrl": "https://2n-z2b.tjuser23.sno-app.exp.direct",
   "packagerNgrokUrl": "https://packager.2n-z2b.tjuser23.sno-app.exp.direct",
-  "ngrokPid": 63849,
+  "ngrokPid": 77609,
   "devToolsPort": 19002,
   "packagerPort": 19004,
-  "packagerPid": 63827,
+  "packagerPid": 77580,
   "webpackServerPort": null
 }

@@ -29,25 +29,45 @@ class SettingsScreen extends React.Component {
         editingUsername: false,
         editingEmail: false,
         username: '',
-        email: ''
+        email: '',
+        notifications: {}
     };
 
     componentDidMount() {
-        const { userInfo, dispatch, activeDomain } = this.props;
+        const { userInfo, dispatch, activeDomain, domains } = this.props;
         this.setState({
             username: userInfo.username,
             email: userInfo.email
         })
-        if (userInfo.tokenId) {
-            dispatch(fetchNotifications({
-                tokenId: userInfo.tokenId,
-                domain: activeDomain.id
-            }))
-        }
+        // if (userInfo.tokenId) {
+        //     dispatch(fetchNotifications({
+        //         tokenId: userInfo.tokenId,
+        //         domain: activeDomain.id
+        //     }))
+        // }
+
+        // this.setState({
+        //     notifications: domains.map(domain => {
+        //         return {[domain.id]: domain.notificationCategories.map(notification => {
+        //             return {[notification.id]: notification.active}
+        //         })}
+        //     })
+        // })
+
+        this.setState({
+            notifications: domains.reduce(function(map, domain) {
+                map[domain.id] = domain.notificationCategories.reduce(function(map, notification) {
+                    map[notification.id] = notification.active;
+                    return map;
+                }, {});
+                return map;
+            }, {})
+        })
     }
 
     render() {
-        const { snackbarVisible, editingUsername, editingEmail, username, email } = this.state;
+        console.log('state', this.state)
+        const { snackbarVisible, editingUsername, editingEmail, username, email, notifications } = this.state;
         const { domains, userInfo, dispatch, theme } = this.props;
         return (
             <ScrollView style={styles.container}>
@@ -166,14 +186,14 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {domains.map(domain => {
+                        {userInfo.tokenId ? domains.map(domain => {
                             return (
                                 <List.Accordion
                                     key={domain.id}
                                     title={domain.name}
                                     left={props => <List.Icon {...props} icon="folder-open" />}
                                 >
-                                    <List.Item
+                                    {/* <List.Item
                                         style={{ paddingVertical: 0, paddingLeft: 60 }}
                                         titleStyle={{ fontWeight: 'bold' }}
                                         title={'All Notifications'}
@@ -187,7 +207,7 @@ class SettingsScreen extends React.Component {
                                                 />
                                             )
                                         }}
-                                    />
+                                    /> */}
                                     {domain.notificationCategories.map((item, i) => {
                                         return (
                                             <List.Item
@@ -198,8 +218,8 @@ class SettingsScreen extends React.Component {
                                                     return (
                                                         <Switch
                                                             style={{ margin: 10 }}
-                                                            value={item.active}
-                                                            onValueChange={(value) => { this._toggleNotifications(item.id, value, domain) }
+                                                            value={notifications[domain.id][item.id]}
+                                                            onValueChange={(value) => { this._toggleNotifications(item.id, value, domain, item) }
                                                             }
 
                                                         />
@@ -208,10 +228,16 @@ class SettingsScreen extends React.Component {
                                             />
                                         )
                                     }
-                                    )}
+                                    )
+                                    }
                                 </List.Accordion>
                             )
-                        })}
+                        })
+                    :
+                    <Text style={{textAlign: 'center'}}>
+                        You have disabled push notifications for this app
+                    </Text>
+                    }
                     </List.Section>
                     <View>
                         <Button
@@ -288,7 +314,19 @@ class SettingsScreen extends React.Component {
         }
     }
 
-    _toggleNotifications = (notificationId, value, domain) => {
+    _toggleNotifications = (notificationId, value, domain, notification) => {
+        // stops lag of DB call for switch value
+        this.setState({
+            notifications: {
+                ...this.state.notifications,
+                [domain.id]: {
+                    ...this.state.notifications[domain.id],
+                    [notificationId]: value
+                }
+            }
+        })
+        console.log('toggle', notification, value)
+        // notificationId is category ID in DB
         const { dispatch, userInfo } = this.props;
         if (value) {
             dispatch(addNotification({

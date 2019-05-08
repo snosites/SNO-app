@@ -194,10 +194,7 @@ function savedArticles(
 // }
 
 export function userInfo(state = {
-    notifications: {
-        all: false,
-        categories: []
-    }
+    allNotifications: {}
 }, action) {
     switch (action.type) {
         case 'SAVE_USERINFO':
@@ -211,14 +208,14 @@ export function userInfo(state = {
                 ...state,
                 tokenId: action.tokenId
             }
-        // case 'SET_NOTIFICATIONS':
-        //     return {
-        //         ...state,
-        //         notifications: {
-        //             ...state.notifications,
-        //             categories: action.notifications
-        //         }
-        //     }
+        case 'SET_ALL_NOTIFICATIONS':
+            return {
+                ...state,
+                allNotifications: {
+                    ...state.allNotifications,
+                    [action.domainId]: action.allNotifications
+                }
+            }
         default:
             return state
     }

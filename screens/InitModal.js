@@ -5,15 +5,17 @@ import {
     View,
     Modal
 } from 'react-native';
-import { Button } from 'react-native-paper'
+import { Button, Switch } from 'react-native-paper'
 import { Haptic, DangerZone } from 'expo';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const { Lottie } = DangerZone;
 
-export default class initModal extends Component {
+class initModal extends Component {
     state = {
         animation: null,
-        showText: false
+        showText: false,
+        allNotifications: true
     };
 
 
@@ -29,43 +31,57 @@ export default class initModal extends Component {
                 onShow={this._startAnimation}
             >
                 <View style={styles.modalContainer}>
-                    <View style={styles.animationContainer}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 300,
-                                height: 300,
-                            }}
-                            loop={false}
-                            speed={0.75}
-                            duration={1200}
-                            source={require('../assets/lottiefiles/animation-success.json')}
-                        />
-                    </View>
-                    {this.state.showText &&
-                    <View style={styles.textContainer}>
-                        <Text style={{ fontSize: 30, paddingBottom: 10, textAlign: 'center' }}>Success!</Text>
-                        <Text style={{ fontSize: 17, paddingBottom: 35 }}>
-                            Your selected organization has been saved.  If you ever want to change this you can find it in your settings.
-                            </Text>
-                        <Button
-                            mode="contained"
-                            theme={{
-                                roundness: 7,
-                                colors: {
-                                primary: '#2099CE'
-                            }}}
-                            style={{ padding: 10 }}
-                            onPress={() => {
-                                Haptic.selection();
-                                this.props.handleDismiss();
-                            }}
-                        >
-                            Dismiss
-                        </Button>
-                    </View>}
+                    <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+                        <View style={styles.animationContainer}>
+                            <Lottie
+                                ref={animation => {
+                                    this.animation = animation;
+                                }}
+                                style={{
+                                    width: 250,
+                                    height: 250,
+                                }}
+                                loop={false}
+                                speed={0.75}
+                                duration={1200}
+                                source={require('../assets/lottiefiles/animation-success.json')}
+                            />
+                        </View>
+                        {this.state.showText &&
+                            <View style={styles.textContainer}>
+                                <Text style={{ fontSize: 30, paddingBottom: 10, textAlign: 'center' }}>Success!</Text>
+                                <Text style={{ fontSize: 17, paddingBottom: 30 }}>
+                                    Your selected school has been saved.  If you ever want to change this you can find it in your settings.
+                                </Text>
+                                <Text style={{ fontSize: 17, textAlign: 'center' }}>Notifications for this school are currently:</Text>
+                                <View style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                                    <Text style={{fontSize: 19, fontWeight: 'bold', paddingRight: 10}}>{this.state.allNotifications ? 'ON' : 'OFF'}</Text>
+                                    <Switch
+                                        color='#2099CE'
+                                        value={this.state.allNotifications}
+                                        onValueChange={() => { this.setState({ allNotifications: !this.state.allNotifications }); }
+                                        }
+                                    />
+                                </View>
+                                <Text style={{ fontSize: 14, paddingBottom: 30 }}>You can always change this later in settings based on individual categories</Text>
+                                <Button
+                                    mode="contained"
+                                    theme={{
+                                        roundness: 7,
+                                        colors: {
+                                            primary: '#2099CE'
+                                        }
+                                    }}
+                                    style={{ padding: 10 }}
+                                    onPress={() => {
+                                        Haptic.selection();
+                                        this.props.handleDismiss(this.state.allNotifications);
+                                    }}
+                                >
+                                    Submit
+                                </Button>
+                            </View>}
+                    </ScrollView>
                 </View>
             </Modal>
         )
@@ -77,7 +93,7 @@ export default class initModal extends Component {
             this.setState({
                 showText: true
             })
-        }, 900)
+        }, 700)
     }
 
     _playAnimation = () => {
@@ -93,14 +109,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        marginTop: 30
+        // marginTop: 30
     },
     animationContainer: {
-        width: 300,
-        height: 300,
+        width: 250,
+        height: 250,
     },
     textContainer: {
         alignContent: 'center',
-        marginHorizontal: 30
+        marginHorizontal: 20
     },
 });
+
+export default initModal;

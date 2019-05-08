@@ -7,7 +7,7 @@ import {
     Text
 } from 'react-native';
 import { connect } from 'react-redux';
-import { addDomain, changeActiveDomain, clearAvailableDomains } from '../redux/actions/actions';
+import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actions/actions';
 
 import { List, Divider } from 'react-native-paper'
 import { Haptic } from 'expo';
@@ -21,6 +21,7 @@ class SelectScreen extends React.Component {
 
     state = {
         modalVisible: false,
+        selectedDomain: ''
     }
 
     // componentDidMount() {
@@ -131,7 +132,12 @@ class SelectScreen extends React.Component {
                                 title={item.school}
                                 style={{ paddingVertical: 0 }}
                                 left={props => <List.Icon {...props} icon="chevron-right" />}
-                                onPress={() => this._handleSelect(item.domain_id, item)}
+                                onPress={() => {
+                                    this._handleSelect(item.domain_id, item)
+                                    this.setState({
+                                        selectedDomain: item.domain_id
+                                    })
+                                }}
                             />
                             <Divider />
                         </View>
@@ -171,12 +177,15 @@ class SelectScreen extends React.Component {
         }
     }
     // dismiss modal and redirect back to auth loading
-    _handleModalDismiss = () => {
-        this.setState({
-            modalVisible: false
-        })
+    _handleModalDismiss = (allNotifications) => {
+        Haptic.selection();
+        this.props.dispatch(setAllNotifications(this.state.selectedDomain, allNotifications))
         this.props.navigation.navigate('AuthLoading');
         this.props.dispatch(clearAvailableDomains());
+        this.setState({
+            modalVisible: false,
+            selectedDomain: ''
+        })
     }
 
 }

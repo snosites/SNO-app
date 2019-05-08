@@ -19,16 +19,34 @@ const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 function* fetchNotifications(action) {
     // const activeDomain = yield select(getActiveDomain);
     const { tokenId, domain } = action.payload;
-    console.log('in fetch notifications', tokenId);
-    const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${tokenId}`);
+    const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${String(tokenId)}`);
     const notifications = yield response.json();
-    console.log('fetched notifications', notifications)
     yield put(setNotifications(notifications, domain))
 }
 
 function* addNotification(action) {
     const { tokenId, categoryId, domain } = action.payload;
-    console.log('token ID', tokenId)
+    yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tokenId,
+            categoryId
+        }),
+    });
+    yield call(fetchNotifications, {
+        payload: {
+            tokenId,
+            domain
+        }
+    });
+}
+
+function* addAllNotifications(action) {
+    const { tokenId, categoryId, domain } = action.payload;
     yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -70,7 +88,6 @@ function* removeNotification(action) {
 }
 
 export function* checkNotificationSettings() {
-    console.log('in checkNotificationSettings')
     const { status: existingStatus } = yield call(Permissions.getAsync, Permissions.NOTIFICATIONS);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
@@ -80,21 +97,24 @@ export function* checkNotificationSettings() {
     // Stop here if the user did not grant permissions -- save token as undefined
     if (finalStatus !== 'granted') {
         console.log('notification status is not granted')
-        yield put(saveTokenId(undefined));
+        yield put(saveTokenId(0));
+        return;
     }
     // Get the token that uniquely identifies this device
     let token = yield call(Notifications.getExpoPushTokenAsync);
-    console.log('token', token)
     let response = yield call(fetch, `${GET_TOKENS_ENDPOINT}/${token}`);
     let tokenResponse = yield response.json();
-    console.log('token repsonse', tokenResponse)
-    // if there is already a token saved in DB update in in redux
+    let tokenId;
+    // if there is already a token saved in DB update it in redux
     if (tokenResponse[0]) {
+        tokenId = tokenResponse[0].id;
         yield put(saveTokenId(tokenResponse[0].id));
         // if not save it in DB and then save in redux
     } else {
-        yield call(savePushNotifications, token);
+        tokenId = yield call(savePushNotifications, token);
     }
+    return tokenId;
+    
 }
 
 function* savePushNotifications(token) {
@@ -111,7 +131,7 @@ function* savePushNotifications(token) {
     });
     let tokenId = yield response.json();
     yield put(saveTokenId(Number(tokenId.id)))
-    return;
+    return tokenId;
 }
 
 function* notificationsSaga() {

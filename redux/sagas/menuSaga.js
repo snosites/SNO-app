@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError, initializeSaved } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError, initializeSaved, fetchNotifications } from '../actions/actions';
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
@@ -11,13 +11,11 @@ import Sentry from 'sentry-expo';
 //     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
 //     : `api.example.com`;
 const api = 'mobileapi.snosites.net/';
-console.log('api', api)
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
     try {
         yield put(requestMenus())
-        console.log('domain', domain);
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
 
@@ -59,7 +57,6 @@ function* fetchMenus(action) {
         //if any are found
         // optimize later into one fetch call
         if (oldCategories.length > 0) {
-            console.log('found old categories', oldCategories)
             //loop through and remove them from DB
             for (let category of oldCategories) {
                 yield call(fetch, `http://${api}/api/categories/delete`, {
@@ -82,8 +79,11 @@ function* fetchMenus(action) {
             notificationCategories: updatedDbCategories
         }))
         // make sure push token has been stored
-        yield call(checkNotificationSettings);
-
+        const token = yield call(checkNotificationSettings);
+        yield put(fetchNotifications({
+            tokenId: token,
+            domain: domainId
+        }))
         const [result, result2, result3, result4, result5, result6] = yield all([
             call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=header-image-small`),
             call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=mini-logo`),
@@ -132,7 +132,7 @@ function* fetchMenus(action) {
         ))
     }
     catch (err) {
-        console.log('error fetching menus in saga', err)
+        // console.log('error fetching menus in saga', err)
         yield put(setError('menu-saga error'))
         Sentry.captureException(err)
     }
@@ -146,7 +146,7 @@ function* fetchCategoriesFromDb(action) {
         return categories;
     }
     catch (err) {
-        console.log('error fetching categories from DB', err)
+        // console.log('error fetching categories from DB', err)
     }
 }
 
