@@ -138,7 +138,7 @@ export function savedArticles(state = [], action) {
             let found = state.find(article => {
                 return action.article.id == article.id
             })
-            if(found){
+            if (found) {
                 return state
             }
             return [
@@ -204,7 +204,8 @@ function articles(
         didInvalidate: false,
         refreshing: false,
         page: 1,
-        items: []
+        items: [],
+        error: ''
     },
     action
 ) {
@@ -217,6 +218,13 @@ function articles(
         case 'REQUEST_ARTICLES':
             return Object.assign({}, state, {
                 isFetching: true,
+                error: ''
+            })
+        case 'FETCH_ARTICLES_FAILURE':
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                error: action.error
             })
         case 'RECEIVE_ARTICLES':
             let updatedPage = 'max';
@@ -248,6 +256,7 @@ export function articlesByCategory(state = {}, action) {
         case 'INVALIDATE_ARTICLES':
         case 'REQUEST_ARTICLES':
         case 'RECEIVE_ARTICLES':
+        case 'FETCH_ARTICLES_FAILURE':
             return {
                 ...state,
                 [action.category]: articles(state[action.category], action)
@@ -263,7 +272,8 @@ export function recentArticles(state = {
     isFetching: false,
     didInvalidate: false,
     page: 1,
-    items: []
+    items: [],
+    error: ''
 }, action) {
     switch (action.type) {
         case 'INVALIDATE_RECENT_ARTICLES':
@@ -274,6 +284,13 @@ export function recentArticles(state = {
         case 'REQUEST_RECENT_ARTICLES':
             return Object.assign({}, state, {
                 isFetching: true,
+                error: ''
+            })
+        case 'FETCH_RECENT_ARTICLES_FAILURE':
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                error: action.error
             })
         case 'RECEIVE_RECENT_ARTICLES':
             let updatedPage = 'max';
@@ -292,7 +309,8 @@ export function recentArticles(state = {
                 didInvalidate: false,
                 items: newItems,
                 lastUpdated: action.receivedAt,
-                page: updatedPage
+                page: updatedPage,
+                
             })
         default:
             return state
@@ -305,7 +323,8 @@ export function searchArticles(state = {
     isFetching: false,
     didInvalidate: false,
     page: 1,
-    items: []
+    items: [],
+    error: ''
 }, action) {
     switch (action.type) {
         case 'INVALIDATE_SEARCH_ARTICLES':
@@ -316,6 +335,13 @@ export function searchArticles(state = {
         case 'REQUEST_SEARCH_ARTICLES':
             return Object.assign({}, state, {
                 isFetching: true,
+                error: ''
+            })
+        case 'FETCH_SEARCH_ARTICLES_FAILURE':
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                error: action.error
             })
         case 'RECEIVE_SEARCH_ARTICLES':
             let updatedPage = 'max';
@@ -334,7 +360,7 @@ export function searchArticles(state = {
                 didInvalidate: false,
                 items: newItems,
                 lastUpdated: action.receivedAt,
-                page: updatedPage
+                page: updatedPage,
             })
         default:
             return state
@@ -343,11 +369,11 @@ export function searchArticles(state = {
 
 // THEME
 
-export function theme(state = {...DefaultTheme,}, action) {
+export function theme(state = { ...DefaultTheme, }, action) {
     switch (action.type) {
         case 'SAVE_THEME':
             let mode = true;
-            if(action.theme.theme.toLowerCase() == 'light') {
+            if (action.theme.theme.toLowerCase() == 'light') {
                 mode = false;
             }
             return {
@@ -370,9 +396,9 @@ export function theme(state = {...DefaultTheme,}, action) {
 export function availableDomains(state = [], action) {
     switch (action.type) {
         case 'SET_AVAILABLE_DOMAINS':
-        if(action.domains.length == 0) {
-            return ['none']
-        }
+            if (action.domains.length == 0) {
+                return ['none']
+            }
             return action.domains
         case 'CLEAR_AVAILABLE_DOMAINS':
             return []
@@ -383,7 +409,7 @@ export function availableDomains(state = [], action) {
 
 // ERRORS
 
-export function errors(state={}, action) {
+export function errors(state = {}, action) {
     switch (action.type) {
         case 'SET_ERROR':
             return {

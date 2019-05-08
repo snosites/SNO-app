@@ -23,9 +23,7 @@ import { Snackbar, Badge } from 'react-native-paper';
 import {
     saveArticle,
     removeSavedArticle,
-    fetchSearchArticlesIfNeeded,
     fetchMoreSearchArticlesIfNeeded,
-    invalidateSearchArticles
 } from '../redux/actions/actions';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -118,6 +116,15 @@ class SearchScreen extends React.Component {
                             source={require('../assets/lottiefiles/search-processing')}
                         />
                     </View>
+                </View>
+            )
+        }
+        if (search.error) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ textAlign: 'center', fontsize: 17, padding: 30 }}>
+                        Sorry, something went wrong.
+                    </Text>
                 </View>
             )
         }

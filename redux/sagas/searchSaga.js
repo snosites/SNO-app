@@ -1,6 +1,8 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestSearchArticles, receiveSearchArticles } from '../actions/actions';
+import { requestSearchArticles, receiveSearchArticles, fetchSearchArticlesFailure } from '../actions/actions';
+
+import Sentry from 'sentry-expo';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
@@ -45,6 +47,8 @@ function* fetchSearchArticles(action) {
     }
     catch (err) {
         console.log('error fetching recent articles in saga', err)
+        yield put(fetchSearchArticlesFailure('error in search saga'))
+        Sentry.captureException(err)
     }
 }
 

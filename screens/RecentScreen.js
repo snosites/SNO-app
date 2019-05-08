@@ -107,6 +107,15 @@ class RecentScreen extends React.Component {
                 </View>
             )
         }
+        if (recent.error) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ textAlign: 'center', fontsize: 17, padding: 30 }}>
+                        Sorry, something went wrong.
+                    </Text>
+                </View>
+            )
+        }
 
         return (
             <View style={{ flex: 1 }}>

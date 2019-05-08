@@ -50,7 +50,7 @@ class ListScreen extends React.Component {
                     <Item
                         title="menu"
                         iconName="ios-menu"
-                        buttonStyle={{color: isDark ? 'white' : 'black'}}
+                        buttonStyle={{ color: isDark ? 'white' : 'black' }}
                         onPress={() => navigation.openDrawer()} />
                 </HeaderButtons>
             ),
@@ -117,6 +117,15 @@ class ListScreen extends React.Component {
                             source={require('../assets/lottiefiles/article-loading-animation')}
                         />
                     </View>
+                </View>
+            )
+        }
+        if (category.error) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ textAlign: 'center', fontsize: 17, padding: 30 }}>
+                        Sorry, something went wrong.
+                    </Text>
                 </View>
             )
         }

@@ -238,8 +238,6 @@ export function fetchRecentArticlesFailure(error) {
 
 // SEARCH ARTICLES
 
-// RECENT ARTICLES
-
 export function invalidateSearchArticles() {
     return {
         type: 'INVALIDATE_SEARCH_ARTICLES',
