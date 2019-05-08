@@ -122,8 +122,23 @@ class ListScreen extends React.Component {
         }
         if (category.error) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <Text style={{ textAlign: 'center', fontsize: 17, padding: 30 }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.animationContainerError}>
+                        <Lottie
+                            ref={animation => {
+                                this.animation = animation;
+                            }}
+                            style={{
+                                width: 200,
+                                height: 200,
+                            }}
+                            loop={false}
+                            speed={1}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/broken-stick-error')}
+                        />
+                    </View>
+                    <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>
                 </View>
@@ -361,6 +376,10 @@ const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
         height: 400,
+    },
+    animationContainerError: {
+        width: 200,
+        height: 200,
     },
     featuredImage: {
         width: 125,
