@@ -151,15 +151,14 @@ class ProfileScreen extends React.Component {
             const userDomain = activeDomain.url;
             const writerName = navigation.getParam('writerName', 'unknown');
             if (writerName !== 'unknown') {
-                const response = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
+                const response = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
                 const profile = await response.json();
                 console.log('wrter name', writerName, userDomain)
                 if (profile.length > 0) {
                     // if more than one matches uses first one
                     const profileId = profile[0].ID;
-                    const newResponse = await fetch(`${userDomain}/wp-json/wp/v2/posts/${profileId}`)
+                    const newResponse = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
-                    console.log('respq', writerProfile)
                     
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
@@ -168,16 +167,15 @@ class ProfileScreen extends React.Component {
                         writerProfile.profileImage = profileImage.media_details.sizes.full.source_url;
                     }
                     // get list of articles written by writer
-                    const query = await fetch(`${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
+                    const query = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
                     
                     const articlesByWriter = await query.json();
                     console.log('articles by writer', articlesByWriter)
                     // get the full posts for all articles
                     const updatedArticlesByWriter = await Promise.all(articlesByWriter.map(async article => {
-                        const response = await fetch(`${userDomain}/wp-json/wp/v2/posts/${article.ID}`)
+                        const response = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${article.ID}`)
                         return await response.json();
                     }))
-                    console.log('updated articles by writer', updatedArticlesByWriter)
                     let verifiedArticlesByWriter = updatedArticlesByWriter.filter(article => {
                         return (!!article.id)
                     })

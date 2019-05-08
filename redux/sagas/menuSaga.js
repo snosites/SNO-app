@@ -18,7 +18,7 @@ function* fetchMenus(action) {
     try {
         yield put(requestMenus())
         console.log('domain', domain);
-        const response = yield fetch(`${domain}/wp-json/custom/menus/mobile-app-menu`)
+        const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
 
         let menus = originalMenus.filter(menu => {
@@ -85,12 +85,12 @@ function* fetchMenus(action) {
         yield call(checkNotificationSettings);
 
         const [result, result2, result3, result4, result5, result6] = yield all([
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=header-image-small`),
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=mini-logo`),
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-splash-image`),
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-theme`),
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-primary`),
-            call(fetch, `${domain}/wp-json/custom/theme-mod?type=snomobile-accent`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=header-image-small`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=mini-logo`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-splash-image`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-theme`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-primary`),
+            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-accent`),
 
         ]);
         const headerImage = yield result.json();
@@ -103,7 +103,7 @@ function* fetchMenus(action) {
             theme.image = 'light';
         }
         if(!primary.image){
-            const response = yield call(fetch, `${domain}/wp-json/custom/theme-mod?type=accentcolor-links`);
+            const response = yield call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=accentcolor-links`);
             const colorFallback = yield response.json();
             primary.image = colorFallback.image;
             if(!accent.image){

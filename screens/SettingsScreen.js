@@ -148,7 +148,7 @@ class SettingsScreen extends React.Component {
                                                 icon="delete"
                                                 color={Colors.red700}
                                                 size={28}
-                                                onPress={() => this._handleDeleteOrg(item.id)}
+                                                onPress={() => this._handleDeleteOrg(item)}
                                             />
                                         )
                                     }}
@@ -189,7 +189,6 @@ class SettingsScreen extends React.Component {
                                         }}
                                     />
                                     {domain.notificationCategories.map((item, i) => {
-                                        console.log('not cat', item)
                                         return (
                                             <List.Item
                                                 key={item.id}
@@ -257,8 +256,20 @@ class SettingsScreen extends React.Component {
         this.props.navigation.navigate('Auth')
     }
 
-    _handleDeleteOrg = (domainId) => {
-        this.props.dispatch(deleteDomain(domainId))
+    _handleDeleteOrg = (domain) => {
+        console.log('in handle delete')
+        const { domains, navigation } = this.props;
+        if(domain.active) {
+            let found = domains.find(domain => {
+                return !domain.active
+            })
+            if(found){
+                this._switchDomain(found.id);
+            } else {
+                navigation.navigate('AuthLoading');
+            }
+        }
+        this.props.dispatch(deleteDomain(domain.id))
         this.setState({
             snackbarVisible: true
         })

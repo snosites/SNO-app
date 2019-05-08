@@ -77,7 +77,7 @@ export default class initModal extends Component {
             this.setState({
                 showText: true
             })
-        }, 1200)
+        }, 900)
     }
 
     _playAnimation = () => {

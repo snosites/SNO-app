@@ -17,7 +17,7 @@ function* fetchFeaturedImage(url, story) {
 }
 
 function* fetchComments(url, story) {
-    const response = yield fetch(`${url}/wp-json/wp/v2/comments?post=${story.id}`);
+    const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
     const comments = yield response.json();
     story.comments = comments
     return;
@@ -26,7 +26,7 @@ function* fetchComments(url, story) {
 function* fetchSearchArticles(action) {
     const { domain, page, searchTerm } = action;
     try {
-        const query = `${domain}/wp-json/wp/v2/posts?search=${searchTerm}&page=${page}`
+        const query = `https://${domain}/wp-json/wp/v2/posts?search=${searchTerm}&page=${page}`
         yield put(requestSearchArticles())
         const response = yield fetch(query)
         const stories = yield response.json();

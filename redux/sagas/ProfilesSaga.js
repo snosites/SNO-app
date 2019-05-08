@@ -5,7 +5,7 @@ function* fetchProfiles(action){
     const { domain } = action;
     try {
         yield put(requestProfiles())
-        const response = yield fetch(`${domain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name`)
+        const response = yield fetch(`https://${domain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name`)
         const profiles = yield response.json();
         yield put(receiveProfiles(profiles))
         

@@ -17,7 +17,7 @@ function* fetchFeaturedImage(url, story) {
 }
 
 function* fetchComments(url, story) {
-    const response = yield fetch(`${url}/wp-json/wp/v2/comments?post=${story.id}`);
+    const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
     const comments = yield response.json();
     story.comments = comments
     return;
@@ -26,7 +26,7 @@ function* fetchComments(url, story) {
 function* refetchComments(action) {
     const { domain, articleId } = action;
     try {
-        const response = yield fetch(`${domain}/wp-json/wp/v2/comments?post=${articleId}`);
+        const response = yield fetch(`https://${domain}/wp-json/wp/v2/comments?post=${articleId}`);
         const comments = yield response.json();
         yield put(updateComments({
             articleId,
@@ -47,7 +47,7 @@ function* addComment(action) {
         post: articleId
     }
     try {
-        const temp = yield call(fetch, `${domain}/wp-json/wp/v2/comments`, {
+        const temp = yield call(fetch, `https://${domain}/wp-json/wp/v2/comments`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function* fetchArticles(action) {
     const { domain, category, page } = action;
     try {
         yield put(requestArticles(category))
-        const response = yield fetch(`${domain}/wp-json/wp/v2/posts?categories=${category}&page=${page}`)
+        const response = yield fetch(`https://${domain}/wp-json/wp/v2/posts?categories=${category}&page=${page}`)
         const stories = yield response.json();
         yield all(stories.map(story => {
             if(story._links['wp:featuredmedia']) {
