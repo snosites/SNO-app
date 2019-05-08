@@ -19,6 +19,10 @@ export function domains(state = [], action) {
                 }
 
             ]
+        case "DELETE_DOMAIN":
+            return state.filter(domain => {
+                return domain.id == action.domainId
+            })
         case 'CHANGE_ACTIVE_DOMAIN':
             return state.map(domain => {
                 if (domain.id === action.id) {

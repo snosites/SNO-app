@@ -32,8 +32,8 @@ export function addDomain(payload) {
     return { type: ADD_DOMAIN, payload}
 }
 
-export function deleteDomain(domain) {
-    return { type: DELETE_DOMAIN, domain }
+export function deleteDomain(domainId) {
+    return { type: DELETE_DOMAIN, domainId }
 }
 
 export function changeActiveDomain(id) {

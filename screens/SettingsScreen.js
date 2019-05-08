@@ -7,12 +7,12 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
-import { saveUserInfo } from '../redux/actions/actions';
+import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
 import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
 
 
-const ActiveDomainIcon = ({color}) => (
+const ActiveDomainIcon = ({ color }) => (
     <List.Icon
         icon={`star`}
         color={color}
@@ -136,7 +136,7 @@ class SettingsScreen extends React.Component {
                                     description={item.active ? 'active' : null}
                                     left={() => {
                                         if (item.active) {
-                                            return <ActiveDomainIcon color={theme.colors.accent}/>
+                                            return <ActiveDomainIcon color={theme.colors.accent} />
                                         }
                                         else {
                                             return null
@@ -191,24 +191,24 @@ class SettingsScreen extends React.Component {
                                     {domain.notificationCategories.map((item, i) => {
                                         console.log('not cat', item)
                                         return (
-                                        <List.Item
-                                            key={item.id}
-                                            style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                            title={item.category_name}
-                                            right={() => {
-                                                return (
-                                                    <Switch
-                                                        style={{ margin: 10 }}
-                                                        value={item.active}
-                                                        onValueChange={(value) => { this._toggleNotifications(item.id, value, domain) }
-                                                        }
+                                            <List.Item
+                                                key={item.id}
+                                                style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                                title={item.category_name}
+                                                right={() => {
+                                                    return (
+                                                        <Switch
+                                                            style={{ margin: 10 }}
+                                                            value={item.active}
+                                                            onValueChange={(value) => { this._toggleNotifications(item.id, value, domain) }
+                                                            }
 
-                                                    />
-                                                )
-                                            }}
-                                        />
-                                    )
-                                        }
+                                                        />
+                                                    )
+                                                }}
+                                            />
+                                        )
+                                    }
                                     )}
                                 </List.Accordion>
                             )
@@ -219,7 +219,7 @@ class SettingsScreen extends React.Component {
                             icon="delete-forever"
                             mode="outlined"
                             color={Colors.red700}
-                            style={{padding: 10, }}
+                            style={{ padding: 10, }}
                             onPress={() => {
                                 persistor.purge();
                                 this.props.dispatch({
@@ -235,6 +235,10 @@ class SettingsScreen extends React.Component {
                 <Snackbar
                     visible={snackbarVisible}
                     duration={3000}
+                    style={{
+                        position: 'absolute',
+                        bottom: 0, left: 0, right: 0
+                    }}
                     onDismiss={() => this.setState({ snackbarVisible: false })}
                     action={{
                         label: 'Dismiss',
@@ -253,7 +257,8 @@ class SettingsScreen extends React.Component {
         this.props.navigation.navigate('Auth')
     }
 
-    _handleDeleteOrg = () => {
+    _handleDeleteOrg = (domainId) => {
+        this.props.dispatch(deleteDomain(domainId))
         this.setState({
             snackbarVisible: true
         })
@@ -274,7 +279,7 @@ class SettingsScreen extends React.Component {
 
     _toggleNotifications = (notificationId, value, domain) => {
         const { dispatch, userInfo } = this.props;
-        if(value) {
+        if (value) {
             dispatch(addNotification({
                 tokenId: userInfo.tokenId,
                 categoryId: notificationId,
