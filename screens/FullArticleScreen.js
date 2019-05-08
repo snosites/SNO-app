@@ -40,7 +40,8 @@ class FullArticleScreen extends React.Component {
     state = {
         fabOpen: false,
         showPortal: true,
-        snackbarSavedVisible: false
+        snackbarSavedVisible: false,
+        expandCaption: false
     };
 
     render() {
@@ -54,7 +55,8 @@ class FullArticleScreen extends React.Component {
                         showPortal: true
                     })}
                     onWillBlur={() => this.setState({
-                        showPortal: false
+                        showPortal: false,
+                        expandCaption: false
                     })}
                 />
                 {article !== 'loading' &&
@@ -62,7 +64,25 @@ class FullArticleScreen extends React.Component {
                         {this._renderFeaturedMedia(article)}
                     </View>
                 }
-                <Text style={styles.title}>{article.title.rendered}</Text>
+                <HTML
+                    html={article.title.rendered}
+                    baseFontStyle={{ fontSize: 30 }}
+                    customWrapper={(text) => {
+                        return (
+                            <Text>{text}</Text>
+                        )
+                    }}
+                    tagsStyles={{
+                        rawtext: {
+                            fontSize: 30,
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            paddingVertical: 5,
+                            paddingHorizontal: 10,
+                            color: theme.dark ? 'white' : 'black'
+                        }
+                    }}
+                />
                 <TouchableItem onPress={() => this._handleProfilePress(article)}>
                     <Text style={{
                         fontSize: 17,
@@ -178,11 +198,30 @@ class FullArticleScreen extends React.Component {
                 >
                     <View style={styles.imageInfoContainer}>
                         <View style={styles.imageInfo}>
-                            <HTML
+                            {/* <HTML
                                 html={article.featuredImage.caption.toUpperCase()}
                                 textSelectable={true}
                                 tagsStyles={{
                                     p: {
+                                        fontSize: 12,
+                                        color: 'white'
+                                    }
+                                }}
+                            /> */}
+                            <HTML
+                                html={article.featuredImage.caption.toUpperCase()}
+                                baseFontStyle={{ fontSize: 12 }}
+                                customWrapper={(text) => {
+                                    return (
+                                        <Text ellipsizeMode='tail' numberOfLines={this.state.expandCaption ? null : 2} onPress={() => {
+                                            this.setState({
+                                                expandCaption: !this.state.expandCaption
+                                            })
+                                        }}>{text}</Text>
+                                    )
+                                }}
+                                tagsStyles={{
+                                    rawtext: {
                                         fontSize: 12,
                                         color: 'white'
                                     }

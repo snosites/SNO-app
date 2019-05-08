@@ -28,7 +28,7 @@ function* fetchComments(url, story) {
 function* fetchRecentArticles(action) {
     const { domain, categories, page } = action;
     try {
-        const query = `${domain}/wp-json/wp/v2/posts?categories=${categories.join(',')}&page=${page}`
+        const query = `https://${domain}/wp-json/wp/v2/posts?categories=${categories.join(',')}&page=${page}`
         yield put(requestRecentArticles())
         const response = yield fetch(query)
         const stories = yield response.json();

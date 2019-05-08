@@ -36,7 +36,7 @@ const itemWidth = slideWidth + itemHorizontalMargin * 2;
 export default class Slideshow extends React.Component {
 
     state = {
-        activeSlide: SLIDER_FIRST_ITEM
+        activeSlide: SLIDER_FIRST_ITEM,
     }
 
     render() {
@@ -98,17 +98,17 @@ export default class Slideshow extends React.Component {
                     <View style={styles.radiusMask} />
                 </View>
                 <View style={styles.textContainer}>
-                    {/* <Text
-                        style={styles.title}
-                        numberOfLines={2}
-                    > */}
                     {item.caption ?
                         <HTML
                             html={item.caption.rendered.toUpperCase()}
-                            textSelectable={true}
-                            // onLinkPress={(e, href) => this._viewLink(href)}
+                            baseFontStyle={{ fontSize: 12 }}
+                            customWrapper={(text) => {
+                                return (
+                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                )
+                            }}
                             tagsStyles={{
-                                p: {
+                                rawtext: {
                                     color: 'white',
                                     fontSize: 12,
                                     fontWeight: 'bold',
@@ -116,7 +116,6 @@ export default class Slideshow extends React.Component {
                                 }
                             }}
                         /> : null}
-                    {/* </Text> */}
                     <Text
                         style={styles.subtitle}
                         numberOfLines={2}
