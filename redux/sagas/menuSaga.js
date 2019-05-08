@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError, initializeSaved } from '../actions/actions';
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
@@ -127,6 +127,9 @@ function* fetchMenus(action) {
             domain,
             category: menus[0].object_id,
         }))
+        yield put(initializeSaved(
+            domainId
+        ))
     }
     catch (err) {
         console.log('error fetching menus in saga', err)

@@ -110,7 +110,7 @@ class SelectScreen extends React.Component {
         if (availableDomains.length == 0) {
             return (
                 <View style={{ flex: 1, padding: 20 }}>
-                    <ActivityIndicator color="#9A1D20" />
+                    <ActivityIndicator />
                 </View>
             )
         }

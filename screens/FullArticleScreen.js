@@ -171,7 +171,8 @@ class FullArticleScreen extends React.Component {
     }
 
     _handleArticleSave = article => {
-        this.props.dispatch(saveArticle(article))
+        const { activeDomain } = this.props;
+        this.props.dispatch(saveArticle(article, activeDomain.id))
         this.setState({
             snackbarSavedVisible: true
         })
@@ -319,7 +320,8 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-    theme: state.theme
+    theme: state.theme,
+    activeDomain: state.activeDomain
 })
 
 export default connect(mapStateToProps)(FullArticleScreen);

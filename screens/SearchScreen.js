@@ -331,7 +331,8 @@ class SearchScreen extends React.Component {
 
     _handleArticleSave = article => {
         console.log('in article save')
-        this.props.dispatch(saveArticle(article))
+        const { activeDomain } = this.props;
+        this.props.dispatch(saveArticle(article, activeDomain.id))
         this.setState({
             snackbarSavedVisible: true
         })
@@ -339,7 +340,8 @@ class SearchScreen extends React.Component {
 
     _handleArticleRemove = articleId => {
         console.log('in article remove')
-        this.props.dispatch(removeSavedArticle(articleId))
+        const { activeDomain } = this.props;
+        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
         this.setState({
             snackbarRemovedVisible: true
         })
@@ -419,7 +421,7 @@ const mapStateToProps = (state) => {
         search: state.searchArticles,
         menus: state.menus,
         searchArticles: state.searchArticles.items.map(articleId => {
-            const found = state.savedArticles.find(savedArticle => {
+            const found = state.savedArticlesBySchool[state.activeDomain.id].find(savedArticle => {
                 return savedArticle.id === articleId;
             })
             if (found) {

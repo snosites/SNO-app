@@ -315,12 +315,16 @@ export function saveUserInfo(payload) {
 
 // SAVED ARTICLES SCREEN
 
-export function saveArticle(article) {
-    return { type: 'SAVE_ARTICLE', article}
+export function saveArticle(article, schoolId) {
+    return { type: 'SAVE_ARTICLE', article, school: schoolId}
 }
 
-export function removeSavedArticle(articleId) {
-    return { type: 'REMOVE_SAVED_ARTICLE', articleId}
+export function removeSavedArticle(articleId, schoolId) {
+    return { type: 'REMOVE_SAVED_ARTICLE', articleId, school: schoolId}
+}
+
+export function initializeSaved(schoolId) {
+    return { type: 'INITIALIZE_SAVED', school: schoolId }
 }
 
 // THEME

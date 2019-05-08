@@ -132,7 +132,24 @@ export function profiles(state = {
     }
 }
 
-export function savedArticles(state = [], action) {
+export function savedArticlesBySchool(state = {}, action) {
+    switch (action.type) {
+        case 'SAVE_ARTICLE':
+        case 'REMOVE_SAVED_ARTICLE':
+        case 'INITIALIZE_SAVED':
+            return {
+                ...state,
+                [action.school]: savedArticles(state[action.school], action)
+            }
+        default:
+            return state
+    }
+}
+
+function savedArticles(
+    state = [],
+    action
+) {
     switch (action.type) {
         case 'SAVE_ARTICLE':
             let found = state.find(article => {
@@ -153,6 +170,28 @@ export function savedArticles(state = [], action) {
             return state
     }
 }
+
+// export function savedArticles(state = [], action) {
+//     switch (action.type) {
+//         case 'SAVE_ARTICLE':
+//             let found = state.find(article => {
+//                 return action.article.id == article.id
+//             })
+//             if (found) {
+//                 return state
+//             }
+//             return [
+//                 ...state,
+//                 action.article
+//             ]
+//         case 'REMOVE_SAVED_ARTICLE':
+//             return state.filter(article => {
+//                 return article.id !== action.articleId
+//             })
+//         default:
+//             return state
+//     }
+// }
 
 export function userInfo(state = {
     notifications: {
@@ -310,7 +349,7 @@ export function recentArticles(state = {
                 items: newItems,
                 lastUpdated: action.receivedAt,
                 page: updatedPage,
-                
+
             })
         default:
             return state

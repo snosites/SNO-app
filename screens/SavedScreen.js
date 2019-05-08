@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = store => ({
     theme: store.theme,
     menus: store.menus,
-    savedArticles: store.savedArticles
+    savedArticles: store.savedArticlesBySchool[store.activeDomain.id]
 })
 
 export default connect(mapStateToProps)(ListScreen);
