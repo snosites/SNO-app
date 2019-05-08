@@ -16,7 +16,7 @@ import FullArticleScreen from '../screens/FullArticleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import CommentsScreen from '../screens/CommentsScreen';
 import StaffScreen from '../screens/StaffScreen';
-
+import ErrorScreen from '../screens/ErrorScreen';
 
 
 const RecentStack = createStackNavigator({
@@ -159,7 +159,8 @@ const AppNav = createBottomTabNavigator({
 export default createSwitchNavigator(
     {
         AppSetup: AppSetupScreen,
-        MainApp: AppNav
+        MainApp: AppNav,
+        Error: ErrorScreen
     },
     {
         initialRouteName: 'AppSetup',

@@ -67,7 +67,7 @@ class CustomDrawerComponent extends React.Component {
                                 numberOfLines={2}
                                 ellipsizeMode='tail'
                                 style={{ fontSize: 20, fontWeight: 'bold', padding: 20 }}>
-                                {activeDomain.name}
+                                {activeDomain.publication}
                             </Text>
                         }
                         <Searchbar

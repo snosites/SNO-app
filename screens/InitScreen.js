@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
+import { connect } from 'react-redux';
+import { fetchAvailableDomains, searchAvailableDomains } from '../redux/actions/actions';
 
-
-
-export default class InitScreen extends React.Component {
+class InitScreen extends React.Component {
     static navigationOptions = {
         header: null,
     };
@@ -68,15 +68,15 @@ export default class InitScreen extends React.Component {
                                     theme={{
                                         roundness: 7,
                                         colors: {
-                                        primary: '#2099CE'
-                                    }}}
+                                            primary: '#2099CE'
+                                        }
+                                    }}
                                     style={{ padding: 10, marginBottom: 50 }}
-                                    onPress={this._handleUseLocation}
+                                    onPress={this._handleBrowse}
                                 >
                                     Browse All Schools
                                 </Button>
-                                {/* <Text>{this.state.errorMessage}</Text> */}
-                                <Text style={styles.locationContainerText}>Or enter your school's name below</Text>
+                                <Text style={styles.locationContainerText}>Or search for a school below</Text>
                                 <View style={styles.formContainer}>
                                     <TextInput
                                         label='School Name'
@@ -86,11 +86,14 @@ export default class InitScreen extends React.Component {
                                             colors: {
                                                 background: 'white',
                                                 primary: '#2099CE'
-                                        }}}
+                                            }
+                                        }}
                                         mode='outlined'
                                         selectionColor='black'
+                                        returnKeyType='search'
                                         value={this.state.orgName}
                                         onChangeText={(text) => this.setState({ orgName: text })}
+                                        onSubmitEditing={this._handleSubmit}
                                     />
                                     <Button
                                         mode="contained"
@@ -98,7 +101,8 @@ export default class InitScreen extends React.Component {
                                             roundness: 7,
                                             colors: {
                                                 primary: '#83B33B'
-                                        }}}
+                                            }
+                                        }}
                                         style={{ padding: 10 }}
                                         onPress={this._handleSubmit}
                                     >
@@ -113,50 +117,53 @@ export default class InitScreen extends React.Component {
         );
     }
 
-    _handleSubmit = text => {
-        console.log(this.state);
-        this.props.navigation.navigate('Select', {
-            orgName: this.state.orgName
-        })
+    _handleSubmit = () => {
+        this.props.dispatch(searchAvailableDomains(this.state.orgName))
+        this.props.navigation.navigate('Select')
     }
 
-    _handleUseLocation = () => {
-        Haptic.selection();
-        if (Platform.OS === 'android' && !Constants.isDevice) {
-            this.setState({
-                errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-            });
-        } else {
-            this._getLocationAsync();
-        }
+    _handleBrowse = () => {
+        this.props.dispatch(fetchAvailableDomains());
+        this.props.navigation.navigate('Select')
     }
 
-    _getLocationAsync = async () => {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
-            this.setState({
-                errorMessage: 'Permission to access location was denied, please enter information manually',
-            });
-        }
-        this.setState({
-            isLoading: true
-        })
-        let location = await Location.getCurrentPositionAsync({});
-        // console.log('location obj', location)
-        let locationObj = {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude
-        }
-        let cityLocation = await Location.reverseGeocodeAsync(locationObj);
-        // console.log('city location', cityLocation)
-        this.setState({ cityLocation });
-        this.props.navigation.navigate('Select', {
-            location: this.state.cityLocation
-        })
-        this.setState({
-            isLoading: false
-        })
-    }
+    // _handleUseLocation = () => {
+    //     Haptic.selection();
+    //     if (Platform.OS === 'android' && !Constants.isDevice) {
+    //         this.setState({
+    //             errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+    //         });
+    //     } else {
+    //         this._getLocationAsync();
+    //     }
+    // }
+
+    // _getLocationAsync = async () => {
+    //     let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    //     if (status !== 'granted') {
+    //         this.setState({
+    //             errorMessage: 'Permission to access location was denied, please enter information manually',
+    //         });
+    //     }
+    //     this.setState({
+    //         isLoading: true
+    //     })
+    //     let location = await Location.getCurrentPositionAsync({});
+    //     // console.log('location obj', location)
+    //     let locationObj = {
+    //         latitude: location.coords.latitude,
+    //         longitude: location.coords.longitude
+    //     }
+    //     let cityLocation = await Location.reverseGeocodeAsync(locationObj);
+    //     // console.log('city location', cityLocation)
+    //     this.setState({ cityLocation });
+    //     this.props.navigation.navigate('Select', {
+    //         location: this.state.cityLocation
+    //     })
+    //     this.setState({
+    //         isLoading: false
+    //     })
+    // }
 
 }
 
@@ -197,3 +204,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     }
 });
+
+export default connect()(InitScreen);

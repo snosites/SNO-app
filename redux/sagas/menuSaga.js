@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme } from '../actions/actions';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError } from '../actions/actions';
 import { checkNotificationSettings } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
@@ -99,21 +99,18 @@ function* fetchMenus(action) {
         const theme = yield result4.json();
         const primary = yield result5.json();
         const accent = yield result6.json();
-        console.log('theme', theme, primary, accent)
         if(!theme.image){
             theme.image = 'light';
         }
         if(!primary.image){
             const response = yield call(fetch, `${domain}/wp-json/custom/theme-mod?type=accentcolor-links`);
             const colorFallback = yield response.json();
-            console.log('color fallback', colorFallback)
             primary.image = colorFallback.image;
             if(!accent.image){
                 accent.image = colorFallback.image;
             }
         }
         
-
         yield put(saveTheme({
             theme: theme.image,
             primary: primary.image,
@@ -133,6 +130,7 @@ function* fetchMenus(action) {
     }
     catch (err) {
         console.log('error fetching menus in saga', err)
+        yield put(setError('menu-saga error'))
         Sentry.captureException(err)
     }
 }

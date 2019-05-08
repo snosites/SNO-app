@@ -8,6 +8,24 @@ export const TOGGLE_NOTIFICATIONS = 'TOGGLE_NOTIFICATIONS'
 
 // action creators
 
+// INITIALIZATION
+
+export function fetchAvailableDomains() {
+    return { type: "FETCH_AVAILABLE_DOMAINS"}
+}
+
+export function searchAvailableDomains(searchTerm) {
+    return { type: 'SEARCH_AVAILABLE_DOMAINS', searchTerm}
+}
+
+export function setAvailableDomains(domains) {
+    return { type: 'SET_AVAILABLE_DOMAINS', domains}
+}
+
+export function clearAvailableDomains() {
+    return { type: 'CLEAR_AVAILABLE_DOMAINS'}
+}
+
 // USERS SAVED DOMAINS
 
 export function addDomain(payload) {
@@ -311,4 +329,14 @@ export function removeSavedArticle(articleId) {
 
 export function saveTheme(theme) {
     return { type: 'SAVE_THEME', theme}
+}
+
+// ERRORS
+
+export function setError(payload) {
+    return { type: 'SET_ERROR', payload}
+}
+
+export function clearError() {
+    return { type: 'CLEAR_ERROR' }
 }

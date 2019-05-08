@@ -27,9 +27,11 @@ class AppSetupScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        const { menus, articlesByCategory, navigation } = this.props;
+        const { menus, articlesByCategory, navigation, errors } = this.props;
+        if(errors.error == 'menu-saga error') {
+            navigation.navigate('Error');
+        }
         if (menus.isLoaded) {
-
             if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
                 console.log('finished loading menus and articles')
                 navigation.navigate('MainApp');
@@ -100,7 +102,8 @@ const mapStateToProps = store => ({
     activeDomain: store.activeDomain,
     menus: store.menus,
     articlesByCategory: store.articlesByCategory,
-    userInfo: store.userInfo
+    userInfo: store.userInfo,
+    errors: store.errors
 })
 
 export default connect(mapStateToProps)(AppSetupScreen);

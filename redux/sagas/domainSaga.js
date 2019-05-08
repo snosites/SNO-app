@@ -1,21 +1,33 @@
 import { put, call, takeLatest } from 'redux-saga/effects';
-import {AsyncStorage} from 'react-native';
-import { setDomains } from '../actions/actions';
+import { setAvailableDomains } from '../actions/actions';
 
+const api = 'mobileapi.snosites.net';
 
-function* fetchDomains(action){
+function* fetchAvailableDomains(action){
     try {
-        const savedDomains = yield call(AsyncStorage.getItem, 'userDomain');
-        yield console.log('storage', savedDomains)
-        yield put(setDomains(savedDomains));
+        const response = yield call(fetch, `http://${api}/api/domains/all`);
+        const availDomains = yield response.json();
+        yield put(setAvailableDomains(availDomains));
     }
     catch(err) {
-        console.log('error fetching saved domains from storage')
+        console.log('error fetching available domains from storage')
+    }
+}
+
+function* searchAvailableDomains(action) {
+    try {
+        const response = yield call(fetch, `http://${api}/api/domains/search/${action.searchTerm}`);
+        const availDomains = yield response.json();
+        yield put(setAvailableDomains(availDomains));
+    }
+    catch(err) {
+        console.log('error fetching available domains from storage')
     }
 }
 
 function* domainSaga() {
-    yield takeLatest('FETCH_DOMAINS', fetchDomains);
+    yield takeLatest('FETCH_AVAILABLE_DOMAINS', fetchAvailableDomains);
+    yield takeLatest('SEARCH_AVAILABLE_DOMAINS', searchAvailableDomains);
 
 }
 
