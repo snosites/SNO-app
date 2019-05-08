@@ -143,7 +143,15 @@ class SearchScreen extends React.Component {
                 </View>
             )
         }
-
+        if (search.items.length == 0) {
+            return (
+                <View style={{ flex: 1 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 17, padding: 20 }}>
+                        No results.  Try searching again.
+                    </Text>
+                </View>
+            )
+        }
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
