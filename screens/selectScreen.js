@@ -11,6 +11,7 @@ import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotificatio
 
 import { List, Divider } from 'react-native-paper'
 import { Haptic } from 'expo';
+import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
@@ -156,6 +157,16 @@ class SelectScreen extends React.Component {
     _handleSelect = async (orgId, item) => {
         Haptic.selection();
         try {
+            const { domains } = this.props;
+            const found = domains.find(domain => {
+                return domain.id == orgId
+            })
+            // if already added set as active -- dont save
+            if (found) {
+                this.props.dispatch(changeActiveDomain(orgId));
+                this.props.navigation.navigate('AuthLoading');
+                return;
+            }
             // save new domain
             this.props.dispatch(addDomain({
                 id: orgId,
@@ -170,7 +181,7 @@ class SelectScreen extends React.Component {
             this.setState({
                 modalVisible: true
             })
-            
+
         }
         catch (error) {
             console.log('error saving users org')
@@ -198,7 +209,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-    availableDomains: state.availableDomains
+    availableDomains: state.availableDomains,
+    domains: state.domains
 })
 
 export default connect(mapStateToProps)(SelectScreen);

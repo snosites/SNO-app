@@ -270,6 +270,7 @@ export default class App extends React.Component {
                     startAsync={this._loadResourcesAsync}
                     onError={this._handleLoadingError}
                     onFinish={this._handleFinishLoading}
+                    autoHideSplash={false}
                 />
             );
         } else {
@@ -286,7 +287,10 @@ export default class App extends React.Component {
     _loadResourcesAsync = async () => {
         return Promise.all([
             Asset.loadAsync([
-                require('./assets/images/snologo-dev.png'),
+                require('./assets/images/anon.png'),
+                require('./assets/images/the-source-icon.png'),
+                require('./assets/images/the-source-logo.png'),
+                require('./assets/images/the-source-splash.png'),
             ]),
             Font.loadAsync({
                 // This is the font that we are using for our tab bar

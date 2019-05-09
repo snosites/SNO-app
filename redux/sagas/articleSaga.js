@@ -19,10 +19,16 @@ function* fetchFeaturedImage(url, story) {
 }
 
 function* fetchComments(url, story) {
-    const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-    const comments = yield response.json();
-    story.comments = comments
-    return;
+    try {
+        const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
+        const comments = yield response.json();
+        story.comments = comments
+        return;
+    }
+    catch (err) {
+        console.log('error fetching comments');
+        Sentry.captureException(err)
+    }
 }
 
 function* refetchComments(action) {
@@ -37,6 +43,7 @@ function* refetchComments(action) {
     }
     catch (err) {
         console.log('error refetching comments in saga', err)
+        Sentry.captureException(err)
     }
 }
 
@@ -63,6 +70,7 @@ function* addComment(action) {
     }
     catch (err) {
         console.log('error adding comment in saga', err)
+        Sentry.captureException(err)
     }
 }
 
@@ -74,7 +82,7 @@ function* fetchArticles(action) {
         const response = yield fetch(`https://${domain}/wp-json/wp/v2/posts?categories=${category}&page=${page}`)
         const stories = yield response.json();
         yield all(stories.map(story => {
-            if(story._links['wp:featuredmedia']) {
+            if (story._links['wp:featuredmedia']) {
                 return call(fetchFeaturedImage, `${story._links['wp:featuredmedia'][0].href}`, story)
             } else {
                 return call(Promise.resolve);

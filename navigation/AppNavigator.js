@@ -1,12 +1,11 @@
 import React from 'react';
 import {
     ActivityIndicator,
-    AsyncStorage,
     StatusBar,
-    StyleSheet,
     View,
 } from 'react-native';
-import { createAppContainer, createStackNavigator, createSwitchNavigator, NavigationActions } from 'react-navigation';
+import { SplashScreen } from 'expo'
+import { createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
 import AppStack from './AppStack';
 
@@ -44,10 +43,12 @@ class AuthLoadingScreen extends React.Component {
         // sets active domain for app and then navigates to app
         if(activeDomain.length > 0) {
             this.props.dispatch(setActiveDomain(activeDomain[0]))
+            SplashScreen.hide();
             this.props.navigation.navigate('App')
         }
         // no active domain navigate to auth
         else {
+            SplashScreen.hide();
             this.props.navigation.navigate('Auth')
         }
         
