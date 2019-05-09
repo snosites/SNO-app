@@ -48,6 +48,7 @@ class FullArticleScreen extends React.Component {
         const { navigation, theme } = this.props;
         const { snackbarSavedVisible } = this.state;
         let article = navigation.getParam('article', 'loading')
+
         return (
             <ScrollView style={styles.storyContainer}>
                 <NavigationEvents
@@ -79,15 +80,35 @@ class FullArticleScreen extends React.Component {
                             textAlign: 'center',
                             paddingVertical: 10,
                             paddingHorizontal: 10,
-                            PADDINGBOTTOM: 20,
                             color: theme.dark ? 'white' : 'black'
                         }
                     }}
                 />
+                {article.custom_fields.sno_deck &&
+                    <HTML
+                        html={article.custom_fields.sno_deck[0]}
+                        baseFontStyle={{ fontSize: 22 }}
+                        customWrapper={(text) => {
+                            return (
+                                <Text>{text}</Text>
+                            )
+                        }}
+                        tagsStyles={{
+                            rawtext: {
+                                fontSize: 22,
+                                textAlign: 'center',
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                color: theme.dark ? 'white' : 'black'
+                            }
+                        }}
+                    />
+                }
                 <TouchableItem onPress={() => this._handleProfilePress(article)}>
                     <Text style={{
                         fontSize: 17,
                         textAlign: 'center',
+                        paddingTop: 20,
                         color: theme.colors.accent
                     }}>
                         {this._getArticleAuthor()}
@@ -109,6 +130,7 @@ class FullArticleScreen extends React.Component {
                         }}
                     />
                 </View>
+                {this._renderChapters()}
 
                 {this.state.showPortal && <Portal>
                     <SafeAreaView style={{ flex: 1 }}>
@@ -160,24 +182,28 @@ class FullArticleScreen extends React.Component {
     }
 
     _renderDate = date => {
-        if(Moment(date).subtract(7, 'days') < Moment()){
+        if (Moment(date).subtract(7, 'days') < Moment()) {
             return (
-                <Text style={{fontSize: 15,
-                    color: '#9e9e9e'}}
+                <Text style={{
+                    fontSize: 15,
+                    color: '#9e9e9e'
+                }}
                 >
                     {String(Moment(date).fromNow())}
                 </Text>
             )
         } else {
             return (
-                <Text style={{fontSize: 15,
-                    color: '#9e9e9e'}}
+                <Text style={{
+                    fontSize: 15,
+                    color: '#9e9e9e'
+                }}
                 >
                     {Moment(date).format('MMM D YYYY')}
                 </Text>
             )
         }
-        
+
     }
 
     _shareArticle = article => {
@@ -228,7 +254,7 @@ class FullArticleScreen extends React.Component {
                                 }}
                             /> */}
                             <HTML
-                                html={article.featuredImage.caption.toUpperCase()}
+                                html={article.featuredImage.caption}
                                 baseFontStyle={{ fontSize: 12 }}
                                 customWrapper={(text) => {
                                     return (
@@ -246,9 +272,9 @@ class FullArticleScreen extends React.Component {
                                     }
                                 }}
                             />
-                            <TouchableOpacity onPress={this._handleProfilePress}>
-                                <Text style={{ color: '#bdbdbd' }}>{article.featuredImage.photographer[0]}</Text>
-                            </TouchableOpacity>
+                            {/* <TouchableOpacity onPress={this._handleProfilePress}> */}
+                            <Text style={{ color: '#bdbdbd' }}>{article.featuredImage.photographer[0]}</Text>
+                            {/* </TouchableOpacity> */}
 
                         </View>
                     </View>
@@ -288,6 +314,103 @@ class FullArticleScreen extends React.Component {
             writerName
         })
     }
+
+    function compare(a, b) {
+    if (a.attr < b.attr)
+        return -1;
+    if (a.attr > b.attr)
+        return 1;
+    return 0;
+}
+
+_renderChapters = (article) => {
+    let articleChapters = navigation.getParam('articleChapters', null)
+    //sort long form stories
+    if (article.custom_fields.sno_format == "Long-Form") {
+        articleChapters.sort(function (a, b) {
+            if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
+                return -1;
+            if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] > b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
+                return 1;
+            return 0;
+        })
+    }
+    return (
+        articleChapters.map(article => {
+            return (
+                <View>
+                    <View style={styles.featuredMediaContainer}>
+                        {this._renderFeaturedMedia(article)}
+                    </View>
+                    <HTML
+                        html={article.title.rendered}
+                        baseFontStyle={{ fontSize: 30 }}
+                        customWrapper={(text) => {
+                            return (
+                                <Text>{text}</Text>
+                            )
+                        }}
+                        tagsStyles={{
+                            rawtext: {
+                                fontSize: 30,
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                color: theme.dark ? 'white' : 'black'
+                            }
+                        }}
+                    />
+                    {article.custom_fields.sno_deck &&
+                        <HTML
+                            html={article.custom_fields.sno_deck[0]}
+                            baseFontStyle={{ fontSize: 22 }}
+                            customWrapper={(text) => {
+                                return (
+                                    <Text>{text}</Text>
+                                )
+                            }}
+                            tagsStyles={{
+                                rawtext: {
+                                    fontSize: 22,
+                                    textAlign: 'center',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 10,
+                                    color: theme.dark ? 'white' : 'black'
+                                }
+                            }}
+                        />
+                    }
+                    <TouchableItem onPress={() => this._handleProfilePress(article)}>
+                        <Text style={{
+                            fontSize: 17,
+                            textAlign: 'center',
+                            paddingTop: 20,
+                            color: theme.colors.accent
+                        }}>
+                            {this._getArticleAuthor()}
+                        </Text>
+                    </TouchableItem>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
+                        {this._renderDate(article.date)}
+                    </View>
+                    <View style={styles.articleContents}>
+                        <HTML
+                            html={article.content.rendered}
+                            textSelectable={true}
+                            onLinkPress={(e, href) => this._viewLink(href)}
+                            tagsStyles={{
+                                p: {
+                                    fontSize: 18,
+                                    marginBottom: 15
+                                }
+                            }}
+                        />
+                    </View>
+                </View>
+            )
+        })
+    )
 }
 
 const styles = StyleSheet.create({

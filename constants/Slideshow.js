@@ -100,7 +100,7 @@ export default class Slideshow extends React.Component {
                 <View style={styles.textContainer}>
                     {item.caption ?
                         <HTML
-                            html={item.caption.rendered.toUpperCase()}
+                            html={item.caption.rendered}
                             baseFontStyle={{ fontSize: 12 }}
                             customWrapper={(text) => {
                                 return (
