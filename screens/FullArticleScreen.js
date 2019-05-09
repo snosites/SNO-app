@@ -130,7 +130,7 @@ class FullArticleScreen extends React.Component {
                         }}
                     />
                 </View>
-                {this._renderChapters()}
+                {this._renderChapters(article)}
 
                 {this.state.showPortal && <Portal>
                     <SafeAreaView style={{ flex: 1 }}>
@@ -189,7 +189,7 @@ class FullArticleScreen extends React.Component {
                     color: '#9e9e9e'
                 }}
                 >
-                    {String(Moment(date).fromNow())}
+                    {Moment(date).format('MMM D YYYY')}
                 </Text>
             )
         } else {
@@ -199,7 +199,7 @@ class FullArticleScreen extends React.Component {
                     color: '#9e9e9e'
                 }}
                 >
-                    {Moment(date).format('MMM D YYYY')}
+                    {String(Moment(date).fromNow())}
                 </Text>
             )
         }
@@ -253,6 +253,7 @@ class FullArticleScreen extends React.Component {
                                     }
                                 }}
                             /> */}
+                            {article.featuredImage.caption ?
                             <HTML
                                 html={article.featuredImage.caption}
                                 baseFontStyle={{ fontSize: 12 }}
@@ -272,10 +273,16 @@ class FullArticleScreen extends React.Component {
                                     }
                                 }}
                             />
-                            {/* <TouchableOpacity onPress={this._handleProfilePress}> */}
-                            <Text style={{ color: '#bdbdbd' }}>{article.featuredImage.photographer[0]}</Text>
-                            {/* </TouchableOpacity> */}
-
+                            :
+                            null
+                            }
+                            {article.featuredImage.photographer ?
+                            <Text style={{ color: '#bdbdbd' }}>  
+                               {article.featuredImage.photographer[0]}
+                            </Text>
+                            :
+                            null
+                            }
                         </View>
                     </View>
                 </ImageBackground>
@@ -315,56 +322,23 @@ class FullArticleScreen extends React.Component {
         })
     }
 
-    function compare(a, b) {
-    if (a.attr < b.attr)
-        return -1;
-    if (a.attr > b.attr)
-        return 1;
-    return 0;
-}
 
-_renderChapters = (article) => {
-    let articleChapters = navigation.getParam('articleChapters', null)
-    //sort long form stories
-    if (article.custom_fields.sno_format == "Long-Form") {
-        articleChapters.sort(function (a, b) {
-            if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
-                return -1;
-            if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] > b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
-                return 1;
-            return 0;
-        })
-    }
-    return (
-        articleChapters.map(article => {
-            return (
-                <View>
-                    <View style={styles.featuredMediaContainer}>
-                        {this._renderFeaturedMedia(article)}
-                    </View>
-                    <HTML
-                        html={article.title.rendered}
-                        baseFontStyle={{ fontSize: 30 }}
-                        customWrapper={(text) => {
-                            return (
-                                <Text>{text}</Text>
-                            )
-                        }}
-                        tagsStyles={{
-                            rawtext: {
-                                fontSize: 30,
-                                fontWeight: 'bold',
-                                textAlign: 'center',
-                                paddingVertical: 10,
-                                paddingHorizontal: 10,
-                                color: theme.dark ? 'white' : 'black'
-                            }
-                        }}
-                    />
-                    {article.custom_fields.sno_deck &&
+    _renderChapters = (article) => {
+        const { navigation, theme } = this.props;
+        let articleChapters = navigation.getParam('articleChapters', [])
+        console.log('article chapters', articleChapters)
+        //sort long form stories
+        
+        return (
+            articleChapters.map(article => {
+                return (
+                    <View key={article.id}>
+                        <View style={styles.featuredMediaContainer}>
+                            {this._renderFeaturedMedia(article)}
+                        </View>
                         <HTML
-                            html={article.custom_fields.sno_deck[0]}
-                            baseFontStyle={{ fontSize: 22 }}
+                            html={article.title.rendered}
+                            baseFontStyle={{ fontSize: 30 }}
                             customWrapper={(text) => {
                                 return (
                                     <Text>{text}</Text>
@@ -372,7 +346,8 @@ _renderChapters = (article) => {
                             }}
                             tagsStyles={{
                                 rawtext: {
-                                    fontSize: 22,
+                                    fontSize: 30,
+                                    fontWeight: 'bold',
                                     textAlign: 'center',
                                     paddingVertical: 10,
                                     paddingHorizontal: 10,
@@ -380,37 +355,57 @@ _renderChapters = (article) => {
                                 }
                             }}
                         />
-                    }
-                    <TouchableItem onPress={() => this._handleProfilePress(article)}>
-                        <Text style={{
-                            fontSize: 17,
-                            textAlign: 'center',
-                            paddingTop: 20,
-                            color: theme.colors.accent
-                        }}>
-                            {this._getArticleAuthor()}
-                        </Text>
-                    </TouchableItem>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
-                        {this._renderDate(article.date)}
+                        {article.custom_fields.sno_deck &&
+                            <HTML
+                                html={article.custom_fields.sno_deck[0]}
+                                baseFontStyle={{ fontSize: 22 }}
+                                customWrapper={(text) => {
+                                    return (
+                                        <Text>{text}</Text>
+                                    )
+                                }}
+                                tagsStyles={{
+                                    rawtext: {
+                                        fontSize: 22,
+                                        textAlign: 'center',
+                                        paddingVertical: 10,
+                                        paddingHorizontal: 10,
+                                        color: theme.dark ? 'white' : 'black'
+                                    }
+                                }}
+                            />
+                        }
+                        <TouchableItem onPress={() => this._handleProfilePress(article)}>
+                            <Text style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}>
+                                {this._getArticleAuthor()}
+                            </Text>
+                        </TouchableItem>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
+                            {this._renderDate(article.date)}
+                        </View>
+                        <View style={styles.articleContents}>
+                            <HTML
+                                html={article.content.rendered}
+                                textSelectable={true}
+                                onLinkPress={(e, href) => this._viewLink(href)}
+                                tagsStyles={{
+                                    p: {
+                                        fontSize: 18,
+                                        marginBottom: 15
+                                    }
+                                }}
+                            />
+                        </View>
                     </View>
-                    <View style={styles.articleContents}>
-                        <HTML
-                            html={article.content.rendered}
-                            textSelectable={true}
-                            onLinkPress={(e, href) => this._viewLink(href)}
-                            tagsStyles={{
-                                p: {
-                                    fontSize: 18,
-                                    marginBottom: 15
-                                }
-                            }}
-                        />
-                    </View>
-                </View>
-            )
-        })
-    )
+                )
+            })
+        )
+    }
 }
 
 const styles = StyleSheet.create({

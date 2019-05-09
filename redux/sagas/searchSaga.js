@@ -11,8 +11,16 @@ const articleListSchema = new schema.Array(articleSchema)
 function* fetchFeaturedImage(url, story) {
     const imgResponse = yield fetch(url);
     const featuredImage = yield imgResponse.json();
+    if(!featuredImage.meta_fields){
+        story.featuredImage = {
+            uri: featuredImage.source_url,
+            photographer: 'Unknown',
+            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        }
+        return;
+    }
     story.featuredImage = {
-        uri: featuredImage.media_details.sizes.full.source_url,
+        uri: featuredImage.source_url,
         photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
         caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
     }
@@ -46,7 +54,7 @@ function* fetchSearchArticles(action) {
         yield put(receiveSearchArticles(normalizedData))
     }
     catch (err) {
-        console.log('error fetching recent articles in saga', err)
+        console.log('error fetching search articles in saga', err)
         yield put(fetchSearchArticlesFailure('error in search saga'))
         Sentry.captureException(err)
     }
