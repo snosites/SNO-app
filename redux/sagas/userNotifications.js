@@ -13,6 +13,7 @@ const api = 'mobileapi.snosites.net';
 const GET_TOKENS_ENDPOINT = `http://${api}/api/tokens`;
 const PUSH_ENDPOINT = `http://${api}/api/token/add`;
 const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
+const ADD_ALL_NOTIFICATIONS_ENDPOINT = `http://${api}/api/subscribe/all`;
 const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
 const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 
@@ -45,9 +46,10 @@ function* addNotification(action) {
     });
 }
 
-function* addAllNotifications(action) {
-    const { tokenId, categoryId, domain } = action.payload;
-    yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
+export function* addAllNotifications(action) {
+    const { tokenId, categoryIds } = action.payload;
+    console.log('in add all', tokenId, categoryIds)
+    yield call(fetch, ADD_ALL_NOTIFICATIONS_ENDPOINT, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -55,14 +57,8 @@ function* addAllNotifications(action) {
         },
         body: JSON.stringify({
             tokenId,
-            categoryId
+            categoryIds
         }),
-    });
-    yield call(fetchNotifications, {
-        payload: {
-            tokenId,
-            domain
-        }
     });
 }
 
@@ -136,6 +132,7 @@ function* savePushNotifications(token) {
 
 function* notificationsSaga() {
     yield takeLatest('ADD_NOTIFICATION', addNotification);
+    yield takeLatest('ADD_ALL_NOTIFICATIONS', addAllNotifications);
     yield takeLatest('REMOVE_NOTIFICATION', removeNotification);
     yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications);
     yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)

@@ -1,7 +1,7 @@
-import { put, call, takeLatest, all } from 'redux-saga/effects';
+import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError, initializeSaved, fetchNotifications } from '../actions/actions';
-import { checkNotificationSettings } from './userNotifications';
+import { requestMenus, receiveMenus, fetchArticlesIfNeeded, setNotificationCategories, saveTheme, setError, initializeSaved, fetchNotifications, setAllNotifications } from '../actions/actions';
+import { checkNotificationSettings, addAllNotifications } from './userNotifications';
 import { Constants } from 'expo';
 const { manifest } = Constants;
 
@@ -11,6 +11,8 @@ import Sentry from 'sentry-expo';
 //     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
 //     : `api.example.com`;
 const api = 'mobileapi.snosites.net/';
+
+const getuserInfo = state => state.userInfo
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
@@ -80,6 +82,20 @@ function* fetchMenus(action) {
         }))
         // make sure push token has been stored
         const token = yield call(checkNotificationSettings);
+        // check if user selected all notifications
+        const userInfo = yield select(getuserInfo);
+        if(userInfo.allNotifications[domainId]) {
+            console.log('adding all notifications...')
+            yield call(addAllNotifications, {
+                payload: {
+                    tokenId: token, 
+                    categoryIds: updatedDbCategories.map(category => {
+                        return category.id
+                    })
+                }
+            })
+            yield put(setAllNotifications(domainId, false))
+        }
         yield put(fetchNotifications({
             tokenId: token,
             domain: domainId
@@ -132,7 +148,7 @@ function* fetchMenus(action) {
         ))
     }
     catch (err) {
-        // console.log('error fetching menus in saga', err)
+        console.log('error fetching menus in saga', err)
         yield put(setError('menu-saga error'))
         Sentry.captureException(err)
     }
