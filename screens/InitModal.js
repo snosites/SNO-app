@@ -79,7 +79,7 @@ class initModal extends Component {
                                         this.props.handleDismiss(this.state.allNotifications);
                                     }}
                                 >
-                                    Submit
+                                    Get Started
                                 </Button>
                             </View>}
                     </ScrollView>
