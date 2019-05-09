@@ -295,7 +295,16 @@ class ListScreen extends React.Component {
         return imageAttachments;
     }
 
-    _handleArticlePress = article => async () => {
+    _handleArticlePress = article => () => {
+        Haptic.selection();
+        if(article.custom_fields.sno_format && article.custom_fields.sno_format == 'Classic') {
+            this._handleRegularArticle(article)
+        } else {
+            this._handleLongFormArticle(article);
+        }
+    }
+
+    _handleRegularArticle = async (article) => {
         console.log('in article press')
         const { navigation } = this.props;
         Haptic.selection();
@@ -306,6 +315,36 @@ class ListScreen extends React.Component {
         navigation.navigate('FullArticle', {
             articleId: article.id,
             article,
+            commentNumber: article.comments.length,
+            comments: article.comments
+        })
+    }
+
+    _handleLongFormArticle = async article => {
+        console.log('in article press long form')
+        const { navigation, activeDomain } = this.props;
+        let storyChapters = [];
+        if(article.custom_fields.sno_format == "Long-Form") {
+            let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
+            storyChapters = results.json();
+        }
+        else if(article.custom_fields.sno_format == "Grid") {
+            let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`)
+            storyChapters = results.json();
+        }
+        else if(article.custom_fields.sno_format == "Side by Side") {
+            let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_sidebyside_list&meta_query[0][value]=${article.id}`)
+            storyChapters = results.json();
+        }
+        storyChapters = storyChapters.map(article => {
+            if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
+                article.slideshow = await this._getAttachmentsAync(article);
+            }
+        })
+        navigation.navigate('FullArticle', {
+            articleId: article.id,
+            article,
+            articleChapters: storyChapters,
             commentNumber: article.comments.length,
             comments: article.comments
         })

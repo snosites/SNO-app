@@ -77,8 +77,9 @@ class FullArticleScreen extends React.Component {
                             fontSize: 30,
                             fontWeight: 'bold',
                             textAlign: 'center',
-                            paddingVertical: 5,
+                            paddingVertical: 10,
                             paddingHorizontal: 10,
+                            PADDINGBOTTOM: 20,
                             color: theme.dark ? 'white' : 'black'
                         }
                     }}
@@ -93,11 +94,7 @@ class FullArticleScreen extends React.Component {
                     </Text>
                 </TouchableItem>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
-                    <Text style={styles.date}>
-                        {Moment(article.date).format('D MMM YYYY')}
-                    </Text>
-                    <Text style={[{ paddingHorizontal: 10 }, styles.date]}>•</Text>
-                    <Text style={styles.date}>{String(Moment(article.date).fromNow())}</Text>
+                    {this._renderDate(article.date)}
                 </View>
                 <View style={styles.articleContents}>
                     <HTML
@@ -160,6 +157,27 @@ class FullArticleScreen extends React.Component {
 
             </ScrollView>
         );
+    }
+
+    _renderDate = date => {
+        if(Moment(date).subtract(7, 'days') < Moment()){
+            return (
+                <Text style={{fontSize: 15,
+                    color: '#9e9e9e'}}
+                >
+                    {String(Moment(date).fromNow())}
+                </Text>
+            )
+        } else {
+            return (
+                <Text style={{fontSize: 15,
+                    color: '#9e9e9e'}}
+                >
+                    {Moment(date).format('MMM D YYYY')}
+                </Text>
+            )
+        }
+        
     }
 
     _shareArticle = article => {
