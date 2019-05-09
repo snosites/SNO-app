@@ -195,11 +195,11 @@ class RecentScreen extends React.Component {
                                         }}
                                         >
                                             <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.date}>
-                                                    {Moment(story.date).format('D MMM YYYY')}
+                                            <Text style={styles.date}>
+                                                    {Moment(story.date).format('MMM D YYYY')}
                                                 </Text>
-                                                <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
-                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text>
+                                                {/* <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
+                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text> */}
                                             </View>
                                         </View>
                                     </View>
@@ -215,11 +215,9 @@ class RecentScreen extends React.Component {
                                                     bottom: 2,
                                                     right: 4,
                                                     backgroundColor: theme.colors.accent,
-                                                    borderWidth: 1,
-                                                    borderColor: 'white'
                                                 }}
                                             >
-                                                {story.comments.length}
+                                                {story.comments.length > 99 ? '99' : story.comments.length}
                                             </Badge>
                                         </View>
                                         <MaterialIcons

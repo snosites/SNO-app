@@ -11,6 +11,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Moment from 'moment';
+import Color from 'color';
 import { connect } from 'react-redux';
 import { WebBrowser, LinearGradient, Haptic } from 'expo';
 import { Feather } from '@expo/vector-icons';
@@ -26,7 +27,7 @@ class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Profile' //navigation.getParam('menuTitle', 'Stories'),
-            
+
         };
     };
 
@@ -35,10 +36,13 @@ class ProfileScreen extends React.Component {
     }
 
     render() {
-        const { navigation } = this.props;
+        const { navigation, theme } = this.props;
         const profile = navigation.getParam('profile', 'loading');
         const articlesByWriter = navigation.getParam('articlesByWriter', []);
-
+        let primaryColor = Color(theme.colors.primary);
+        let primaryIsDark = primaryColor.isDark();
+        let accentColor = Color(theme.colors.accent);
+        let accentIsDark = accentColor.isDark();
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
                 <NavigationEvents
@@ -79,10 +83,10 @@ class ProfileScreen extends React.Component {
                                     }}
                                 />
                             </View>
-                            <View style={{ flex: 1, paddingBottom: 20, backgroundColor: Colors.indigo200 }}>
+                            <View style={{ flex: 1, paddingBottom: 20, backgroundColor: accentColor }}>
                                 <View style={{ flex: 1, alignItems: 'center' }}>
                                     <LinearGradient
-                                        colors={['#7e57c2', '#673ab7', '#3949ab']}
+                                        colors={[theme.colors.primary, theme.colors.primary]}
                                         start={[0, 0.5]}
                                         end={[1, 0.5]}
                                         style={styles.listHeader}>
@@ -92,7 +96,7 @@ class ProfileScreen extends React.Component {
                                             style={{
                                                 backgroundColor: 'transparent',
                                                 fontSize: 19,
-                                                color: '#fff',
+                                                color: primaryIsDark ? 'white' : 'black',
                                                 textAlign: 'center',
                                             }}>
                                             {`Articles Authored By ${profile.custom_fields.name[0]}`}
@@ -100,9 +104,9 @@ class ProfileScreen extends React.Component {
                                     </LinearGradient>
                                 </View>
                                 <FlatList
-                                    contentContainerStyle={{ flex: 1, marginTop: 40, backgrondColor: 'red' }}
+                                    contentContainerStyle={{ flex: 1, marginTop: 40 }}
                                     data={articlesByWriter}
-                                    keyExtractor={item => item.id? item.id.toString(): null}
+                                    keyExtractor={item => item.id ? item.id.toString() : null}
                                     ItemSeparatorComponent={() => (<Divider />)}
                                     // onEndReachedThreshold={0.25}
                                     // onEndReached={this._loadMore}
@@ -111,7 +115,6 @@ class ProfileScreen extends React.Component {
 
                                     renderItem={(props) => {
                                         const story = props.item;
-                                        console.log('story', articlesByWriter)
                                         return (
                                             <TouchableOpacity
                                                 style={styles.storyContainer}
@@ -120,20 +123,30 @@ class ProfileScreen extends React.Component {
                                                 <View style={{ flex: 1 }}>
                                                     <Text
                                                         ellipsizeMode='tail' numberOfLines={2}
-                                                        style={styles.articleTitle}
+                                                        style={{
+                                                            flex: 1,
+                                                            fontSize: 19,
+                                                            textAlign: 'left',
+                                                            color: accentIsDark ? 'white' : 'black'
+                                                        }}
                                                     >
                                                         {story.title.rendered}
                                                     </Text>
                                                     <Text
-                                                        style={styles.date}>
-                                                        {String(Moment(story.date).fromNow())}
+                                                        style={{
+                                                            flex: 1,
+                                                            fontSize: 12,
+                                                            textAlign: 'left',
+                                                            color: accentIsDark ? 'white' : 'black'
+                                                        }}>
+                                                        {String(Moment(story.date).fromNow(format('MMM D YYYY')))}
                                                     </Text>
                                                 </View>
                                                 <Feather
                                                     style={{ marginLeft: 20 }}
                                                     name="chevron-right"
                                                     size={32}
-                                                    color={Colors.grey100} />
+                                                    color={accentIsDark ? 'white' : 'black'} />
                                             </TouchableOpacity>
                                         )
                                     }}
@@ -159,7 +172,7 @@ class ProfileScreen extends React.Component {
                     const profileId = profile[0].ID;
                     const newResponse = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
-                    
+
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
@@ -168,7 +181,7 @@ class ProfileScreen extends React.Component {
                     }
                     // get list of articles written by writer
                     const query = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
-                    
+
                     const articlesByWriter = await query.json();
                     console.log('articles by writer', articlesByWriter)
                     // get the full posts for all articles
@@ -275,15 +288,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginVertical: 15,
     },
-    articleTitle: {
-        flex: 1,
-        fontSize: 19,
-        textAlign: 'left'
-    },
-    date: {
-        fontSize: 12,
-        color: Colors.grey200
-    },
     listHeader: {
         padding: 15,
         paddingHorizontal: 25,
@@ -300,6 +304,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         activeDomain: state.activeDomain,
+        theme: state.theme
     }
 }
 
