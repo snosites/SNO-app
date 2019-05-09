@@ -20,6 +20,9 @@ const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 function* fetchNotifications(action) {
     // const activeDomain = yield select(getActiveDomain);
     const { tokenId, domain } = action.payload;
+    if(!tokenId) {
+        return;
+    }
     const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${String(tokenId)}`);
     const notifications = yield response.json();
     yield put(setNotifications(notifications, domain))
@@ -90,7 +93,7 @@ export function* checkNotificationSettings() {
         const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS);
         finalStatus = status;
     }
-    // Stop here if the user did not grant permissions -- save token as undefined
+    // Stop here if the user did not grant permissions -- save token as 0
     if (finalStatus !== 'granted') {
         console.log('notification status is not granted')
         yield put(saveTokenId(0));
@@ -127,7 +130,7 @@ function* savePushNotifications(token) {
     });
     let tokenId = yield response.json();
     yield put(saveTokenId(Number(tokenId.id)))
-    return tokenId;
+    return tokenId.id;
 }
 
 function* notificationsSaga() {

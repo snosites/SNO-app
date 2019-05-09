@@ -3,7 +3,8 @@ import {
     ScrollView,
     StyleSheet,
     View,
-    TextInput
+    TextInput,
+    Text
 } from 'react-native';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';

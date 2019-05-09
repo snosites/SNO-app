@@ -3,7 +3,8 @@ import {
     StyleSheet,
     Text,
     View,
-    Modal
+    Modal,
+    SafeAreaView
 } from 'react-native';
 import { Button, Switch } from 'react-native-paper'
 import { Haptic, DangerZone } from 'expo';
@@ -30,7 +31,7 @@ class initModal extends Component {
                 }}
                 onShow={this._startAnimation}
             >
-                <View style={styles.modalContainer}>
+                <SafeAreaView style={styles.modalContainer}>
                     <ScrollView contentContainerStyle={{alignItems: 'center'}}>
                         <View style={styles.animationContainer}>
                             <Lottie
@@ -82,7 +83,7 @@ class initModal extends Component {
                                 </Button>
                             </View>}
                     </ScrollView>
-                </View>
+                </SafeAreaView>
             </Modal>
         )
     }
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        // marginTop: 30
+        marginTop: 10
     },
     animationContainer: {
         width: 250,
