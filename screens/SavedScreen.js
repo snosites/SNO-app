@@ -90,6 +90,15 @@ class ListScreen extends React.Component {
                 </View>
             )
         }
+        if (savedArticles.length == 0) {
+            return (
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, textAlign: 'center', padding: 20 }}>
+                        You have no saved articles yet.
+                    </Text>
+                </View>
+            )
+        }
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
