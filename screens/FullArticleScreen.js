@@ -126,7 +126,7 @@ class FullArticleScreen extends React.Component {
                     <HTML
                         html={article.content.rendered}
                         imagesMaxWidth={Dimensions.get('window').width}
-                        ignoredStyles={['height','width']}
+                        ignoredStyles={['height', 'width']}
                         textSelectable={true}
                         onLinkPress={(e, href) => this._viewLink(href)}
                         tagsStyles={{
@@ -412,12 +412,28 @@ class FullArticleScreen extends React.Component {
                         <View style={styles.articleContents}>
                             <HTML
                                 html={article.content.rendered}
+                                imagesMaxWidth={Dimensions.get('window').width}
+                                ignoredStyles={['height', 'width']}
                                 textSelectable={true}
                                 onLinkPress={(e, href) => this._viewLink(href)}
                                 tagsStyles={{
                                     p: {
                                         fontSize: 18,
                                         marginBottom: 15
+                                    },
+                                    img: {
+                                        height: MEDIASIZE,
+                                        width: MEDIAWIDTH,
+                                        borderRadius: 8
+                                    }
+                                }}
+                                classesStyles={{
+                                    'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
+                                    'largequote': { fontSize: 21 },
+                                    'pullquotetext': { textAlign: 'left', fontSize: 21 },
+                                    'quotespeaker': { textAlign: 'left', fontSize: 14 },
+                                    'photowrap': {
+                                        display: 'none'
                                     }
                                 }}
                             />

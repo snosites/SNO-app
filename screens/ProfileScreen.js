@@ -139,7 +139,7 @@ class ProfileScreen extends React.Component {
                                                             textAlign: 'left',
                                                             color: accentIsDark ? 'white' : 'black'
                                                         }}>
-                                                        {String(Moment(story.date).fromNow(format('MMM D YYYY')))}
+                                                        {String(Moment(story.date).format('MMM D YYYY'))}
                                                     </Text>
                                                 </View>
                                                 <Feather
@@ -177,7 +177,7 @@ class ProfileScreen extends React.Component {
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
                         const profileImage = await response.json();
-                        writerProfile.profileImage = profileImage.media_details.sizes.full.source_url;
+                        writerProfile.profileImage = profileImage.source_url;
                     }
                     // get list of articles written by writer
                     const query = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
@@ -227,6 +227,13 @@ class ProfileScreen extends React.Component {
                 />
             )
         }
+    }
+
+    _getAttachmentsAync = async (article) => {
+        console.log('article', article)
+        const response = await fetch(article._links['wp:attachment'][0].href);
+        const imageAttachments = await response.json();
+        return imageAttachments;
     }
 
     _handleArticlePress = article => async () => {
