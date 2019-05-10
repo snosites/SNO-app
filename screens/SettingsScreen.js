@@ -4,8 +4,9 @@ import {
     StyleSheet,
     View,
     TextInput,
-    Text
+    Text,
 } from 'react-native';
+import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
@@ -56,8 +57,8 @@ class SettingsScreen extends React.Component {
         // })
 
         this.setState({
-            notifications: domains.reduce(function(map, domain) {
-                map[domain.id] = domain.notificationCategories.reduce(function(map, notification) {
+            notifications: domains.reduce(function (map, domain) {
+                map[domain.id] = domain.notificationCategories.reduce(function (map, notification) {
                     map[notification.id] = notification.active;
                     return map;
                 }, {});
@@ -234,12 +235,19 @@ class SettingsScreen extends React.Component {
                                 </List.Accordion>
                             )
                         })
-                    :
-                    <Text style={{textAlign: 'center'}}>
-                        You have disabled push notifications for this app
+                            :
+                            <Text style={{ textAlign: 'center' }}>
+                                You have disabled push notifications for this app
                     </Text>
-                    }
+                        }
                     </List.Section>
+                    <Divider />
+                    <List.Item
+                        title='Privacy Policy'
+                        style={{ paddingVertical: 0 }}
+                        left={props => <List.Icon {...props} icon="supervisor-account" />}
+                        onPress={this._viewLink}
+                    />
                     <View>
                         <Button
                             icon="delete-forever"
@@ -280,18 +288,24 @@ class SettingsScreen extends React.Component {
         )
     }
 
+    _viewLink = async () => {
+        let result = await WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/');
+    }
+
     _handleAddNewOrg = () => {
+        Haptic.selection();
         this.props.navigation.navigate('Auth')
     }
 
     _handleDeleteOrg = (domain) => {
         console.log('in handle delete')
+        Haptic.selection();
         const { domains, navigation } = this.props;
-        if(domain.active) {
+        if (domain.active) {
             let found = domains.find(domain => {
                 return !domain.active
             })
-            if(found){
+            if (found) {
                 this._switchDomain(found.id);
             } else {
                 navigation.navigate('AuthLoading');
@@ -317,6 +331,7 @@ class SettingsScreen extends React.Component {
     }
 
     _toggleNotifications = (notificationId, value, domain, notification) => {
+        Haptic.selection();
         // stops lag of DB call for switch value
         this.setState({
             notifications: {
@@ -347,6 +362,7 @@ class SettingsScreen extends React.Component {
     }
 
     _switchDomain = (id) => {
+        Haptic.selection();
         const { dispatch, navigation } = this.props;
         dispatch(changeActiveDomain(id))
         navigation.navigate('AuthLoading');
