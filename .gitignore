@@ -1,4 +1,4 @@
 node_modules
 .env
-
+google-services.json
 env.js
