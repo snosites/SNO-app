@@ -97,7 +97,7 @@ class FadeInView extends React.Component {
             this.state.slideAnim,
             {
                 toValue: 0,
-                duration: 300,
+                duration: 800,
                 // useNativeDriver: true,
             }
         ).start();
@@ -108,7 +108,7 @@ class FadeInView extends React.Component {
 
         Animated.timing(this.state.slideAnim, {
             toValue: -125,
-            duration: 300,
+            duration: 400,
             // useNativeDriver: true,
         }).start(({ finished }) => {
             if (finished) {
@@ -191,7 +191,7 @@ class AppNavigatorContainer extends React.Component {
                     </View>
                     <Portal>
                         <FadeInView
-                            visible={true}
+                            visible={visible}
                             style={{
                                 position: 'absolute',
                                 top: -100,
@@ -223,7 +223,6 @@ class AppNavigatorContainer extends React.Component {
                                 style={{
                                     fontSize: 14,
                                     paddingHorizontal: 5,
-                                    color: '#757575'
                                 }}
                             >
                                 {notification.data ?
@@ -234,7 +233,7 @@ class AppNavigatorContainer extends React.Component {
                             <Text
                                 ellipsizeMode='tail'
                                 numberOfLines={1}
-                                style={{ fontSize: 14, paddingLeft: 10 }}
+                                style={{ fontSize: 14, paddingLeft: 10, color: '#757575' }}
                             >
                                 {notification.data ?
                                     notification.data.title
