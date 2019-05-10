@@ -28,7 +28,7 @@ import { theme } from '../redux/reducers/reducers';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
-
+const MEDIAWIDTH = viewportWidth * 0.90;
 
 class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
@@ -44,11 +44,16 @@ class FullArticleScreen extends React.Component {
         expandCaption: false
     };
 
+    //     "<p>long form 1 chapter 2 text</p>
+    // <p><img src="http://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081.jpg" alt="" width="844" height="1501" class="alignnone size-full wp-image-602" srcset="https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081.jpg 844w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-267x475.jpg 267w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-768x1366.jpg 768w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-506x900.jpg 506w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-300x534.jpg 300w" sizes="(max-width: 844px) 100vw, 844px" /></p>
+    // <div class='pullquote left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><div class='largequote' style='color: #888888;'>&ldquo;</div><p class='pullquotetext'>this is a pull quote&rdquo;</p><p class='quotespeaker'>&mdash; Travis L</p></div>
+    // "
+
     render() {
         const { navigation, theme } = this.props;
         const { snackbarSavedVisible } = this.state;
         let article = navigation.getParam('article', 'loading')
-
+        console.log('article', article)
         return (
             <ScrollView style={styles.storyContainer}>
                 <NavigationEvents
@@ -120,13 +125,26 @@ class FullArticleScreen extends React.Component {
                 <View style={styles.articleContents}>
                     <HTML
                         html={article.content.rendered}
+                        imagesMaxWidth={Dimensions.get('window').width}
+                        ignoredStyles={['height','width']}
                         textSelectable={true}
                         onLinkPress={(e, href) => this._viewLink(href)}
                         tagsStyles={{
                             p: {
                                 fontSize: 18,
                                 marginBottom: 15
+                            },
+                            img: {
+                                height: MEDIASIZE,
+                                width: MEDIAWIDTH,
+                                borderRadius: 8
                             }
+                        }}
+                        classesStyles={{
+                            'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
+                            'largequote': { fontSize: 21 },
+                            'pullquotetext': { textAlign: 'left', fontSize: 21 },
+                            'quotespeaker': { textAlign: 'left', fontSize: 14 }
                         }}
                     />
                 </View>
@@ -254,34 +272,34 @@ class FullArticleScreen extends React.Component {
                                 }}
                             /> */}
                             {article.featuredImage.caption ?
-                            <HTML
-                                html={article.featuredImage.caption}
-                                baseFontStyle={{ fontSize: 12 }}
-                                customWrapper={(text) => {
-                                    return (
-                                        <Text ellipsizeMode='tail' numberOfLines={this.state.expandCaption ? null : 2} onPress={() => {
-                                            this.setState({
-                                                expandCaption: !this.state.expandCaption
-                                            })
-                                        }}>{text}</Text>
-                                    )
-                                }}
-                                tagsStyles={{
-                                    rawtext: {
-                                        fontSize: 12,
-                                        color: 'white'
-                                    }
-                                }}
-                            />
-                            :
-                            null
+                                <HTML
+                                    html={article.featuredImage.caption}
+                                    baseFontStyle={{ fontSize: 12 }}
+                                    customWrapper={(text) => {
+                                        return (
+                                            <Text ellipsizeMode='tail' numberOfLines={this.state.expandCaption ? null : 2} onPress={() => {
+                                                this.setState({
+                                                    expandCaption: !this.state.expandCaption
+                                                })
+                                            }}>{text}</Text>
+                                        )
+                                    }}
+                                    tagsStyles={{
+                                        rawtext: {
+                                            fontSize: 12,
+                                            color: 'white'
+                                        }
+                                    }}
+                                />
+                                :
+                                null
                             }
                             {article.featuredImage.photographer ?
-                            <Text style={{ color: '#bdbdbd' }}>  
-                               {article.featuredImage.photographer[0]}
-                            </Text>
-                            :
-                            null
+                                <Text style={{ color: '#bdbdbd' }}>
+                                    {article.featuredImage.photographer[0]}
+                                </Text>
+                                :
+                                null
                             }
                         </View>
                     </View>
@@ -328,7 +346,7 @@ class FullArticleScreen extends React.Component {
         let articleChapters = navigation.getParam('articleChapters', [])
         console.log('article chapters', articleChapters)
         //sort long form stories
-        
+
         return (
             articleChapters.map(article => {
                 return (
