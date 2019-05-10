@@ -12,12 +12,14 @@ import Sentry from 'sentry-expo';
 //     : `api.example.com`;
 const api = 'mobileapi.snosites.net/';
 
-const getuserInfo = state => state.userInfo
+const getUserInfo = state => state.userInfo
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
-    const userInfo = yield select(getuserInfo);
+    const userInfo = yield select(getUserInfo);
+    console.log('user info', userInfo)
     try {
+        
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
@@ -84,7 +86,6 @@ function* fetchMenus(action) {
         // make sure push token has been stored
         const token = yield call(checkNotificationSettings);
         // check if user selected all notifications
-        const userInfo = yield select(getuserInfo);
         if(userInfo.allNotifications[domainId]) {
             console.log('adding all notifications...')
             yield call(addAllNotifications, {
@@ -158,7 +159,7 @@ function* fetchMenus(action) {
 function* fetchCategoriesFromDb(action) {
     try {
         const domainId = action.domainId;
-        const userInfo = yield select(getuserInfo)
+        const userInfo = yield select(getUserInfo)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
         const categories = yield response.json();
         return categories;
