@@ -105,7 +105,7 @@ class FadeInView extends React.Component {
         clearTimeout(this._hideTimeout);
 
         Animated.timing(this.state.slideAnim, {
-            toValue: -170,
+            toValue: -125,
             duration: 300,
             // useNativeDriver: true,
         }).start(({ finished }) => {
@@ -130,8 +130,8 @@ class FadeInView extends React.Component {
                         {
                             // translateY: slideAnim
                             translateY: slideAnim.interpolate({
-                                inputRange: [-170, 0],
-                                outputRange: [0, 170],
+                                inputRange: [-125, 0],
+                                outputRange: [0, 125],
                                 extrapolateRight: 'clamp'
                             }),
                         },
@@ -185,11 +185,11 @@ class AppNavigatorContainer extends React.Component {
                 <PaperProvider theme={theme}>
                     <View style={styles.container}>
                         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-                        <AppNavigator screenProps={{theme: theme}}/>
+                        <AppNavigator screenProps={{ theme: theme }} />
                     </View>
                     <Portal>
                         <FadeInView
-                            visible={visible}
+                            visible={true}
                             style={{
                                 position: 'absolute',
                                 top: -100,
@@ -199,43 +199,40 @@ class AppNavigatorContainer extends React.Component {
                                 paddingHorizontal: 10,
                                 paddingVertical: 5,
                                 justifyContent: 'space-between',
-                                backgroundColor: '#f5f5f5',
+                                backgroundColor: '#e0e0e0',
                                 borderRadius: 10,
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,
-                                    height: 2,
+                                    height: 6,
                                 },
-                                shadowOpacity: 0.23,
-                                shadowRadius: 2.62,
+                                shadowOpacity: 0.37,
+                                shadowRadius: 7.49,
 
-                                elevation: 4,
+                                elevation: 12,
                             }}
                         >
-                            <Text style={{ fontSize: 10, paddingLeft: 20, color: '#9e9e9e' }}>
+                            <Text style={{ fontSize: 10, paddingLeft: 10, color: '#424242' }}>
                                 {String(Moment().fromNow())}
                             </Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Feather name="award" size={14} color="#ffca28" />
-                                <Text
-                                    ellipsizeMode='tail'
-                                    numberOfLines={1}
-                                    style={{
-                                        fontSize: 14,
-                                        paddingHorizontal: 5,
-                                        color: '#757575'
-                                    }}
-                                >
-                                    {notification.data ?
-                                        `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
-                                        null
-                                    }
-                                </Text>
-                            </View>
                             <Text
                                 ellipsizeMode='tail'
                                 numberOfLines={1}
-                                style={{ fontSize: 17, paddingLeft: 20 }}
+                                style={{
+                                    fontSize: 14,
+                                    paddingHorizontal: 5,
+                                    color: '#757575'
+                                }}
+                            >
+                                {notification.data ?
+                                    `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
+                                    null
+                                }
+                            </Text>
+                            <Text
+                                ellipsizeMode='tail'
+                                numberOfLines={1}
+                                style={{ fontSize: 14, paddingLeft: 10 }}
                             >
                                 {notification.data ?
                                     notification.data.title

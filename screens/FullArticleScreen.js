@@ -144,7 +144,10 @@ class FullArticleScreen extends React.Component {
                             'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
                             'largequote': { fontSize: 21 },
                             'pullquotetext': { textAlign: 'left', fontSize: 21 },
-                            'quotespeaker': { textAlign: 'left', fontSize: 14 }
+                            'quotespeaker': { textAlign: 'left', fontSize: 14 },
+                            'photowrap': {
+                                display: 'none'
+                            }
                         }}
                     />
                 </View>
