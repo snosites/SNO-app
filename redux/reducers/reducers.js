@@ -216,6 +216,11 @@ export function userInfo(state = {
                     [action.domainId]: action.allNotifications
                 }
             }
+        case 'SET_API_KEY':
+            return {
+                ...state,
+                apiKey: action.payload
+            }
         default:
             return state
     }

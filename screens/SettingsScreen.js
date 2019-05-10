@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
 import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
-import { changeActiveDomain, addNotification, removeNotification, fetchNotifications } from '../redux/actions/actions';
+import { changeActiveDomain, addNotification, removeNotification, fetchNotifications, deleteUser } from '../redux/actions/actions';
 
 
 const ActiveDomainIcon = ({ color }) => (
@@ -247,6 +247,7 @@ class SettingsScreen extends React.Component {
                             color={Colors.red700}
                             style={{ padding: 10, }}
                             onPress={() => {
+                                this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
                                 persistor.purge();
                                 this.props.dispatch({
                                     type: 'PURGE_STATE'

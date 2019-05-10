@@ -310,10 +310,31 @@ export function saveUserInfo(payload) {
     }
 }
 
+export function getApiKey() {
+    return {
+        type: 'GET_API_KEY'
+    }
+}
+
+export function setApiKey(payload) {
+    return {
+        type: 'SET_API_KEY',
+        payload
+    }
+}
+
 export function saveTokenId(tokenId) {
     return {
         type: 'SAVE_TOKEN_ID',
         tokenId
+    }
+}
+
+export function deleteUser(tokenId, apiKey) {
+    return {
+        type: 'DELETE_USER',
+        tokenId,
+        apiKey
     }
 }
 

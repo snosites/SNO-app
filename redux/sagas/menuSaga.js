@@ -16,6 +16,7 @@ const getuserInfo = state => state.userInfo
 
 function* fetchMenus(action) {
     const { domain, domainId } = action;
+    const userInfo = yield select(getuserInfo);
     try {
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
@@ -37,7 +38,7 @@ function* fetchMenus(action) {
             })
             if (!foundCategory) {
                 console.log('adding new category', menu.object_id)
-                yield call(fetch, `http://${api}/api/categories/add`, {
+                yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -61,7 +62,7 @@ function* fetchMenus(action) {
         if (oldCategories.length > 0) {
             //loop through and remove them from DB
             for (let category of oldCategories) {
-                yield call(fetch, `http://${api}/api/categories/delete`, {
+                yield call(fetch, `http://${api}/api/categories/delete?api_token=${userInfo.apiKey}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -157,12 +158,13 @@ function* fetchMenus(action) {
 function* fetchCategoriesFromDb(action) {
     try {
         const domainId = action.domainId;
-        const response = yield call(fetch, `http://${api}/api/categories/${domainId}`)
+        const userInfo = yield select(getuserInfo)
+        const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
         const categories = yield response.json();
         return categories;
     }
     catch (err) {
-        // console.log('error fetching categories from DB', err)
+        console.log('error fetching categories from DB', err)
     }
 }
 

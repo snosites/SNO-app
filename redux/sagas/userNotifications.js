@@ -1,8 +1,11 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, saveTokenId, setNotifications } from '../actions/actions';
+import { requestMenus, saveTokenId, setNotifications, setApiKey, setError } from '../actions/actions';
 
 import { Permissions, Notifications, Constants } from 'expo';
+
+import Sentry from 'sentry-expo';
+
 const { manifest } = Constants;
 // const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
 //     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
@@ -10,27 +13,33 @@ const { manifest } = Constants;
 
 const api = 'mobileapi.snosites.net';
 
-const GET_TOKENS_ENDPOINT = `http://${api}/api/tokens`;
-const PUSH_ENDPOINT = `http://${api}/api/token/add`;
+const GET_API_TOKEN_ENDPOINT = `http://${api}/api/key`;
+const GET_USERS_ENDPOINT = `http://${api}/api/users`;
+const PUSH_ENDPOINT = `http://${api}/api/users/add_token`;
+const DELETE_USER_ENDPOINT = `http://${api}/api/users/delete`;
 const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`;
 const ADD_ALL_NOTIFICATIONS_ENDPOINT = `http://${api}/api/subscribe/all`;
 const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`;
 const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`;
 
+const getUserInfo = state => state.userInfo;
+
 function* fetchNotifications(action) {
     // const activeDomain = yield select(getActiveDomain);
     const { tokenId, domain } = action.payload;
-    if(!tokenId) {
+    const userInfo = yield select(getUserInfo)
+    if (!tokenId) {
         return;
     }
-    const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${String(tokenId)}`);
+    const response = yield call(fetch, `${FETCH_NOTIFICATIONS_ENDPOINT}/${String(tokenId)}?api_token=${userInfo.apiKey}`);
     const notifications = yield response.json();
     yield put(setNotifications(notifications, domain))
 }
 
 function* addNotification(action) {
     const { tokenId, categoryId, domain } = action.payload;
-    yield call(fetch, ADD_NOTIFICATION_ENDPOINT, {
+    const userInfo = yield select(getUserInfo)
+    yield call(fetch, `${ADD_NOTIFICATION_ENDPOINT}?api_token=${userInfo.apiKey}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -51,8 +60,9 @@ function* addNotification(action) {
 
 export function* addAllNotifications(action) {
     const { tokenId, categoryIds } = action.payload;
+    const userInfo = yield select(getUserInfo)
     console.log('in add all', tokenId, categoryIds)
-    yield call(fetch, ADD_ALL_NOTIFICATIONS_ENDPOINT, {
+    yield call(fetch, `${ADD_ALL_NOTIFICATIONS_ENDPOINT}?api_token=${userInfo.apiKey}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -67,7 +77,8 @@ export function* addAllNotifications(action) {
 
 function* removeNotification(action) {
     const { tokenId, categoryId, domain } = action.payload;
-    yield call(fetch, REMOVE_NOTIFICATION_ENDPOINT, {
+    const userInfo = yield select(getUserInfo)
+    yield call(fetch, `${REMOVE_NOTIFICATION_ENDPOINT}?api_token=${userInfo.apiKey}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -87,6 +98,7 @@ function* removeNotification(action) {
 }
 
 export function* checkNotificationSettings() {
+    const userInfo = yield select(getUserInfo)
     const { status: existingStatus } = yield call(Permissions.getAsync, Permissions.NOTIFICATIONS);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
@@ -101,11 +113,12 @@ export function* checkNotificationSettings() {
     }
     // Get the token that uniquely identifies this device
     let token = yield call(Notifications.getExpoPushTokenAsync);
-    let response = yield call(fetch, `${GET_TOKENS_ENDPOINT}/${token}`);
+    let response = yield call(fetch, `${GET_USERS_ENDPOINT}/${userInfo.apiKey}?api_token=${userInfo.apiKey}`);
     let tokenResponse = yield response.json();
     let tokenId;
     // if there is already a token saved in DB update it in redux
-    if (tokenResponse[0]) {
+    if (tokenResponse[0].token) {
+        console.log('token response', tokenResponse[0])
         tokenId = tokenResponse[0].id;
         yield put(saveTokenId(tokenResponse[0].id));
         // if not save it in DB and then save in redux
@@ -113,24 +126,60 @@ export function* checkNotificationSettings() {
         tokenId = yield call(savePushNotifications, token);
     }
     return tokenId;
-    
+
 }
 
 function* savePushNotifications(token) {
     // POST the token to backend server
-    let response = yield call(fetch, PUSH_ENDPOINT, {
+    const userInfo = yield select(getUserInfo)
+    let response = yield call(fetch, `${PUSH_ENDPOINT}?api_token=${userInfo.apiKey}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            token
+            token,
+            api_token: userInfo.apiKey
         }),
     });
     let tokenId = yield response.json();
-    yield put(saveTokenId(Number(tokenId.id)))
-    return tokenId.id;
+    yield put(saveTokenId(Number(tokenId[0].id)))
+    return tokenId[0].id;
+}
+
+function* getApiKey() {
+    try {
+        let response = yield call(fetch, GET_API_TOKEN_ENDPOINT);
+        console.log('repsonse', response)
+        let apiKey = yield response.json();
+        yield put(setApiKey(apiKey))
+    } catch(err) {
+        console.log('error getting api key in saga', err)
+        yield put(setError('api-saga error'))
+        Sentry.captureException(err)
+    }
+    
+}
+
+function* deleteUser(action){
+    try {
+        let response = yield call(fetch, `${DELETE_USER_ENDPOINT}?api_token=${action.apiKey}`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token_id: action.tokenId
+            })
+        });
+        const deleted = yield response.json();
+    } catch(err) {
+        console.log('error deleting user in saga', err)
+        yield put(setError('delete user-saga error'))
+        Sentry.captureException(err)
+    }
 }
 
 function* notificationsSaga() {
@@ -139,6 +188,10 @@ function* notificationsSaga() {
     yield takeLatest('REMOVE_NOTIFICATION', removeNotification);
     yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications);
     yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
+    yield takeLatest('GET_API_KEY', getApiKey);
+    yield takeLatest('DELETE_USER', deleteUser)
+
+
 }
 
 export default notificationsSaga;

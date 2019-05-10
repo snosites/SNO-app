@@ -13,7 +13,7 @@ import InitScreen from '../screens/InitScreen';
 import SelectScreen from '../screens/SelectScreen';
 
 import { connect } from 'react-redux';
-import { setActiveDomain } from '../redux/actions/actions';
+import { setActiveDomain, getApiKey } from '../redux/actions/actions';
 
 class AuthLoadingScreen extends React.Component {
     constructor(props) {
@@ -34,7 +34,11 @@ class AuthLoadingScreen extends React.Component {
     }
 
     _getDomainAsync = async () => {
-        console.log('in get dom async')
+        const { dispatch, userInfo } = this.props;
+        if(!userInfo.apiKey) {
+            dispatch(getApiKey())
+        }
+        
         const activeDomain = this.props.domains.filter(domain => {
             if(domain.active){
                 return domain
@@ -56,7 +60,8 @@ class AuthLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    domains: state.domains
+    domains: state.domains,
+    userInfo: state.userInfo
 })
 
 

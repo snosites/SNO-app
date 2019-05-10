@@ -27,7 +27,9 @@ import Moment from 'moment';
 import { useScreens } from 'react-native-screens';
 
 // performance optimization for navigations screens
-useScreens();
+// rendering bug -- commented out until fixed
+
+// useScreens();
 
 // sentry setup
 // Sentry.enableInExpoDevelopment = true;
@@ -59,7 +61,7 @@ class FadeInView extends React.Component {
                 }
             ]),
             onPanResponderRelease: (e, gestureState) => {
-                if (gestureState.dy < -60) {
+                if (gestureState.dy < -40) {
                     this._hide();
                 } else {
                     this._show();
