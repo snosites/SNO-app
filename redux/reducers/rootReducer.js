@@ -10,6 +10,7 @@ const rootReducer = (state, action) => {
       state = {
           ...state,
           articlesByCategory: undefined,
+          recentArticles: undefined,
           entities: undefined,
           menus: undefined
       }

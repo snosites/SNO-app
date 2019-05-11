@@ -234,7 +234,14 @@ export function entities(state = { articles: {} }, action) {
         return merge({}, state, action.response.entities)
     }
     else if (action.type === 'UPDATE_COMMENTS') {
-        return merge({}, state, { articles: { [action.payload.articleId]: { comments: action.payload.comments } } })
+        return merge({}, state, 
+            { 
+                articles: { 
+                    [action.payload.articleId]: { 
+                        comments: action.payload.comments 
+                    } 
+                } 
+            })
     }
     return state
 }
