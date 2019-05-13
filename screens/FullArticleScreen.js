@@ -65,7 +65,7 @@ class FullArticleScreen extends React.Component {
                         {this._renderFeaturedMedia(article)}
                     </View>
                 }
-                <View style={{paddingHorizontal: 20}}>
+                <View style={{paddingHorizontal: 20, alignItems: 'center'}}>
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
