@@ -8,7 +8,7 @@ import {
     ImageBackground,
     Dimensions,
     Share,
-    TouchableOpacity
+    Platform,
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
@@ -336,7 +336,9 @@ class FullArticleScreen extends React.Component {
 
     _handleProfilePress = async (article) => {
         const { navigation } = this.props;
-        Haptic.selection();
+        if(Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         const writerName = article.custom_fields.writer && article.custom_fields.writer[0];
         navigation.navigate('Profile', {
             writerName

@@ -7,7 +7,8 @@ import {
     ActivityIndicator,
     StyleSheet,
     TouchableOpacity,
-    StatusBar
+    StatusBar,
+    Platform
 } from 'react-native';
 import Moment from 'moment';
 import Color from 'color';
@@ -302,7 +303,9 @@ class SearchScreen extends React.Component {
     }
 
     _handleArticlePress = article => () => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         console.log('article', article)
         if (article.custom_fields.sno_format && article.custom_fields.sno_format[0] == 'Classic') {
             this._handleRegularArticle(article)
@@ -314,7 +317,9 @@ class SearchScreen extends React.Component {
     _handleRegularArticle = async (article) => {
         console.log('in article press')
         const { navigation } = this.props;
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         // check if there is a slidehsow
         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
             article.slideshow = await this._getAttachmentsAync(article);

@@ -5,6 +5,7 @@ import {
     View,
     TextInput,
     Text,
+    Platform
 } from 'react-native';
 import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
@@ -293,13 +294,17 @@ class SettingsScreen extends React.Component {
     }
 
     _handleAddNewOrg = () => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         this.props.navigation.navigate('Auth')
     }
 
     _handleDeleteOrg = (domain) => {
         console.log('in handle delete')
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         const { domains, navigation } = this.props;
         if (domain.active) {
             let found = domains.find(domain => {
@@ -331,7 +336,9 @@ class SettingsScreen extends React.Component {
     }
 
     _toggleNotifications = (notificationId, value, domain, notification) => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         // stops lag of DB call for switch value
         this.setState({
             notifications: {
@@ -362,7 +369,9 @@ class SettingsScreen extends React.Component {
     }
 
     _switchDomain = (id) => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         const { dispatch, navigation } = this.props;
         dispatch(changeActiveDomain(id))
         navigation.navigate('AuthLoading');

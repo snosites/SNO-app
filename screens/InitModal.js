@@ -4,7 +4,8 @@ import {
     Text,
     View,
     Modal,
-    SafeAreaView
+    SafeAreaView,
+    Platform
 } from 'react-native';
 import { Button, Switch } from 'react-native-paper'
 import { Haptic, DangerZone } from 'expo';
@@ -75,7 +76,9 @@ class initModal extends Component {
                                     }}
                                     style={{ padding: 10 }}
                                     onPress={() => {
-                                        Haptic.selection();
+                                        if (Platform.OS === 'ios') {
+                                            Haptic.selection();
+                                        }
                                         this.props.handleDismiss(this.state.allNotifications);
                                     }}
                                 >

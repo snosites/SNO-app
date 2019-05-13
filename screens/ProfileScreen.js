@@ -6,7 +6,7 @@ import {
     View,
     Image,
     ActivityIndicator,
-    AsyncStorage,
+    Platform,
     FlatList,
     TouchableOpacity
 } from 'react-native';
@@ -239,7 +239,9 @@ class ProfileScreen extends React.Component {
     _handleArticlePress = article => async () => {
         console.log('in article press')
         const { navigation } = this.props;
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         // check if there is a slidehsow
         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
             article.slideshow = await this._getAttachmentsAync(article);

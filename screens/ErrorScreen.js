@@ -6,7 +6,8 @@ import {
     Text,
     Modal,
     SafeAreaView,
-    StatusBar
+    StatusBar,
+    Platform
 } from 'react-native';
 import { Haptic } from 'expo';
 import { connect } from 'react-redux';
@@ -102,7 +103,9 @@ class ErrorScreen extends React.Component {
     }
 
     _handleSelect = async (id) => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         try {
             const { dispatch, navigation } = this.props;
             dispatch(changeActiveDomain(id))

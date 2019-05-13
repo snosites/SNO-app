@@ -4,7 +4,8 @@ import {
     StyleSheet,
     ActivityIndicator,
     View,
-    Text
+    Text,
+    Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actions/actions';
@@ -155,7 +156,9 @@ class SelectScreen extends React.Component {
     }
 
     _handleSelect = async (orgId, item) => {
-        Haptic.selection();
+        if(Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         try {
             const { domains } = this.props;
             const found = domains.find(domain => {
@@ -189,7 +192,9 @@ class SelectScreen extends React.Component {
     }
     // dismiss modal and redirect back to auth loading
     _handleModalDismiss = (allNotifications) => {
-        Haptic.selection();
+        if (Platform.OS === 'ios') {
+            Haptic.selection();
+        }
         this.props.dispatch(setAllNotifications(this.state.selectedDomain, allNotifications))
         this.props.navigation.navigate('AuthLoading');
         this.props.dispatch(clearAvailableDomains());
