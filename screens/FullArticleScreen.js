@@ -44,11 +44,6 @@ class FullArticleScreen extends React.Component {
         expandCaption: false
     };
 
-    //     "<p>long form 1 chapter 2 text</p>
-    // <p><img src="http://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081.jpg" alt="" width="844" height="1501" class="alignnone size-full wp-image-602" srcset="https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081.jpg 844w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-267x475.jpg 267w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-768x1366.jpg 768w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-506x900.jpg 506w, https://travislang.snodemo.com/wp-content/uploads/2019/04/1077120e27b3ef20b48e4a693acdc081-300x534.jpg 300w" sizes="(max-width: 844px) 100vw, 844px" /></p>
-    // <div class='pullquote left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><div class='largequote' style='color: #888888;'>&ldquo;</div><p class='pullquotetext'>this is a pull quote&rdquo;</p><p class='quotespeaker'>&mdash; Travis L</p></div>
-    // "
-
     render() {
         const { navigation, theme } = this.props;
         const { snackbarSavedVisible } = this.state;
@@ -70,29 +65,10 @@ class FullArticleScreen extends React.Component {
                         {this._renderFeaturedMedia(article)}
                     </View>
                 }
-                <HTML
-                    html={article.title.rendered}
-                    baseFontStyle={{ fontSize: 30 }}
-                    customWrapper={(text) => {
-                        return (
-                            <Text>{text}</Text>
-                        )
-                    }}
-                    tagsStyles={{
-                        rawtext: {
-                            fontSize: 30,
-                            fontWeight: 'bold',
-                            textAlign: 'center',
-                            paddingVertical: 10,
-                            paddingHorizontal: 10,
-                            color: theme.dark ? 'white' : 'black'
-                        }
-                    }}
-                />
-                {article.custom_fields.sno_deck &&
+                <View style={{paddingHorizontal: 10}}>
                     <HTML
-                        html={article.custom_fields.sno_deck[0]}
-                        baseFontStyle={{ fontSize: 22 }}
+                        html={article.title.rendered}
+                        baseFontStyle={{ fontSize: 30 }}
                         customWrapper={(text) => {
                             return (
                                 <Text>{text}</Text>
@@ -100,7 +76,8 @@ class FullArticleScreen extends React.Component {
                         }}
                         tagsStyles={{
                             rawtext: {
-                                fontSize: 22,
+                                fontSize: 30,
+                                fontWeight: 'bold',
                                 textAlign: 'center',
                                 paddingVertical: 10,
                                 paddingHorizontal: 10,
@@ -108,7 +85,28 @@ class FullArticleScreen extends React.Component {
                             }
                         }}
                     />
-                }
+                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] &&
+                        <HTML
+                            html={article.custom_fields.sno_deck[0]}
+                            baseFontStyle={{ fontSize: 22 }}
+                            customWrapper={(text) => {
+                                return (
+                                    <Text>{text}</Text>
+                                )
+                            }}
+                            tagsStyles={{
+                                rawtext: {
+                                    fontSize: 22,
+                                    textAlign: 'center',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 30,
+                                    color: theme.dark ? 'white' : 'black'
+                                }
+                            }}
+                        />
+                    }
+                </View>
+                
                 <TouchableItem onPress={() => this._handleProfilePress(article)}>
                     <Text style={{
                         fontSize: 17,
