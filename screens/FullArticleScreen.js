@@ -126,7 +126,7 @@ class FullArticleScreen extends React.Component {
                     <HTML
                         html={article.content.rendered}
                         imagesMaxWidth={Dimensions.get('window').width}
-                        ignoredStyles={['height', 'width']}
+                        ignoredStyles={['height', 'width', 'display']}
                         textSelectable={true}
                         onLinkPress={(e, href) => this._viewLink(href)}
                         tagsStyles={{
@@ -415,7 +415,7 @@ class FullArticleScreen extends React.Component {
                             <HTML
                                 html={article.content.rendered}
                                 imagesMaxWidth={Dimensions.get('window').width}
-                                ignoredStyles={['height', 'width']}
+                                ignoredStyles={['height', 'width', 'display']}
                                 textSelectable={true}
                                 onLinkPress={(e, href) => this._viewLink(href)}
                                 tagsStyles={{
