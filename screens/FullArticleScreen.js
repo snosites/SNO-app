@@ -65,7 +65,7 @@ class FullArticleScreen extends React.Component {
                         {this._renderFeaturedMedia(article)}
                     </View>
                 }
-                <View style={{paddingHorizontal: 10}}>
+                <View style={{paddingHorizontal: 20}}>
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
@@ -80,12 +80,11 @@ class FullArticleScreen extends React.Component {
                                 fontWeight: 'bold',
                                 textAlign: 'center',
                                 paddingVertical: 10,
-                                paddingHorizontal: 10,
                                 color: theme.dark ? 'white' : 'black'
                             }
                         }}
                     />
-                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] &&
+                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
                         <HTML
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
@@ -99,11 +98,12 @@ class FullArticleScreen extends React.Component {
                                     fontSize: 22,
                                     textAlign: 'center',
                                     paddingVertical: 10,
-                                    paddingHorizontal: 30,
                                     color: theme.dark ? 'white' : 'black'
                                 }
                             }}
                         />
+                        :
+                        null
                     }
                 </View>
                 
@@ -357,29 +357,10 @@ class FullArticleScreen extends React.Component {
                         <View style={styles.featuredMediaContainer}>
                             {this._renderFeaturedMedia(article)}
                         </View>
-                        <HTML
-                            html={article.title.rendered}
-                            baseFontStyle={{ fontSize: 30 }}
-                            customWrapper={(text) => {
-                                return (
-                                    <Text>{text}</Text>
-                                )
-                            }}
-                            tagsStyles={{
-                                rawtext: {
-                                    fontSize: 30,
-                                    fontWeight: 'bold',
-                                    textAlign: 'center',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 10,
-                                    color: theme.dark ? 'white' : 'black'
-                                }
-                            }}
-                        />
-                        {article.custom_fields.sno_deck &&
+                        <View style={{ paddingHorizontal: 20 }}>
                             <HTML
-                                html={article.custom_fields.sno_deck[0]}
-                                baseFontStyle={{ fontSize: 22 }}
+                                html={article.title.rendered}
+                                baseFontStyle={{ fontSize: 30 }}
                                 customWrapper={(text) => {
                                     return (
                                         <Text>{text}</Text>
@@ -387,15 +368,36 @@ class FullArticleScreen extends React.Component {
                                 }}
                                 tagsStyles={{
                                     rawtext: {
-                                        fontSize: 22,
+                                        fontSize: 30,
+                                        fontWeight: 'bold',
                                         textAlign: 'center',
                                         paddingVertical: 10,
-                                        paddingHorizontal: 10,
                                         color: theme.dark ? 'white' : 'black'
                                     }
                                 }}
                             />
-                        }
+                            {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
+                                <HTML
+                                    html={article.custom_fields.sno_deck[0]}
+                                    baseFontStyle={{ fontSize: 22 }}
+                                    customWrapper={(text) => {
+                                        return (
+                                            <Text>{text}</Text>
+                                        )
+                                    }}
+                                    tagsStyles={{
+                                        rawtext: {
+                                            fontSize: 22,
+                                            textAlign: 'center',
+                                            paddingVertical: 10,
+                                            color: theme.dark ? 'white' : 'black'
+                                        }
+                                    }}
+                                />
+                                :
+                                null
+                            }
+                        </View>
                         <TouchableItem onPress={() => this._handleProfilePress(article)}>
                             <Text style={{
                                 fontSize: 17,
