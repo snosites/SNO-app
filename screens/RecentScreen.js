@@ -408,9 +408,7 @@ class RecentScreen extends React.Component {
     _handleRefresh = () => {
         const { dispatch, activeDomain } = this.props;
         dispatch(invalidateRecentArticles());
-        dispatch(fetchRecentArticlesIfNeeded({
-            domain: activeDomain.url,
-        }))
+        dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
     }
 
     _playAnimation = () => {

@@ -155,7 +155,8 @@ class ListScreen extends React.Component {
 
     _handleArticleRemove = articleId => {
         console.log('in article remove')
-        this.props.dispatch(removeSavedArticle(articleId))
+        const { activeDomain } = this.props;
+        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
         this.setState({
             snackbarVisible: true
         })
@@ -286,6 +287,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = store => ({
+    activeDomain: store.activeDomain,
     theme: store.theme,
     menus: store.menus,
     savedArticles: store.savedArticlesBySchool[store.activeDomain.id]

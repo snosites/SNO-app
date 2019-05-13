@@ -22,6 +22,7 @@ function* fetchMenus(action) {
         
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
+        console.log('resp', response)
         const originalMenus = yield response.json();
 
         let menus = originalMenus.filter(menu => {
@@ -83,6 +84,7 @@ function* fetchMenus(action) {
             id: domainId,
             notificationCategories: updatedDbCategories
         }))
+        
         // make sure push token has been stored
         const token = yield call(checkNotificationSettings);
         // check if user selected all notifications
@@ -98,48 +100,66 @@ function* fetchMenus(action) {
             })
             yield put(setAllNotifications(domainId, false))
         }
+        console.log('made it here', token, domainId)
         yield put(fetchNotifications({
             tokenId: token,
             domain: domainId
         }))
         const [result, result2, result3, result4, result5, result6] = yield all([
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=header-image-small`),
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=mini-logo`),
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-splash-image`),
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-theme`),
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-primary`),
-            call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=snomobile-accent`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_nav_header`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_header_logo`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_splash_screen`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_theme`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_primary_color`),
+            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_accent_color`),
 
         ]);
-        const headerImage = yield result.json();
-        const headerSmall = yield result2.json();
-        const splashScreen = yield result3.json();
+        const headerImageId = yield result.json();
+        console.log('header img id', headerImageId)
+        const headerSmallId = yield result2.json();
+        const splashScreenId = yield result3.json();
         const theme = yield result4.json();
         const primary = yield result5.json();
         const accent = yield result6.json();
-        if(!theme.image){
-            theme.image = 'light';
+
+        // get actual images
+        const [imgResult1, imgResult2, imgResult3 ] = yield all(
+            [
+                call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerImageId.result}`),
+                call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerSmallId.result}`),
+                call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`),
+            ]
+        );
+
+        const headerImage = yield imgResult1.json();
+        const headerSmall = yield imgResult2.json();
+        const splashScreen = yield imgResult3.json();
+
+        if(!theme.result){
+            theme.result = 'light';
         }
-        if(!primary.image){
-            const response = yield call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=accentcolor-links`);
-            const colorFallback = yield response.json();
-            primary.image = colorFallback.image;
-            if(!accent.image){
-                accent.image = colorFallback.image;
+        if(!primary.result){
+            // const response = yield call(fetch, `https://${domain}/wp-json/custom/theme-mod?type=accentcolor-links`);
+            // const colorFallback = yield response.json();
+            // primary.image = colorFallback.image;
+            primary.result = '#2099CE';
+            if(!accent.result){
+                accent.result = '#83B33B';
             }
         }
         
         yield put(saveTheme({
-            theme: theme.image,
-            primary: primary.image,
-            accent: accent.image
+            theme: theme.result,
+            primary: primary.result,
+            accent: accent.result
         }))
 
+        // if image set otherwise empty string
         yield put(receiveMenus({
             menus,
-            header: headerImage.image,
-            headerSmall: headerSmall.image,
-            splashScreen: splashScreen.image,
+            header: headerImageId.result ? headerImage[0].source_url : '',
+            headerSmall: headerSmallId.result ? headerSmall[0].source_url : '',
+            splashScreen: splashScreenId.result ? splashScreen[0].source_url : '',
         }))
         yield put(fetchArticlesIfNeeded({
             domain,
