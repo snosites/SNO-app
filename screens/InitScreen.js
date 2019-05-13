@@ -39,7 +39,8 @@ class InitScreen extends React.Component {
         }
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <ScrollView>
+                <ScrollView
+                    keyboardShouldPersistTaps={'handled'}>
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
                         <View style={styles.container}>
                             <View style={styles.logoContainer}>
