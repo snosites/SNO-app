@@ -10,7 +10,8 @@ export default class TabBarLabel extends React.Component {
             <Text
                 style={{
                     color: this.props.focused ? color : TABICOLORDEFAULT,
-                    fontSize: 11
+                    fontSize: 11,
+                    textAlign: 'center'
                 }}
             >
                 {this.props.label}
