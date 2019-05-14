@@ -31,7 +31,7 @@
         ],
         "ios": {
             "bundleIdentifier": "com.snosites.studentnewssource",
-            "buildNumber": "1.4.1",
+            "buildNumber": "1.4.2",
             "supportsTablet": false
         },
         "android": {
