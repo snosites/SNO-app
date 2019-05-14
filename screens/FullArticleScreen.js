@@ -168,7 +168,7 @@ class FullArticleScreen extends React.Component {
                             Article Added To Saved List
                         </Snackbar>
                         <FAB.Group
-                            style={{ marginBottom: snackbarSavedVisible ? 100 : 50 }}
+                            style={{ paddingBottom: snackbarSavedVisible ? 130 : 80 }}
                             open={this.state.fabOpen}
                             icon={this.state.fabOpen ? 'clear' : 'add'}
                             actions={[
