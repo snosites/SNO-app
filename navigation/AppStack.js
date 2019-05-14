@@ -138,9 +138,10 @@ SettingsStack.navigationOptions = ({ screenProps }) => {
                 color={theme.colors.primary}
             />
         ),
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ focused, horizontal }) => (
             <TabBarIcon
                 focused={focused}
+                // horizontal={horizontal}
                 color={theme.colors.primary}
                 name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
             />
@@ -154,6 +155,11 @@ const AppNav = createBottomTabNavigator({
     BookmarkStack,
     SettingsStack,
 },
+{
+    tabBarOptions: {
+        adaptive: false
+    }
+} 
 );
 
 export default createSwitchNavigator(

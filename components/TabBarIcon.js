@@ -5,7 +5,7 @@ const TABICONDEFAULT = '#ccc';
 
 export default class TabBarIcon extends React.Component {
     render() {
-        const { color } = this.props;
+        const { color, horizontal } = this.props;
         return (
             <Icon.Ionicons
                 name={this.props.name}

@@ -11,6 +11,7 @@ export default class TabBarLabel extends React.Component {
                 style={{
                     color: this.props.focused ? color : TABICOLORDEFAULT,
                     fontSize: 11,
+                    marginHorizontal: 10,
                     textAlign: 'center'
                 }}
             >
