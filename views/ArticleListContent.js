@@ -34,18 +34,26 @@ import {
 export default class ArticleListContent extends React.Component {
 
     render() {
-        const { articleList, refreshing, isFetching, navigation } = this.props;
+        const { 
+            articleList, 
+            isRefreshing, 
+            isFetching, 
+            saveRef, 
+            loadMore, 
+            handleRefresh 
+        } = this.props;
+
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
                     keyExtractor={item => item.id.toString()}
-                    ref={(ref) => { this.flatListRef = ref; }}
+                    ref={(ref) => { saveRef(ref) }}
                     onEndReachedThreshold={0.25}
-                    onEndReached={this._loadMore}
-                    onRefresh={this._handleRefresh}
-                    refreshing={refreshing}
+                    onEndReached={loadMore}
+                    onRefresh={handleRefresh}
+                    refreshing={isRefreshing}
                     onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={() => {
                         if (!isFetching) {
@@ -63,17 +71,18 @@ export default class ArticleListContent extends React.Component {
         )
     }
 
-    _renderItem = props => {
-        const story = props.item;
+    _renderItem = ({ item }) => {
+        const { theme, onIconPress } = this.props;
+        const article = item;
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={this._handleArticlePress(story)}
+                onPress={this._handleArticlePress(article)}
             >
                 <View style={styles.storyContainer}>
-                    {story.featuredImage ?
+                    {article.featuredImage ?
                         <Image
-                            source={{ uri: story.featuredImage.uri }}
+                            source={{ uri: article.featuredImage.uri }}
                             style={styles.featuredImage}
                         />
                         :
@@ -81,11 +90,16 @@ export default class ArticleListContent extends React.Component {
                     }
                     <View style={styles.storyInfo}>
                         <HTML
-                            html={story.title.rendered}
+                            html={article.title.rendered}
                             baseFontStyle={{ fontSize: 17 }}
                             customWrapper={(text) => {
                                 return (
-                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                    <Text 
+                                        ellipsizeMode='tail' 
+                                        numberOfLines={2}
+                                    >
+                                        {text}
+                                    </Text>
                                 )
                             }}
                             tagsStyles={{
@@ -104,7 +118,7 @@ export default class ArticleListContent extends React.Component {
                                 fontSize: 15
                             }}
                         >
-                            {story.custom_fields.writer ? story.custom_fields.writer : ''}
+                            {article.custom_fields.writer ? article.custom_fields.writer : ''}
                         </Text>
                         <View
                             style={{
@@ -114,7 +128,7 @@ export default class ArticleListContent extends React.Component {
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
-                                {this._renderDate(story.date)}
+                                {this._renderDate(article.date)}
                             </View>
                         </View>
                     </View>
@@ -139,21 +153,19 @@ export default class ArticleListContent extends React.Component {
                                     backgroundColor: theme.colors.accent,
                                 }}
                             >
-                                {story.comments.length > 99 ? '99' : story.comments.length}
+                                {article.comments.length > 99 ? '99' : article.comments.length}
                             </Badge>
                         </View>
                         <MaterialIcons
                             name={
-                                story.saved ? 'bookmark'
+                                article.saved ? 'bookmark'
                                     :
                                     'bookmark-border'
                             }
                             color={theme.colors.accent}
                             style={{ paddingHorizontal: 5 }}
                             size={24}
-                            onPress={() => {
-                                this._saveRemoveToggle(story)
-                            }}
+                            onPress={() => {onIconPress(article)}}
                         />
                     </View>
                 </View>
@@ -162,25 +174,11 @@ export default class ArticleListContent extends React.Component {
         )
     }
 
-    _loadMore = () => {
-        if (!this.onEndReachedCalledDuringMomentum) {
-            const { activeDomain, category } = this.props;
-            this.props.dispatch(fetchMoreArticlesIfNeeded({
-                domain: activeDomain.url,
-                category: category.categoryId,
-            }))
-            this.onEndReachedCalledDuringMomentum = true;
-        }
-
-    }
-
-    _handleRefresh = () => {
-        const { dispatch, activeDomain, category } = this.props;
-        dispatch(invalidateArticles(category.categoryId));
-        dispatch(fetchArticlesIfNeeded({
-            domain: activeDomain.url,
-            category: category.categoryId,
-        }))
+    _getAttachmentsAync = async (article) => {
+        console.log('article', article)
+        const response = await fetch(article._links['wp:attachment'][0].href);
+        const imageAttachments = await response.json();
+        return imageAttachments;
     }
 
     _handleArticlePress = article => () => {
@@ -217,6 +215,7 @@ export default class ArticleListContent extends React.Component {
         console.log('in article press long form')
         const { navigation, activeDomain } = this.props;
         let storyChapters = [];
+        navigation.navigate('FullArticle');
         if (article.custom_fields.sno_format == "Long-Form") {
             let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
             storyChapters = await results.json();
@@ -258,6 +257,7 @@ export default class ArticleListContent extends React.Component {
         }))
         if (article.custom_fields.sno_format == "Long-Form") {
             console.log('updated chapters', updatedStoryChapters)
+            // sort long form chapters
             updatedStoryChapters.sort(function (a, b) {
                 if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
                     return -1;
@@ -276,57 +276,20 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderDate = date => {
-        let dateNow = Moment();
-        let subDate = Moment(date).subtract(7, 'days');
-        console.log('moment date', subDate, dateNow)
-        if (Moment().isAfter(Moment(date).add(7, 'days'))) {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {Moment(date).format('MMM D YYYY')}
-                </Text>
-            )
-        } else {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {String(Moment(date).fromNow())}
-                </Text>
-            )
-        }
-    }
-
-    _saveRemoveToggle = article => {
-        if (article.saved) {
-            this._handleArticleRemove(article.id);
-        } else {
-            this._handleArticleSave(article);
-        }
-    }
-
-    _handleArticleSave = article => {
-
-        const { activeDomain } = this.props;
-        console.log('in article save', activeDomain)
-        this.props.dispatch(saveArticle(article, activeDomain.id))
-        this.setState({
-            snackbarSavedVisible: true
-        })
-    }
-
-    _handleArticleRemove = articleId => {
-        console.log('in article remove')
-        const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
-        this.setState({
-            snackbarRemovedVisible: true
-        })
+        return (
+            <Text style={{
+                fontSize: 15,
+                color: '#9e9e9e'
+            }}
+            >
+                {Moment().isAfter(Moment(date).add(7, 'days')) 
+                ?
+                    String(Moment(date).format('MMM D YYYY'))
+                :
+                    String(Moment(date).fromNow())
+                }
+            </Text>
+        )
     }
 
 }
