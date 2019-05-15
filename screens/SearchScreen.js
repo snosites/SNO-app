@@ -71,8 +71,7 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, activeDomain, navigation, menus, theme } = this.props;
-        const searchTerm = navigation.getParam('searchTerm', null);
+        const { menus } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
