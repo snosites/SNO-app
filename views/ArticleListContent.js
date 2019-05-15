@@ -28,7 +28,7 @@ export default class ArticleListContent extends React.Component {
             isFetching, 
             saveRef, 
             loadMore, 
-            handleRefresh 
+            handleRefresh
         } = this.props;
         return (
             <View style={{ flex: 1 }}>
@@ -44,7 +44,7 @@ export default class ArticleListContent extends React.Component {
                     }}
                     onEndReachedThreshold={0.25}
                     onEndReached={() => {
-                        if (!this.onEndReachedCalledDuringMomentum) {
+                        if (!this.onEndReachedCalledDuringMomentum && loadMore) {
                             loadMore();
                             this.onEndReachedCalledDuringMomentum = true;
                         }
@@ -69,7 +69,7 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderItem = ({ item }) => {
-        const { theme, onIconPress } = this.props;
+        const { theme, onIconPress, deleteIcon } = this.props;
         const article = item;
         return (
             <TouchableOpacity
@@ -155,11 +155,12 @@ export default class ArticleListContent extends React.Component {
                         </View>
                         <MaterialIcons
                             name={
-                                article.saved ? 'bookmark'
+                                deleteIcon ? 'delete' :
+                                (article.saved ? 'bookmark'
                                     :
-                                    'bookmark-border'
+                                    'bookmark-border')
                             }
-                            color={theme.colors.accent}
+                            color={deleteIcon ? '#c62828' : theme.colors.accent}
                             style={{ paddingHorizontal: 5 }}
                             size={24}
                             onPress={() => {onIconPress(article)}}

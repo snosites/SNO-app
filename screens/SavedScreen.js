@@ -20,6 +20,7 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
 
 import { removeSavedArticle } from '../redux/actions/actions';
+import ArticleListContent from '../views/ArticleListContent';
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -68,7 +69,7 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { savedArticles } = this.props;
+        const { savedArticles, activeDomain, theme, navigation } = this.props;
         const { snackbarVisible } = this.state;
         if (savedArticles === 'loading') {
             return (
@@ -102,12 +103,14 @@ class ListScreen extends React.Component {
         }
         return (
             <View style={{ flex: 1 }}>
-                <FlatList
-                    Style={{ flex: 1, marginVertical: 5 }}
-                    data={savedArticles}
-                    keyExtractor={item => item.id.toString()}
-                    ref={(ref) => { this.flatListRef = ref; }}
-                    renderItem={this._renderItem}
+                <ArticleListContent
+                    articleList={savedArticles}
+                    saveRef={this._saveRef}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    navigation={navigation}
+                    onIconPress={this._handleArticleRemove}
+                    deleteIcon={true}
                 />
                 <Snackbar
                     visible={snackbarVisible}
@@ -128,38 +131,18 @@ class ListScreen extends React.Component {
         );
     }
 
-    _getAttachmentsAync = async (article) => {
-        console.log('article', article)
-        const response = await fetch(article._links['wp:attachment'][0].href);
-        const imageAttachments = await response.json();
-        return imageAttachments;
-    }
-
-    _handleArticlePress = article => async () => {
-        const { navigation } = this.props;
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
-        // check if there is a slidehsow
-        if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-            article.slideshow = await this._getAttachmentsAync(article);
-        }
-        navigation.push('FullArticle', {
-            articleId: article.id,
-            article,
-            commentNumber: article.comments.length,
-            comments: article.comments
-        })
+    _saveRef = (ref) => {
+        this.flatListRef = ref;
     }
 
     _scrollToTop = () => {
         this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
     }
 
-    _handleArticleRemove = articleId => {
+    _handleArticleRemove = article => {
         console.log('in article remove')
         const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
+        this.props.dispatch(removeSavedArticle(article.id, activeDomain.id))
         this.setState({
             snackbarVisible: true
         })
@@ -170,139 +153,12 @@ class ListScreen extends React.Component {
         this.animation.play();
     };
 
-    _renderDate = date => {
-        let dateNow = Moment();
-        let subDate = Moment(date).subtract(7, 'days');
-        console.log('moment date', subDate, dateNow)
-        if (Moment().isAfter(Moment(date).add(7, 'days'))) {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {Moment(date).format('MMM D YYYY')}
-                </Text>
-            )
-        } else {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {String(Moment(date).fromNow())}
-                </Text>
-            )
-        }
-    }
-
-    _renderItem = props => {
-        const { theme } = this.props;
-        const story = props.item;
-        return (
-            <TouchableOpacity
-                key={story.id}
-                onPress={this._handleArticlePress(story)}
-            >
-                <View style={styles.storyContainer}>
-                    {story.featuredImage ?
-                        <Image source={{ uri: story.featuredImage.uri }} style={styles.featuredImage} />
-                        :
-                        null
-                    }
-                    <View style={styles.storyInfo}>
-                        <HTML
-                            html={story.title.rendered}
-                            baseFontStyle={{ fontSize: 17 }}
-                            customWrapper={(text) => {
-                                return (
-                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
-                                )
-                            }}
-                            tagsStyles={{
-                                rawtext: {
-                                    fontSize: 17,
-                                    fontWeight: 'bold',
-                                    color: theme.dark ? 'white' : 'black'
-                                }
-                            }}
-                        />
-                        <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.author, { color: theme.colors.accent }]}>{story.custom_fields.writer ? story.custom_fields.writer : ''}</Text>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                        }}
-                        >
-                            <View style={{ flexDirection: 'row' }}>
-                                {this._renderDate(story.date)}
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ justifySelf: 'end', justifyContent: 'space-between' }}>
-                        <View>
-                            <FontAwesome name="comment"
-                                size={21} color='#e0e0e0'
-                            />
-                            <Badge
-                                size={16}
-                                style={{
-                                    position: 'absolute',
-                                    bottom: 2,
-                                    right: 4,
-                                    backgroundColor: theme.colors.accent,
-                                }}
-                            >
-                                {story.comments.length > 99 ? '99' : story.comments.length}
-                            </Badge>
-                        </View>
-                        <MaterialIcons
-                            name='delete'
-                            color='#c62828'
-                            style={styles.socialIcon}
-                            size={24}
-                            onPress={() => {
-                                this._handleArticleRemove(story.id)
-                            }}
-                        />
-                    </View>
-                </View>
-            </TouchableOpacity>
-        )
-    }
 }
 
 const styles = StyleSheet.create({
-    storyContainer: {
-        flexDirection: 'row',
-        flex: 1,
-        marginHorizontal: 10,
-        marginVertical: 10,
-    },
     animationContainer: {
         width: 400,
         height: 400,
-    },
-    featuredImage: {
-        width: 125,
-        height: 80,
-        borderRadius: 8
-    },
-    storyInfo: {
-        flex: 1,
-        marginLeft: 10,
-        justifyContent: 'space-between'
-    },
-    date: {
-        fontSize: 14,
-        color: 'grey'
-    },
-    author: {
-        fontSize: 15,
-    },
-    socialIcon: {
-        paddingHorizontal: 5
     },
     snackbar: {
         position: 'absolute',
