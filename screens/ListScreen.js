@@ -150,7 +150,7 @@ class ListScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <ArticleListContent 
+                <ArticleListContent
                     articleList={articlesByCategory}
                     isFetching={category.isFetching}
                     isRefreshing={category.didInvalidate}
@@ -212,7 +212,7 @@ class ListScreen extends React.Component {
     }
 
     _handleArticleSave = article => {
-        
+
         const { activeDomain } = this.props;
         console.log('in article save', activeDomain)
         this.props.dispatch(saveArticle(article, activeDomain.id))
@@ -231,14 +231,14 @@ class ListScreen extends React.Component {
     }
 
     _loadMore = () => {
-        if (!this.onEndReachedCalledDuringMomentum) {
-            const { activeDomain, category } = this.props;
-            this.props.dispatch(fetchMoreArticlesIfNeeded({
-                domain: activeDomain.url,
-                category: category.categoryId,
-            }))
-            this.onEndReachedCalledDuringMomentum = true;
-        }
+        const { activeDomain, category } = this.props;
+        this.props.dispatch(fetchMoreArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: category.categoryId,
+        }))
+    }
+
+    _setShouldLoadMore = () => {
 
     }
 

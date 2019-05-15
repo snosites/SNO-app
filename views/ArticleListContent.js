@@ -51,7 +51,12 @@ export default class ArticleListContent extends React.Component {
                     keyExtractor={item => item.id.toString()}
                     ref={(ref) => { saveRef(ref) }}
                     onEndReachedThreshold={0.25}
-                    onEndReached={loadMore}
+                    onEndReached={() => {
+                        if (!this.onEndReachedCalledDuringMomentum) {
+                            loadMore();
+                            this.onEndReachedCalledDuringMomentum = true;
+                        }
+                    }}
                     onRefresh={handleRefresh}
                     refreshing={isRefreshing}
                     onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
