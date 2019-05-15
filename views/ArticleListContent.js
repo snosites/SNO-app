@@ -30,14 +30,18 @@ export default class ArticleListContent extends React.Component {
             loadMore, 
             handleRefresh 
         } = this.props;
-
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
                     keyExtractor={item => item.id.toString()}
-                    ref={(ref) => { saveRef(ref) }}
+                    ref={(ref) => { 
+                        if(saveRef){
+                            saveRef(ref) 
+                        }
+                        return;
+                    }}
                     onEndReachedThreshold={0.25}
                     onEndReached={() => {
                         if (!this.onEndReachedCalledDuringMomentum) {
@@ -45,7 +49,7 @@ export default class ArticleListContent extends React.Component {
                             this.onEndReachedCalledDuringMomentum = true;
                         }
                     }}
-                    onRefresh={handleRefresh}
+                    onRefresh={handleRefresh ? handleRefresh : null}
                     refreshing={isRefreshing}
                     onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={() => {

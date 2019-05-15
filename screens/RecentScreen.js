@@ -1,23 +1,15 @@
 import React from 'react';
 import {
     View,
-    FlatList,
     Text,
     Image,
-    ActivityIndicator,
     StyleSheet,
-    TouchableOpacity,
-    Platform
 } from 'react-native';
-import Moment from 'moment';
 import { connect } from 'react-redux';
-import HTML from 'react-native-render-html';
-import { Haptic, DangerZone } from 'expo';
+import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
-import Colors from '../constants/Colors'
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { Snackbar, Badge } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 
 import {
     saveArticle,
