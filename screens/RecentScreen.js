@@ -87,7 +87,13 @@ class RecentScreen extends React.Component {
     }
 
     render() {
-        const { navigation, recentArticles, recent, theme } = this.props;
+        const { 
+            navigation, 
+            recentArticles, 
+            recent, 
+            theme, 
+            activeDomain 
+        } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (recent.items.length === 0 && recent.isFetching) {
             return (
