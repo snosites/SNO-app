@@ -14,7 +14,7 @@ import Moment from 'moment';
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import HTML from 'react-native-render-html';
-import Slideshow from '../constants/Slideshow';
+import Slideshow from '../views/Slideshow';
 import { withTheme } from 'react-native-paper';
 import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 import { saveArticle } from '../redux/actions/actions';
@@ -23,6 +23,7 @@ import { FAB, Portal, Snackbar } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import TouchableItem from '../constants/TouchableItem';
 import { CustomArticleHeader } from '../components/ArticleHeader';
+import ArticleBodyContent from '../views/ArticleBodyContent';
 import { theme } from '../redux/reducers/reducers';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -47,8 +48,10 @@ class FullArticleScreen extends React.Component {
     render() {
         const { navigation, theme } = this.props;
         const { snackbarSavedVisible } = this.state;
+
         let article = navigation.getParam('article', 'loading')
-        console.log('article', article)
+        let articleChapters = navigation.getParam('articleChapters', [])
+
         return (
             <ScrollView style={styles.storyContainer}>
                 <NavigationEvents
@@ -60,96 +63,25 @@ class FullArticleScreen extends React.Component {
                         expandCaption: false
                     })}
                 />
-                {article !== 'loading' &&
-                    <View style={styles.featuredMediaContainer}>
-                        {this._renderFeaturedMedia(article)}
-                    </View>
+                {article !== 'loading' && 
+                <ArticleBodyContent 
+                    navigation={navigation}
+                    article={article}
+                    theme={theme}
+                    handleCaptionClick={this._handleCaptionClick}
+                    expandCaption={this.state.expandCaption}
+                />
                 }
-                <View style={{ paddingHorizontal: 20, alignItems: 'center' }}>
-                    <HTML
-                        html={article.title.rendered}
-                        baseFontStyle={{ fontSize: 30 }}
-                        customWrapper={(text) => {
-                            return (
-                                <Text>{text}</Text>
-                            )
-                        }}
-                        tagsStyles={{
-                            rawtext: {
-                                fontSize: 30,
-                                fontWeight: 'bold',
-                                textAlign: 'center',
-                                paddingVertical: 10,
-                                color: theme.dark ? 'white' : 'black'
-                            }
-                        }}
+                {/* display chapters if there are any -- long form stories */}
+                {articleChapters.map(article => (
+                    <ArticleBodyContent
+                        navigation={navigation}
+                        article={article}
+                        theme={theme}
+                        handleCaptionClick={this._handleCaptionClick}
+                        expandCaption={this.state.expandCaption}
                     />
-                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
-                        <HTML
-                            html={article.custom_fields.sno_deck[0]}
-                            baseFontStyle={{ fontSize: 22 }}
-                            customWrapper={(text) => {
-                                return (
-                                    <Text>{text}</Text>
-                                )
-                            }}
-                            tagsStyles={{
-                                rawtext: {
-                                    fontSize: 22,
-                                    textAlign: 'center',
-                                    paddingVertical: 10,
-                                    color: theme.dark ? 'white' : 'black'
-                                }
-                            }}
-                        />
-                        :
-                        null
-                    }
-                </View>
-
-                <TouchableItem onPress={() => this._handleProfilePress(article)}>
-                    <Text style={{
-                        fontSize: 17,
-                        textAlign: 'center',
-                        paddingTop: 20,
-                        color: theme.colors.accent
-                    }}>
-                        {this._getArticleAuthor()}
-                    </Text>
-                </TouchableItem>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
-                    {this._renderDate(article.date)}
-                </View>
-                <View style={styles.articleContents}>
-                    <HTML
-                        html={article.content.rendered}
-                        imagesMaxWidth={Dimensions.get('window').width}
-                        ignoredStyles={['height', 'width', 'display']}
-                        textSelectable={true}
-                        onLinkPress={(e, href) => this._viewLink(href)}
-                        tagsStyles={{
-                            p: {
-                                fontSize: 18,
-                                marginBottom: 15
-                            },
-                            img: {
-                                height: MEDIASIZE,
-                                width: MEDIAWIDTH,
-                                borderRadius: 8
-                            }
-                        }}
-                        classesStyles={{
-                            'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
-                            'largequote': { fontSize: 21 },
-                            'pullquotetext': { textAlign: 'left', fontSize: 21 },
-                            'quotespeaker': { textAlign: 'left', fontSize: 14 },
-                            'photowrap': {
-                                display: 'none'
-                            }
-                        }}
-                    />
-                </View>
-                {this._renderChapters(article)}
+                ))}
 
                 {this.state.showPortal && <Portal>
                     <SafeAreaView style={{ flex: 1 }}>
@@ -200,31 +132,6 @@ class FullArticleScreen extends React.Component {
         );
     }
 
-    _renderDate = date => {
-        if (Moment(date).subtract(7, 'days') < Moment()) {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {Moment(date).format('MMM D YYYY')}
-                </Text>
-            )
-        } else {
-            return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-                >
-                    {String(Moment(date).fromNow())}
-                </Text>
-            )
-        }
-
-    }
-
     _shareArticle = article => {
         Share.share({
             title: article.title.rendered,
@@ -241,241 +148,12 @@ class FullArticleScreen extends React.Component {
         })
     }
 
-    _renderFeaturedMedia = (article) => {
-        console.log('article', article)
-        const { theme } = this.props;
-        if (article.slideshow) {
-            return (
-                <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
-            )
-        }
-
-        // "<iframe width="100 % " height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/581821017&color=%234285b0&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>"
-
-
-        else if (article.custom_fields.video) {
-            if (article.custom_fields.video[0].includes('iframe')) {
-                const source = article.custom_fields.video[0];
-                
-                return (
-                    <WebView
-                        scalesPageToFit={true}
-                        bounces={false}
-                        javaScriptEnabled
-                        style={{ flex: 1, height: MEDIASIZE }}
-                        source={{
-                            html: `
-                                <!DOCTYPE html>
-                                <html>
-                                    <head></head>
-                                    <body>
-                                    <div id="baseDiv">
-                                        ${source}
-                                    </div>
-                                    </body>
-                                </html>
-                            `,
-                        }}
-                        automaticallyAdjustContentInsets={false}
-                    />
-                )
-            }
-            return <WebView
-                style={{ flex: 1, height: MEDIASIZE }}
-                source={{ uri: article.custom_fields.video[0] }}
-            />
-        }
-        else if (article.featuredImage) {
-            return (
-                <ImageBackground
-                    source={{ uri: article.featuredImage.uri }}
-                    style={styles.featuredImage}
-                >
-                    <View style={styles.imageInfoContainer}>
-                        <View style={styles.imageInfo}>
-                            {/* <HTML
-                                html={article.featuredImage.caption.toUpperCase()}
-                                textSelectable={true}
-                                tagsStyles={{
-                                    p: {
-                                        fontSize: 12,
-                                        color: 'white'
-                                    }
-                                }}
-                            /> */}
-                            {article.featuredImage.caption ?
-                                <HTML
-                                    html={article.featuredImage.caption}
-                                    baseFontStyle={{ fontSize: 12 }}
-                                    customWrapper={(text) => {
-                                        return (
-                                            <Text ellipsizeMode='tail' numberOfLines={this.state.expandCaption ? null : 2} onPress={() => {
-                                                this.setState({
-                                                    expandCaption: !this.state.expandCaption
-                                                })
-                                            }}>{text}</Text>
-                                        )
-                                    }}
-                                    tagsStyles={{
-                                        rawtext: {
-                                            fontSize: 12,
-                                            color: 'white'
-                                        }
-                                    }}
-                                />
-                                :
-                                null
-                            }
-                            {article.featuredImage.photographer ?
-                                <Text style={{ color: '#bdbdbd' }}>
-                                    {article.featuredImage.photographer[0]}
-                                </Text>
-                                :
-                                null
-                            }
-                        </View>
-                    </View>
-                </ImageBackground>
-            )
-
-        } else {
-            return;
-        }
-    }
-
-    _getArticleAuthor = () => {
-        const { navigation } = this.props;
-        let article = navigation.getParam('article', 'loading')
-        if (article.custom_fields.writer) {
-            if (article.custom_fields.jobtitle) {
-                return `${article.custom_fields.writer} | ${article.custom_fields.jobtitle}`
-            }
-            else {
-                return article.custom_fields.writer
-            }
-        }
-        else {
-            return ''
-        }
-    }
-
-    _viewLink = async (href) => {
-        let result = await WebBrowser.openBrowserAsync(href);
-    }
-
-    _handleProfilePress = async (article) => {
-        const { navigation } = this.props;
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
-        const writerName = article.custom_fields.writer && article.custom_fields.writer[0];
-        navigation.navigate('Profile', {
-            writerName
+    _handleCaptionClick = () => {
+        this.setState({
+            expandCaption: !this.state.expandCaption
         })
     }
 
-
-    _renderChapters = (article) => {
-        const { navigation, theme } = this.props;
-        let articleChapters = navigation.getParam('articleChapters', [])
-        console.log('article chapters', articleChapters)
-        //sort long form stories
-
-        return (
-            articleChapters.map(article => {
-                return (
-                    <View key={article.id}>
-                        <View style={styles.featuredMediaContainer}>
-                            {this._renderFeaturedMedia(article)}
-                        </View>
-                        <View style={{ paddingHorizontal: 20 }}>
-                            <HTML
-                                html={article.title.rendered}
-                                baseFontStyle={{ fontSize: 30 }}
-                                customWrapper={(text) => {
-                                    return (
-                                        <Text>{text}</Text>
-                                    )
-                                }}
-                                tagsStyles={{
-                                    rawtext: {
-                                        fontSize: 30,
-                                        fontWeight: 'bold',
-                                        textAlign: 'center',
-                                        paddingVertical: 10,
-                                        color: theme.dark ? 'white' : 'black'
-                                    }
-                                }}
-                            />
-                            {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
-                                <HTML
-                                    html={article.custom_fields.sno_deck[0]}
-                                    baseFontStyle={{ fontSize: 22 }}
-                                    customWrapper={(text) => {
-                                        return (
-                                            <Text>{text}</Text>
-                                        )
-                                    }}
-                                    tagsStyles={{
-                                        rawtext: {
-                                            fontSize: 22,
-                                            textAlign: 'center',
-                                            paddingVertical: 10,
-                                            color: theme.dark ? 'white' : 'black'
-                                        }
-                                    }}
-                                />
-                                :
-                                null
-                            }
-                        </View>
-                        <TouchableItem onPress={() => this._handleProfilePress(article)}>
-                            <Text style={{
-                                fontSize: 17,
-                                textAlign: 'center',
-                                paddingTop: 20,
-                                color: theme.colors.accent
-                            }}>
-                                {this._getArticleAuthor()}
-                            </Text>
-                        </TouchableItem>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
-                            {this._renderDate(article.date)}
-                        </View>
-                        <View style={styles.articleContents}>
-                            <HTML
-                                html={article.content.rendered}
-                                imagesMaxWidth={Dimensions.get('window').width}
-                                ignoredStyles={['height', 'width', 'display']}
-                                textSelectable={true}
-                                onLinkPress={(e, href) => this._viewLink(href)}
-                                tagsStyles={{
-                                    p: {
-                                        fontSize: 18,
-                                        marginBottom: 15
-                                    },
-                                    img: {
-                                        height: MEDIASIZE,
-                                        width: MEDIAWIDTH,
-                                        borderRadius: 8
-                                    }
-                                }}
-                                classesStyles={{
-                                    'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
-                                    'largequote': { fontSize: 21 },
-                                    'pullquotetext': { textAlign: 'left', fontSize: 21 },
-                                    'quotespeaker': { textAlign: 'left', fontSize: 14 },
-                                    'photowrap': {
-                                        display: 'none'
-                                    }
-                                }}
-                            />
-                        </View>
-                    </View>
-                )
-            })
-        )
-    }
 }
 
 const styles = StyleSheet.create({
@@ -485,37 +163,6 @@ const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
         height: 400,
-    },
-    featuredMediaContainer: {
-        flex: 1,
-        // height: MEDIASIZE
-    },
-    featuredImage: {
-        height: MEDIASIZE,
-        resizeMode: 'cover'
-    },
-    imageInfoContainer: {
-        flex: 1,
-        justifyContent: 'flex-end'
-    },
-    imageInfo: {
-        backgroundColor: 'rgba(0,0,0,0.55)',
-        padding: 10,
-    },
-    title: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        paddingVertical: 5,
-        paddingHorizontal: 10
-
-    },
-    date: {
-        fontSize: 15,
-        color: '#9e9e9e',
-    },
-    articleContents: {
-        padding: 20,
     },
     snackbar: {
         position: 'absolute',
