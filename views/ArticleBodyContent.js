@@ -1,35 +1,27 @@
 import React from 'react';
 import {
-    ScrollView,
     StyleSheet,
     Text,
     View,
     WebView,
     ImageBackground,
     Dimensions,
-    Share,
     Platform,
     ActivityIndicator
 } from 'react-native';
-import Moment from 'moment';
-import { connect } from 'react-redux';
-import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import HTML from 'react-native-render-html';
-import Slideshow from './Slideshow';
-import { withTheme } from 'react-native-paper';
-import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
-import { saveArticle } from '../redux/actions/actions';
 
-import { FAB, Portal, Snackbar } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
+import Moment from 'moment';
+import HTML from 'react-native-render-html';
+import { WebBrowser, Haptic } from 'expo';
+
 import TouchableItem from '../constants/TouchableItem';
-import { CustomArticleHeader } from '../components/ArticleHeader';
-import { theme } from '../redux/reducers/reducers';
+import Slideshow from './Slideshow';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
 const MEDIAWIDTH = viewportWidth * 0.90;
+
 
 export default class ArticleBodyContent extends React.Component {
     
@@ -135,7 +127,6 @@ export default class ArticleBodyContent extends React.Component {
                 <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
             )
         }
-        // `<iframe width="100 % " scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/581821017&color=%234285b0&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>`
 
         else if (article.custom_fields.video) {
             const source = article.custom_fields.video[0];
@@ -177,27 +168,40 @@ export default class ArticleBodyContent extends React.Component {
                         </View>)}
                         style={{ flex: 1, height: MEDIASIZE }}
                         source={{ uri: src }}
-                        // source={{
-                        //     // html: `
-                        //     //     <!DOCTYPE html>
-                        //     //     <html>
-                        //     //         <head></head>
-                        //     //         <body>
-                        //     //         <div id="baseDiv">
-                        //     //             ${source}
-                        //     //         </div>
-                        //     //         </body>
-                        //     //     </html>
-                        //     // `,
-                        //     html: `${htmlStyleFix}<div>${source}</div>`
-                        // }}
-                        
                     />
                 )
             }
             let embedString = source.replace('watch?v=', 'embed/');
 
             return <WebView
+                scalesPageToFit={true}
+                automaticallyAdjustContentInsets={false}
+                scrollEnabled={false}
+                bounces={false}
+                originWhitelist={["*"]}
+                allowsInlineMediaPlayback={true}
+                javaScriptEnabled
+                startInLoadingState={true}
+                renderLoading={() => (<View
+                    style={{
+                        flex: 1,
+                        height: MEDIASIZE,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <ActivityIndicator />
+                </View>)}
+                renderError={() => (<View
+                    style={{
+                        flex: 1,
+                        height: MEDIASIZE,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <Text style={{ textAlign: 'center' }}>Sorry, the video failed to load</Text>
+                </View>)}
                 style={{ flex: 1, height: MEDIASIZE }}
                 source={{ uri: embedString }}
             />
@@ -241,7 +245,6 @@ export default class ArticleBodyContent extends React.Component {
                     </View>
                 </ImageBackground>
             )
-
         } else {
             return;
         }
@@ -273,7 +276,10 @@ export default class ArticleBodyContent extends React.Component {
     }
 
     _renderDate = date => {
-        if (Moment(date).subtract(7, 'days') < Moment()) {
+        let dateNow = Moment();
+        let subDate = Moment(date).subtract(7, 'days');
+        console.log('moment date', subDate, dateNow)
+        if (Moment().isAfter(Moment(date).add(7, 'days'))) {
             return (
                 <Text style={{
                     fontSize: 15,

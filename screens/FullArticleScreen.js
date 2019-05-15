@@ -2,35 +2,17 @@ import React from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text,
-    View,
-    WebView,
-    ImageBackground,
-    Dimensions,
     Share,
-    Platform,
     StatusBar
 } from 'react-native';
-import Moment from 'moment';
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import HTML from 'react-native-render-html';
-import Slideshow from '../views/Slideshow';
-import { withTheme } from 'react-native-paper';
-import { Permissions, MediaLibrary, WebBrowser, Haptic } from 'expo';
 import { saveArticle } from '../redux/actions/actions';
-
 import { FAB, Portal, Snackbar } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
-import TouchableItem from '../constants/TouchableItem';
+
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import ArticleBodyContent from '../views/ArticleBodyContent';
-import { theme } from '../redux/reducers/reducers';
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
-
-const MEDIASIZE = viewportHeight * 0.32;
-const MEDIAWIDTH = viewportWidth * 0.90;
 
 class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {

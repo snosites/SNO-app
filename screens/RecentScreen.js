@@ -196,11 +196,7 @@ class RecentScreen extends React.Component {
                                         }}
                                         >
                                             <View style={{ flexDirection: 'row' }}>
-                                            <Text style={styles.date}>
-                                                    {Moment(story.date).format('MMM D YYYY')}
-                                                </Text>
-                                                {/* <Text style={[{ paddingHorizontal: 5 }, styles.date]}>•</Text>
-                                                <Text style={styles.date}>{String(Moment(story.date).fromNow())}</Text> */}
+                                                {this._renderDate(story.date)}
                                             </View>
                                         </View>
                                     </View>
@@ -420,6 +416,33 @@ class RecentScreen extends React.Component {
         this.animation.reset();
         this.animation.play();
     };
+
+    _renderDate = date => {
+        let dateNow = Moment();
+        let subDate = Moment(date).subtract(7, 'days');
+        console.log('moment date', subDate, dateNow)
+        if (Moment().isAfter(Moment(date).add(7, 'days'))) {
+            return (
+                <Text style={{
+                    fontSize: 15,
+                    color: '#9e9e9e'
+                }}
+                >
+                    {Moment(date).format('MMM D YYYY')}
+                </Text>
+            )
+        } else {
+            return (
+                <Text style={{
+                    fontSize: 15,
+                    color: '#9e9e9e'
+                }}
+                >
+                    {String(Moment(date).fromNow())}
+                </Text>
+            )
+        }
+    }
 }
 
 const styles = StyleSheet.create({
