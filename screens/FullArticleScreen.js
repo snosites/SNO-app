@@ -65,7 +65,7 @@ class FullArticleScreen extends React.Component {
                         {this._renderFeaturedMedia(article)}
                     </View>
                 }
-                <View style={{paddingHorizontal: 20, alignItems: 'center'}}>
+                <View style={{ paddingHorizontal: 20, alignItems: 'center' }}>
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
@@ -106,7 +106,7 @@ class FullArticleScreen extends React.Component {
                         null
                     }
                 </View>
-                
+
                 <TouchableItem onPress={() => this._handleProfilePress(article)}>
                     <Text style={{
                         fontSize: 17,
@@ -242,13 +242,44 @@ class FullArticleScreen extends React.Component {
     }
 
     _renderFeaturedMedia = (article) => {
+        console.log('article', article)
         const { theme } = this.props;
         if (article.slideshow) {
             return (
                 <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
             )
         }
+
+        // "<iframe width="100 % " height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/581821017&color=%234285b0&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>"
+
+
         else if (article.custom_fields.video) {
+            if (article.custom_fields.video[0].includes('iframe')) {
+                const source = article.custom_fields.video[0];
+                
+                return (
+                    <WebView
+                        scalesPageToFit={true}
+                        bounces={false}
+                        javaScriptEnabled
+                        style={{ flex: 1, height: MEDIASIZE }}
+                        source={{
+                            html: `
+                                <!DOCTYPE html>
+                                <html>
+                                    <head></head>
+                                    <body>
+                                    <div id="baseDiv">
+                                        ${source}
+                                    </div>
+                                    </body>
+                                </html>
+                            `,
+                        }}
+                        automaticallyAdjustContentInsets={false}
+                    />
+                )
+            }
             return <WebView
                 style={{ flex: 1, height: MEDIASIZE }}
                 source={{ uri: article.custom_fields.video[0] }}
@@ -334,7 +365,7 @@ class FullArticleScreen extends React.Component {
 
     _handleProfilePress = async (article) => {
         const { navigation } = this.props;
-        if(Platform.OS === 'ios') {
+        if (Platform.OS === 'ios') {
             Haptic.selection();
         }
         const writerName = article.custom_fields.writer && article.custom_fields.writer[0];
