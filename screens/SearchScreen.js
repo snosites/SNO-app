@@ -81,22 +81,6 @@ class SearchScreen extends React.Component {
         })
     }
 
-    componentDidUpdate() {
-        console.log('in component did update recent')
-        if (this.animation) {
-            this._playAnimation();
-        }
-        const { navigation } = this.props;
-        // if (navigation.state.params && navigation.state.params.scrollToTop) {
-        //     if (this.flatListRef) {
-        //         // scroll list to top
-        //         this._scrollToTop();
-        //     }
-        //     navigation.setParams({ scrollToTop: false })
-        // }
-    }
-
-
     render() {
         const { navigation, searchArticles, search, theme, activeDomain } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
