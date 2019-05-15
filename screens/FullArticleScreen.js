@@ -9,6 +9,7 @@ import {
     Dimensions,
     Share,
     Platform,
+    StatusBar
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
@@ -58,10 +59,14 @@ class FullArticleScreen extends React.Component {
                     onDidFocus={() => this.setState({
                         showPortal: true
                     })}
-                    onWillBlur={() => this.setState({
-                        showPortal: false,
-                        expandCaption: false
-                    })}
+                    onWillBlur={() => {
+                        console.log('bluuuuuured');
+                        StatusBar.setHidden(false);
+                        this.setState({
+                            showPortal: false,
+                            expandCaption: false
+                        })
+                    }}
                 />
                 {article !== 'loading' && 
                 <ArticleBodyContent 

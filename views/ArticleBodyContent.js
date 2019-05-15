@@ -9,6 +9,7 @@ import {
     Dimensions,
     Share,
     Platform,
+    ActivityIndicator
 } from 'react-native';
 import Moment from 'moment';
 import { connect } from 'react-redux';
@@ -134,15 +135,16 @@ export default class ArticleBodyContent extends React.Component {
                 <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
             )
         }
-
-        // "<iframe width="100 % " height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/581821017&color=%234285b0&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>"
-
+        // `<iframe width="100 % " scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/581821017&color=%234285b0&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>`
 
         else if (article.custom_fields.video) {
             const source = article.custom_fields.video[0];
             if (source.includes('iframe')) {
 
-                const htmlStyleFix = `<style type="text/css">iframe{max-width: 100%;}</style>`;
+                let regex = /<iframe.*?src="(.*?)"/;
+                var src = regex.exec(source)[1];
+
+                // console.log('reg ex', src)
                 return (
                     <WebView
                         scalesPageToFit={true}
@@ -150,22 +152,45 @@ export default class ArticleBodyContent extends React.Component {
                         scrollEnabled={false}
                         bounces={false}
                         originWhitelist={["*"]}
+                        allowsInlineMediaPlayback={true}
                         javaScriptEnabled
+                        startInLoadingState={true}
+                        renderLoading={() => (<View 
+                            style={{
+                                flex: 1,
+                                height: MEDIASIZE,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <ActivityIndicator />
+                        </View>)}
+                        renderError={() => (<View
+                            style={{
+                                flex: 1,
+                                height: MEDIASIZE,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Text style={{textAlign: 'center'}}>Sorry, the video failed to load</Text>
+                        </View>)}
                         style={{ flex: 1, height: MEDIASIZE }}
-                        source={{
-                            // html: `
-                            //     <!DOCTYPE html>
-                            //     <html>
-                            //         <head></head>
-                            //         <body>
-                            //         <div id="baseDiv">
-                            //             ${source}
-                            //         </div>
-                            //         </body>
-                            //     </html>
-                            // `,
-                            html: `${htmlStyleFix}<div>${source}</div>`
-                        }}
+                        source={{ uri: src }}
+                        // source={{
+                        //     // html: `
+                        //     //     <!DOCTYPE html>
+                        //     //     <html>
+                        //     //         <head></head>
+                        //     //         <body>
+                        //     //         <div id="baseDiv">
+                        //     //             ${source}
+                        //     //         </div>
+                        //     //         </body>
+                        //     //     </html>
+                        //     // `,
+                        //     html: `${htmlStyleFix}<div>${source}</div>`
+                        // }}
                         
                     />
                 )
