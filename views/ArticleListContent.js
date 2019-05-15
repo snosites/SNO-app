@@ -11,24 +11,12 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 import Color from 'color';
-import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
-import { Haptic, DangerZone } from 'expo';
+import { Haptic } from 'expo';
 
-const { Lottie } = DangerZone;
-
-import Colors from '../constants/Colors'
-import { Ionicons, Feather, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Snackbar, Badge, IconButton } from 'react-native-paper';
-
-import {
-    saveArticle,
-    fetchArticlesIfNeeded,
-    fetchMoreArticlesIfNeeded,
-    invalidateArticles,
-    removeSavedArticle
-} from '../redux/actions/actions';
+import { Badge } from 'react-native-paper';
 
 
 export default class ArticleListContent extends React.Component {
