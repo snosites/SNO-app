@@ -99,7 +99,7 @@ class ProfileScreen extends React.Component {
                                                 color: primaryIsDark ? 'white' : 'black',
                                                 textAlign: 'center',
                                             }}>
-                                            {`Articles Authored By ${profile.custom_fields.name[0]}`}
+                                            {`Recent Articles Authored By ${profile.custom_fields.name[0]}`}
                                         </Text>
                                     </LinearGradient>
                                 </View>
@@ -121,17 +121,28 @@ class ProfileScreen extends React.Component {
                                                 onPress={this._handleArticlePress(story)}
                                             >
                                                 <View style={{ flex: 1 }}>
-                                                    <Text
-                                                        ellipsizeMode='tail' numberOfLines={2}
-                                                        style={{
-                                                            flex: 1,
-                                                            fontSize: 19,
-                                                            textAlign: 'left',
-                                                            color: accentIsDark ? 'white' : 'black'
+                                                    <HTML
+                                                        html={story.title.rendered}
+                                                        baseFontStyle={{ fontSize: 19 }}
+                                                        customWrapper={(text) => {
+                                                            return (
+                                                                <Text
+                                                                    ellipsizeMode='tail'
+                                                                    numberOfLines={2}
+                                                                >
+                                                                    {text}
+                                                                </Text>
+                                                            )
                                                         }}
-                                                    >
-                                                        {story.title.rendered}
-                                                    </Text>
+                                                        tagsStyles={{
+                                                            rawtext: {
+                                                                flex: 1,
+                                                                fontSize: 19,
+                                                                textAlign: 'left',
+                                                                color: accentIsDark ? 'white' : 'black'
+                                                            }
+                                                        }}
+                                                    />
                                                     <Text
                                                         style={{
                                                             flex: 1,

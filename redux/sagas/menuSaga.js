@@ -17,7 +17,7 @@ export function* fetchMenus(action) {
     try {
         
         yield put(requestMenus())
-        const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menuxxx`)
+        const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         console.log('resp', response)
         const originalMenus = yield response.json();
 
