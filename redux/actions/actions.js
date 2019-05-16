@@ -26,6 +26,14 @@ export function clearAvailableDomains() {
     return { type: 'CLEAR_AVAILABLE_DOMAINS'}
 }
 
+export function initialize(domain, domainId) {
+    return {
+        type: 'INITIALIZE',
+        domain,
+        domainId
+    }
+}
+
 // USERS SAVED DOMAINS
 
 export function addDomain(payload) {
