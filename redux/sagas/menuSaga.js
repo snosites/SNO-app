@@ -17,7 +17,7 @@ export function* fetchMenus(action) {
     try {
         
         yield put(requestMenus())
-        const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
+        const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menuxxx`)
         console.log('resp', response)
         const originalMenus = yield response.json();
 
@@ -90,8 +90,6 @@ export function* fetchMenus(action) {
     }
     catch (err) {
         console.log('error fetching menus in saga', err)
-        yield put(setError('menu-saga error'))
-        Sentry.captureException(err)
     }
 }
 

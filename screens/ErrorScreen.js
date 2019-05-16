@@ -25,13 +25,14 @@ class ErrorScreen extends React.Component {
     }
 
     render() {
-        const { domains } = this.props;
+        const { domains, navigation } = this.props;
         const { modalVisible } = this.state;
+        const errorMessage = navigation.getParam('errorMessage', null);
         return (
             <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
                 <StatusBar barStyle='dark-content' />
                 <Text style={{ textAlign: 'center', padding: 20, paddingBottom: 50, fontSize: 20, fontWeight: 'bold' }}>
-                    Sorry, this school is currently unavailable
+                    {errorMessage}
                 </Text>
                 <Button
                     mode="contained"
@@ -60,7 +61,7 @@ class ErrorScreen extends React.Component {
                     style={{ padding: 5 }}
                     onPress={this._handleSelectActive}
                 >
-                    Choose From Your Saved School's
+                    Choose From Your Saved Schools
                 </Button>
                 <Modal
                     animationType="slide"

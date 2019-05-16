@@ -28,8 +28,15 @@ class AppSetupScreen extends React.Component {
 
     componentDidUpdate() {
         const { menus, articlesByCategory, navigation, errors } = this.props;
-        if(errors.error == 'menu-saga error') {
-            navigation.navigate('Error');
+        if(errors.error == 'initialize-saga error') {
+            navigation.navigate('Error', {
+                errorMessage: 'Sorry, this school is currently unavailable'
+            });
+        }
+        if (errors.error == 'no school') {
+            navigation.navigate('Error', {
+                errorMessage: 'Sorry, this school did not renew its Student News Source subscription'
+            });
         }
         if (menus.isLoaded) {
             if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {

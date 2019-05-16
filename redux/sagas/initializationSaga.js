@@ -15,7 +15,8 @@ import { fetchMenus } from './menuSaga';
 
 import Sentry from 'sentry-expo';
 
-
+const api = 'mobileapi.snosites.net';
+const GET_DOMAIN_BY_ID = `http://${api}/api/domains`;
 const getUserInfo = state => state.userInfo
 
 function* initialize(action) {
@@ -110,10 +111,22 @@ function* initialize(action) {
         ))
     }
     catch(err) {
-        console.log('error initializing in saga', err)
-        yield put(setError('initialize-saga error'))
-        Sentry.captureException(err)
+        const domainCheck = yield call(checkWithDb, domainId, userInfo);
+        console.log('domain check', domainCheck)
+        if(domainCheck.length > 0) {
+            console.log('error initializing in saga', err)
+            yield put(setError('initialize-saga error'))
+            Sentry.captureException(err)
+        } else {
+            yield put(setError('no school'));
+        }
     }
+}
+
+function* checkWithDb(domainId, userInfo) {
+    const response = yield call(fetch, `${GET_DOMAIN_BY_ID}/${domainId}?api_token=${userInfo.apiKey}`);
+    const dbDomain = yield response.json();
+    return dbDomain;
 }
 
 

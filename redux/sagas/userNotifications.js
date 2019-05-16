@@ -2,14 +2,9 @@ import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestMenus, saveTokenId, setNotifications, setApiKey, setError } from '../actions/actions';
 
-import { Permissions, Notifications, Constants } from 'expo';
+import { Permissions, Notifications } from 'expo';
 
 import Sentry from 'sentry-expo';
-
-const { manifest } = Constants;
-// const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-//     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-//     : `api.example.com`;
 
 const api = 'mobileapi.snosites.net';
 
