@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
+import ConnectedBottomTabBar from '../components/ConnectedBottomTabBar';
+
 import Color from 'color';
 
 import TabBarIcon from '../components/TabBarIcon';
@@ -42,19 +44,12 @@ const RecentStack = createStackNavigator({
 RecentStack.navigationOptions = ({ screenProps }) => {
     const { theme } = screenProps;
     return ({
-        tabBarLabel: ({ focused }) => (
-            <TabBarLabel
-                focused={focused}
-                label='Recent'
-                color={theme.colors.primary}
-            />
-        ),
+        tabBarLabel: 'Recent',
         tabBarIcon: ({ focused }) => (
             <TabBarIcon
                 focused={focused}
                 color={theme.colors.primary}
                 name={'md-funnel'}
-
             />
         ),
         tabBarOnPress: ({ navigation }) => {
@@ -89,13 +84,7 @@ const BookmarkStack = createStackNavigator({
 BookmarkStack.navigationOptions = ({ screenProps }) => {
     const { theme } = screenProps;
     return ({
-        tabBarLabel: ({ focused }) => (
-            <TabBarLabel
-                focused={focused}
-                label='Saved'
-                color={theme.colors.primary}
-            />
-        ),
+        tabBarLabel: 'Saved',
         tabBarIcon: ({ focused }) => (
             <TabBarIcon
                 focused={focused}
@@ -104,7 +93,6 @@ BookmarkStack.navigationOptions = ({ screenProps }) => {
             />
         ),
         tabBarOnPress: ({ navigation }) => {
-            console.log('pressed tab button home')
             navigation.navigate('Saved', {
                 scrollToTop: true
             })
@@ -131,23 +119,19 @@ const SettingsStack = createStackNavigator({
 SettingsStack.navigationOptions = ({ screenProps }) => {
     const { theme } = screenProps;
     return ({
-        tabBarLabel: ({ focused }) => (
-            <TabBarLabel
-                focused={focused}
-                label='Settings'
-                color={theme.colors.primary}
-            />
-        ),
+        tabBarLabel: 'Settings',
         tabBarIcon: ({ focused, horizontal }) => (
             <TabBarIcon
                 focused={focused}
-                // horizontal={horizontal}
+                horizontal={horizontal}
                 color={theme.colors.primary}
                 name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
             />
         ),
     })
 };
+
+
 
 const AppNav = createBottomTabNavigator({
     HomeStack: MainDrawerNavigator,
@@ -156,9 +140,7 @@ const AppNav = createBottomTabNavigator({
     SettingsStack,
 },
 {
-    tabBarOptions: {
-        adaptive: false
-    }
+    tabBarComponent: props => <ConnectedBottomTabBar {...props} />,
 } 
 );
 
