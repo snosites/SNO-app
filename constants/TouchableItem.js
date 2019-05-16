@@ -1,12 +1,3 @@
-/**
- * TouchableItem renders a touchable that looks native on both iOS and Android.
- *
- * It provides an abstraction on top of TouchableNativeFeedback and
- * TouchableOpacity.
- *
- * On iOS you can pass the props of TouchableOpacity, on Android pass the props
- * of TouchableNativeFeedback.
- */
 import React from 'react';
 import {
   Platform,
@@ -24,14 +15,6 @@ export default class TouchableItem extends React.Component {
   };
 
   render() {
-    /*
-     * TouchableNativeFeedback.Ripple causes a crash on old Android versions,
-     * therefore only enable it on Android Lollipop and above.
-     *
-     * All touchables on Android should have the ripple effect according to
-     * platform design guidelines.
-     * We need to pass the background prop to specify a borderless ripple effect.
-     */
     if (
       Platform.OS === 'android' &&
       Platform.Version >= ANDROID_VERSION_LOLLIPOP

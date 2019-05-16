@@ -24,7 +24,7 @@ const MEDIAWIDTH = viewportWidth * 0.90;
 
 
 export default class ArticleBodyContent extends React.Component {
-    
+
     render() {
         const { theme, article } = this.props;
 
@@ -74,16 +74,14 @@ export default class ArticleBodyContent extends React.Component {
                         null
                     }
                 </View>
-                <TouchableItem onPress={() => this._handleProfilePress(article)}>
-                    <Text style={{
-                        fontSize: 17,
-                        textAlign: 'center',
-                        paddingTop: 20,
-                        color: theme.colors.accent
-                    }}>
-                        {this._getArticleAuthor(article)}
-                    </Text>
-                </TouchableItem>
+                <View 
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center'
+                    }}
+                >
+                    {this._renderArticleAuthor(article)}
+                </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
                     {this._renderDate(article.date)}
                 </View>
@@ -146,7 +144,7 @@ export default class ArticleBodyContent extends React.Component {
                         allowsInlineMediaPlayback={true}
                         javaScriptEnabled
                         startInLoadingState={true}
-                        renderLoading={() => (<View 
+                        renderLoading={() => (<View
                             style={{
                                 flex: 1,
                                 height: MEDIASIZE,
@@ -164,7 +162,7 @@ export default class ArticleBodyContent extends React.Component {
                                 justifyContent: 'center'
                             }}
                         >
-                            <Text style={{textAlign: 'center'}}>Sorry, the video failed to load</Text>
+                            <Text style={{ textAlign: 'center' }}>Sorry, the video failed to load</Text>
                         </View>)}
                         style={{ flex: 1, height: MEDIASIZE }}
                         source={{ uri: src }}
@@ -250,24 +248,96 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _handleProfilePress = async article => {
+    _handleProfilePress = writerName => {
         const { navigation } = this.props;
         if (Platform.OS === 'ios') {
             Haptic.selection();
         }
-        const writerName = article.custom_fields.writer && article.custom_fields.writer[0];
         navigation.navigate('Profile', {
             writerName
         })
     }
 
-    _getArticleAuthor = article => {
+    _renderArticleAuthor = article => {
+        const { theme } = this.props;
         if (article.custom_fields.writer) {
-            if (article.custom_fields.jobtitle) {
-                return `${article.custom_fields.writer} | ${article.custom_fields.jobtitle}`
+            let writers = article.custom_fields.writer;
+            //if arr of writers dont include job title
+            if (writers.length > 1) {
+                return writers.map((writer, i) => {
+                    if (i === writers.length - 2) {
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                                <Text style={{
+                                    fontSize: 17,
+                                    textAlign: 'center',
+                                    paddingTop: 20,
+                                    color: theme.colors.accent
+                                }}>
+                                    {`${writer} & `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    }
+                    else if (i === writers.length - 1) {
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                                <Text style={{
+                                    fontSize: 17,
+                                    textAlign: 'center',
+                                    paddingTop: 20,
+                                    color: theme.colors.accent
+                                }}>
+                                    {writer}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    } else {
+                        writersArr.push(`${writers[i]}, `);
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                                <Text style={{
+                                    fontSize: 17,
+                                    textAlign: 'center',
+                                    paddingTop: 20,
+                                    color: theme.colors.accent
+                                }}>
+                                    {`${writer}, `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    }
+                })
             }
+            // if writer has a jobtitle include it
+            if (article.custom_fields.jobtitle) {
+                return (
+                    <TouchableItem onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}>
+                        <Text style={{
+                            fontSize: 17,
+                            textAlign: 'center',
+                            paddingTop: 20,
+                            color: theme.colors.accent
+                        }}>
+                            {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
+                        </Text>
+                    </TouchableItem>
+                )
+            }
+            // otherwise just display writer
             else {
-                return article.custom_fields.writer
+                return (
+                    <TouchableItem onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}>
+                        <Text style={{
+                            fontSize: 17,
+                            textAlign: 'center',
+                            paddingTop: 20,
+                            color: theme.colors.accent
+                        }}>
+                            {`${article.custom_fields.writer[0]}`}
+                        </Text>
+                    </TouchableItem>
+                )
             }
         }
         else {
