@@ -17,6 +17,8 @@ import HTML from 'react-native-render-html';
 import { Haptic, DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
+import Animation from '../views/Animation';
+
 import Colors from '../constants/Colors'
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
@@ -71,7 +73,7 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { menus } = this.props;
+        const { menus, navigation } = this.props;
         if (this.animation) {
             this._playAnimation();
         }

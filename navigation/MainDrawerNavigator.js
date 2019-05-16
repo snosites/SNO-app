@@ -50,7 +50,7 @@ const MyDrawerNavigator = createDrawerNavigator(
 MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
     const { theme } = screenProps;
     return ({
-        tabBarLabel: 'Settings',
+        tabBarLabel: 'Home',
         tabBarIcon: ({ focused }) => (
             <TabBarIcon
                 focused={focused}
