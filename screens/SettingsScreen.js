@@ -11,8 +11,25 @@ import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
-import { List, Divider, Switch, IconButton, Colors, Snackbar, Button } from 'react-native-paper';
-import { changeActiveDomain, addNotification, removeNotification, fetchNotifications, deleteUser } from '../redux/actions/actions';
+import {
+    List,
+    Divider,
+    Switch,
+    IconButton,
+    Colors,
+    Snackbar,
+    Button,
+    Paragraph,
+    Dialog,
+    Portal
+} from 'react-native-paper';
+
+import {
+    changeActiveDomain,
+    addNotification,
+    removeNotification,
+    deleteUser
+} from '../redux/actions/actions';
 
 
 const ActiveDomainIcon = ({ color }) => (
@@ -33,7 +50,8 @@ class SettingsScreen extends React.Component {
         editingEmail: false,
         username: '',
         email: '',
-        notifications: {}
+        notifications: {},
+        dialog: false
     };
 
     componentDidMount() {
@@ -55,19 +73,19 @@ class SettingsScreen extends React.Component {
     }
 
     render() {
-        const { 
-            snackbarVisible, 
-            editingUsername, 
-            editingEmail, 
-            username, 
-            email, 
-            notifications 
+        const {
+            snackbarVisible,
+            editingUsername,
+            editingEmail,
+            username,
+            email,
+            notifications
         } = this.state;
-        const { 
-            domains, 
-            userInfo, 
-            dispatch, 
-            theme 
+        const {
+            domains,
+            userInfo,
+            dispatch,
+            theme
         } = this.props;
         return (
             <ScrollView style={styles.container}>
@@ -252,14 +270,7 @@ class SettingsScreen extends React.Component {
                             mode="outlined"
                             color={Colors.red700}
                             style={{ padding: 10, }}
-                            onPress={() => {
-                                this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
-                                persistor.purge();
-                                this.props.dispatch({
-                                    type: 'PURGE_STATE'
-                                })
-                                this.props.navigation.navigate('AuthLoading')
-                            }}
+                            onPress={this._showDialog}
                         >
                             Clear All Settings
                         </Button>
@@ -282,9 +293,40 @@ class SettingsScreen extends React.Component {
                 >
                     Organization Removed
                 </Snackbar>
+                <Portal>
+                    <Dialog
+                        visible={this.state.dialog}
+                        onDismiss={this._hideDialog}>
+                        <Dialog.Title>Clear all settings?</Dialog.Title>
+                        <Dialog.Content>
+                            <Paragraph>This will clear all of your saved schools, articles, and notification settings.</Paragraph>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <Button onPress={this._hideDialog}>Cancel</Button>
+                            <Button
+                                onPress={() => {
+                                    this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
+                                    persistor.purge();
+                                    this.props.dispatch({
+                                        type: 'PURGE_STATE'
+                                    })
+                                    this._hideDialog();
+                                    this.props.navigation.navigate('AuthLoading')
+                                }}
+                            >
+                                Clear
+                            </Button>
+
+                        </Dialog.Actions>
+                    </Dialog>
+                </Portal>
             </ScrollView>
         )
     }
+
+    _showDialog = () => this.setState({ dialog: true });
+
+    _hideDialog = () => this.setState({ dialog: false });
 
     _viewLink = async () => {
         let result = await WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/');
@@ -380,7 +422,7 @@ class SettingsScreen extends React.Component {
             Haptic.selection();
         }
         const { dispatch, navigation } = this.props;
-        
+
         dispatch(changeActiveDomain(id))
         navigation.navigate('AuthLoading');
     }
