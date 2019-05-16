@@ -37,25 +37,11 @@ class SettingsScreen extends React.Component {
     };
 
     componentDidMount() {
-        const { userInfo, dispatch, activeDomain, domains } = this.props;
+        const { userInfo, domains } = this.props;
         this.setState({
             username: userInfo.username,
             email: userInfo.email
         })
-        // if (userInfo.tokenId) {
-        //     dispatch(fetchNotifications({
-        //         tokenId: userInfo.tokenId,
-        //         domain: activeDomain.id
-        //     }))
-        // }
-
-        // this.setState({
-        //     notifications: domains.map(domain => {
-        //         return {[domain.id]: domain.notificationCategories.map(notification => {
-        //             return {[notification.id]: notification.active}
-        //         })}
-        //     })
-        // })
 
         this.setState({
             notifications: domains.reduce(function (map, domain) {
@@ -69,9 +55,20 @@ class SettingsScreen extends React.Component {
     }
 
     render() {
-        console.log('state', this.state)
-        const { snackbarVisible, editingUsername, editingEmail, username, email, notifications } = this.state;
-        const { domains, userInfo, dispatch, theme } = this.props;
+        const { 
+            snackbarVisible, 
+            editingUsername, 
+            editingEmail, 
+            username, 
+            email, 
+            notifications 
+        } = this.state;
+        const { 
+            domains, 
+            userInfo, 
+            dispatch, 
+            theme 
+        } = this.props;
         return (
             <ScrollView style={styles.container}>
                 <View style={{ flex: 1 }}>
@@ -305,7 +302,7 @@ class SettingsScreen extends React.Component {
         if (Platform.OS === 'ios') {
             Haptic.selection();
         }
-        const { domains, navigation } = this.props;
+        const { domains, navigation, userInfo } = this.props;
         if (domain.active) {
             let found = domains.find(domain => {
                 return !domain.active
@@ -316,6 +313,15 @@ class SettingsScreen extends React.Component {
                 navigation.navigate('AuthLoading');
             }
         }
+        // get all the category IDs to remove them from DB
+        const categoryIds = domain.notificationCategories.map(category => {
+            return category.id
+        })
+        this.props.dispatch(removeNotification({
+            tokenId: userInfo.tokenId,
+            categoryId: categoryIds,
+            domain: domain.id
+        }))
         this.props.dispatch(deleteDomain(domain.id))
         this.setState({
             snackbarVisible: true
@@ -334,6 +340,7 @@ class SettingsScreen extends React.Component {
             })
         }
     }
+
 
     _toggleNotifications = (notificationId, value, domain, notification) => {
         if (Platform.OS === 'ios') {
@@ -373,6 +380,7 @@ class SettingsScreen extends React.Component {
             Haptic.selection();
         }
         const { dispatch, navigation } = this.props;
+        
         dispatch(changeActiveDomain(id))
         navigation.navigate('AuthLoading');
     }

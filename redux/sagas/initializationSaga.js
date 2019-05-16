@@ -15,8 +15,12 @@ import { fetchMenus } from './menuSaga';
 
 import Sentry from 'sentry-expo';
 
+
+const getUserInfo = state => state.userInfo
+
 function* initialize(action) {
     const { domain, domainId } = action;
+    const userInfo = yield select(getUserInfo);
     try {
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menus and DB categories
         const menus = yield call(fetchMenus, {
@@ -92,14 +96,14 @@ function* initialize(action) {
 
         // if image is set otherwise empty string
         yield put(receiveMenus({
-            menus,
+            menus: menus.menus,
             header: headerImageId.result ? headerImage[0].source_url : '',
             headerSmall: headerSmallId.result ? headerSmall[0].source_url : '',
             splashScreen: splashScreenId.result ? splashScreen[0].source_url : '',
         }))
         yield put(fetchArticlesIfNeeded({
             domain,
-            category: menus[0].object_id,
+            category: menus.menus[0].object_id,
         }))
         yield put(initializeSaved(
             domainId
