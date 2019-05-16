@@ -20,6 +20,7 @@ import {
 } from '../redux/actions/actions';
 
 import ArticleListContent from '../views/ArticleListContent';
+import Animation from '../views/Animation';
 
 class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -89,43 +90,31 @@ class RecentScreen extends React.Component {
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (recent.items.length === 0 && recent.isFetching) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <View style={styles.animationContainer}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 400,
-                                height: 400,
-                            }}
-                            loop={true}
-                            speed={1}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/article-loading-animation')}
-                        />
-                    </View>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Animation
+                        style={{
+                            width: 400,
+                            height: 400
+                        }}
+                        source={require('../assets/lottiefiles/article-loading-animation')}
+                        saveRef={this._saveAnimationRef}
+                        speed={1}
+                    />
                 </View>
             )
         }
         if (recent.error) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={styles.animationContainerError}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                            }}
-                            loop={false}
-                            speed={1}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/broken-stick-error')}
-                        />
-                    </View>
+                    <Animation
+                        style={{
+                            width: 200,
+                            height: 200
+                        }}
+                        source={require('../assets/lottiefiles/broken-stick-error')}
+                        saveRef={this._saveAnimationRef}
+                        speed={1}
+                    />
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>
@@ -182,6 +171,10 @@ class RecentScreen extends React.Component {
 
     _saveRef = (ref) => {
         this.flatListRef = ref;
+    }
+
+    _saveAnimationRef = (ref) => {
+        this.animation = ref;
     }
 
     _scrollToTop = () => {

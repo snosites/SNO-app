@@ -7,9 +7,6 @@ import {
 } from 'react-native';
 import Color from 'color';
 import { connect } from 'react-redux';
-import { DangerZone } from 'expo';
-
-const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +21,7 @@ import {
 } from '../redux/actions/actions';
 
 import ArticleListContent from '../views/ArticleListContent';
+import Animation from '../views/Animation';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -97,43 +95,31 @@ class ListScreen extends React.Component {
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (articlesByCategory.length === 0 && category.isFetching) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <View style={styles.animationContainer}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 400,
-                                height: 400,
-                            }}
-                            loop={true}
-                            speed={1}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/article-loading-animation')}
-                        />
-                    </View>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Animation
+                        style={{
+                            width: 400,
+                            height: 400
+                        }}
+                        source={require('../assets/lottiefiles/article-loading-animation')}
+                        saveRef={this._saveAnimationRef}
+                        speed={1}
+                    />
                 </View>
             )
         }
         if (category.error) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={styles.animationContainerError}>
-                        <Lottie
-                            ref={animation => {
-                                this.animation = animation;
-                            }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                            }}
-                            loop={false}
-                            speed={1}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/broken-stick-error')}
-                        />
-                    </View>
+                    <Animation
+                        style={{
+                            width: 200,
+                            height: 200
+                        }}
+                        source={require('../assets/lottiefiles/broken-stick-error')}
+                        saveRef={this._saveAnimationRef}
+                        speed={1}
+                    />
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>
@@ -196,6 +182,10 @@ class ListScreen extends React.Component {
         this.flatListRef = ref;
     }
 
+    _saveAnimationRef = (ref) => {
+        this.animation = ref;
+    }
+
     _saveRemoveToggle = article => {
         if (article.saved) {
             this._handleArticleRemove(article.id);
@@ -231,10 +221,6 @@ class ListScreen extends React.Component {
         }))
     }
 
-    _setShouldLoadMore = () => {
-
-    }
-
     _handleRefresh = () => {
         const { dispatch, activeDomain, category } = this.props;
         dispatch(invalidateArticles(category.categoryId));
@@ -252,14 +238,6 @@ class ListScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    animationContainer: {
-        width: 400,
-        height: 400,
-    },
-    animationContainerError: {
-        width: 200,
-        height: 200,
-    },
     snackbar: {
         position: 'absolute',
         bottom: 0,

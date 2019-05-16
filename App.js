@@ -164,7 +164,7 @@ class AppNavigatorContainer extends React.Component {
         console.log('new notification', notification);
         console.log('notification data', notification.data);
         this.setState({ notification });
-
+        // if app is open show custom notification
         if (notification.origin == 'received') {
             this.setState({
                 visible: true
@@ -202,7 +202,7 @@ class AppNavigatorContainer extends React.Component {
                                 paddingVertical: 5,
                                 justifyContent: 'space-between',
                                 backgroundColor: '#e0e0e0',
-                                borderRadius: 10,
+                                borderRadius: 7,
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,

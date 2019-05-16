@@ -72,9 +72,7 @@ class AppSetupScreen extends React.Component {
     }
 
     _loadSettings = async () => {
-        const { userInfo } = this.props;
-        const { url } = this.props.activeDomain;
-        const { id } = this.props.activeDomain;
+        const { url, id } = this.props.activeDomain;
         //fetch menus
         this.props.dispatch(fetchMenus(url, id));
     };
