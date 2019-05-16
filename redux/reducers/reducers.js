@@ -171,28 +171,6 @@ function savedArticles(
     }
 }
 
-// export function savedArticles(state = [], action) {
-//     switch (action.type) {
-//         case 'SAVE_ARTICLE':
-//             let found = state.find(article => {
-//                 return action.article.id == article.id
-//             })
-//             if (found) {
-//                 return state
-//             }
-//             return [
-//                 ...state,
-//                 action.article
-//             ]
-//         case 'REMOVE_SAVED_ARTICLE':
-//             return state.filter(article => {
-//                 return article.id !== action.articleId
-//             })
-//         default:
-//             return state
-//     }
-// }
-
 export function userInfo(state = {
     allNotifications: {}
 }, action) {

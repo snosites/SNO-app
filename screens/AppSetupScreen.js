@@ -13,7 +13,7 @@ const { Lottie } = DangerZone;
 const { manifest } = Constants;
 
 import { connect } from 'react-redux';
-import { fetchArticles, fetchMenus } from '../redux/actions/actions';
+import { initialize } from '../redux/actions/actions';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -74,7 +74,7 @@ class AppSetupScreen extends React.Component {
     _loadSettings = async () => {
         const { url, id } = this.props.activeDomain;
         //fetch menus
-        this.props.dispatch(fetchMenus(url, id));
+        this.props.dispatch(initialize(url, id));
     };
 
     _playAnimation = () => {

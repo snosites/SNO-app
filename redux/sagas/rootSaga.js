@@ -7,6 +7,7 @@ import searchArticleSaga from './searchSaga';
 import menuSaga from './menuSaga';
 import profilesSaga from './ProfilesSaga';
 import notificationsSaga from './userNotifications';
+import initializationSaga from './initializationSaga';
 
 export default function* rootSaga() {
     yield all([
@@ -16,6 +17,7 @@ export default function* rootSaga() {
         searchArticleSaga(),
         menuSaga(),
         profilesSaga(),
-        notificationsSaga()
+        notificationsSaga(),
+        initializationSaga()
     ])
 }
