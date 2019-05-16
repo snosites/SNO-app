@@ -1,12 +1,11 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation';
-import ConnectedBottomTabBar from '../components/ConnectedBottomTabBar';
 
 import Color from 'color';
 
+import ConnectedBottomTabBar from '../components/ConnectedBottomTabBar';
 import TabBarIcon from '../components/TabBarIcon';
-import TabBarLabel from '../components/TabBarLabel';
 
 import AppSetupScreen from '../screens/AppSetupScreen';
 import MainDrawerNavigator from './MainDrawerNavigator';

@@ -6,7 +6,6 @@ import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
 import Color from 'color';
 
 import TabBarIcon from '../components/TabBarIcon';
-import TabBarLabel from '../components/TabBarLabel';
 import CustomDrawer from './CustomDrawer';
 
 import ListScreen from '../screens/ListScreen';

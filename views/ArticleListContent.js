@@ -115,7 +115,7 @@ export default class ArticleListContent extends React.Component {
                                 fontSize: 15
                             }}
                         >
-                            {article.custom_fields.writer ? article.custom_fields.writer : ''}
+                            {article.custom_fields.writer ? this._renderWriters(article.custom_fields.writer) : ''}
                         </Text>
                         <View
                             style={{
@@ -288,6 +288,24 @@ export default class ArticleListContent extends React.Component {
                 }
             </Text>
         )
+    }
+
+    _renderWriters = writers => {
+        console.log('writer', writers)
+        let newArr = '';
+        for(let i = 0; i < writers.length; i++) {
+            console.log('new arr', newArr)
+            if(i === writers.length - 2){
+                newArr += `${writers[i]} & `
+            } 
+            else if(i === writers.length - 1) {
+                newArr += `${writers[i]}`
+            } else {
+                newArr += `${writers[i]}, `
+            }
+        }
+        
+        return newArr;
     }
 
 }
