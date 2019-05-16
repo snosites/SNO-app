@@ -56,10 +56,10 @@ class ProfileScreen extends React.Component {
                     profile == 'none' ?
                         <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
                             <Image
-                                style={styles.profileImage}
+                                style={styles.noProfileImage}
                                 source={require('../assets/images/anon.png')}
                             />
-                            <Text style={{ fontSize: 35, textAlign: 'center', paddingVertical: 20 }}>
+                            <Text style={{ fontSize: 28, textAlign: 'center', paddingVertical: 20 }}>
                                 This person does not appear to have a profile page
                             </Text>
                         </View>
@@ -277,6 +277,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 15,
         marginBottom: 5
+    },
+    noProfileImage: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
     },
     profileImage: {
         width: 200,
