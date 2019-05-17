@@ -31,8 +31,8 @@ class ListScreen extends React.Component {
                 logo &&
                 <Image
                     source={{ uri: logo }}
-                    style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
-                    resizeMode='cover'
+                    style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
+                    resizeMode='contain'
                 />
             ),
             headerBackTitle: null

@@ -291,7 +291,6 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderWriters = writers => {
-        console.log('writer', writers)
         let newArr = '';
         for(let i = 0; i < writers.length; i++) {
             console.log('new arr', newArr)
