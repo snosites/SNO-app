@@ -3,7 +3,8 @@ import {
     ScrollView,
     StyleSheet,
     Share,
-    StatusBar
+    StatusBar,
+    View
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
@@ -36,88 +37,89 @@ class FullArticleScreen extends React.Component {
         let articleChapters = navigation.getParam('articleChapters', [])
 
         return (
-            <ScrollView style={styles.storyContainer}>
-                <NavigationEvents
-                    onDidFocus={() => this.setState({
-                        showPortal: true
-                    })}
-                    onWillBlur={() => {
-                        console.log('bluuuuuured');
-                        StatusBar.setHidden(false);
-                        this.setState({
-                            showPortal: false,
-                            expandCaption: false
-                        })
-                    }}
-                />
-                {article !== 'loading' && 
-                <ArticleBodyContent 
-                    navigation={navigation}
-                    article={article}
-                    theme={theme}
-                    handleCaptionClick={this._handleCaptionClick}
-                    expandCaption={this.state.expandCaption}
-                />
-                }
-                {/* display chapters if there are any -- long form stories */}
-                {articleChapters.map(article => (
-                    <ArticleBodyContent
-                        navigation={navigation}
-                        article={article}
-                        theme={theme}
-                        handleCaptionClick={this._handleCaptionClick}
-                        expandCaption={this.state.expandCaption}
+            <View style={{flex: 1}}>
+                <ScrollView>
+                    <NavigationEvents
+                        onDidFocus={() => this.setState({
+                            showPortal: true
+                        })}
+                        onWillBlur={() => {
+                            console.log('bluuuuuured');
+                            StatusBar.setHidden(false);
+                            this.setState({
+                                showPortal: false,
+                                expandCaption: false
+                            })
+                        }}
                     />
-                ))}
-
-                {this.state.showPortal && <Portal>
-                    <SafeAreaView style={{ flex: 1, justifyContent: 'flex-end' }} onLayout={(e) => {
-                        console.log('on layout e', e.layout)
-                    }}>
-                        <Snackbar
-                            visible={snackbarSavedVisible}
-                            style={styles.snackbar}
-                            duration={3000}
-                            onDismiss={() => this.setState({ snackbarSavedVisible: false })}
-                            action={{
-                                label: 'Dismiss',
-                                onPress: () => {
-                                    this.setState({ snackbarSavedVisible: false })
-                                }
-                            }}
-                        >
-                            Article Added To Saved List
-                        </Snackbar>
-                        <FAB.Group
-                            style={{ flex: 1, position: 'relative', paddingBottom: snackbarSavedVisible ? 100 : 50 }}
-                            open={this.state.fabOpen}
-                            icon={this.state.fabOpen ? 'clear' : 'add'}
-                            actions={[
-                                {
-                                    icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
-                                        comments: article.comments
-                                    })
-                                },
-                                {
-                                    icon: 'send', label: 'Share', onPress: () => {
-                                        this._shareArticle(article)
-                                    }
-                                },
-                                { icon: 'bookmark', label: 'Save', onPress: () => this._handleArticleSave(article) },
-                            ]}
-                            onStateChange={({ open }) => this.setState({
-                                fabOpen: open
-                            })}
-                            onPress={() => {
-                                if (this.state.open) {
-                                    // do something if the speed dial is open
-                                }
-                            }}
+                    {article !== 'loading' &&
+                        <ArticleBodyContent
+                            navigation={navigation}
+                            article={article}
+                            theme={theme}
+                            handleCaptionClick={this._handleCaptionClick}
+                            expandCaption={this.state.expandCaption}
                         />
-                    </SafeAreaView>
-                </Portal>}
+                    }
+                    {/* display chapters if there are any -- long form stories */}
+                    {articleChapters.map(article => (
+                        <ArticleBodyContent
+                            navigation={navigation}
+                            article={article}
+                            theme={theme}
+                            handleCaptionClick={this._handleCaptionClick}
+                            expandCaption={this.state.expandCaption}
+                        />
+                    ))}
 
-            </ScrollView>
+                    {this.state.showPortal && <Portal>
+                        <SafeAreaView style={{ flex: 1, justifyContent: 'flex-end' }}>
+                            <Snackbar
+                                visible={snackbarSavedVisible}
+                                style={styles.snackbar}
+                                duration={3000}
+                                onDismiss={() => this.setState({ snackbarSavedVisible: false })}
+                                action={{
+                                    label: 'Dismiss',
+                                    onPress: () => {
+                                        this.setState({ snackbarSavedVisible: false })
+                                    }
+                                }}
+                            >
+                                Article Added To Saved List
+                        </Snackbar>
+                            <FAB.Group
+                                style={{ flex: 1, position: 'relative', paddingBottom: snackbarSavedVisible ? 100 : 50 }}
+                                open={this.state.fabOpen}
+                                icon={this.state.fabOpen ? 'clear' : 'add'}
+                                actions={[
+                                    {
+                                        icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
+                                            comments: article.comments
+                                        })
+                                    },
+                                    {
+                                        icon: 'send', label: 'Share', onPress: () => {
+                                            this._shareArticle(article)
+                                        }
+                                    },
+                                    { icon: 'bookmark', label: 'Save', onPress: () => this._handleArticleSave(article) },
+                                ]}
+                                onStateChange={({ open }) => this.setState({
+                                    fabOpen: open
+                                })}
+                                onPress={() => {
+                                    if (this.state.open) {
+                                        // do something if the speed dial is open
+                                    }
+                                }}
+                            />
+                        </SafeAreaView>
+                    </Portal>}
+
+                </ScrollView>
+            </View>
+            
         );
     }
 
