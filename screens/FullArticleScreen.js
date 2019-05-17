@@ -71,7 +71,9 @@ class FullArticleScreen extends React.Component {
                 ))}
 
                 {this.state.showPortal && <Portal>
-                    <SafeAreaView style={{ flex: 1 }}>
+                    <SafeAreaView style={{ flex: 1, justifyContent: 'flex-end' }} onLayout={(e) => {
+                        console.log('on layout e', e.layout)
+                    }}>
                         <Snackbar
                             visible={snackbarSavedVisible}
                             style={styles.snackbar}
@@ -87,7 +89,7 @@ class FullArticleScreen extends React.Component {
                             Article Added To Saved List
                         </Snackbar>
                         <FAB.Group
-                            style={{ paddingBottom: snackbarSavedVisible ? 130 : 80 }}
+                            style={{ flex: 1, position: 'relative', paddingBottom: snackbarSavedVisible ? 100 : 50 }}
                             open={this.state.fabOpen}
                             icon={this.state.fabOpen ? 'clear' : 'add'}
                             actions={[

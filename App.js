@@ -249,7 +249,7 @@ class AppNavigatorContainer extends React.Component {
                     </View>
                     <Portal>
                         <FadeInView
-                            visible={true}
+                            visible={visible}
                             style={{
                                 position: 'absolute',
                                 top: -100,
