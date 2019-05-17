@@ -71,12 +71,12 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderItem = ({ item }) => {
-        const { theme, onIconPress, deleteIcon, activeDomain, navigation } = this.props;
+        const { theme, onIconPress, deleteIcon, activeDomain } = this.props;
         const article = item;
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={() => handleArticlePress(article, activeDomain, navigation)}
+                onPress={() => handleArticlePress(article, activeDomain)}
             >
                 <View style={styles.storyContainer}>
                     {article.featuredImage ?

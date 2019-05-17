@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import { Haptic } from 'expo';
-
+import NavigationService from '../utils/NavigationService';
 
 getAttachmentsAsync = async (article) => {
     console.log('article', article)
@@ -9,19 +9,19 @@ getAttachmentsAsync = async (article) => {
     return imageAttachments;
 }
 
-export const handleArticlePress = (article, activeDomain, navigation) => {
+export const handleArticlePress = (article, activeDomain) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
     console.log('article', article)
     if (article.custom_fields.sno_format && article.custom_fields.sno_format == 'Classic') {
-        handleRegularArticle(article, navigation);
+        handleRegularArticle(article);
     } else {
-        handleLongFormArticle(article, activeDomain, navigation);
+        handleLongFormArticle(article, activeDomain);
     }
 }
 
-handleRegularArticle = async (article, navigation) => {
+handleRegularArticle = async (article) => {
     console.log('in article press')
     if (Platform.OS === 'ios') {
         Haptic.selection();
@@ -30,7 +30,7 @@ handleRegularArticle = async (article, navigation) => {
     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
         article.slideshow = await this._getAttachmentsAsync(article);
     }
-    navigation.navigate('FullArticle', {
+    NavigationService.navigate('FullArticle', {
         articleId: article.id,
         article,
         commentNumber: article.comments.length,
@@ -38,10 +38,10 @@ handleRegularArticle = async (article, navigation) => {
     })
 }
 
-handleLongFormArticle = async (article, activeDomain, navigation) => {
+handleLongFormArticle = async (article, activeDomain) => {
     console.log('in article press long form')
     let storyChapters = [];
-    navigation.navigate('FullArticle');
+    NavigationService.navigate('FullArticle');
     if (article.custom_fields.sno_format == "Long-Form") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
@@ -92,7 +92,7 @@ handleLongFormArticle = async (article, activeDomain, navigation) => {
             return 0;
         })
     }
-    navigation.navigate('FullArticle', {
+    NavigationService.navigate('FullArticle', {
         articleId: article.id,
         article,
         articleChapters: updatedStoryChapters,

@@ -172,6 +172,11 @@ function savedArticles(
 }
 
 export function userInfo(state = {
+    username: '',
+    email: '',
+    tokenId: '',
+    apiKey: '',
+    fromPush: false,
     allNotifications: {}
 }, action) {
     switch (action.type) {
@@ -193,6 +198,11 @@ export function userInfo(state = {
                     ...state.allNotifications,
                     [action.domainId]: action.allNotifications
                 }
+            }
+        case 'SET_FROM_PUSH':
+            return {
+                ...state,
+                fromPush: action.payload
             }
         case 'SET_API_KEY':
             return {

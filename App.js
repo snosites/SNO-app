@@ -11,19 +11,22 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
-import Color from 'color';
 import { Provider as ReduxProvider, connect } from 'react-redux';
+import { changeActiveDomain, setFromPush } from './redux/actions/actions';
+
 import AppNavigator from './navigation/AppNavigator';
+import NavigationService from './utils/NavigationService';
+import { handleArticlePress } from './utils/articlePress';
+
 import { Provider as PaperProvider, Portal } from 'react-native-paper';
+import Color from 'color';
+import Moment from 'moment';
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
 
 import Sentry from 'sentry-expo';
 import { secrets } from './env';
-
-import { Feather } from '@expo/vector-icons';
-import Moment from 'moment';
 
 import { useScreens } from 'react-native-screens';
 
@@ -73,7 +76,6 @@ class FadeInView extends React.Component {
 
 
     componentDidMount() {
-
         if (this.props.visible) {
             this._show();
         }
@@ -176,18 +178,45 @@ class AppNavigatorContainer extends React.Component {
                 })
             }, 8000)
         }
+        else if(notification.origin === 'selected') {
+            this._handleNotificationPress();
+        }
     };
 
-    _handleNotificationPress = () => {
+    _handleNotificationPress = async () => {
         const { notification } = this.state;
-        const { activeDomain, dispatch } = this.props;
+        const { activeDomain, dispatch, domains } = this.props;
         this.setState({
             visible: false
         })
-        if(notification.domain_id === activeDomain.id){
-
+        const article = await this._fetchArticleAndComments(activeDomain.url, notification.data.post_id);
+        if (notification.domain_id === activeDomain.id) {
+            handleArticlePress(article, activeDomain);
+        } else {
+            // make sure domain origin is a saved domain
+            let found = domains.find(domain => {
+                return domain.id === notification.domain_id;
+            })
+            if(!found) {
+                // user doesnt have this domain saved -- handle further later
+                return;
+            }
+            // sets key for app to look for on new domain load
+            dispatch(setFromPush(true));
+            // change active domain
+            dispatch(changeActiveDomain(notification.domain_id));
         }
+    }
 
+    _fetchArticleAndComments = async (url, articleId) => {
+        const [articleQuery, commentsQuery] = await Promise.all([
+            await fetch(`https://${url}/wp-json/wp/v2/posts/${articleId}`),
+            await fetch(`https://${url}/wp-json/wp/v2/comments?post=${articleId}`)
+        ])
+        const article = await articleQuery.json();
+        const comments = await commentsQuery.json();
+        article.comments = comments;
+        return article;
     }
 
     render() {
@@ -200,7 +229,12 @@ class AppNavigatorContainer extends React.Component {
                 <PaperProvider theme={theme}>
                     <View style={styles.container}>
                         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-                        <AppNavigator screenProps={{ theme: theme }} />
+                        <AppNavigator 
+                            screenProps={{ theme: theme }} 
+                            ref={navigatorRef => {
+                                NavigationService.setTopLevelNavigator(navigatorRef);
+                            }}
+                        />
                     </View>
                     <Portal>
                         <FadeInView
@@ -270,7 +304,8 @@ class AppNavigatorContainer extends React.Component {
 const mapStateToProps = store => ({
     userInfo: store.userInfo,
     theme: store.theme,
-    activeDomain: store.activeDomain
+    activeDomain: store.activeDomain,
+    domains: store.domains
 })
 
 const ConnectedAppNavigator = connect(mapStateToProps)(AppNavigatorContainer);
