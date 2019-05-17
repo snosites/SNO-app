@@ -88,7 +88,7 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={styles.articleContents}>
                     <HTML
                         html={article.content.rendered}
-                        imagesMaxWidth={Dimensions.get('window').width}
+                        imagesMaxWidth={MEDIAWIDTH}
                         ignoredStyles={['height', 'width', 'display']}
                         textSelectable={true}
                         onLinkPress={(e, href) => this._viewLink(href)}
@@ -99,7 +99,6 @@ export default class ArticleBodyContent extends React.Component {
                             },
                             img: {
                                 height: MEDIASIZE,
-                                width: MEDIAWIDTH,
                                 borderRadius: 8
                             }
                         }}

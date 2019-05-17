@@ -7,7 +7,8 @@ import {
     Text,
     ActivityIndicator,
     Animated,
-    PanResponder
+    PanResponder,
+    TouchableOpacity
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 import Color from 'color';
@@ -41,7 +42,7 @@ class FadeInView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            slideAnim: new Animated.Value(-170)
+            slideAnim: new Animated.Value(-125)
         }
 
         this._panResponder = PanResponder.create({
@@ -165,7 +166,7 @@ class AppNavigatorContainer extends React.Component {
         console.log('notification data', notification.data);
         this.setState({ notification });
         // if app is open show custom notification
-        if (notification.origin == 'received') {
+        if (notification.origin === 'received') {
             this.setState({
                 visible: true
             })
@@ -176,6 +177,18 @@ class AppNavigatorContainer extends React.Component {
             }, 8000)
         }
     };
+
+    _handleNotificationPress = () => {
+        const { notification } = this.state;
+        const { activeDomain, dispatch } = this.props;
+        this.setState({
+            visible: false
+        })
+        if(notification.domain_id === activeDomain.id){
+
+        }
+
+    }
 
     render() {
         const { notification, visible } = this.state;
@@ -214,33 +227,38 @@ class AppNavigatorContainer extends React.Component {
                                 elevation: 12,
                             }}
                         >
-                            <Text style={{ fontSize: 10, paddingLeft: 10, color: '#424242' }}>
-                                {String(Moment().fromNow())}
-                            </Text>
-                            <Text
-                                ellipsizeMode='tail'
-                                numberOfLines={1}
-                                style={{
-                                    fontSize: 14,
-                                    paddingHorizontal: 5,
-                                }}
+                            <TouchableOpacity
+                                style={{ flex: 1 }}
+                                onPress={() => this._handleNotificationPress()}
                             >
-                                {notification.data ?
-                                    `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
-                                    null
-                                }
-                            </Text>
-                            <Text
-                                ellipsizeMode='tail'
-                                numberOfLines={1}
-                                style={{ fontSize: 14, paddingLeft: 10, color: '#757575' }}
-                            >
-                                {notification.data ?
-                                    notification.data.title
-                                    :
-                                    null
-                                }
-                            </Text>
+                                <Text style={{ fontSize: 10, paddingLeft: 10, color: '#424242' }}>
+                                    {String(Moment().fromNow())}
+                                </Text>
+                                <Text
+                                    ellipsizeMode='tail'
+                                    numberOfLines={1}
+                                    style={{
+                                        fontSize: 14,
+                                        paddingHorizontal: 5,
+                                    }}
+                                >
+                                    {notification.data ?
+                                        `New ${notification.data.category_name} Story from ${notification.data.site_name}` :
+                                        null
+                                    }
+                                </Text>
+                                <Text
+                                    ellipsizeMode='tail'
+                                    numberOfLines={1}
+                                    style={{ fontSize: 14, paddingLeft: 10, color: '#757575' }}
+                                >
+                                    {notification.data ?
+                                        notification.data.title
+                                        :
+                                        null
+                                    }
+                                </Text>
+                            </TouchableOpacity>
                         </FadeInView>
                     </Portal>
                 </PaperProvider>
@@ -251,10 +269,12 @@ class AppNavigatorContainer extends React.Component {
 
 const mapStateToProps = store => ({
     userInfo: store.userInfo,
-    theme: store.theme
+    theme: store.theme,
+    activeDomain: store.activeDomain
 })
 
 const ConnectedAppNavigator = connect(mapStateToProps)(AppNavigatorContainer);
+
 
 export default class App extends React.Component {
     state = {
