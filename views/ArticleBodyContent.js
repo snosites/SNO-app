@@ -347,7 +347,6 @@ export default class ArticleBodyContent extends React.Component {
     _renderDate = date => {
         let dateNow = Moment();
         let subDate = Moment(date).subtract(7, 'days');
-        console.log('moment date', subDate, dateNow)
         if (Moment().isAfter(Moment(date).add(7, 'days'))) {
             return (
                 <Text style={{

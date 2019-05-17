@@ -49,13 +49,18 @@ class FadeInView extends React.Component {
         }
 
         this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            // onStartShouldSetPanResponder: (evt, gestureState) => true,
+            // onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => false,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+                //return true if user is swiping, return false if it's a single click
+                const { dx, dy } = gestureState
+                console.log('dy', dy, 'dx', dx)
+                return dy > 2 || dy < -2
+            },
             onPanResponderTerminationRequest: (evt, gestureState) => true,
             onPanResponderGrant: (evt, gestureState) => {
-                console.log('pan started')
+                console.log('pan started', gestureState)
             },
             // on each move event, set slideValue to gestureState.dx -- the 
             // first value `null` ignores the first `event` argument
@@ -163,6 +168,8 @@ class AppNavigatorContainer extends React.Component {
         }
     }
 
+    // { "category_name": "Opinions", "domain_id": "59162841", "post_id": "34587", "site_name": "Best of SNO", "title": "test" }
+
     _handleNotification = (notification) => {
         console.log('new notification', notification);
         console.log('notification data', notification.data);
@@ -184,27 +191,31 @@ class AppNavigatorContainer extends React.Component {
     };
 
     _handleNotificationPress = async () => {
+        console.log('notification press')
         const { notification } = this.state;
         const { activeDomain, dispatch, domains } = this.props;
         this.setState({
             visible: false
         })
+        NavigationService.navigate('FullArticle');
         const article = await this._fetchArticleAndComments(activeDomain.url, notification.data.post_id);
-        if (notification.domain_id === activeDomain.id) {
+        if (notification.data.domain_id == activeDomain.id) {
             handleArticlePress(article, activeDomain);
         } else {
             // make sure domain origin is a saved domain
             let found = domains.find(domain => {
-                return domain.id === notification.domain_id;
+                return domain.id == notification.data.domain_id;
             })
             if(!found) {
                 // user doesnt have this domain saved -- handle further later
                 return;
             }
             // sets key for app to look for on new domain load
-            dispatch(setFromPush(true));
+            dispatch(setFromPush(article));
             // change active domain
             dispatch(changeActiveDomain(notification.domain_id));
+            //navigate to auth loading to load initial domain data
+            NavigationService.navigate('AuthLoading');
         }
     }
 
@@ -238,7 +249,7 @@ class AppNavigatorContainer extends React.Component {
                     </View>
                     <Portal>
                         <FadeInView
-                            visible={visible}
+                            visible={true}
                             style={{
                                 position: 'absolute',
                                 top: -100,
@@ -247,7 +258,6 @@ class AppNavigatorContainer extends React.Component {
                                 height: 75,
                                 paddingHorizontal: 10,
                                 paddingVertical: 5,
-                                justifyContent: 'space-between',
                                 backgroundColor: '#e0e0e0',
                                 borderRadius: 7,
                                 shadowColor: "#000",
@@ -262,10 +272,13 @@ class AppNavigatorContainer extends React.Component {
                             }}
                         >
                             <TouchableOpacity
-                                style={{ flex: 1 }}
+                                style={{ 
+                                    flex: 1,
+                                    justifyContent: 'space-between', 
+                                }}
                                 onPress={() => this._handleNotificationPress()}
                             >
-                                <Text style={{ fontSize: 10, paddingLeft: 10, color: '#424242' }}>
+                                <Text style={{ fontSize: 10, paddingLeft: 5, color: '#424242' }}>
                                     {String(Moment().fromNow())}
                                 </Text>
                                 <Text
@@ -284,7 +297,7 @@ class AppNavigatorContainer extends React.Component {
                                 <Text
                                     ellipsizeMode='tail'
                                     numberOfLines={1}
-                                    style={{ fontSize: 14, paddingLeft: 10, color: '#757575' }}
+                                    style={{ fontSize: 14, paddingLeft: 5, color: '#757575' }}
                                 >
                                     {notification.data ?
                                         notification.data.title

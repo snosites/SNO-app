@@ -174,107 +174,6 @@ export default class ArticleListContent extends React.Component {
         )
     }
 
-    // _getAttachmentsAync = async (article) => {
-    //     console.log('article', article)
-    //     const response = await fetch(article._links['wp:attachment'][0].href);
-    //     const imageAttachments = await response.json();
-    //     return imageAttachments;
-    // }
-
-    // _handleArticlePress = article => () => {
-    //     if (Platform.OS === 'ios') {
-    //         Haptic.selection();
-    //     }
-    //     console.log('article', article)
-    //     if (article.custom_fields.sno_format && article.custom_fields.sno_format == 'Classic') {
-    //         this._handleRegularArticle(article)
-    //     } else {
-    //         this._handleLongFormArticle(article);
-    //     }
-    // }
-
-    // _handleRegularArticle = async (article) => {
-    //     console.log('in article press')
-    //     const { navigation } = this.props;
-    //     if (Platform.OS === 'ios') {
-    //         Haptic.selection();
-    //     }
-    //     // check if there is a slidehsow
-    //     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-    //         article.slideshow = await this._getAttachmentsAync(article);
-    //     }
-    //     navigation.navigate('FullArticle', {
-    //         articleId: article.id,
-    //         article,
-    //         commentNumber: article.comments.length,
-    //         comments: article.comments
-    //     })
-    // }
-
-    // _handleLongFormArticle = async article => {
-    //     console.log('in article press long form')
-    //     const { navigation, activeDomain } = this.props;
-    //     let storyChapters = [];
-    //     navigation.navigate('FullArticle');
-    //     if (article.custom_fields.sno_format == "Long-Form") {
-    //         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
-    //         storyChapters = await results.json();
-    //     }
-    //     else if (article.custom_fields.sno_format == "Grid") {
-    //         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`)
-    //         storyChapters = await results.json();
-    //     }
-    //     else if (article.custom_fields.sno_format == "Side by Side") {
-    //         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_sidebyside_list&meta_query[0][value]=${article.id}`)
-    //         storyChapters = await results.json();
-    //     }
-    //     let updatedStoryChapters = await Promise.all(storyChapters.map(async article => {
-    //         const response = await fetch(`https://${activeDomain.url}/wp-json/wp/v2/posts/${article.ID}`)
-    //         return await response.json();
-    //     }))
-    //     updatedStoryChapters = await Promise.all(updatedStoryChapters.map(async article => {
-    //         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-    //             article.slideshow = await this._getAttachmentsAync(article);
-    //         }
-    //         if (article._links['wp:featuredmedia']) {
-    //             const imgResponse = await fetch(article._links['wp:featuredmedia'][0].href);
-    //             const featuredImage = await imgResponse.json();
-    //             if (!featuredImage.meta_fields) {
-    //                 article.featuredImage = {
-    //                     uri: featuredImage.source_url,
-    //                     photographer: 'Unknown',
-    //                     caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-    //                 }
-    //                 return article
-    //             }
-    //             article.featuredImage = {
-    //                 uri: featuredImage.source_url,
-    //                 photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
-    //                 caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-    //             }
-    //         }
-    //         return article
-    //     }))
-    //     if (article.custom_fields.sno_format == "Long-Form") {
-    //         console.log('updated chapters', updatedStoryChapters)
-    //         // sort long form chapters
-    //         updatedStoryChapters.sort(function (a, b) {
-    //             if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
-    //                 return -1;
-    //             if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] > b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
-    //                 return 1;
-    //             return 0;
-    //         })
-    //     }
-    //     navigation.navigate('FullArticle', {
-    //         articleId: article.id,
-    //         article,
-    //         articleChapters: updatedStoryChapters,
-    //         commentNumber: article.comments.length,
-    //         comments: article.comments
-    //     })
-    // }
-
     _renderDate = date => {
         return (
             <Text style={{
@@ -295,7 +194,6 @@ export default class ArticleListContent extends React.Component {
     _renderWriters = writers => {
         let newArr = '';
         for(let i = 0; i < writers.length; i++) {
-            console.log('new arr', newArr)
             if(i === writers.length - 2){
                 newArr += `${writers[i]} & `
             } 
