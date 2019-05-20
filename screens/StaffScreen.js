@@ -72,8 +72,31 @@ class StaffScreen extends React.Component {
             headerLogo: menus.headerSmall
         })
         let years = navigation.getParam('activeYears', null);
+        let customDisplay = navigation.getParam('customDisplay', null);
+        let staffDisplay = navigation.getParam('staffDisplay', null);
+
         let sortedYears = years.sort();
-        let indexNum = sortedYears.length - 2;
+        let indexNum;
+        if(customDisplay){
+            indexNum = sortedYears.indexOf(staffDisplay);
+        } else {
+            const thisYear = Moment().year();
+            const nextYear = Moment().add(1, 'y').format('YYYY');
+            const thisMonth = Moment().month();
+            console.log('year calcs', thisYear, nextYear, thisMonth);
+            if(thisMonth >= Number(staffDisplay - 1)) {
+                indexNum = years.findIndex(year => {
+                    return year.includes(thisYear && nextYear)
+                })
+            } else {
+                indexNum = years.findIndex(year => {
+                    return year.includes(thisYear)
+                })
+            }
+            console.log('index number', indexNum)
+            console.log(years)
+        }
+        
         this.setState({
             activeYears: sortedYears,
             selectedIndex: indexNum

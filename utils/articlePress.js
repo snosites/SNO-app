@@ -41,24 +41,19 @@ handleRegularArticle = async (article) => {
 }
 
 handleLongFormArticle = async (article, activeDomain) => {
-    console.log('in article press long form')
-    console.log(article.custom_fields.sno_format)
     let storyChapters = [];
     NavigationService.navigate('FullArticle');
     if (article.custom_fields.sno_format == "Long-Form") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
-        console.log('story chapters', storyChapters)
     }
     else if (article.custom_fields.sno_format == "Grid") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
-        console.log('story chapters grif', storyChapters)
     }
     else if (article.custom_fields.sno_format == "Side by Side") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_sidebyside_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
-        console.log('story chapters', storyChapters)
     }
     let updatedStoryChapters = await Promise.all(storyChapters.map(async article => {
         const response = await fetch(`https://${activeDomain.url}/wp-json/wp/v2/posts/${article.ID}`)
@@ -88,7 +83,6 @@ handleLongFormArticle = async (article, activeDomain) => {
         return article
     }))
     if (article.custom_fields.sno_format == "Long-Form") {
-        console.log('updated chapters', updatedStoryChapters)
         // sort long form chapters
         updatedStoryChapters.sort(function (a, b) {
             if (a.custom_fields.sno_longform_order && a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order && b.custom_fields.sno_longform_order[0])
@@ -98,7 +92,6 @@ handleLongFormArticle = async (article, activeDomain) => {
             return 0;
         })
     }
-    console.log('ipdated story article', updatedStoryChapters)
     NavigationService.navigate('FullArticle', {
         articleId: article.id,
         article,
