@@ -192,31 +192,31 @@ class AppNavigatorContainer extends React.Component {
 
     _handleNotificationPress = async () => {
         console.log('notification press')
-        const { notification } = this.state;
-        const { activeDomain, dispatch, domains } = this.props;
-        this.setState({
-            visible: false
-        })
-        NavigationService.navigate('FullArticle');
-        const article = await this._fetchArticleAndComments(activeDomain.url, notification.data.post_id);
-        if (notification.data.domain_id == activeDomain.id) {
-            handleArticlePress(article, activeDomain);
-        } else {
-            // make sure domain origin is a saved domain
-            let found = domains.find(domain => {
-                return domain.id == notification.data.domain_id;
-            })
-            if(!found) {
-                // user doesnt have this domain saved -- handle further later
-                return;
-            }
-            // sets key for app to look for on new domain load
-            dispatch(setFromPush(article));
-            // change active domain
-            dispatch(changeActiveDomain(notification.domain_id));
-            //navigate to auth loading to load initial domain data
-            NavigationService.navigate('AuthLoading');
-        }
+        // const { notification } = this.state;
+        // const { activeDomain, dispatch, domains } = this.props;
+        // this.setState({
+        //     visible: false
+        // })
+        // NavigationService.navigate('FullArticle');
+        // const article = await this._fetchArticleAndComments(activeDomain.url, notification.data.post_id);
+        // if (notification.data.domain_id == activeDomain.id) {
+        //     handleArticlePress(article, activeDomain);
+        // } else {
+        //     // make sure domain origin is a saved domain
+        //     let found = domains.find(domain => {
+        //         return domain.id == notification.data.domain_id;
+        //     })
+        //     if(!found) {
+        //         // user doesnt have this domain saved -- handle further later
+        //         return;
+        //     }
+        //     // sets key for app to look for on new domain load
+        //     dispatch(setFromPush(article));
+        //     // change active domain
+        //     dispatch(changeActiveDomain(notification.domain_id));
+        //     //navigate to auth loading to load initial domain data
+        //     NavigationService.navigate('AuthLoading');
+        // }
     }
 
     _fetchArticleAndComments = async (url, articleId) => {
