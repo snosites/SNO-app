@@ -113,7 +113,7 @@ class StaffScreen extends React.Component {
                             loop={true}
                             speed={1}
                             autoPlay={true}
-                            source={require('../assets/lottiefiles/profile-loader')}
+                            source={require('../assets/lottiefiles/simple-loader-dots')}
                         />
                     </View>
                 </View>
