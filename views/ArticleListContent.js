@@ -183,7 +183,7 @@ export default class ArticleListContent extends React.Component {
             >
                 {Moment().isAfter(Moment(date).add(7, 'days')) 
                 ?
-                    String(Moment(date).format('MMM D YYYY'))
+                    String(Moment(date).format('MMM D, YYYY'))
                 :
                     String(Moment(date).fromNow())
                 }

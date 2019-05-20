@@ -129,6 +129,7 @@ class CustomDrawerComponent extends React.Component {
             })
         }
         else if (item.object === 'page') {
+            console.log('item staff', item)
             if (item.template === 'snostaff.php') {
                 this.props.navigation.navigate('Staff', {
                     menuTitle: item.title,

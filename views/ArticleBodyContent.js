@@ -345,8 +345,6 @@ export default class ArticleBodyContent extends React.Component {
     }
 
     _renderDate = date => {
-        let dateNow = Moment();
-        let subDate = Moment(date).subtract(7, 'days');
         if (Moment().isAfter(Moment(date).add(7, 'days'))) {
             return (
                 <Text style={{
@@ -354,7 +352,7 @@ export default class ArticleBodyContent extends React.Component {
                     color: '#9e9e9e'
                 }}
                 >
-                    {Moment(date).format('MMM D YYYY')}
+                    {Moment(date).format('MMM D, YYYY')}
                 </Text>
             )
         } else {
