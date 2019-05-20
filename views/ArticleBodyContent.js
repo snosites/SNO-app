@@ -52,7 +52,7 @@ export default class ArticleBodyContent extends React.Component {
                             }
                         }}
                     />
-                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
+                    {/* {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
                         <HTML
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
@@ -72,7 +72,7 @@ export default class ArticleBodyContent extends React.Component {
                         />
                         :
                         null
-                    }
+                    } */}
                 </View>
                 <View 
                     style={{
@@ -340,7 +340,7 @@ export default class ArticleBodyContent extends React.Component {
             }
         }
         else {
-            return ''
+            return null
         }
     }
 
