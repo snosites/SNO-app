@@ -64,6 +64,7 @@ class FullArticleScreen extends React.Component {
                     {/* display chapters if there are any -- long form stories */}
                     {articleChapters.map(article => (
                         <ArticleBodyContent
+                            key={article.id}
                             navigation={navigation}
                             article={article}
                             theme={theme}

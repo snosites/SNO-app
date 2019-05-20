@@ -27,13 +27,12 @@ export default class ArticleBodyContent extends React.Component {
 
     render() {
         const { theme, article } = this.props;
-
         return (
-            <View key={article.id}>
+            <View>
                 <View style={styles.featuredMediaContainer}>
                     {this._renderFeaturedMedia(article)}
                 </View>
-                <View style={{ paddingHorizontal: 20, alignItems: 'center' }}>
+                <View style={{ paddingHorizontal: 20, paddingTop: 10, alignItems: 'center' }}>
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
@@ -129,7 +128,7 @@ export default class ArticleBodyContent extends React.Component {
             )
         }
 
-        else if (article.custom_fields.video) {
+        else if (article.custom_fields.video && article.custom_fields.video[0] ) {
             const source = article.custom_fields.video[0];
             if (source.includes('iframe')) {
 
@@ -263,7 +262,7 @@ export default class ArticleBodyContent extends React.Component {
 
     _renderArticleAuthor = article => {
         const { theme } = this.props;
-        if (article.custom_fields.writer) {
+        if (article.custom_fields.writer && article.custom_fields.writer[0] ) {
             let writers = article.custom_fields.writer;
             //if arr of writers dont include job title
             if (writers.length > 1) {
