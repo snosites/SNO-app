@@ -20,7 +20,6 @@ export function* fetchMenus(action) {
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         console.log('resp', response)
         const originalMenus = yield response.json();
-
         //filter out all menu items that are custom
         let menus = originalMenus.filter(menu => {
             if(menu.object !== 'custom') {
