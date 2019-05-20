@@ -52,7 +52,7 @@ export default class ArticleBodyContent extends React.Component {
                             }
                         }}
                     />
-                    {/* {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
+                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
                         <HTML
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
@@ -72,9 +72,9 @@ export default class ArticleBodyContent extends React.Component {
                         />
                         :
                         null
-                    } */}
+                    }
                 </View>
-                <View 
+                <View
                     style={{
                         flexDirection: 'row',
                         justifyContent: 'center'
@@ -85,34 +85,38 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
                     {this._renderDate(article.date)}
                 </View>
-                <View style={styles.articleContents}>
-                    <HTML
-                        html={article.content.rendered}
-                        imagesMaxWidth={MEDIAWIDTH}
-                        ignoredStyles={['height', 'width', 'display']}
-                        textSelectable={true}
-                        onLinkPress={(e, href) => this._viewLink(href)}
-                        tagsStyles={{
-                            p: {
-                                fontSize: 18,
-                                marginBottom: 15
-                            },
-                            img: {
-                                height: MEDIASIZE,
-                                borderRadius: 8
-                            }
-                        }}
-                        classesStyles={{
-                            'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
-                            'largequote': { fontSize: 21 },
-                            'pullquotetext': { textAlign: 'left', fontSize: 21 },
-                            'quotespeaker': { textAlign: 'left', fontSize: 14 },
-                            'photowrap': {
-                                display: 'none'
-                            }
-                        }}
-                    />
-                </View>
+                {article.content.rendered ?
+                    <View style={styles.articleContents}>
+                        <HTML
+                            html={article.content.rendered}
+                            imagesMaxWidth={MEDIAWIDTH}
+                            ignoredStyles={['height', 'width', 'display']}
+                            textSelectable={true}
+                            onLinkPress={(e, href) => this._viewLink(href)}
+                            tagsStyles={{
+                                p: {
+                                    fontSize: 18,
+                                    marginBottom: 15
+                                },
+                                img: {
+                                    height: MEDIASIZE,
+                                    borderRadius: 8
+                                }
+                            }}
+                            classesStyles={{
+                                'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
+                                'largequote': { fontSize: 21 },
+                                'pullquotetext': { textAlign: 'left', fontSize: 21 },
+                                'quotespeaker': { textAlign: 'left', fontSize: 14 },
+                                'photowrap': {
+                                    display: 'none'
+                                }
+                            }}
+                        />
+                    </View>
+                    :
+                    null
+                }
             </View>
         )
     }
