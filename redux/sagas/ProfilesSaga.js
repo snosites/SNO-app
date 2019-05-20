@@ -2,10 +2,10 @@ import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { requestProfiles, receiveProfiles, fetchArticlesIfNeeded } from '../actions/actions';
 
 function* fetchProfiles(action){
-    const { domain } = action;
+    const { domain, year } = action;
     try {
         yield put(requestProfiles())
-        const response = yield fetch(`https://${domain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name`)
+        const response = yield fetch(`https://${domain}/wp-json/sns-v2/get_profiles?year=${year}`)
         const profiles = yield response.json();
         yield put(receiveProfiles(profiles))
         

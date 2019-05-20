@@ -83,7 +83,6 @@ class StaffScreen extends React.Component {
             const thisYear = Moment().year();
             const nextYear = Moment().add(1, 'y').format('YYYY');
             const thisMonth = Moment().month();
-            console.log('year calcs', thisYear, nextYear, thisMonth);
             if(thisMonth >= Number(staffDisplay - 1)) {
                 indexNum = years.findIndex(year => {
                     return year.includes(thisYear && nextYear)
@@ -93,8 +92,6 @@ class StaffScreen extends React.Component {
                     return year.includes(thisYear)
                 })
             }
-            console.log('index number', indexNum)
-            console.log(years)
         }
         
         this.setState({
@@ -113,7 +110,7 @@ class StaffScreen extends React.Component {
                 doneLoading: true
             })
         }, 2000)
-        this._getProfiles();
+        this._getProfiles(years[indexNum]);
     }
 
     render() {
@@ -168,10 +165,10 @@ class StaffScreen extends React.Component {
                         </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
                         {profiles.items.map(profile => {
-                            const temp = profile.schoolYears.filter(schoolyear => {
-                                return schoolyear === activeYears[selectedIndex]
-                            })
-                            if (temp.length > 0) {
+                            // const temp = profile.schoolYears.filter(schoolyear => {
+                            //     return schoolyear === activeYears[selectedIndex]
+                            // })
+                            // if (temp.length > 0) {
                                 return (
                                     <View key={profile.ID} style={{ padding: 20, alignItems: 'center', width: 175 }}>
                                         {profile.featuredImage ?
@@ -209,17 +206,17 @@ class StaffScreen extends React.Component {
                                 )
                             }
 
-                        })}
+                        )}
                     </View>
                 </ScrollView>
             </View>
         );
     }
 
-    _getProfiles = () => {
+    _getProfiles = (year) => {
         const { activeDomain, dispatch } = this.props;
         const url = activeDomain.url;
-        dispatch(fetchProfiles(url));
+        dispatch(fetchProfiles(url, year));
     }
 
     _scrollToIndex = (index) => {
@@ -234,7 +231,7 @@ class StaffScreen extends React.Component {
     }
 
     _renderItem = ({ item, index }) => {
-        const { selectedIndex } = this.state;
+        const { activeYears, selectedIndex } = this.state;
         const { theme } = this.props;
         let accentColor = Color(theme.colors.accent);
         let isDark = accentColor.isDark();
@@ -247,6 +244,7 @@ class StaffScreen extends React.Component {
                         selectedIndex: index
                     })
                     this._scrollToIndex(index)
+                    this._getProfiles(activeYears[index]);
                 }}
             >
                 <Card.Content>

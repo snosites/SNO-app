@@ -175,10 +175,11 @@ export function receiveMenus(response) {
 
 // PROFILE ACTIONS
 
-export function fetchProfiles(domain) {
+export function fetchProfiles(domain, year) {
     return {
         type: 'FETCH_PROFILES',
-        domain
+        domain,
+        year
     }
 }
 
