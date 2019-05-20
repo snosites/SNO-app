@@ -11,7 +11,14 @@ function* fetchAvailableDomains(action){
         const response = yield call(fetch, `http://${api}/api/domains/all?api_token=${userInfo.apiKey}`);
         console.log('response', response)
         const availDomains = yield response.json();
-        yield put(setAvailableDomains(availDomains));
+        if(__DEV__) {
+            yield put(setAvailableDomains(availDomains));
+        } else {
+            const filteredDomains = availDomains.filter(domain => {
+                return !domain.development
+            })
+            yield put(setAvailableDomains(filteredDomains));
+        }
     }
     catch(err) {
         console.log('error fetching available domains', err)

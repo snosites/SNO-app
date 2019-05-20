@@ -70,7 +70,7 @@ const AuthStack = createStackNavigator({
     Select: connect(mapStateToProps)(SelectScreen)
 });
 
-const AppContainer = createAppContainer(createSwitchNavigator(
+export default AppContainer = createAppContainer(createSwitchNavigator(
     {
         AuthLoading: connect(mapStateToProps)(AuthLoadingScreen),
         App: AppStack,
@@ -80,7 +80,3 @@ const AppContainer = createAppContainer(createSwitchNavigator(
         initialRouteName: 'AuthLoading',
     }
 ));
-
-
-
-export default AppContainer;

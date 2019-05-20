@@ -7,13 +7,12 @@ import {
     Dimensions,
     Image
 } from 'react-native';
-import { DangerZone, Permissions, Notifications, Constants } from 'expo';
-
+import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
-const { manifest } = Constants;
 
 import { connect } from 'react-redux';
-import { initialize } from '../redux/actions/actions';
+import { initialize, setFromPush } from '../redux/actions/actions';
+import { handleArticlePress } from '../utils/articlePress';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -27,7 +26,7 @@ class AppSetupScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        const { menus, articlesByCategory, navigation, errors } = this.props;
+        const { activeDomain, menus, articlesByCategory, navigation, errors, userInfo, dispatch } = this.props;
         if(errors.error == 'initialize-saga error') {
             navigation.navigate('Error', {
                 errorMessage: 'Sorry, this school is currently unavailable'
@@ -40,6 +39,16 @@ class AppSetupScreen extends React.Component {
         }
         if (menus.isLoaded) {
             if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+                // check if the user is coming from a push notification
+                if(userInfo.fromPush) {
+                    // go to main app
+                    navigation.navigate('MainApp');
+                    // direct to article from push
+                    handleArticlePress(userInfo.fromPush, activeDomain);
+                    // reset push key
+                    dispatch(setFromPush(false));
+
+                }
                 console.log('finished loading menus and articles')
                 navigation.navigate('MainApp');
             }

@@ -354,6 +354,13 @@ export function setAllNotifications(domainId, allNotifications) {
     }
 }
 
+export function setFromPush(payload) {
+    return {
+        type: 'SET_FROM_PUSH',
+        payload
+    }
+}
+
 // SAVED ARTICLES SCREEN
 
 export function saveArticle(article, schoolId) {

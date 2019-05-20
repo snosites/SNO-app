@@ -5,7 +5,8 @@ import {
     View,
     TextInput,
     Text,
-    Platform
+    Platform,
+    Image
 } from 'react-native';
 import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
@@ -40,8 +41,20 @@ const ActiveDomainIcon = ({ color }) => (
 )
 
 class SettingsScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Settings',
+    static navigationOptions = ({navigation}) => {
+        const logo = navigation.getParam('headerLogo', null)
+        return {
+            title: 'Settings',
+            headerLeft: (
+                logo &&
+                <Image
+                    source={{ uri: logo }}
+                    style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
+                    resizeMode='contain'
+                />
+            ),
+        }
+        
     };
 
     state = {
@@ -55,10 +68,13 @@ class SettingsScreen extends React.Component {
     };
 
     componentDidMount() {
-        const { userInfo, domains } = this.props;
+        const { userInfo, domains, menus, navigation } = this.props;
         this.setState({
             username: userInfo.username,
             email: userInfo.email
+        })
+        navigation.setParams({
+            headerLogo: menus.headerSmall
         })
 
         this.setState({
