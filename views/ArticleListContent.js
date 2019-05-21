@@ -203,7 +203,6 @@ export default class ArticleListContent extends React.Component {
                 newArr += `${writers[i]}, `
             }
         }
-        
         return newArr;
     }
 

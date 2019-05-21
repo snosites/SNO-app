@@ -131,7 +131,7 @@ class StaffScreen extends React.Component {
                                 height: 300,
                             }}
                             loop={true}
-                            speed={1}
+                            speed={0.80}
                             autoPlay={true}
                             source={require('../assets/lottiefiles/simple-loader-dots')}
                         />

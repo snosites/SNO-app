@@ -89,7 +89,8 @@ export default class ArticleBodyContent extends React.Component {
                         <HTML
                             html={article.content.rendered}
                             imagesMaxWidth={MEDIAWIDTH}
-                            ignoredStyles={['height', 'width', 'display']}
+                            ignoredStyles={['height', 'width', 'display', 'font - family']}
+                            allowedStyles={[]}
                             textSelectable={true}
                             onLinkPress={(e, href) => this._viewLink(href)}
                             tagsStyles={{
@@ -219,6 +220,7 @@ export default class ArticleBodyContent extends React.Component {
                                 <HTML
                                     html={article.featuredImage.caption}
                                     baseFontStyle={{ fontSize: 12 }}
+                                    allowedStyles={[]}
                                     customWrapper={(text) => {
                                         return (
                                             <Text ellipsizeMode='tail' numberOfLines={this.props.expandCaption ? null : 2} onPress={handleCaptionClick}>{text}</Text>
@@ -295,7 +297,6 @@ export default class ArticleBodyContent extends React.Component {
                             </TouchableItem>
                         )
                     } else {
-                        writersArr.push(`${writers[i]}, `);
                         return (
                             <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
                                 <Text style={{

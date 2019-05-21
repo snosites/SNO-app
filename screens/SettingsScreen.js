@@ -6,7 +6,8 @@ import {
     TextInput,
     Text,
     Platform,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';

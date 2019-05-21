@@ -20,6 +20,8 @@ import {
     Searchbar
 } from 'react-native-paper';
 
+import HTML from 'react-native-render-html';
+
 import { fetchArticlesIfNeeded } from '../redux/actions/actions';
 
 import { SafeAreaView } from 'react-navigation';
@@ -82,7 +84,21 @@ class CustomDrawerComponent extends React.Component {
                                 return (
                                     <Drawer.Item
                                         key={item.ID}
-                                        label={item.title}
+                                        label={
+                                            <HTML
+                                                html={item.title}
+                                                customWrapper={(text) => {
+                                                    return (
+                                                        <Text
+                                                            ellipsizeMode='tail'
+                                                            numberOfLines={1}
+                                                        >
+                                                            {text}
+                                                        </Text>
+                                                    )
+                                                }}
+                                            />
+                                        }
                                         active={this.state.activeMenuIndex === index}
                                         onPress={() => this._handleMenuPress(item, index)}
                                         icon={passedProps => {
