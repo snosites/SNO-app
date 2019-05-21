@@ -19,7 +19,7 @@ export function* fetchMenus(action) {
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
-        if(response.status !== 200 || typeof originalMenus != 'xxobject'){
+        if(response.status !== 200 || typeof originalMenus != 'object'){
             throw new Error('REST API issue fetching menus, possibly no route')
         }
         
