@@ -118,7 +118,7 @@ class StaffScreen extends React.Component {
         const { navigation, profiles, theme } = this.props;
         const { activeYears, selectedIndex, doneLoading } = this.state;
         
-        if (!doneLoading || !profiles.isLoaded) {
+        if (!doneLoading) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.animationContainer}>
@@ -155,7 +155,7 @@ class StaffScreen extends React.Component {
                         )}
                     />
                 </View>
-
+                {profiles.isLoaded ?
                 <ScrollView style={{ flex: 1 }}>
                     <NavigationEvents
                     // onWillFocus={payload => this._loadProfile(payload)}
@@ -182,7 +182,7 @@ class StaffScreen extends React.Component {
                                             />
                                             :
                                             <Image
-                                                source={{ uri: require('../assets/images/anon.png') }}
+                                                source={require('../assets/images/anon.png')}
                                                 style={{
                                                     width: 150,
                                                     height: 150,
@@ -209,6 +209,11 @@ class StaffScreen extends React.Component {
                         )}
                     </View>
                 </ScrollView>
+                :
+                <View style={{justifyContent: 'center', paddingTop: 20}}>
+                    <ActivityIndicator />
+                </View>
+                }
             </View>
         );
     }

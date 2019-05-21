@@ -71,6 +71,7 @@ class ProfileScreen extends React.Component {
                                 </View>
                                 <Text style={styles.title}>{profile.title.rendered}</Text>
                                 <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
+                                {profile.content.rendered ?
                                 <HTML
                                     html={profile.content.rendered}
                                     textSelectable={true}
@@ -82,6 +83,9 @@ class ProfileScreen extends React.Component {
                                         }
                                     }}
                                 />
+                                :
+                                <View style={{height: 150}}></View>
+                                }
                             </View>
                             <View style={{ flex: 1, paddingBottom: 20, backgroundColor: accentColor }}>
                                 <View style={{ flex: 1, alignItems: 'center' }}>
