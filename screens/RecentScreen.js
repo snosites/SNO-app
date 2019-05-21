@@ -4,6 +4,7 @@ import {
     Text,
     Image,
     StyleSheet,
+    Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 import { DangerZone } from 'expo';
@@ -18,9 +19,11 @@ import {
     fetchMoreRecentArticlesIfNeeded,
     invalidateRecentArticles
 } from '../redux/actions/actions';
-
+import { SafeAreaView } from 'react-navigation';
 import ArticleListContent from '../views/ArticleListContent';
 import Animation from '../views/Animation';
+
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 class RecentScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -41,7 +44,8 @@ class RecentScreen extends React.Component {
 
     state = {
         snackbarSavedVisible: false,
-        snackbarRemovedVisible: false
+        snackbarRemovedVisible: false,
+        offset: 0
     }
 
     componentDidMount() {
@@ -80,41 +84,53 @@ class RecentScreen extends React.Component {
     }
 
     render() {
-        const { 
-            navigation, 
-            recentArticles, 
-            recent, 
-            theme, 
-            activeDomain 
+        const {
+            navigation,
+            recentArticles,
+            recent,
+            theme,
+            activeDomain
         } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (recent.items.length === 0 && recent.isFetching) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
-                        style={{
-                            width: 400,
-                            height: 400
-                        }}
-                        source={require('../assets/lottiefiles/article-loading-animation')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
+                <SafeAreaView
+                    style={{
+                        flex: 1,
+                        marginTop: 20,
+                    }}
+                >
+                    <Lottie
+                        ref={animation => this._saveAnimationRef(animation)}
+                        style={StyleSheet.absoluteFill}
+                        speed={0.8}
+                        loop={true}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/multi-article-loading')}
                     />
-                </View>
+                </SafeAreaView>
             )
         }
         if (recent.error) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
+                    <View
                         style={{
                             width: 200,
                             height: 200
                         }}
-                        source={require('../assets/lottiefiles/broken-stick-error')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
-                    />
+                    >
+                        <Lottie
+                            ref={animation => this._saveAnimationRef(animation)}
+                            style={{
+                                width: 200,
+                                height: 200
+                            }}
+                            loop={true}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/broken-stick-error')}
+                        />
+                    </View>
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>

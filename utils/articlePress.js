@@ -28,6 +28,7 @@ handleRegularArticle = async (article) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
+    NavigationService.navigate('FullArticle');
     // check if there is a slideshow
     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
         article.slideshow = await this._getAttachmentsAsync(article);
@@ -41,6 +42,9 @@ handleRegularArticle = async (article) => {
 }
 
 handleLongFormArticle = async (article, activeDomain) => {
+    if (Platform.OS === 'ios') {
+        Haptic.selection();
+    }
     let storyChapters = [];
     NavigationService.navigate('FullArticle');
     if (article.custom_fields.sno_format == "Long-Form") {
