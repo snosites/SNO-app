@@ -21,8 +21,6 @@ import {
     Colors,
     Snackbar,
     Button,
-    Paragraph,
-    Dialog,
     Portal
 } from 'react-native-paper';
 
@@ -42,7 +40,7 @@ const ActiveDomainIcon = ({ color }) => (
 )
 
 class SettingsScreen extends React.Component {
-    static navigationOptions = ({navigation}) => {
+    static navigationOptions = ({ navigation }) => {
         const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Settings',
@@ -55,7 +53,7 @@ class SettingsScreen extends React.Component {
                 />
             ),
         }
-        
+
     };
 
     state = {
@@ -311,17 +309,18 @@ class SettingsScreen extends React.Component {
                     Organization Removed
                 </Snackbar>
                 <Portal>
-                    <Dialog
-                        visible={this.state.dialog}
-                        onDismiss={this._hideDialog}>
-                        <Dialog.Title>Clear all settings?</Dialog.Title>
-                        <Dialog.Content>
-                            <Paragraph>This will clear all of your saved schools, articles, and notification settings.</Paragraph>
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                            <Button onPress={this._hideDialog}>Cancel</Button>
-                            <Button
-                                onPress={() => {
+                    {this.state.dialog ? Alert.alert(
+                        'Clear all settings?',
+                        'This will clear all of your saved schools, articles, and notification settings.',
+                        [
+                            {
+                                text: 'Cancel',
+                                onPress: this._hideDialog,
+                                style: 'cancel'
+                            },
+                            {
+                                text: 'Clear',
+                                onPress: () => {
                                     this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
                                     persistor.purge();
                                     this.props.dispatch({
@@ -329,13 +328,13 @@ class SettingsScreen extends React.Component {
                                     })
                                     this._hideDialog();
                                     this.props.navigation.navigate('AuthLoading')
-                                }}
-                            >
-                                Clear
-                            </Button>
-
-                        </Dialog.Actions>
-                    </Dialog>
+                                }
+                            }
+                        ],
+                        { cancelable: false },
+                    )
+                        :
+                        null}
                 </Portal>
             </ScrollView>
         )
