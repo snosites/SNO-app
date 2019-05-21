@@ -5,7 +5,8 @@ import {
     StyleSheet,
     View,
     Dimensions,
-    Image
+    Image,
+    ImageBackground
 } from 'react-native';
 import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
@@ -13,14 +14,17 @@ const { Lottie } = DangerZone;
 import { connect } from 'react-redux';
 import { initialize, setFromPush } from '../redux/actions/actions';
 import { handleArticlePress } from '../utils/articlePress';
-
+import anim from '../assets/lottiefiles/splash-animation';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+const ANIMATION_WIDTH = viewportWidth;
+const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.20;
 
 class AppSetupScreen extends React.Component {
 
     componentDidMount() {
         if (this.animation) {
-            this._playAnimation();
+            this.animation.play();
         }
         this._loadSettings();
     }
@@ -37,52 +41,80 @@ class AppSetupScreen extends React.Component {
                 errorMessage: 'Sorry, this school did not renew its Student News Source subscription'
             });
         }
-        if (menus.isLoaded) {
-            if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
-                // check if the user is coming from a push notification
-                if(userInfo.fromPush) {
-                    // go to main app
-                    navigation.navigate('MainApp');
-                    // direct to article from push
-                    handleArticlePress(userInfo.fromPush, activeDomain);
-                    // reset push key
-                    dispatch(setFromPush(false));
-
-                }
-                console.log('finished loading menus and articles')
-                navigation.navigate('MainApp');
-            }
+        if (this.animation) {
+            console.log('animation found');
+            this.animation.play();
         }
+        // if (menus.isLoaded) {
+        //     if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+        //         // check if the user is coming from a push notification
+        //         if(userInfo.fromPush) {
+        //             // go to main app
+        //             navigation.navigate('MainApp');
+        //             // direct to article from push
+        //             handleArticlePress(userInfo.fromPush, activeDomain);
+        //             // reset push key
+        //             dispatch(setFromPush(false));
+
+        //         }
+        //         console.log('finished loading menus and articles')
+        //         navigation.navigate('MainApp');
+        //     }
+        // }
     }
 
     render() {
         const { menus } = this.props;
-        if(menus.splashScreen) {
-            return (
-                    <Image
-                        source={{ uri: menus.splashScreen }}
-                        style={{ width: viewportWidth, height: viewportHeight }}
-                        resizeMode='cover'
-                    />
-            )
-        }
+        // if(menus.splashScreen) {
+        //     return (
+        //             <Image
+        //                 source={{ uri: menus.splashScreen }}
+        //                 style={{ width: viewportWidth, height: viewportHeight }}
+        //                 resizeMode='cover'
+        //             />
+        //     )
+        // }
         return (
-            <View style={styles.rootContainer}>
-                <View style={styles.animationContainer}>
-                    <Lottie
-                        ref={animation => {
-                            this.animation = animation;
-                        }}
+            <View style={{
+                flex: 1
+            }}>
+                <ImageBackground
+                    source={require('../assets/images/the-source-splash.png')}
+                    resizeMode='cover'
+                    style={{
+                        width: viewportWidth,
+                        height: viewportHeight,
+                        flex: 1
+                    }}
+                >
+                    <View
                         style={{
-                            width: 200,
-                            height: 200,
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            width: viewportWidth,
+                            height: viewportHeight,
+                            paddingBottom: ANIMATION_BOTTOM_PADDING,
                         }}
-                        loop={true}
-                        speed={1}
-                        autoPlay={true}
-                        source={require('../assets/lottiefiles/square-loader.json')}
-                    />
-                </View>
+                    >
+                    <View>
+                            <Lottie
+                                ref={animation => {
+                                    this.animation = animation;
+                                }}
+                                resizeMode="cover"
+                                style={{
+                                    width: ANIMATION_WIDTH,
+                                    height: 100,
+                                }}
+                                loop={true}
+                                speed={0.75}
+                                autoPlay={true}
+                                source={anim}
+                            />
+                    </View>
+                        
+                    </View>
+                </ImageBackground>
             </View>
         );
     }

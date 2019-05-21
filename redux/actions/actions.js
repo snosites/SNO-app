@@ -173,6 +173,13 @@ export function receiveMenus(response) {
     }
 }
 
+export function receiveSplash(splash) {
+    return {
+        type: 'RECEIVE_SPLASH',
+        splash,
+    }
+}
+
 // PROFILE ACTIONS
 
 export function fetchProfiles(domain, year) {

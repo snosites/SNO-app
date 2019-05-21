@@ -102,9 +102,11 @@ export function menus(state = {
                 items: action.response.menus,
                 header: action.response.header,
                 headerSmall: action.response.headerSmall,
-                splashScreen: action.response.splashScreen,
-
-
+            }
+        case 'RECEIVE_SPLASH':
+            return {
+                ...state,
+                splashScreen: action.splash,
             }
         default:
             return state
