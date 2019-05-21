@@ -3,7 +3,18 @@ import { setAvailableDomains } from '../actions/actions';
 
 const api = 'mobileapi.snosites.net';
 const getUserInfo = state => state.userInfo
-
+// city: "St. Louis Park"
+        // development: null
+        // domain_id: 40316786
+        // id: 33
+        // latitude: "44.959700"
+        // level: "secondary"
+        // longitude: "-93.370200"
+        // publication: "Knight Errant"
+        // school: "Benilde-St. Margaret's School"
+        // state: "MN"
+        // url: "bsmknighterrant.org"
+        // zip: 55416
 function* fetchAvailableDomains(action){
     try {
         const userInfo = yield select(getUserInfo)
@@ -11,6 +22,14 @@ function* fetchAvailableDomains(action){
         const response = yield call(fetch, `http://${api}/api/domains/all?api_token=${userInfo.apiKey}`);
         console.log('response', response)
         const availDomains = yield response.json();
+        // sort domains
+        availDomains.sort(function (a, b) {
+            if (a.school < b.school)
+                return -1;
+            if (a.school > b.school)
+                return 1;
+            return 0;
+        })
         if(__DEV__) {
             yield put(setAvailableDomains(availDomains));
         } else {

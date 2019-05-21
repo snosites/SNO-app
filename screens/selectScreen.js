@@ -18,7 +18,7 @@ import InitModal from './InitModal';
 
 class SelectScreen extends React.Component {
     static navigationOptions = {
-        title: 'Select Your Organization',
+        title: 'Select Your Publication',
     };
 
     state = {
@@ -124,6 +124,19 @@ class SelectScreen extends React.Component {
                 </View>
             )
         }
+
+        // city: "St. Louis Park"
+        // development: null
+        // domain_id: 40316786
+        // id: 33
+        // latitude: "44.959700"
+        // level: "secondary"
+        // longitude: "-93.370200"
+        // publication: "Knight Errant"
+        // school: "Benilde-St. Margaret's School"
+        // state: "MN"
+        // url: "bsmknighterrant.org"
+        // zip: 55416
         return (
             <ScrollView style={styles.container}>
                 {availableDomains.map(item => {
@@ -132,8 +145,14 @@ class SelectScreen extends React.Component {
                         <View key={item.id}>
                             <List.Item
                                 title={item.school}
+                                titleEllipsizeMode='tail'
+                                // description={<Text>{item.publication}{"\n"}{item.city}, {item.state}</Text>}
+                                description={`${item.publication}  •  ${item.city}, ${item.state}`}
+                                descriptionEllipsizeMode='tail'
                                 style={{ paddingVertical: 0 }}
-                                left={props => <List.Icon {...props} icon="chevron-right" />}
+                                left={props => <List.Icon {...props}
+                                    icon="chevron-right" />
+                                }
                                 onPress={() => {
                                     this._handleSelect(item.domain_id, item)
                                     this.setState({
