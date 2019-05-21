@@ -19,7 +19,10 @@ export function* fetchMenus(action) {
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
-        console.log('menus', originalMenus)
+        if(response.status !== 200 || typeof originalMenus != 'xxobject'){
+            throw new Error('REST API issue fetching menus, possibly no route')
+        }
+        
         //filter out all menu items that are custom
         let menus = originalMenus.filter(menu => {
             if(menu.object !== 'custom') {
@@ -35,7 +38,7 @@ export function* fetchMenus(action) {
             let foundCategory = dbCategories.find((category) => {
                 return Number(menu.object_id) === category.category_id
             })
-            if (!foundCategory) {
+            if (!foundCategory && menu.object_id) {
                 console.log('adding new category', menu.object_id)
                 yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
                     method: "POST",
@@ -83,12 +86,17 @@ export function* fetchMenus(action) {
         }))
 
         return {
-            menus,
-            DbCategories: updatedDbCategories
+            menus: {
+                menus,
+                DbCategories: updatedDbCategories
+            }
         }
     }
     catch (err) {
         console.log('error fetching menus in saga', err)
+        return {
+            err
+        }
     }
 }
 

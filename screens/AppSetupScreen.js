@@ -27,7 +27,7 @@ class AppSetupScreen extends React.Component {
 
     componentDidUpdate() {
         const { activeDomain, menus, articlesByCategory, navigation, errors, userInfo, dispatch } = this.props;
-        if(errors.error == 'initialize-saga error') {
+        if (errors.error == 'initialize-saga error' || errors.error == 'menu-saga error') {
             navigation.navigate('Error', {
                 errorMessage: 'Sorry, this school is currently unavailable'
             });

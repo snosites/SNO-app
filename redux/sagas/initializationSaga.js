@@ -1,4 +1,4 @@
-import { put, call, takeLatest, all, select } from 'redux-saga/effects';
+import { put, call, takeLatest, all, select, cancel } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { 
     receiveMenus, 
@@ -24,10 +24,13 @@ function* initialize(action) {
     const userInfo = yield select(getUserInfo);
     try {
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menus and DB categories
-        const menus = yield call(fetchMenus, {
+        const { menus, err } = yield call(fetchMenus, {
             domain,
             domainId
         })
+        if(err) {
+            throw err
+        }
 
         // make sure push token has been stored
         const token = yield call(checkNotificationSettings);
@@ -111,10 +114,10 @@ function* initialize(action) {
         ))
     }
     catch(err) {
+        console.log('initilize err', err)
         const domainCheck = yield call(checkWithDb, domainId, userInfo);
         console.log('domain check', domainCheck)
         if(domainCheck.length > 0) {
-            console.log('error initializing in saga', err)
             yield put(setError('initialize-saga error'))
             Sentry.captureException(err)
         } else {
