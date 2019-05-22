@@ -25,7 +25,7 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'FullArticle' ? (isDark ? 'white' : 'black') : '#9e9e9e',
+                        color: state.routeName === 'FullArticle' ? (isDark ? 'white' : 'black') : (isDark ? '#bdbdbd' : '#9e9e9e'),
                         fontSize: 19
                     }}>Article</Text>
             </TouchableOpacity>
@@ -48,7 +48,7 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'Comments' ? (isDark ? 'white' : 'black') : '#9e9e9e',
+                        color: state.routeName === 'Comments' ? (isDark ? 'white' : 'black') : (isDark ? '#bdbdbd' : '#9e9e9e'),
                         fontSize: 19
                     }}>
                     Comments
