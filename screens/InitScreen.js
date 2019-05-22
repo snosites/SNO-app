@@ -14,7 +14,7 @@ import {
 import { Button, TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
 import { connect } from 'react-redux';
-import { fetchAvailableDomains, searchAvailableDomains } from '../redux/actions/actions';
+import { fetchAvailableDomains, searchAvailableDomains } from '../redux/actionCreators';
 
 class InitScreen extends React.Component {
     static navigationOptions = {

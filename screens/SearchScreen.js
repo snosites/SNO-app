@@ -27,7 +27,7 @@ import {
     saveArticle,
     removeSavedArticle,
     fetchMoreSearchArticlesIfNeeded,
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 
 import ArticleListContent from '../views/ArticleListContent';
 

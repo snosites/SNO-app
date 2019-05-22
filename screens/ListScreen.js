@@ -21,7 +21,7 @@ import {
     fetchMoreArticlesIfNeeded,
     invalidateArticles,
     removeSavedArticle
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 
 import { SafeAreaView } from 'react-navigation';
 

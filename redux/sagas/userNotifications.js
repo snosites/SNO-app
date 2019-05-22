@@ -1,6 +1,6 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, saveTokenId, setNotifications, setApiKey, setError } from '../actions/actions';
+import { requestMenus, saveTokenId, setNotifications, setApiKey, setError } from '../actionCreators';
 
 import { Permissions, Notifications } from 'expo';
 

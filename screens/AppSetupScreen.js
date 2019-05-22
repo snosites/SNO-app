@@ -12,7 +12,7 @@ import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 
 import { connect } from 'react-redux';
-import { initialize, setFromPush } from '../redux/actions/actions';
+import { initialize, setFromPush } from '../redux/actionCreators';
 import { handleArticlePress } from '../utils/articlePress';
 import anim from '../assets/lottiefiles/splash-animation';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');

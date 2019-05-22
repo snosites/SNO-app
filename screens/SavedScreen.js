@@ -19,7 +19,7 @@ import Colors from '../constants/Colors'
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Snackbar, Badge } from 'react-native-paper';
 
-import { removeSavedArticle } from '../redux/actions/actions';
+import { removeSavedArticle } from '../redux/actionCreators';
 import ArticleListContent from '../views/ArticleListContent';
 
 class ListScreen extends React.Component {

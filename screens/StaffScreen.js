@@ -12,7 +12,7 @@ import {
 import Moment from 'moment';
 import Color from 'color';
 import { connect } from 'react-redux';
-import { fetchProfiles } from '../redux/actions/actions';
+import { fetchProfiles } from '../redux/actionCreators';
 
 import { NavigationEvents } from 'react-navigation';
 import { Haptic, DangerZone } from 'expo';

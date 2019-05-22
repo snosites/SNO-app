@@ -8,7 +8,7 @@ import {
     fetchNotifications, 
     setAllNotifications ,
     receiveSplash
-} from '../actions/actions';
+} from '../actionCreators';
 
 import { checkNotificationSettings, addAllNotifications } from './userNotifications';
 import { fetchMenus } from './menuSaga';

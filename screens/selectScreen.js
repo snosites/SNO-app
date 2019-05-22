@@ -8,7 +8,7 @@ import {
     Platform
 } from 'react-native';
 import { connect } from 'react-redux';
-import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actions/actions';
+import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
 
 import { List, Divider } from 'react-native-paper'
 import { Haptic } from 'expo';

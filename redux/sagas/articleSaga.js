@@ -1,6 +1,6 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestArticles, receiveArticles, updateComments, fetchArticlesFailure, setCommentPosted } from '../actions/actions';
+import { requestArticles, receiveArticles, updateComments, fetchArticlesFailure, setCommentPosted } from '../actionCreators';
 
 import Sentry from 'sentry-expo';
 

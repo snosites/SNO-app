@@ -13,7 +13,7 @@ import InitScreen from '../screens/InitScreen';
 import SelectScreen from '../screens/SelectScreen';
 
 import { connect } from 'react-redux';
-import { setActiveDomain, getApiKey } from '../redux/actions/actions';
+import { setActiveDomain, getApiKey } from '../redux/actionCreators';
 
 class AuthLoadingScreen extends React.Component {
     constructor(props) {

@@ -6,7 +6,7 @@ import {
     ADD_DOMAIN,
     DELETE_DOMAIN,
     TOGGLE_NOTIFICATIONS
-} from '../actions/actions';
+} from '../actionCreators';
 import FullArticleScreen from '../../screens/FullArticleScreen';
 
 export function domains(state = [], action) {

@@ -12,7 +12,7 @@ import {
 import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
-import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
+import { saveUserInfo, deleteDomain } from '../redux/actionCreators';
 import {
     List,
     Divider,
@@ -29,7 +29,7 @@ import {
     addNotification,
     removeNotification,
     deleteUser
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 
 
 const ActiveDomainIcon = ({ color }) => (
