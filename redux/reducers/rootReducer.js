@@ -1,8 +1,34 @@
 import {combineReducers} from 'redux'
-import * as reducers from './reducers';
+
+import { activeDomain } from './activeDomainReducer';
+import { entities, articlesByCategory } from './articlesReducer';
+import { domains } from './domainsReducer';
+import { errors } from './errorsReducer';
+import { availableDomains } from './initializationReducer';
+import { menus } from './menusReducer';
+import { profiles } from './profilesReducer';
+import { recentArticles } from './recentArticlesReducer';
+import { savedArticlesBySchool } from './savedArticlesReducer';
+import { searchArticles } from './searchReducer';
+import { theme } from './themeReducer';
+import { userInfo } from './userInfoReducer';
 
 
-const appReducer = combineReducers(reducers)
+const appReducer = combineReducers({
+    activeDomain,
+    entities,
+    articlesByCategory,
+    domains,
+    errors,
+    availableDomains,
+    menus,
+    profiles,
+    recentArticles,
+    savedArticlesBySchool,
+    searchArticles,
+    theme,
+    userInfo
+})
 
 // if user chnges domain clear out domain specific state data
 const rootReducer = (state, action) => {
@@ -15,7 +41,7 @@ const rootReducer = (state, action) => {
           menus: undefined
       }
     }
-    if(action.type === 'PURGE_STATE') {
+    if(action.type === 'PURGE_USER_STATE') {
         state = undefined
     }
   

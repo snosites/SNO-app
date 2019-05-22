@@ -15,7 +15,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import { saveUserInfo, addComment, setCommentPosted } from '../redux/actions/actions';
+import { saveUserInfo, addComment, setCommentPosted } from '../redux/actionCreators';
 import Moment from 'moment';
 import Color from 'color';
 import HTML from 'react-native-render-html';

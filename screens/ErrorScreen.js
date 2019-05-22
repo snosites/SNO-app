@@ -12,7 +12,7 @@ import {
 import { Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { Button, List, Divider } from 'react-native-paper';
-import { clearError, changeActiveDomain } from '../redux/actions/actions';
+import { clearError, changeActiveDomain } from '../redux/actionCreators';
 
 
 class ErrorScreen extends React.Component {

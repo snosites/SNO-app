@@ -11,7 +11,7 @@ import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { saveArticle } from '../redux/actions/actions';
+import { saveArticle } from '../redux/actionCreators';
 import { FAB, Portal, Snackbar } from 'react-native-paper';
 
 import { CustomArticleHeader } from '../components/ArticleHeader';

@@ -1,5 +1,5 @@
 import { put, call, takeLatest, select } from 'redux-saga/effects';
-import { setAvailableDomains } from '../actions/actions';
+import { setAvailableDomains } from '../actionCreators';
 
 const api = 'mobileapi.snosites.net';
 const getUserInfo = state => state.userInfo

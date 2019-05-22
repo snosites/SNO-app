@@ -8,7 +8,7 @@ import {
     Platform
 } from 'react-native';
 import { connect } from 'react-redux';
-import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actions/actions';
+import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
 
 import { List, Divider } from 'react-native-paper'
 import { Haptic } from 'expo';
@@ -125,18 +125,6 @@ class SelectScreen extends React.Component {
             )
         }
 
-        // city: "St. Louis Park"
-        // development: null
-        // domain_id: 40316786
-        // id: 33
-        // latitude: "44.959700"
-        // level: "secondary"
-        // longitude: "-93.370200"
-        // publication: "Knight Errant"
-        // school: "Benilde-St. Margaret's School"
-        // state: "MN"
-        // url: "bsmknighterrant.org"
-        // zip: 55416
         return (
             <ScrollView style={styles.container}>
                 {availableDomains.map(item => {
@@ -146,7 +134,6 @@ class SelectScreen extends React.Component {
                             <List.Item
                                 title={item.school}
                                 titleEllipsizeMode='tail'
-                                // description={<Text>{item.publication}{"\n"}{item.city}, {item.state}</Text>}
                                 description={`${item.publication}  •  ${item.city}, ${item.state}`}
                                 descriptionEllipsizeMode='tail'
                                 style={{ paddingVertical: 0 }}
@@ -207,6 +194,7 @@ class SelectScreen extends React.Component {
         }
         catch (error) {
             console.log('error saving users org')
+            console.log(error)
         }
     }
     // dismiss modal and redirect back to auth loading

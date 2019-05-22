@@ -3,7 +3,7 @@ import {
     requestMenus, 
     setNotificationCategories,
     setError
- } from '../actions/actions';
+ } from '../actionCreators';
 
 import Sentry from 'sentry-expo';
 

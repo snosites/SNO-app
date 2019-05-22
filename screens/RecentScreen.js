@@ -18,7 +18,7 @@ import {
     fetchRecentArticlesIfNeeded,
     fetchMoreRecentArticlesIfNeeded,
     invalidateRecentArticles
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 import { SafeAreaView } from 'react-navigation';
 import ArticleListContent from '../views/ArticleListContent';
 import Animation from '../views/Animation';

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 import { Provider as ReduxProvider, connect } from 'react-redux';
-import { changeActiveDomain, setFromPush } from './redux/actions/actions';
+import { changeActiveDomain, setFromPush } from './redux/actionCreators';
 
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './utils/NavigationService';

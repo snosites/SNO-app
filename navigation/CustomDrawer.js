@@ -22,7 +22,7 @@ import {
 
 import HTML from 'react-native-render-html';
 
-import { fetchArticlesIfNeeded } from '../redux/actions/actions';
+import { fetchArticlesIfNeeded } from '../redux/actionCreators';
 
 import { SafeAreaView } from 'react-navigation';
 
@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
 import {
     fetchSearchArticlesIfNeeded,
     invalidateSearchArticles
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 
 
 class CustomDrawerComponent extends React.Component {

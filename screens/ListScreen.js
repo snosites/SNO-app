@@ -21,7 +21,7 @@ import {
     fetchMoreArticlesIfNeeded,
     invalidateArticles,
     removeSavedArticle
-} from '../redux/actions/actions';
+} from '../redux/actionCreators';
 
 import { SafeAreaView } from 'react-navigation';
 
@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
+    console.log('state in reducer', state, ownProps)
     const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
     return {
         theme: state.theme,

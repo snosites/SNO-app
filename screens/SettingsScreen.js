@@ -12,7 +12,8 @@ import {
 import { WebBrowser, Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
-import { saveUserInfo, deleteDomain } from '../redux/actions/actions';
+import NavigationService from '../utils/NavigationService';
+import { saveUserInfo, deleteDomain, clearingSettings } from '../redux/actionCreators';
 import {
     List,
     Divider,
@@ -21,15 +22,17 @@ import {
     Colors,
     Snackbar,
     Button,
-    Portal
+    Portal,
+    ActivityIndicator
 } from 'react-native-paper';
 
 import {
     changeActiveDomain,
     addNotification,
     removeNotification,
-    deleteUser
-} from '../redux/actions/actions';
+    deleteUser,
+    clearError
+} from '../redux/actionCreators';
 
 
 const ActiveDomainIcon = ({ color }) => (
@@ -63,7 +66,8 @@ class SettingsScreen extends React.Component {
         username: '',
         email: '',
         notifications: {},
-        dialog: false
+        dialog: false,
+        clearedAllSettings: false
     };
 
     componentDidMount() {
@@ -87,6 +91,17 @@ class SettingsScreen extends React.Component {
         })
     }
 
+    componentDidUpdate() {
+        if (this.props.userInfo.resetSettings) {
+            persistor.purge();
+            this.props.dispatch({
+                type: 'PURGE_USER_STATE'
+            })
+            this.props.navigation.navigate('AuthLoading')
+        }
+        
+    }
+
     render() {
         const {
             snackbarVisible,
@@ -94,14 +109,28 @@ class SettingsScreen extends React.Component {
             editingEmail,
             username,
             email,
-            notifications
+            notifications,
         } = this.state;
         const {
             domains,
             userInfo,
             dispatch,
-            theme
+            theme,
+            errors
         } = this.props;
+
+        if (userInfo.clearingSettings){
+            return (
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <ActivityIndicator />
+                </View>
+            )
+        }
+
         return (
             <ScrollView style={styles.container}>
                 <View style={{ flex: 1 }}>
@@ -308,6 +337,23 @@ class SettingsScreen extends React.Component {
                 >
                     Organization Removed
                 </Snackbar>
+                <Snackbar
+                    visible={errors.error === 'delete user-saga error'}
+                    duration={3000}
+                    style={{
+                        position: 'absolute',
+                        bottom: 100, left: 0, right: 0
+                    }}
+                    onDismiss={() => dispatch(clearError()) }
+                    action={{
+                        label: 'Dismiss',
+                        onPress: () => {
+                            dispatch(clearError())
+                        }
+                    }}
+                >
+                    Sorry there was an error clearing your settings. Please try again later.
+                </Snackbar>
                 <Portal>
                     {this.state.dialog ? Alert.alert(
                         'Clear all settings?',
@@ -321,13 +367,9 @@ class SettingsScreen extends React.Component {
                             {
                                 text: 'Clear',
                                 onPress: () => {
+                                    this.props.dispatch(clearingSettings(true))
                                     this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
-                                    persistor.purge();
-                                    this.props.dispatch({
-                                        type: 'PURGE_STATE'
-                                    })
                                     this._hideDialog();
-                                    this.props.navigation.navigate('AuthLoading')
                                 }
                             }
                         ],
@@ -462,7 +504,8 @@ const mapStateToProps = store => ({
     domains: store.domains,
     userInfo: store.userInfo,
     menus: store.menus,
-    activeDomain: store.activeDomain
+    activeDomain: store.activeDomain,
+    errors: store.errors
 })
 
 export default connect(mapStateToProps)(SettingsScreen)

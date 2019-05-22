@@ -1,5 +1,5 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
-import { requestProfiles, receiveProfiles, fetchArticlesIfNeeded } from '../actions/actions';
+import { requestProfiles, receiveProfiles, fetchArticlesIfNeeded } from '../actionCreators';
 
 function* fetchProfiles(action){
     const { domain, year } = action;
