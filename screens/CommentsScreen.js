@@ -11,7 +11,8 @@ import {
     KeyboardAvoidingView,
     Modal,
     SafeAreaView,
-    Keyboard
+    Keyboard,
+    ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import { saveUserInfo, addComment, setCommentPosted } from '../redux/actions/actions';
@@ -41,7 +42,8 @@ class CommentsScreen extends React.Component {
         commentInput: '',
         modalVisible: false,
         username: '',
-        email: ''
+        email: '',
+        commentSent: false
     }
 
     componentDidMount() {
@@ -102,8 +104,11 @@ class CommentsScreen extends React.Component {
                                             this._addComment();
                                         }
                                     }}
-                                >
+                                >   
+                                    {this.state.commentSent ? <ActivityIndicator /> 
+                                    :
                                     <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color={isDark ? 'white' : 'black'} />
+                                    }
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -168,12 +173,20 @@ class CommentsScreen extends React.Component {
                 </Modal>
                 <Snackbar
                     visible={userInfo.commentPosted}
-                    onDismiss={() => dispatch(setCommentPosted(false))}
+                    onDismiss={() => {
+                        dispatch(setCommentPosted(false))
+                        this.setState({
+                            commentSent: false
+                        })
+                    }}
                     duration={3000}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
                             dispatch(setCommentPosted(false))
+                            this.setState({
+                                commentSent: false
+                            })
                         },
                     }}
                 >
@@ -198,7 +211,7 @@ class CommentsScreen extends React.Component {
         }))
         this.setState({
             commentInput: '',
-            snackbarVisible: true
+            commentSent: true
         })
     }
 

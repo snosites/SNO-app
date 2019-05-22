@@ -72,6 +72,7 @@ function* addComment(action) {
             },
             body: JSON.stringify(objToSend),
         })
+        console.log('repsonse comment', response)
         if(response.status !== 201){
             yield put(setCommentPosted('error'))
             throw new Error('error posting comment');
