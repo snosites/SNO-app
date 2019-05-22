@@ -8,6 +8,9 @@ import {
 import Color from 'color';
 import { connect } from 'react-redux';
 
+import { DangerZone } from 'expo';
+const { Lottie } = DangerZone;
+
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
@@ -19,6 +22,8 @@ import {
     invalidateArticles,
     removeSavedArticle
 } from '../redux/actions/actions';
+
+import { SafeAreaView } from 'react-navigation';
 
 import ArticleListContent from '../views/ArticleListContent';
 import Animation from '../views/Animation';
@@ -95,31 +100,43 @@ class ListScreen extends React.Component {
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
         if (articlesByCategory.length === 0 && category.isFetching) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
-                        style={{
-                            width: 400,
-                            height: 400
-                        }}
-                        source={require('../assets/lottiefiles/article-loading-animation')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
+                <SafeAreaView
+                    style={{
+                        flex: 1,
+                        marginTop: 20,
+                    }}
+                >
+                    <Lottie
+                        ref={animation => this._saveAnimationRef(animation)}
+                        style={StyleSheet.absoluteFill}
+                        speed={0.8}
+                        loop={true}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/multi-article-loading')}
                     />
-                </View>
+                </SafeAreaView>
             )
         }
         if (category.error) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
+                    <View
                         style={{
                             width: 200,
                             height: 200
                         }}
-                        source={require('../assets/lottiefiles/broken-stick-error')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
-                    />
+                    >
+                        <Lottie
+                            ref={animation => this._saveAnimationRef(animation)}
+                            style={{
+                                width: 200,
+                                height: 200
+                            }}
+                            loop={true}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/broken-stick-error')}
+                        />
+                    </View>
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>

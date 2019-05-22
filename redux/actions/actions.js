@@ -173,6 +173,13 @@ export function receiveMenus(response) {
     }
 }
 
+export function receiveSplash(splash) {
+    return {
+        type: 'RECEIVE_SPLASH',
+        splash,
+    }
+}
+
 // PROFILE ACTIONS
 
 export function fetchProfiles(domain, year) {
@@ -358,6 +365,13 @@ export function setAllNotifications(domainId, allNotifications) {
 export function setFromPush(payload) {
     return {
         type: 'SET_FROM_PUSH',
+        payload
+    }
+}
+
+export function setCommentPosted(payload) {
+    return {
+        type: 'SET_COMMENT_POSTED',
         payload
     }
 }

@@ -11,10 +11,11 @@ import {
     KeyboardAvoidingView,
     Modal,
     SafeAreaView,
-    Keyboard
+    Keyboard,
+    ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import { saveUserInfo, addComment } from '../redux/actions/actions';
+import { saveUserInfo, addComment, setCommentPosted } from '../redux/actions/actions';
 import Moment from 'moment';
 import Color from 'color';
 import HTML from 'react-native-render-html';
@@ -40,9 +41,9 @@ class CommentsScreen extends React.Component {
     state = {
         commentInput: '',
         modalVisible: false,
-        snackbarVisible: false,
         username: '',
-        email: ''
+        email: '',
+        commentSent: false
     }
 
     componentDidMount() {
@@ -103,8 +104,11 @@ class CommentsScreen extends React.Component {
                                             this._addComment();
                                         }
                                     }}
-                                >
+                                >   
+                                    {this.state.commentSent ? <ActivityIndicator /> 
+                                    :
                                     <Ionicons name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'} size={45} color={isDark ? 'white' : 'black'} />
+                                    }
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -168,17 +172,25 @@ class CommentsScreen extends React.Component {
                     </SafeAreaView>
                 </Modal>
                 <Snackbar
-                    visible={this.state.snackbarVisible}
-                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    visible={userInfo.commentPosted}
+                    onDismiss={() => {
+                        dispatch(setCommentPosted(false))
+                        this.setState({
+                            commentSent: false
+                        })
+                    }}
                     duration={3000}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
-                            this.setState({ snackbarVisible: false })
+                            dispatch(setCommentPosted(false))
+                            this.setState({
+                                commentSent: false
+                            })
                         },
                     }}
                 >
-                    Success!  Your comment is awaiting review
+                    {userInfo.commentPosted && userInfo.commentPosted === 'posted' ? 'Success!  Your comment is awaiting review' : 'There was an error posting your comment.  Please try again.'}
                 </Snackbar>
             </View>
         )
@@ -199,7 +211,7 @@ class CommentsScreen extends React.Component {
         }))
         this.setState({
             commentInput: '',
-            snackbarVisible: true
+            commentSent: true
         })
     }
 

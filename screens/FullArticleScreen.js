@@ -124,7 +124,8 @@ class FullArticleScreen extends React.Component {
                                 actions={[
                                     {
                                         icon: 'comment', label: 'Comment', onPress: () => navigation.navigate('Comments', {
-                                            comments: article.comments
+                                            comments: article.comments,
+                                            articleId: article.id
                                         })
                                     },
                                     {

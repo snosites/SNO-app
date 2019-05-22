@@ -102,9 +102,11 @@ export function menus(state = {
                 items: action.response.menus,
                 header: action.response.header,
                 headerSmall: action.response.headerSmall,
-                splashScreen: action.response.splashScreen,
-
-
+            }
+        case 'RECEIVE_SPLASH':
+            return {
+                ...state,
+                splashScreen: action.splash,
             }
         default:
             return state
@@ -177,7 +179,8 @@ export function userInfo(state = {
     tokenId: '',
     apiKey: '',
     fromPush: false,
-    allNotifications: {}
+    allNotifications: {},
+    commentPosted: false
 }, action) {
     switch (action.type) {
         case 'SAVE_USERINFO':
@@ -208,6 +211,11 @@ export function userInfo(state = {
             return {
                 ...state,
                 apiKey: action.payload
+            }
+        case 'SET_COMMENT_POSTED':
+            return {
+                ...state,
+                commentPosted: action.payload
             }
         default:
             return state

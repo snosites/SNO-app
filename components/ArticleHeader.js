@@ -6,16 +6,14 @@ import {
 } from 'react-native';
 import { withTheme, Badge, Colors } from 'react-native-paper';
 import Color from 'color';
-
 const ArticleHeader = (props) => {
     const { navigation, state, theme } = props;
     let commentNumber = navigation.getParam('commentNumber', 0)
     let comments = navigation.getParam('comments', null)
-    let article = navigation.getParam('article', null)
     let articleId = navigation.getParam('articleId', null)
-
     let primaryColor = Color(theme.colors.primary);
     let isDark = primaryColor.isDark();
+    console.log('article header info', articleId, comments)
 
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -27,7 +25,7 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'FullArticle' ? (isDark ? 'white' : 'black') : theme.colors.disabled,
+                        color: state.routeName === 'FullArticle' ? (isDark ? 'white' : 'black') : (isDark ? '#bdbdbd' : '#9e9e9e'),
                         fontSize: 19
                     }}>Article</Text>
             </TouchableOpacity>
@@ -50,7 +48,7 @@ const ArticleHeader = (props) => {
                 <Text
                     style={{
                         paddingHorizontal: 5,
-                        color: state.routeName === 'Comments' ? (isDark ? 'white' : 'black') : theme.colors.disabled,
+                        color: state.routeName === 'Comments' ? (isDark ? 'white' : 'black') : (isDark ? '#bdbdbd' : '#9e9e9e'),
                         fontSize: 19
                     }}>
                     Comments

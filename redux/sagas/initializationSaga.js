@@ -1,5 +1,4 @@
-import { put, call, takeLatest, all, select, cancel } from 'redux-saga/effects';
-import { normalize, schema } from 'normalizr';
+import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { 
     receiveMenus, 
     fetchArticlesIfNeeded, 
@@ -7,12 +6,14 @@ import {
     setError, 
     initializeSaved, 
     fetchNotifications, 
-    setAllNotifications 
+    setAllNotifications ,
+    receiveSplash
 } from '../actions/actions';
 
 import { checkNotificationSettings, addAllNotifications } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
+import { SplashScreen } from 'expo'
 import Sentry from 'sentry-expo';
 
 const api = 'mobileapi.snosites.net';
@@ -23,6 +24,19 @@ function* initialize(action) {
     const { domain, domainId } = action;
     const userInfo = yield select(getUserInfo);
     try {
+        // get splash right away if set
+        const splashResult = yield call(fetch, `https://${domain}/wp-json/custom/option?type=sns_splash_screen`);
+        const splashScreenId = yield splashResult.json();
+        if (splashResult.status !== 200) {
+            throw new Error('REST API issue, possibly no route')
+        }
+        const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
+        const splashImage = yield splashImageresult.json();
+        console.log('splashes', splashScreenId, splashImage)
+        yield put(receiveSplash(splashScreenId.result ? splashImage[0].source_url : ''))
+        SplashScreen.hide();
+
+
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menus and DB categories
         const { menus, err } = yield call(fetchMenus, {
             domain,
@@ -53,10 +67,9 @@ function* initialize(action) {
             domain: domainId
         }))
         // get user options
-        const [result, result2, result3, result4, result5, result6] = yield all([
+        const [result, result2, result3, result4, result5] = yield all([
             call(fetch, `https://${domain}/wp-json/custom/option?type=sns_nav_header`),
             call(fetch, `https://${domain}/wp-json/custom/option?type=sns_header_logo`),
-            call(fetch, `https://${domain}/wp-json/custom/option?type=sns_splash_screen`),
             call(fetch, `https://${domain}/wp-json/custom/option?type=sns_theme`),
             call(fetch, `https://${domain}/wp-json/custom/option?type=sns_primary_color`),
             call(fetch, `https://${domain}/wp-json/custom/option?type=sns_accent_color`),
@@ -64,23 +77,19 @@ function* initialize(action) {
         ]);
         const headerImageId = yield result.json();
         const headerSmallId = yield result2.json();
-        const splashScreenId = yield result3.json();
-        const theme = yield result4.json();
-        const primary = yield result5.json();
-        const accent = yield result6.json();
+        const theme = yield result3.json();
+        const primary = yield result4.json();
+        const accent = yield result5.json();
 
         // get actual images
-        const [imgResult1, imgResult2, imgResult3] = yield all(
+        const [imgResult1, imgResult2] = yield all(
             [
                 call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerImageId.result}`),
                 call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerSmallId.result}`),
-                call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`),
             ]
         );
-
         const headerImage = yield imgResult1.json();
         const headerSmall = yield imgResult2.json();
-        const splashScreen = yield imgResult3.json();
 
         if (!theme.result) {
             theme.result = 'light';
@@ -103,7 +112,6 @@ function* initialize(action) {
             menus: menus.menus,
             header: headerImageId.result ? headerImage[0].source_url : '',
             headerSmall: headerSmallId.result ? headerSmall[0].source_url : '',
-            splashScreen: splashScreenId.result ? splashScreen[0].source_url : '',
         }))
         yield put(fetchArticlesIfNeeded({
             domain,
