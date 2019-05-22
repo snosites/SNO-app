@@ -41,7 +41,7 @@ const rootReducer = (state, action) => {
           menus: undefined
       }
     }
-    if(action.type === 'PURGE_STATE') {
+    if(action.type === 'PURGE_USER_STATE') {
         state = undefined
     }
   

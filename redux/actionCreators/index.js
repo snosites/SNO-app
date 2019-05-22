@@ -1,4 +1,3 @@
-export * from '.';
 export * from './articles';
 export * from './initialization';
 export * from './menu';

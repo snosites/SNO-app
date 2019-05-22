@@ -1,7 +1,10 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestMenus, saveTokenId, setNotifications, setApiKey, setError } from '../actionCreators';
+import { requestMenus, saveTokenId, setNotifications, setApiKey, setError, clearingSettings, resetSettings } from '../actionCreators';
 
+import NavigationService from '../../utils/NavigationService';
+
+import { persistor } from '../configureStore';
 import { Permissions, Notifications } from 'expo';
 
 import Sentry from 'sentry-expo';
@@ -145,6 +148,7 @@ function* savePushNotifications(token) {
 
 function* getApiKey() {
     try {
+        
         let response = yield call(fetch, GET_API_TOKEN_ENDPOINT);
         console.log('repsonse', response)
         let apiKey = yield response.json();
@@ -154,7 +158,6 @@ function* getApiKey() {
         yield put(setError('api-saga error'))
         Sentry.captureException(err)
     }
-    
 }
 
 function* deleteUser(action){
@@ -170,6 +173,13 @@ function* deleteUser(action){
             })
         });
         const deleted = yield response.json();
+        console.log('delete user info', response, deleted)
+        if (response.status != 200){
+            yield put(clearingSettings(false))
+            throw new Error(response.status)
+        } else {
+            yield put(resetSettings());
+        }
     } catch(err) {
         console.log('error deleting user in saga', err)
         yield put(setError('delete user-saga error'))

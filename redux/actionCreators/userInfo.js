@@ -8,6 +8,9 @@ export const DELETE_USER = 'DELETE_USER'
 export const SET_ALL_NOTIFICATIONS = 'SET_ALL_NOTIFICATIONS'
 export const SET_FROM_PUSH = 'SET_FROM_PUSH'
 export const SET_COMMENT_POSTED = 'SET_COMMENT_POSTED'
+export const CLEARING_SETTINGS = 'CLEARING_SETTINGS'
+export const RESET_SETTINGS = 'RESET_SETTINGS'
+
 
 
 // USER INFO
@@ -67,4 +70,15 @@ export function setCommentPosted(payload) {
         type: SET_COMMENT_POSTED,
         payload
     }
+}
+
+export function clearingSettings(payload) {
+    return {
+        type: CLEARING_SETTINGS,
+        payload
+    }
+}
+
+export function resetSettings() {
+    return { type: RESET_SETTINGS }
 }

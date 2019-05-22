@@ -4,7 +4,9 @@ import {
     SET_ALL_NOTIFICATIONS,
     SET_FROM_PUSH,
     SET_API_KEY,
-    SET_COMMENT_POSTED
+    SET_COMMENT_POSTED,
+    CLEARING_SETTINGS,
+    RESET_SETTINGS
 } from '../actionCreators/userInfo'
 
 
@@ -15,7 +17,9 @@ export function userInfo(state = {
     apiKey: '',
     fromPush: false,
     allNotifications: {},
-    commentPosted: false
+    commentPosted: false,
+    deletedInfo: false,
+    resetSettings: false
 }, action) {
     switch (action.type) {
         case SAVE_USERINFO:
@@ -51,6 +55,16 @@ export function userInfo(state = {
             return {
                 ...state,
                 commentPosted: action.payload
+            }
+        case CLEARING_SETTINGS:
+            return {
+                ...state,
+                clearingSettings: action.payload
+            }
+        case RESET_SETTINGS:
+            return {
+                ...state,
+                resetSettings: true
             }
         default:
             return state

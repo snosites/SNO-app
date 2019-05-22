@@ -14,7 +14,7 @@ import {
 import { Button, TextInput } from 'react-native-paper';
 import { Constants, Location, Permissions, Haptic } from 'expo';
 import { connect } from 'react-redux';
-import { fetchAvailableDomains, searchAvailableDomains } from '../redux/actionCreators';
+import { fetchAvailableDomains, searchAvailableDomains, clearError } from '../redux/actionCreators';
 
 class InitScreen extends React.Component {
     static navigationOptions = {
@@ -29,7 +29,34 @@ class InitScreen extends React.Component {
         errorMessage: null,
     }
 
+
     render() {
+        const { errors, navigation, dispatch } = this.props;
+        if (errors.error === 'api-saga error') {
+            return (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20}}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242'}}>
+                        Sorry, there was a problem authenticating your device.  Please try reloading the app.
+                    </Text>
+                    <Button
+                        mode="contained"
+                        theme={{
+                            roundness: 7,
+                            colors: {
+                                primary: '#2099CE'
+                            }
+                        }}
+                        style={{ padding: 5, marginTop: 50 }}
+                        onPress={() => {
+                            dispatch(clearError())
+                            navigation.navigate('AuthLoading')
+                        }}
+                    >
+                        Reload
+                    </Button>
+                </View>
+            )
+        }
         if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingVertical: 40 }}>
@@ -206,4 +233,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect()(InitScreen);
+const mapStateToProps = state => ({
+    errors: state.errors
+})
+
+export default connect(mapStateToProps)(InitScreen);
