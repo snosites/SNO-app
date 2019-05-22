@@ -1,5 +1,13 @@
 import {combineReducers} from 'redux'
-import * as reducers from './reducers';
+
+import * as articles from './articlesReducer';
+import * as activeDomain from './activeDomainReducer';
+import * as domains from './domainsReducer';
+import * as errors from './errorsReducer';
+import * as initialization from './initializationReducer';
+import * as menus from './menusReducer';
+import * as profiles from './profilesReducer';
+import * as recentArticles from './recentArticlesReducer';
 
 
 const appReducer = combineReducers(reducers)
