@@ -1,16 +1,34 @@
 import {combineReducers} from 'redux'
 
-import * as articles from './articlesReducer';
-import * as activeDomain from './activeDomainReducer';
-import * as domains from './domainsReducer';
-import * as errors from './errorsReducer';
-import * as initialization from './initializationReducer';
-import * as menus from './menusReducer';
-import * as profiles from './profilesReducer';
-import * as recentArticles from './recentArticlesReducer';
+import { activeDomain } from './activeDomainReducer';
+import { entities, articlesByCategory } from './articlesReducer';
+import { domains } from './domainsReducer';
+import { errors } from './errorsReducer';
+import { availableDomains } from './initializationReducer';
+import { menus } from './menusReducer';
+import { profiles } from './profilesReducer';
+import { recentArticles } from './recentArticlesReducer';
+import { savedArticlesBySchool } from './savedArticlesReducer';
+import { searchArticles } from './searchReducer';
+import { theme } from './themeReducer';
+import { userInfo } from './userInfoReducer';
 
 
-const appReducer = combineReducers(reducers)
+const appReducer = combineReducers({
+    activeDomain,
+    entities,
+    articlesByCategory,
+    domains,
+    errors,
+    availableDomains,
+    menus,
+    profiles,
+    recentArticles,
+    savedArticlesBySchool,
+    searchArticles,
+    theme,
+    userInfo
+})
 
 // if user chnges domain clear out domain specific state data
 const rootReducer = (state, action) => {
