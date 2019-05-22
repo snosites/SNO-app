@@ -75,7 +75,7 @@ function* addComment(action) {
         console.log('repsonse comment', response)
         if(response.status !== 201){
             yield put(setCommentPosted('error'))
-            throw new Error('error posting comment');
+            throw new Error(response._bodyText);
         } else {
             yield put(setCommentPosted('posted'))
         }
