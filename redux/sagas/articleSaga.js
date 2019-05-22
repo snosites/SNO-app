@@ -35,6 +35,7 @@ function* fetchComments(url, story) {
     }
     catch (err) {
         console.log('error fetching comments');
+        story.comments = [];
         Sentry.captureException(err)
     }
 }
