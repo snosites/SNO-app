@@ -47,7 +47,6 @@ class AuthLoadingScreen extends React.Component {
         // sets active domain for app and then navigates to app
         if(activeDomain.length > 0) {
             this.props.dispatch(setActiveDomain(activeDomain[0]))
-            SplashScreen.hide();
             this.props.navigation.navigate('App')
         }
         // no active domain navigate to auth

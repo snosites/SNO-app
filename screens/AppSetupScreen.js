@@ -65,15 +65,15 @@ class AppSetupScreen extends React.Component {
 
     render() {
         const { menus } = this.props;
-        // if(menus.splashScreen) {
-        //     return (
-        //             <Image
-        //                 source={{ uri: menus.splashScreen }}
-        //                 style={{ width: viewportWidth, height: viewportHeight }}
-        //                 resizeMode='cover'
-        //             />
-        //     )
-        // }
+        if(menus.splashScreen) {
+            return (
+                    <Image
+                        source={{ uri: menus.splashScreen }}
+                        style={{ width: viewportWidth, height: viewportHeight }}
+                        resizeMode='cover'
+                    />
+            )
+        }
         return (
             <View style={{
                 flex: 1

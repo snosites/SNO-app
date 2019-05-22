@@ -1,5 +1,4 @@
-import { put, call, takeLatest, all, select, cancel } from 'redux-saga/effects';
-import { normalize, schema } from 'normalizr';
+import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { 
     receiveMenus, 
     fetchArticlesIfNeeded, 
@@ -14,6 +13,7 @@ import {
 import { checkNotificationSettings, addAllNotifications } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
+import { SplashScreen } from 'expo'
 import Sentry from 'sentry-expo';
 
 const api = 'mobileapi.snosites.net';
@@ -34,6 +34,7 @@ function* initialize(action) {
         const splashImage = yield splashImageresult.json();
         console.log('splashes', splashScreenId, splashImage)
         yield put(receiveSplash(splashScreenId.result ? splashImage[0].source_url : ''))
+        SplashScreen.hide();
 
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menus and DB categories
