@@ -369,6 +369,13 @@ export function setFromPush(payload) {
     }
 }
 
+export function setCommentPosted(payload) {
+    return {
+        type: 'SET_COMMENT_POSTED',
+        payload
+    }
+}
+
 // SAVED ARTICLES SCREEN
 
 export function saveArticle(article, schoolId) {

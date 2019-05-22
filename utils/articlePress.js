@@ -31,7 +31,7 @@ handleRegularArticle = async (article) => {
     NavigationService.navigate('FullArticle');
     // check if there is a slideshow
     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-        article.slideshow = await this._getAttachmentsAsync(article);
+        article.slideshow = await getAttachmentsAsync(article);
     }
     NavigationService.navigate('FullArticle', {
         articleId: article.id,
@@ -65,7 +65,7 @@ handleLongFormArticle = async (article, activeDomain) => {
     }))
     updatedStoryChapters = await Promise.all(updatedStoryChapters.map(async article => {
         if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-            article.slideshow = await this._getAttachmentsAsync(article);
+            article.slideshow = await getAttachmentsAsync(article);
         }
         if (article._links['wp:featuredmedia']) {
             const imgResponse = await fetch(article._links['wp:featuredmedia'][0].href);

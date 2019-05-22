@@ -179,7 +179,8 @@ export function userInfo(state = {
     tokenId: '',
     apiKey: '',
     fromPush: false,
-    allNotifications: {}
+    allNotifications: {},
+    commentPosted: false
 }, action) {
     switch (action.type) {
         case 'SAVE_USERINFO':
@@ -210,6 +211,11 @@ export function userInfo(state = {
             return {
                 ...state,
                 apiKey: action.payload
+            }
+        case 'SET_COMMENT_POSTED':
+            return {
+                ...state,
+                commentPosted: action.payload
             }
         default:
             return state

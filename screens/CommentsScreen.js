@@ -14,7 +14,7 @@ import {
     Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
-import { saveUserInfo, addComment } from '../redux/actions/actions';
+import { saveUserInfo, addComment, setCommentPosted } from '../redux/actions/actions';
 import Moment from 'moment';
 import Color from 'color';
 import HTML from 'react-native-render-html';
@@ -40,7 +40,6 @@ class CommentsScreen extends React.Component {
     state = {
         commentInput: '',
         modalVisible: false,
-        snackbarVisible: false,
         username: '',
         email: ''
     }
@@ -168,17 +167,17 @@ class CommentsScreen extends React.Component {
                     </SafeAreaView>
                 </Modal>
                 <Snackbar
-                    visible={this.state.snackbarVisible}
-                    onDismiss={() => this.setState({ snackbarVisible: false })}
+                    visible={userInfo.commentPosted}
+                    onDismiss={() => dispatch(setCommentPosted(false))}
                     duration={3000}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
-                            this.setState({ snackbarVisible: false })
+                            dispatch(setCommentPosted(false))
                         },
                     }}
                 >
-                    Success!  Your comment is awaiting review
+                    {userInfo.commentPosted && userInfo.commentPosted === 'posted' ? 'Success!  Your comment is awaiting review' : 'There was an error posting your comment.  Please try again.'}
                 </Snackbar>
             </View>
         )

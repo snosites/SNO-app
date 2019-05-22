@@ -1,6 +1,6 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
-import { requestArticles, receiveArticles, updateComments, fetchArticlesFailure } from '../actions/actions';
+import { requestArticles, receiveArticles, updateComments, fetchArticlesFailure, setCommentPosted } from '../actions/actions';
 
 import Sentry from 'sentry-expo';
 
@@ -39,21 +39,22 @@ function* fetchComments(url, story) {
     }
 }
 
-function* refetchComments(action) {
-    const { domain, articleId } = action;
-    try {
-        const response = yield fetch(`https://${domain}/wp-json/wp/v2/comments?post=${articleId}`);
-        const comments = yield response.json();
-        yield put(updateComments({
-            articleId,
-            comments
-        }))
-    }
-    catch (err) {
-        console.log('error refetching comments in saga', err)
-        Sentry.captureException(err)
-    }
-}
+// function* refetchComments(action) {
+//     const { domain, articleId } = action;
+//     console.log('in refetch comments', domain, articleId)
+//     try {
+//         const response = yield fetch(`https://${domain}/wp-json/wp/v2/comments?post=${articleId}`);
+//         const comments = yield response.json();
+//         yield put(updateComments({
+//             articleId,
+//             comments
+//         }))
+//     }
+//     catch (err) {
+//         console.log('error refetching comments in saga', err)
+//         Sentry.captureException(err)
+//     }
+// }
 
 function* addComment(action) {
     const { domain, articleId, username, email, comment } = action.payload;
@@ -64,17 +65,19 @@ function* addComment(action) {
         post: articleId
     }
     try {
-        const temp = yield call(fetch, `https://${domain}/wp-json/wp/v2/comments`, {
+        const response = yield call(fetch, `https://${domain}/wp-json/wp/v2/comments`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(objToSend),
         })
-        yield call(refetchComments, {
-            domain,
-            articleId
-        })
+        if(response.status !== 201){
+            yield put(setCommentPosted('error'))
+            throw new Error('error posting comment');
+        } else {
+            yield put(setCommentPosted('posted'))
+        }
     }
     catch (err) {
         console.log('error adding comment in saga', err)
@@ -164,7 +167,7 @@ function* fetchMoreArticlesIfNeeded(action) {
 function* articleSaga() {
     yield takeLatest('FETCH_ARTICLES_IF_NEEDED', fetchArticlesIfNeeded);
     yield takeLatest('FETCH_MORE_ARTICLES_IF_NEEDED', fetchMoreArticlesIfNeeded);
-    yield takeLatest('REFETCH_COMMENTS', refetchComments);
+    // yield takeLatest('REFETCH_COMMENTS', refetchComments);
     yield takeLatest('ADD_COMMENT', addComment)
 
 }

@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import { withTheme, Badge, Colors } from 'react-native-paper';
 import Color from 'color';
-
 const ArticleHeader = (props) => {
     const { navigation, state, theme } = props;
     let commentNumber = navigation.getParam('commentNumber', 0)
@@ -16,6 +15,7 @@ const ArticleHeader = (props) => {
 
     let primaryColor = Color(theme.colors.primary);
     let isDark = primaryColor.isDark();
+    console.log('article header info', articleId, article, comments)
 
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
