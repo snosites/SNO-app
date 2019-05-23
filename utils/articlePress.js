@@ -27,6 +27,7 @@ handleRegularArticle = async (article) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
+    console.log('navigation service')
     NavigationService.navigate('FullArticle');
     // check if there is a slideshow
     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {

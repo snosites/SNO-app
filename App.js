@@ -78,39 +78,57 @@ class AppNavigatorContainer extends React.Component {
     };
 
     _handleNotificationPress = async () => {
-        console.log('notification press')
-        const { notification } = this.state;
-        const { activeDomain, dispatch, domains } = this.props;
-        this.setState({
-            visible: false
-        })
-        NavigationService.navigate('FullArticle');
-        // get article
-        const article = await this._fetchArticle(activeDomain.url, notification.data.post_id);
-        // get featured image if there is one
-        if (article._links['wp:featuredmedia']) {
-            await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
-        }
-        // get comments
-        await asyncFetchComments(activeDomain.url, article)
-        // if the push is from active domain go to article
-        if (notification.data.domain_id == activeDomain.id) {
-            handleArticlePress(article, activeDomain);
-        } else {
-            // make sure domain origin is a saved domain
-            let found = domains.find(domain => {
-                return domain.id == notification.data.domain_id;
+        try {
+            console.log('notification press')
+            const { notification } = this.state;
+            const { activeDomain, dispatch, domains } = this.props;
+            this.setState({
+                visible: false
             })
-            if(!found) {
-                // user doesnt have this domain saved -- handle further later
-                return;
+            NavigationService.navigateReset('FullArticle');
+            
+            // if the push is from active domain go to article
+            if (notification.data.domain_id == activeDomain.id) {
+                // get article
+                const article = await this._fetchArticle(activeDomain.url, notification.data.post_id);
+                // get featured image if there is one
+                if (article._links['wp:featuredmedia']) {
+                    await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+                }
+                // get comments
+                await asyncFetchComments(activeDomain.url, article)
+                handleArticlePress(article, activeDomain);
+            } else {
+                // make sure domain origin is a saved domain
+                let found = domains.find(domain => {
+                    console.log(domain.id, notification.data.domain_id)
+                    return domain.id == notification.data.domain_id;
+                })
+                console.log('found', found)
+                if (!found) {
+                    // user doesnt have this domain saved -- handle further later
+                    return;
+                }
+                // get article
+                const article = await this._fetchArticle(found.url, notification.data.post_id);
+                // get featured image if there is one
+                if (article._links['wp:featuredmedia']) {
+                    await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+                }
+                // get comments
+                await asyncFetchComments(found.url, article)
+                // sets key for app to look for on new domain load
+                dispatch(setFromPush(article));
+                // change active domain
+                console.log('notification.data.domain_id', notification.data, notification.data.domain_id)
+                dispatch(changeActiveDomain(Number(notification.data.domain_id)));
+                //navigate to auth loading to load initial domain data
+                let nav = NavigationService;
+                nav.navigate('AuthLoading');
             }
-            // sets key for app to look for on new domain load
-            dispatch(setFromPush(article));
-            // change active domain
-            dispatch(changeActiveDomain(notification.domain_id));
-            //navigate to auth loading to load initial domain data
-            NavigationService.navigate('AuthLoading');
+        } catch(err) {
+            console.log('error in notification press', err)
+            Sentry.captureException(err)
         }
     }
 
