@@ -20,6 +20,12 @@ import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Badge } from 'react-native-paper';
 
+Moment.updateLocale('en', {
+    relativeTime: {
+        d: "1 day",
+    }
+});
+
 
 export default class ArticleListContent extends React.Component {
 

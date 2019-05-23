@@ -17,6 +17,12 @@ import { WebBrowser, Haptic } from 'expo';
 import TouchableItem from '../constants/TouchableItem';
 import Slideshow from './Slideshow';
 
+Moment.updateLocale('en', {
+    relativeTime: {
+        d: "1 day",
+    }
+});
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const MEDIASIZE = viewportHeight * 0.32;
