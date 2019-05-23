@@ -1,6 +1,8 @@
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { requestProfiles, receiveProfiles, setProfileArticles, setProfileArticleError } from '../actionCreators';
 
+import { fetchFeaturedImage, fetchComments } from '../../utils/sagaHelpers';
+
 import Sentry from 'sentry-expo';
 
 function* fetchProfiles(action){
@@ -14,38 +16,6 @@ function* fetchProfiles(action){
     }
     catch(err) {
         console.log('error fetching profiles in saga', err)
-        Sentry.captureException(err)
-    }
-}
-
-function* fetchFeaturedImage(url, story) {
-    const imgResponse = yield fetch(url);
-    const featuredImage = yield imgResponse.json();
-    if (!featuredImage.meta_fields) {
-        story.featuredImage = {
-            uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-        }
-        return;
-    }
-    story.featuredImage = {
-        uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-    }
-}
-
-function* fetchComments(url, story) {
-    try {
-        const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-        const comments = yield response.json();
-        story.comments = comments
-        return;
-    }
-    catch (err) {
-        console.log('error fetching comments');
-        story.comments = [];
         Sentry.captureException(err)
     }
 }
