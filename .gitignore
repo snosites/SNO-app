@@ -4,3 +4,5 @@ google-services.json
 env.js
 .tmp
 release-channel
+.expo/
+.expo
