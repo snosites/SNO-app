@@ -2,60 +2,13 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestArticles, receiveArticles, updateComments, fetchArticlesFailure, setCommentPosted } from '../actionCreators';
 
+import { fetchFeaturedImage, fetchComments } from '../../utils/sagaHelpers';
+
 import Sentry from 'sentry-expo';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
-
-function* fetchFeaturedImage(url, story) {
-    const imgResponse = yield fetch(url);
-    const featuredImage = yield imgResponse.json();
-    if(!featuredImage.meta_fields){
-        story.featuredImage = {
-            uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-        }
-        return;
-    }
-    story.featuredImage = {
-        uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-    }
-}
-
-function* fetchComments(url, story) {
-    try {
-        const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-        const comments = yield response.json();
-        story.comments = comments
-        return;
-    }
-    catch (err) {
-        console.log('error fetching comments');
-        story.comments = [];
-        Sentry.captureException(err)
-    }
-}
-
-// function* refetchComments(action) {
-//     const { domain, articleId } = action;
-//     console.log('in refetch comments', domain, articleId)
-//     try {
-//         const response = yield fetch(`https://${domain}/wp-json/wp/v2/comments?post=${articleId}`);
-//         const comments = yield response.json();
-//         yield put(updateComments({
-//             articleId,
-//             comments
-//         }))
-//     }
-//     catch (err) {
-//         console.log('error refetching comments in saga', err)
-//         Sentry.captureException(err)
-//     }
-// }
 
 function* addComment(action) {
     const { domain, articleId, username, email, comment } = action.payload;
@@ -73,7 +26,6 @@ function* addComment(action) {
             },
             body: JSON.stringify(objToSend),
         })
-        console.log('repsonse comment', response)
         if(response.status !== 201){
             yield put(setCommentPosted('error'))
             throw new Error(response._bodyText);

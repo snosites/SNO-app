@@ -2,36 +2,12 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestSearchArticles, receiveSearchArticles, fetchSearchArticlesFailure } from '../actionCreators';
 
+import { fetchFeaturedImage, fetchComments } from '../../utils/sagaHelpers';
+
 import Sentry from 'sentry-expo';
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
-
-
-function* fetchFeaturedImage(url, story) {
-    const imgResponse = yield fetch(url);
-    const featuredImage = yield imgResponse.json();
-    if(!featuredImage.meta_fields){
-        story.featuredImage = {
-            uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-        }
-        return;
-    }
-    story.featuredImage = {
-        uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
-    }
-}
-
-function* fetchComments(url, story) {
-    const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-    const comments = yield response.json();
-    story.comments = comments
-    return;
-}
 
 function* fetchSearchArticles(action) {
     const { domain, page, searchTerm } = action;
