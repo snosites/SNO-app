@@ -5,7 +5,8 @@ import {
     ActivityIndicator,
     View,
     Text,
-    Platform
+    Platform,
+    Image
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
@@ -108,7 +109,6 @@ class SelectScreen extends React.Component {
 
     render() {
         const { navigation, availableDomains } = this.props;
-        console.log('available domains', availableDomains)
         // const cityLocation = navigation.getParam('location', null);
         if (availableDomains.length == 0) {
             return (
@@ -137,8 +137,29 @@ class SelectScreen extends React.Component {
                                 description={`${item.publication}  •  ${item.city}, ${item.state}`}
                                 descriptionEllipsizeMode='tail'
                                 style={{ paddingVertical: 0 }}
-                                left={props => <List.Icon {...props}
-                                    icon="chevron-right" />
+                                left={props => {
+                                    if (item.icon) {
+                                        return (
+                                            <List.Icon {...props}
+                                                icon={({ size, color }) => (
+                                                    <Image
+                                                        source={{
+                                                            uri: item.icon
+                                                        }}
+                                                        style={{ 
+                                                            width: size + 5, height: size + 5,
+                                                            borderRadius: 4
+                                                        }}
+                                                    />
+                                                )} />
+                                        )
+                                    } else {
+                                        return (
+                                            <List.Icon {...props}
+                                                icon="chevron-right" />
+                                        )
+                                    }
+                                }
                                 }
                                 onPress={() => {
                                     this._handleSelect(item.domain_id, item)
@@ -162,7 +183,7 @@ class SelectScreen extends React.Component {
     }
 
     _handleSelect = async (orgId, item) => {
-        if(Platform.OS === 'ios') {
+        if (Platform.OS === 'ios') {
             Haptic.selection();
         }
         try {
