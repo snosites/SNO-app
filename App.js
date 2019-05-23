@@ -7,7 +7,8 @@ import {
     ActivityIndicator,
     Animated,
     PanResponder,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 import { Provider as ReduxProvider, connect } from 'react-redux';
@@ -81,11 +82,11 @@ class AppNavigatorContainer extends React.Component {
         try {
             console.log('notification press')
             const { notification } = this.state;
-            const { activeDomain, dispatch, domains } = this.props;
+            const { activeDomain, domains } = this.props;
             this.setState({
                 visible: false
             })
-            NavigationService.navigateReset('FullArticle');
+            NavigationService.navigate('FullArticle');
             
             // if the push is from active domain go to article
             if (notification.data.domain_id == activeDomain.id) {
@@ -106,28 +107,59 @@ class AppNavigatorContainer extends React.Component {
                 })
                 console.log('found', found)
                 if (!found) {
-                    // user doesnt have this domain saved -- handle further later
+                    // user doesnt have this domain saved direct to home screen
+                    NavigationService.navigate('MainApp');
                     return;
                 }
-                // get article
-                const article = await this._fetchArticle(found.url, notification.data.post_id);
-                // get featured image if there is one
-                if (article._links['wp:featuredmedia']) {
-                    await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
-                }
-                // get comments
-                await asyncFetchComments(found.url, article)
-                // sets key for app to look for on new domain load
-                dispatch(setFromPush(article));
-                // change active domain
-                console.log('notification.data.domain_id', notification.data, notification.data.domain_id)
-                dispatch(changeActiveDomain(Number(notification.data.domain_id)));
-                //navigate to auth loading to load initial domain data
-                let nav = NavigationService;
-                nav.navigate('AuthLoading');
+                Alert.alert(
+                    'Switch Active School?',
+                    `Viewing this story will switch your active school to ${notification.data.site_name}.`,
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => NavigationService.back(),
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'Proceed',
+                            onPress: () => {
+                                this._notificationSwitchDomain(found.url);
+                            }
+                        }
+                    ],
+                    { cancelable: false },
+                )
             }
         } catch(err) {
             console.log('error in notification press', err)
+            Sentry.captureException(err)
+        }
+    }
+
+    _notificationSwitchDomain = async (url) => {
+        try{
+            const { notification } = this.state;
+            const { dispatch } = this.props;
+            NavigationService.navigateReset('FullArticle');
+            // get article
+            const article = await this._fetchArticle(url, notification.data.post_id);
+            // get featured image if there is one
+            if (article._links['wp:featuredmedia']) {
+                await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+            }
+            // get comments
+            await asyncFetchComments(url, article)
+            // sets key for app to look for on new domain load
+            dispatch(setFromPush(article));
+            // change active domain
+            console.log('notification.data.domain_id', notification.data, notification.data.domain_id)
+            dispatch(changeActiveDomain(Number(notification.data.domain_id)));
+            //navigate to auth loading to load initial domain data
+            let nav = NavigationService;
+            nav.navigate('AuthLoading');
+        } catch(err) {
+            console.log('error in notification switch domain func', err)
+            NavigationService.back();
             Sentry.captureException(err)
         }
     }
