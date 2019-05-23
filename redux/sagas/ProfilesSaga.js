@@ -36,6 +36,20 @@ function* fetchFeaturedImage(url, story) {
     }
 }
 
+function* fetchComments(url, story) {
+    try {
+        const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
+        const comments = yield response.json();
+        story.comments = comments
+        return;
+    }
+    catch (err) {
+        console.log('error fetching comments');
+        story.comments = [];
+        Sentry.captureException(err)
+    }
+}
+
 function* fetchAuthorArticle(url, articleId){
     const response = yield call(fetch, `https://${url}/wp-json/wp/v2/posts/${articleId}`)
     return yield response.json();
@@ -65,6 +79,9 @@ function* fetchProfileArticles(action) {
             } else {
                 return call(Promise.resolve);
             }
+        }))
+        yield all(verifiedArticlesByWriter.map(story => {
+            return call(fetchComments, url, story)
         }))
         yield put(setProfileArticles(verifiedArticlesByWriter))
 

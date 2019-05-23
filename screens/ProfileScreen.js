@@ -189,7 +189,8 @@ class ProfileScreen extends React.Component {
                                     <View style={{
                                         flex: 1,
                                         alignItems: 'center',
-                                        marginVertical: 70
+                                        marginTop: 80,
+                                        marginBottom: 40
                                     }}>
                                         <ActivityIndicator />
                                     </View>
