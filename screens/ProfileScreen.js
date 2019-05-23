@@ -6,16 +6,22 @@ import {
     View,
     Image,
     ActivityIndicator,
-    Platform,
     FlatList,
     TouchableOpacity
 } from 'react-native';
+import {
+    fetchProfileArticles,
+    clearProfileArticles,
+    clearProfileError
+} from '../redux/actionCreators'
+
 import Moment from 'moment';
 import Color from 'color';
 import { connect } from 'react-redux';
 import { WebBrowser, LinearGradient, Haptic } from 'expo';
-import { Feather } from '@expo/vector-icons';
+import { handleArticlePress } from '../utils/articlePress';
 
+import { Feather } from '@expo/vector-icons';
 import HTML from 'react-native-render-html';
 // import Colors from '../constants/Colors';
 import { NavigationEvents } from 'react-navigation';
@@ -26,19 +32,14 @@ import { Divider, Colors } from 'react-native-paper';
 class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Profile' //navigation.getParam('menuTitle', 'Stories'),
+            title: 'Profile'
 
         };
     };
 
-    state = {
-        articlesByWriter: []
-    }
-
     render() {
-        const { navigation, theme } = this.props;
+        const { navigation, theme, profiles, activeDomain, dispatch } = this.props;
         const profile = navigation.getParam('profile', 'loading');
-        const articlesByWriter = navigation.getParam('articlesByWriter', []);
         let primaryColor = Color(theme.colors.primary);
         let primaryIsDark = primaryColor.isDark();
         let accentColor = Color(theme.colors.accent);
@@ -47,6 +48,10 @@ class ProfileScreen extends React.Component {
             <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
                 <NavigationEvents
                     onWillFocus={payload => this._loadProfile(payload)}
+                    onWillBlur={() => {
+                        dispatch(clearProfileArticles())
+                        dispatch(clearProfileError())
+                    }}
                 />
                 {profile == 'loading' ?
                     <View style={{ flex: 1, paddingTop: 20, alignItems: 'center' }}>
@@ -72,19 +77,19 @@ class ProfileScreen extends React.Component {
                                 <Text style={styles.title}>{profile.title.rendered}</Text>
                                 <Text style={styles.position}>{profile.custom_fields.staffposition[0]}</Text>
                                 {profile.content.rendered ?
-                                <HTML
-                                    html={profile.content.rendered}
-                                    textSelectable={true}
-                                    containerStyle={styles.textContainer}
-                                    onLinkPress={(e, href) => this._viewLink(href)}
-                                    tagsStyles={{
-                                        p: {
-                                            fontSize: 17,
-                                        }
-                                    }}
-                                />
-                                :
-                                <View style={{height: 150}}></View>
+                                    <HTML
+                                        html={profile.content.rendered}
+                                        textSelectable={true}
+                                        containerStyle={styles.textContainer}
+                                        onLinkPress={(e, href) => this._viewLink(href)}
+                                        tagsStyles={{
+                                            p: {
+                                                fontSize: 17,
+                                            }
+                                        }}
+                                    />
+                                    :
+                                    <View style={{ height: 150 }}></View>
                                 }
                             </View>
                             <View style={{ flex: 1, paddingBottom: 20, backgroundColor: accentColor }}>
@@ -107,65 +112,88 @@ class ProfileScreen extends React.Component {
                                         </Text>
                                     </LinearGradient>
                                 </View>
-                                <FlatList
-                                    contentContainerStyle={{ flex: 1, marginTop: 40 }}
-                                    data={articlesByWriter}
-                                    keyExtractor={item => item.id ? item.id.toString() : null}
-                                    ItemSeparatorComponent={() => (<Divider />)}
-                                    // onEndReachedThreshold={0.25}
-                                    // onEndReached={this._loadMore}
-                                    // onRefresh={this._handleRefresh}
-                                    // refreshing={category.isFetching}
+                                {profiles.error == 'error fetching posts by author' ?
+                                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                                        <Text style={{ textAlign: 'center', fontSize: 17 }}>Error loading articles by author</Text>
+                                    </View>
+                                    :
+                                    profiles.articles.length > 0 ?
+                                    <FlatList
+                                        contentContainerStyle={{ flex: 1, marginTop: 40 }}
+                                        data={profiles.articles}
+                                        keyExtractor={item => item.id ? item.id.toString() : null}
+                                        ItemSeparatorComponent={() => (<Divider />)}
+                                        // onEndReachedThreshold={0.25}
+                                        // onEndReached={this._loadMore}
+                                        // onRefresh={this._handleRefresh}
+                                        // refreshing={category.isFetching}
 
-                                    renderItem={(props) => {
-                                        const story = props.item;
-                                        return (
-                                            <TouchableOpacity
-                                                style={styles.storyContainer}
-                                                onPress={this._handleArticlePress(story)}
-                                            >
-                                                <View style={{ flex: 1 }}>
-                                                    <HTML
-                                                        html={story.title.rendered}
-                                                        baseFontStyle={{ fontSize: 19 }}
-                                                        customWrapper={(text) => {
-                                                            return (
-                                                                <Text
-                                                                    ellipsizeMode='tail'
-                                                                    numberOfLines={2}
-                                                                >
-                                                                    {text}
-                                                                </Text>
-                                                            )
-                                                        }}
-                                                        tagsStyles={{
-                                                            rawtext: {
+                                        renderItem={(props) => {
+                                            const story = props.item;
+                                            return (
+                                                <TouchableOpacity
+                                                    style={styles.storyContainer}
+                                                    onPress={() => handleArticlePress(story, activeDomain)}
+                                                >
+                                                    {story.featuredImage ?
+                                                        <Image
+                                                            source={{ uri: story.featuredImage.uri }}
+                                                            style={styles.featuredImage}
+                                                        />
+                                                        :
+                                                        null
+                                                    }
+                                                    <View style={{ flex: 1, paddingHorizontal: 20 }}>
+                                                        <HTML
+                                                            html={story.title.rendered}
+                                                            baseFontStyle={{ fontSize: 19 }}
+                                                            customWrapper={(text) => {
+                                                                return (
+                                                                    <Text
+                                                                        ellipsizeMode='tail'
+                                                                        numberOfLines={2}
+                                                                    >
+                                                                        {text}
+                                                                    </Text>
+                                                                )
+                                                            }}
+                                                            tagsStyles={{
+                                                                rawtext: {
+                                                                    flex: 1,
+                                                                    fontSize: 19,
+                                                                    textAlign: 'left',
+                                                                    color: accentIsDark ? 'white' : 'black'
+                                                                }
+                                                            }}
+                                                        />
+                                                        <Text
+                                                            style={{
                                                                 flex: 1,
-                                                                fontSize: 19,
+                                                                fontSize: 12,
                                                                 textAlign: 'left',
                                                                 color: accentIsDark ? 'white' : 'black'
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Text
-                                                        style={{
-                                                            flex: 1,
-                                                            fontSize: 12,
-                                                            textAlign: 'left',
-                                                            color: accentIsDark ? 'white' : 'black'
-                                                        }}>
-                                                        {String(Moment(story.date).format('MMM D YYYY'))}
-                                                    </Text>
-                                                </View>
-                                                <Feather
-                                                    style={{ marginLeft: 20 }}
-                                                    name="chevron-right"
-                                                    size={32}
-                                                    color={accentIsDark ? 'white' : 'black'} />
-                                            </TouchableOpacity>
-                                        )
-                                    }}
-                                />
+                                                            }}>
+                                                            {String(Moment(story.date).format('MMM D YYYY'))}
+                                                        </Text>
+                                                    </View>
+                                                    <Feather
+                                                        style={{ marginLeft: 20 }}
+                                                        name="chevron-right"
+                                                        size={32}
+                                                        color={accentIsDark ? 'white' : 'black'} />
+                                                </TouchableOpacity>
+                                            )
+                                        }}
+                                    />
+                                    :
+                                    <View style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        marginVertical: 70
+                                    }}>
+                                        <ActivityIndicator />
+                                    </View>
+                                }
                             </View>
                         </View>
                 }
@@ -174,7 +202,7 @@ class ProfileScreen extends React.Component {
     }
 
     _loadProfile = async (payload) => {
-        const { navigation, activeDomain } = this.props;
+        const { navigation, activeDomain, dispatch } = this.props;
         try {
             const userDomain = activeDomain.url;
             const writerName = navigation.getParam('writerName', 'unknown');
@@ -187,32 +215,18 @@ class ProfileScreen extends React.Component {
                     const profileId = profile[0].ID;
                     const newResponse = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
-
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(writerProfile._links['wp:featuredmedia'][0].href);
                         const profileImage = await response.json();
                         writerProfile.profileImage = profileImage.source_url;
                     }
-                    // get list of articles written by writer
-                    const query = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=20`)
-
-                    const articlesByWriter = await query.json();
-                    console.log('articles by writer', articlesByWriter)
-                    // get the full posts for all articles
-                    const updatedArticlesByWriter = await Promise.all(articlesByWriter.map(async article => {
-                        const response = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${article.ID}`)
-                        return await response.json();
-                    }))
-                    let verifiedArticlesByWriter = updatedArticlesByWriter.filter(article => {
-                        return (!!article.id)
-                    })
-                    //set those articles as param
+                    //set profile
                     navigation.setParams({
-                        profile: writerProfile,
-                        articlesByWriter: updatedArticlesByWriter
+                        profile: writerProfile
                     })
-                    console.log('loaded profile')
+                    // get list of articles written by writer
+                    dispatch(fetchProfileArticles(userDomain, writerName));
                 }
                 else {
                     navigation.setParams({ profile: 'none' })
@@ -225,7 +239,6 @@ class ProfileScreen extends React.Component {
     }
 
     _renderProfileImage = (profile) => {
-        console.log('in render profile image')
         if (profile.profileImage) {
             return (
                 <Image
@@ -244,28 +257,28 @@ class ProfileScreen extends React.Component {
         }
     }
 
-    _getAttachmentsAync = async (article) => {
-        console.log('article', article)
-        const response = await fetch(article._links['wp:attachment'][0].href);
-        const imageAttachments = await response.json();
-        return imageAttachments;
-    }
+    // _getAttachmentsAync = async (article) => {
+    //     console.log('article', article)
+    //     const response = await fetch(article._links['wp:attachment'][0].href);
+    //     const imageAttachments = await response.json();
+    //     return imageAttachments;
+    // }
 
-    _handleArticlePress = article => async () => {
-        console.log('in article press')
-        const { navigation } = this.props;
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
-        // check if there is a slidehsow
-        if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
-            article.slideshow = await this._getAttachmentsAync(article);
-        }
-        navigation.push('FullArticle', {
-            articleId: article.id,
-            article,
-        })
-    }
+    // _handleArticlePress = article => async () => {
+    //     console.log('in article press')
+    //     const { navigation } = this.props;
+    //     if (Platform.OS === 'ios') {
+    //         Haptic.selection();
+    //     }
+    //     // check if there is a slidehsow
+    //     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
+    //         article.slideshow = await this._getAttachmentsAync(article);
+    //     }
+    //     navigation.push('FullArticle', {
+    //         articleId: article.id,
+    //         article,
+    //     })
+    // }
 
     _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href);
@@ -327,13 +340,19 @@ const styles = StyleSheet.create({
         position: 'absolute',
         marginHorizontal: 30,
         top: -40
-    }
+    },
+    featuredImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 30
+    },
 });
 
 const mapStateToProps = (state) => {
     return {
         activeDomain: state.activeDomain,
-        theme: state.theme
+        theme: state.theme,
+        profiles: state.profiles
     }
 }
 

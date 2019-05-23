@@ -40,23 +40,6 @@ function* fetchComments(url, story) {
     }
 }
 
-// function* refetchComments(action) {
-//     const { domain, articleId } = action;
-//     console.log('in refetch comments', domain, articleId)
-//     try {
-//         const response = yield fetch(`https://${domain}/wp-json/wp/v2/comments?post=${articleId}`);
-//         const comments = yield response.json();
-//         yield put(updateComments({
-//             articleId,
-//             comments
-//         }))
-//     }
-//     catch (err) {
-//         console.log('error refetching comments in saga', err)
-//         Sentry.captureException(err)
-//     }
-// }
-
 function* addComment(action) {
     const { domain, articleId, username, email, comment } = action.payload;
     let objToSend = {
@@ -73,7 +56,6 @@ function* addComment(action) {
             },
             body: JSON.stringify(objToSend),
         })
-        console.log('repsonse comment', response)
         if(response.status !== 201){
             yield put(setCommentPosted('error'))
             throw new Error(response._bodyText);

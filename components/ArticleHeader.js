@@ -13,7 +13,6 @@ const ArticleHeader = (props) => {
     let articleId = navigation.getParam('articleId', null)
     let primaryColor = Color(theme.colors.primary);
     let isDark = primaryColor.isDark();
-    console.log('article header info', articleId, comments)
 
     return (
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
