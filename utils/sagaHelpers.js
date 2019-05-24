@@ -6,15 +6,15 @@ export function* fetchFeaturedImage(url, story) {
     if (!featuredImage.meta_fields) {
         story.featuredImage = {
             uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+            photographer: '',
+            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
         }
         return;
     }
     story.featuredImage = {
         uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
+        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
 }
 
@@ -35,15 +35,15 @@ export async function asyncFetchFeaturedImage(url, story) {
     if (!featuredImage.meta_fields) {
         story.featuredImage = {
             uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+            photographer: '',
+            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
         }
         return;
     }
     story.featuredImage = {
         uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
+        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
 }
 

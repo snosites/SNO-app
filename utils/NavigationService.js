@@ -7,7 +7,6 @@ function setTopLevelNavigator(navigatorRef) {
 }
 
 function navigate(routeName, params) {
-    console.log('_navigator', _navigator)
     _navigator.dispatch(
         NavigationActions.navigate({
             routeName,
@@ -38,22 +37,6 @@ function nestedNavigate(routeName1, routeName2) {
                 routeName: routeName1,
                 params: {},
                 action: NavigationActions.navigate({ routeName: routeName2 })
-            })
-    )
-}
-
-function nestedNavigate3(routeName1, routeName2, routeName3) {
-    _navigator.dispatch(
-        NavigationActions.navigate(
-            {
-                routeName: routeName1,
-                params: {},
-                action: NavigationActions.navigate(
-                    {
-                        routeName: routeName2,
-                        params: {},
-                        action: NavigationActions.navigate({ routeName: routeName3 })
-                    })
             })
     )
 }

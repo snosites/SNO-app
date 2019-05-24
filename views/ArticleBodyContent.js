@@ -16,6 +16,7 @@ import { WebBrowser, Haptic } from 'expo';
 
 import TouchableItem from '../constants/TouchableItem';
 import Slideshow from './Slideshow';
+import { slideshowRenderer } from '../utils/slideshowRenderer';
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -25,7 +26,7 @@ Moment.updateLocale('en', {
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-const MEDIASIZE = viewportHeight * 0.32;
+const MEDIASIZE = viewportHeight * 0.35;
 const MEDIAWIDTH = viewportWidth * 0.90;
 
 
@@ -42,6 +43,7 @@ export default class ArticleBodyContent extends React.Component {
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
+                        allowedStyles={[]}
                         customWrapper={(text) => {
                             return (
                                 <Text>{text}</Text>
@@ -61,6 +63,7 @@ export default class ArticleBodyContent extends React.Component {
                         <HTML
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
+                            allowedStyles={[]}
                             customWrapper={(text) => {
                                 return (
                                     <Text>{text}</Text>
@@ -95,18 +98,41 @@ export default class ArticleBodyContent extends React.Component {
                         <HTML
                             html={article.content.rendered}
                             imagesMaxWidth={MEDIAWIDTH}
-                            ignoredStyles={['height', 'width', 'display', 'font - family']}
+                            ignoredStyles={['height', 'width', 'display', 'font-family']}
                             allowedStyles={[]}
+                            imagesInitialDimensions={{
+                                width: MEDIAWIDTH
+                            }}
                             textSelectable={true}
                             onLinkPress={(e, href) => this._viewLink(href)}
+                            alterChildren={(node) => {
+                                if (node.name === 'iframe') {
+                                    delete node.attribs.width;
+                                    delete node.attribs.height;
+
+                                }
+                                // if (node.attribs['data-photo-ids']){
+                                //     console.log('node', node);
+                                //     console.log('node attribs', node.attribs);
+                                //     console.log('node children', node.children)
+
+                                // }
+                                return node.children;
+                            }}
                             tagsStyles={{
                                 p: {
                                     fontSize: 18,
                                     marginBottom: 15
                                 },
                                 img: {
+                                    marginLeft: -20,
                                     height: MEDIASIZE,
-                                    borderRadius: 8
+                                    width: viewportWidth
+                                },
+                                iframe: {
+                                    marginLeft: -20,
+                                    height: MEDIASIZE,
+                                    width: viewportWidth
                                 }
                             }}
                             classesStyles={{
@@ -116,8 +142,32 @@ export default class ArticleBodyContent extends React.Component {
                                 'quotespeaker': { textAlign: 'left', fontSize: 14 },
                                 'photowrap': {
                                     display: 'none'
+                                },
+                                'wp-caption-text': {
+                                    fontSize: 14, color: '#757575'
                                 }
                             }}
+                            // alterNode={(node) => {
+                            //     if (node.attribs && node.attribs['data-photo-ids']) {
+                            //         return {
+                            //             attribs: {
+                            //                 class: "photowrap",
+                            //                 ['data-photo-ids']: "602,410,403,453,197"
+                            //             },
+                            //             children: [],
+                            //             name: "snsgallery",
+                            //             next: {},
+                            //             parent: null,
+                            //             prev: {},
+                            //             type: "tag"
+                            //         }
+
+                            //     }
+                            //     return node
+                            // }}
+                        renderers={{
+                            snsgallery: slideshowRenderer
+                        }}
                         />
                     </View>
                     :
@@ -127,6 +177,66 @@ export default class ArticleBodyContent extends React.Component {
         )
     }
 
+//     "<p>embed pull quote</p>
+//         <p>& nbsp;</p >
+//             <div class='pullquote left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><div class='largequote' style='color: #888888;'>&ldquo;</div><p class='pullquotetext'>This is the pull quote that this person said This is the pull quote that this person said This is the pull quote that this person said&rdquo;</p><p class='quotespeaker'>&mdash; Travis</p></div>
+//             <p>&nbsp;</p>
+//             <p>embed related stories</p>
+//             <div class='related relatedvert left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><h5>Related Stories</h5><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/" title="New political piece"><img src="https://travislang.snodemo.com/wp-content/uploads/2012/07/iStock_000017198608Small-240x150.jpg" style="width:100%" class="catboxphoto" alt="New political piece" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/">New political piece</a></h5><div class='relateddivider'></div><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/" title="New Entertainment Article"><img src="https://travislang.snodemo.com/wp-content/uploads/2019/04/paint-240x150.jpg" style="width:100%" class="catboxphoto" alt="New Entertainment Article" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/">New Entertainment Article</a></h5><div class='relateddivider'></div><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/791/showcase/new-showcase-article/">new showcase article</a></h5><div class="clear"></div></div>
+//             <p>test embed video iframe</p>
+//             <div id='video7658' style="opacity:.4" class='videowidget left  background-white' style='border-color: #888888;'><div class='embedcontainer'><iframe width="560" height="315" src="https://www.youtube.com/embed/4FpgcX7tqho" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>travis</div> <script type='text/javascript'>
+//                 $(document).ready(function() {
+//                     $(function () {
+//                         $(window).scroll(function () {
+//                             var scrollTop7658 = $(window).scrollTop(),
+//                                 elementOffset7658 = $('#video7658').offset().top,
+//                                 distance7658 = (elementOffset7658 - scrollTop7658);
+//                             if ((distance7658 < 400) && (distance7658 > 80)) {
+//                                 $('#video7658').stop().animate({ 'opacity': '1' }, 'slow');
+
+//                             } else {
+//                                 $('#video7658').stop().animate({ 'opacity': '.4' }, 'slow');
+//                             }
+
+
+//                         });
+//                     })
+
+//                 })
+// </script>
+
+//             <p>test video embed link</p>
+//             <div id='video2587' style="opacity:.4" class='videowidget left  background-white' style='border-color: #888888;'><div class='embedcontainer'>https://www.youtube.com/watch?v=4FpgcX7tqho</div>trav</div> <script type='text/javascript'>
+//                 $(document).ready(function() {
+//                     $(function () {
+//                         $(window).scroll(function () {
+//                             var scrollTop2587 = $(window).scrollTop(),
+//                                 elementOffset2587 = $('#video2587').offset().top,
+//                                 distance2587 = (elementOffset2587 - scrollTop2587);
+//                             if ((distance2587 < 400) && (distance2587 > 80)) {
+//                                 $('#video2587').stop().animate({ 'opacity': '1' }, 'slow');
+
+//                             } else {
+//                                 $('#video2587').stop().animate({ 'opacity': '.4' }, 'slow');
+//                             }
+
+
+//                         });
+//                     })
+
+//                 })
+// </script>
+
+//             <p>embed image</p>
+//             <div id="attachment_415" style="width: 1010px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-415" class="size-full wp-image-415" src="http://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM.jpg" alt="" width="1000" height="665" srcset="https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM.jpg 1000w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-475x315.jpg 475w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-950x631.jpg 950w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-122x80.jpg 122w" sizes="(max-width: 1000px) 100vw, 1000px" /><p id="caption-attachment-415" class="wp-caption-text"><span class="photocreditinline">Photographer</span><br />Caption goes here.</p></div>
+//             <p>&nbsp;</p>
+//             <p>embed slideshow</p>
+//             <snsgallery data-photo-ids="602,410,403,453,197"></snsgallery
+// <p>&nbsp;</p>
+//             <p>&nbsp;</p>
+//             <p>&nbsp;</p>
+// "
+
     _renderFeaturedMedia = article => {
         const { theme, handleCaptionClick } = this.props;
         if (article.slideshow) {
@@ -135,7 +245,7 @@ export default class ArticleBodyContent extends React.Component {
             )
         }
 
-        else if (article.custom_fields.video && article.custom_fields.video[0] ) {
+        else if (article.custom_fields.video && article.custom_fields.video[0]) {
             const source = article.custom_fields.video[0];
             if (source.includes('iframe')) {
 
@@ -270,7 +380,7 @@ export default class ArticleBodyContent extends React.Component {
 
     _renderArticleAuthor = article => {
         const { theme } = this.props;
-        if (article.custom_fields.writer && article.custom_fields.writer[0] ) {
+        if (article.custom_fields.writer && article.custom_fields.writer[0]) {
             let writers = article.custom_fields.writer;
             //if arr of writers dont include job title
             if (writers.length > 1) {

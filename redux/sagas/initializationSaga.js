@@ -27,7 +27,8 @@ function* initialize(action) {
         // get splash right away if set
         const splashResult = yield call(fetch, `https://${domain}/wp-json/custom/option?type=sns_splash_screen`);
         const splashScreenId = yield splashResult.json();
-        if (splashResult.status !== 200) {
+        console.log('splash result', splashResult)
+        if (splashResult.status != 200) {
             throw new Error('REST API issue, possibly no route')
         }
         const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
