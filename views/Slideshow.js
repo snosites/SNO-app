@@ -132,7 +132,6 @@ class Slideshow extends React.Component {
             const images = await Promise.all(imageIds.map(async id => {
                 return await this._getImage(id);
             }))
-            console.log('images', images)
             this.setState({
                 photos: images
             })

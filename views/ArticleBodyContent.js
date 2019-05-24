@@ -16,7 +16,7 @@ import { WebBrowser, Haptic } from 'expo';
 
 import TouchableItem from '../constants/TouchableItem';
 import Slideshow from './Slideshow';
-import { slideshowRenderer } from '../utils/slideshowRenderer';
+import { slideshowRenderer, relatedRenderer } from '../utils/Renderers';
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -166,7 +166,8 @@ export default class ArticleBodyContent extends React.Component {
                             //     return node
                             // }}
                         renderers={{
-                            snsgallery: slideshowRenderer
+                            snsgallery: slideshowRenderer,
+                            snsrelated: relatedRenderer
                         }}
                         />
                     </View>
@@ -183,59 +184,7 @@ export default class ArticleBodyContent extends React.Component {
 //             <p>&nbsp;</p>
 //             <p>embed related stories</p>
 //             <div class='related relatedvert left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><h5>Related Stories</h5><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/" title="New political piece"><img src="https://travislang.snodemo.com/wp-content/uploads/2012/07/iStock_000017198608Small-240x150.jpg" style="width:100%" class="catboxphoto" alt="New political piece" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/">New political piece</a></h5><div class='relateddivider'></div><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/" title="New Entertainment Article"><img src="https://travislang.snodemo.com/wp-content/uploads/2019/04/paint-240x150.jpg" style="width:100%" class="catboxphoto" alt="New Entertainment Article" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/">New Entertainment Article</a></h5><div class='relateddivider'></div><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/791/showcase/new-showcase-article/">new showcase article</a></h5><div class="clear"></div></div>
-//             <p>test embed video iframe</p>
-//             <div id='video7658' style="opacity:.4" class='videowidget left  background-white' style='border-color: #888888;'><div class='embedcontainer'><iframe width="560" height="315" src="https://www.youtube.com/embed/4FpgcX7tqho" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>travis</div> <script type='text/javascript'>
-//                 $(document).ready(function() {
-//                     $(function () {
-//                         $(window).scroll(function () {
-//                             var scrollTop7658 = $(window).scrollTop(),
-//                                 elementOffset7658 = $('#video7658').offset().top,
-//                                 distance7658 = (elementOffset7658 - scrollTop7658);
-//                             if ((distance7658 < 400) && (distance7658 > 80)) {
-//                                 $('#video7658').stop().animate({ 'opacity': '1' }, 'slow');
 
-//                             } else {
-//                                 $('#video7658').stop().animate({ 'opacity': '.4' }, 'slow');
-//                             }
-
-
-//                         });
-//                     })
-
-//                 })
-// </script>
-
-//             <p>test video embed link</p>
-//             <div id='video2587' style="opacity:.4" class='videowidget left  background-white' style='border-color: #888888;'><div class='embedcontainer'>https://www.youtube.com/watch?v=4FpgcX7tqho</div>trav</div> <script type='text/javascript'>
-//                 $(document).ready(function() {
-//                     $(function () {
-//                         $(window).scroll(function () {
-//                             var scrollTop2587 = $(window).scrollTop(),
-//                                 elementOffset2587 = $('#video2587').offset().top,
-//                                 distance2587 = (elementOffset2587 - scrollTop2587);
-//                             if ((distance2587 < 400) && (distance2587 > 80)) {
-//                                 $('#video2587').stop().animate({ 'opacity': '1' }, 'slow');
-
-//                             } else {
-//                                 $('#video2587').stop().animate({ 'opacity': '.4' }, 'slow');
-//                             }
-
-
-//                         });
-//                     })
-
-//                 })
-// </script>
-
-//             <p>embed image</p>
-//             <div id="attachment_415" style="width: 1010px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-415" class="size-full wp-image-415" src="http://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM.jpg" alt="" width="1000" height="665" srcset="https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM.jpg 1000w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-475x315.jpg 475w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-950x631.jpg 950w, https://travislang.snodemo.com/wp-content/uploads/2013/12/tX5skae4XTfZstVA7A68_qdLW7-41fO_mxVf_7-XKlM-122x80.jpg 122w" sizes="(max-width: 1000px) 100vw, 1000px" /><p id="caption-attachment-415" class="wp-caption-text"><span class="photocreditinline">Photographer</span><br />Caption goes here.</p></div>
-//             <p>&nbsp;</p>
-//             <p>embed slideshow</p>
-//             <snsgallery data-photo-ids="602,410,403,453,197"></snsgallery
-// <p>&nbsp;</p>
-//             <p>&nbsp;</p>
-//             <p>&nbsp;</p>
-// "
 
     _renderFeaturedMedia = article => {
         const { theme, handleCaptionClick } = this.props;
