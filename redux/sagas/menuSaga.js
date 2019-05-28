@@ -19,6 +19,7 @@ export function* fetchMenus(action) {
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();
+        console.log('menus', originalMenus)
         if(response.status !== 200 || typeof originalMenus != 'object'){
             throw new Error('REST API issue fetching menus, possibly no route')
         }
@@ -80,6 +81,10 @@ export function* fetchMenus(action) {
         const updatedDbCategories = yield call(fetchCategoriesFromDb, {
             domainId
         })
+        // make sure there is at least one menu
+        if(updatedDbCategories.length === 0) {
+            throw new Error('no menus in DB for school')
+        }
         yield put(setNotificationCategories({
             id: domainId,
             notificationCategories: updatedDbCategories
