@@ -30,11 +30,15 @@ function back() {
     );
 }
 
-function navigateReset(routeName) {
+function navigateReset(routeName, params) {
     _navigator.dispatch(
         StackActions.reset({
             index: 0,
-            actions: [NavigationActions.navigate({ routeName: routeName })],
+            key: undefined,
+            actions: [NavigationActions.navigate({ 
+                routeName: routeName,
+                params 
+            })],
         })
     )
 }

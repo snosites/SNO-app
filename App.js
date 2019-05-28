@@ -86,7 +86,7 @@ class AppNavigatorContainer extends React.Component {
             this.setState({
                 visible: false
             })
-            NavigationService.navigate('FullArticle');
+            // NavigationService.navigate('FullArticle');
             
             // if the push is from active domain go to article
             if (notification.data.domain_id == activeDomain.id) {
@@ -107,8 +107,7 @@ class AppNavigatorContainer extends React.Component {
                 })
                 console.log('found', found)
                 if (!found) {
-                    // user doesnt have this domain saved direct to home screen
-                    NavigationService.navigate('MainApp');
+                    // user doesnt have this domain saved so dont direct anywhere
                     return;
                 }
                 Alert.alert(
@@ -117,7 +116,7 @@ class AppNavigatorContainer extends React.Component {
                     [
                         {
                             text: 'Cancel',
-                            onPress: () => NavigationService.back(),
+                            onPress: () => {},
                             style: 'cancel'
                         },
                         {
@@ -140,7 +139,9 @@ class AppNavigatorContainer extends React.Component {
         try{
             const { notification } = this.state;
             const { dispatch } = this.props;
-            NavigationService.navigateReset('FullArticle');
+            NavigationService.navigate('AuthLoading', {
+                switchingDomain: true
+            });
             // get article
             const article = await this._fetchArticle(url, notification.data.post_id);
             // get featured image if there is one
@@ -156,7 +157,10 @@ class AppNavigatorContainer extends React.Component {
             dispatch(changeActiveDomain(Number(notification.data.domain_id)));
             //navigate to auth loading to load initial domain data
             let nav = NavigationService;
-            nav.navigate('AuthLoading');
+            console.log('nav obj', nav)
+            nav.navigate('AuthLoading', {
+                switchingDomain: false
+            });
         } catch(err) {
             console.log('error in notification switch domain func', err)
             NavigationService.back();
