@@ -46,7 +46,7 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
                 width: viewportWidth, 
                 marginLeft: -20, 
                 marginVertical: 20, 
-                paddingHorizontal: 20,
+                // paddingHorizontal: 10,
                 backgroundColor: '#eeeeee' 
             }}
         >

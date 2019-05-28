@@ -40,71 +40,49 @@ class RelatedStoriesList extends React.Component {
 
 
     render() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', paddingVertical: 10 }}>
+                <Text
+                    style={{
+                        textAlign: 'center',
+                        color: '#757575',
+                        fontSize: 19,
+                        fontWeight: 'bold',
+                        paddingVertical: 10
+                    }}
+                >
+                    Related Stories
+                </Text>
+                {this._renderRelatedStories()}
+            </View>
+        )
+    }
 
+    _renderRelatedStories = () => {
         const { relatedStoryIds } = this.props;
         const { stories, error } = this.state;
-        console.log('related stories', stories)
         if (error) {
             return (
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 20 }}>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            color: '#424242',
-                            fontSize: 19,
-                            fontWeight: 'bold',
-                            paddingVertical: 10
-                        }}
-                    >
-                        Related Stories
-                    </Text>
-                    <Text style={{ textAlign: 'center' }}>Error loading related stories</Text>
-                </View>
+                <Text style={{ textAlign: 'center' }}>Error loading related stories</Text>
             )
         }
-        if (relatedStoryIds && stories.length == 0) {
+        else if (relatedStoryIds && stories.length == 0) {
             return (
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 20 }}>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            color: '#424242',
-                            fontSize: 19,
-                            fontWeight: 'bold',
-                            paddingVertical: 10
-                        }}
-                    >
-                        Related Stories
-                    </Text>
-                    <ActivityIndicator />
+                <ActivityIndicator />
+            )
+        }
+        else {
+            return (
+                <View style={{flex: 1}}>
+                    <FlatList
+                        // style={{ flex: 1, marginVertical: 5 }}
+                        data={stories}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={this._renderItem}
+                    />
                 </View>
             )
         }
-        return (
-            <View style={{ flex: 1 }}>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            color: '#424242',
-                            fontSize: 19,
-                            fontWeight: 'bold',
-                            paddingVertical: 10
-                        }}
-                    >
-                        Related Stories
-                    </Text>
-                </View>
-                <FlatList
-                    Style={{ flex: 1, marginVertical: 5 }}
-                    data={stories}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={this._renderItem}
-                />
-            </View>
-
-
-        )
     }
 
     _renderItem = ({ item }) => {
@@ -127,7 +105,7 @@ class RelatedStoriesList extends React.Component {
                     <View style={styles.storyInfo}>
                         <HTML
                             html={article.title.rendered}
-                            baseFontStyle={{ fontSize: 15 }}
+                            baseFontStyle={{ fontSize: 16 }}
                             customWrapper={(text) => {
                                 return (
                                     <Text
@@ -140,7 +118,7 @@ class RelatedStoriesList extends React.Component {
                             }}
                             tagsStyles={{
                                 rawtext: {
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight: 'bold',
                                     color: theme.dark ? 'white' : 'black'
                                 }
@@ -151,7 +129,7 @@ class RelatedStoriesList extends React.Component {
                             numberOfLines={1}
                             style={{
                                 color: theme.colors.accent,
-                                fontSize: 12
+                                fontSize: 14
                             }}
                         >
                             {article.custom_fields.writer ? this._renderWriters(article.custom_fields.writer) : ''}
@@ -177,7 +155,7 @@ class RelatedStoriesList extends React.Component {
     _renderDate = date => {
         return (
             <Text style={{
-                fontSize: 12,
+                fontSize: 14,
                 color: '#9e9e9e'
             }}
             >
@@ -270,7 +248,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         flexDirection: 'row',
         flex: 1,
-        marginHorizontal: 5,
+        marginHorizontal: 10,
         marginVertical: 10,
     },
     featuredImage: {
