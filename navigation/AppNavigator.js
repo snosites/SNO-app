@@ -21,7 +21,6 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
-        console.log('in auth loading mount')
         const switchingDomain = this.props.navigation.getParam('switchingDomain', false);
         if(switchingDomain){
             return;
@@ -30,7 +29,6 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('in auth loading update')
         const switchingDomain = this.props.navigation.getParam('switchingDomain', false);
         if (switchingDomain) {
             return;

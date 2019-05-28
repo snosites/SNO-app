@@ -210,7 +210,6 @@ class ProfileScreen extends React.Component {
             if (writerName !== 'unknown') {
                 const response = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
                 const profile = await response.json();
-                console.log('wrter name', writerName, userDomain)
                 if (profile.length > 0) {
                     // if more than one matches uses first one
                     const profileId = profile[0].ID;

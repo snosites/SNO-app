@@ -12,7 +12,7 @@ export const handleArticlePress = (article, activeDomain) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
-    console.log('article', article)
+    console.log('article press', article)
     if (article.custom_fields.sno_format && 
         (article.custom_fields.sno_format == 'Classic' || article.custom_fields.sno_format == 'Full-Width' || article.custom_fields.sno_format == 'Side-Rails')
     ) {
@@ -23,7 +23,6 @@ export const handleArticlePress = (article, activeDomain) => {
 }
 
 handleRegularArticle = async (article) => {
-    console.log('in article press')
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }

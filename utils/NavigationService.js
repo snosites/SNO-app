@@ -43,16 +43,6 @@ function navigateReset(routeName, params) {
     )
 }
 
-function nestedNavigate(routeName1, routeName2) {
-    _navigator.dispatch(
-        NavigationActions.navigate(
-            {
-                routeName: routeName1,
-                params: {},
-                action: NavigationActions.navigate({ routeName: routeName2 })
-            })
-    )
-}
 
 
 // add other navigation functions that you need and export them
@@ -62,6 +52,5 @@ export default {
     push,
     setTopLevelNavigator,
     navigateReset,
-    nestedNavigate,
     back
 };

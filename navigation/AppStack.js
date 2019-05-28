@@ -52,7 +52,6 @@ RecentStack.navigationOptions = ({ screenProps }) => {
             />
         ),
         tabBarOnPress: ({ navigation }) => {
-            console.log('pressed tab button home')
             navigation.navigate('Recent', {
                 scrollToTop: true
             })
