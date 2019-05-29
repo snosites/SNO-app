@@ -15,6 +15,17 @@ function navigate(routeName, params) {
     );
 }
 
+function nestedNavigate(routeName1, routeName2) {
+    _navigator.dispatch(
+        NavigationActions.navigate(
+            {
+                routeName: routeName1,
+                params: {},
+                action: NavigationActions.navigate({ routeName: routeName2 })
+            })
+    )
+}
+
 function push(routeName, params) {
     _navigator.dispatch(
         StackActions.push({
@@ -49,6 +60,7 @@ function navigateReset(routeName, params) {
 
 export default {
     navigate,
+    nestedNavigate,
     push,
     setTopLevelNavigator,
     navigateReset,
