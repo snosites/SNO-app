@@ -6,21 +6,54 @@ export function* fetchFeaturedImage(url, story) {
     if (!featuredImage.meta_fields) {
         story.featuredImage = {
             uri: featuredImage.source_url,
-            photographer: 'Unknown',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+            photographer: '',
+            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
         }
         return;
     }
     story.featuredImage = {
         uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : 'Unknown',
-        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : 'Unknown'
+        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
+        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
 }
 
 export function* fetchComments(url, story) {
     const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
     const comments = yield response.json();
-    story.comments = comments
+    if (response.status == 200) {
+        story.comments = comments
+    } else {
+        story.comments = []
+    }
+    return;
+}
+
+export async function asyncFetchFeaturedImage(url, story) {
+    const imgResponse = await fetch(url);
+    const featuredImage = await imgResponse.json();
+    if (!featuredImage.meta_fields) {
+        story.featuredImage = {
+            uri: featuredImage.source_url,
+            photographer: '',
+            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
+        }
+        return;
+    }
+    story.featuredImage = {
+        uri: featuredImage.source_url,
+        photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
+        caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
+    }
+}
+
+export async function asyncFetchComments(url, story) {
+    const response = await fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
+    const comments = await response.json();
+    if(response.status == 200) {
+        story.comments = comments
+    } else {
+        story.comments = []
+    }
     return;
 }

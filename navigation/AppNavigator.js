@@ -21,6 +21,18 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
+        const switchingDomain = this.props.navigation.getParam('switchingDomain', false);
+        if(switchingDomain){
+            return;
+        }
+        this._getDomainAsync();
+    }
+
+    componentDidUpdate() {
+        const switchingDomain = this.props.navigation.getParam('switchingDomain', false);
+        if (switchingDomain) {
+            return;
+        }
         this._getDomainAsync();
     }
 

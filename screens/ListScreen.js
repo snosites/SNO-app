@@ -26,7 +26,6 @@ import {
 import { SafeAreaView } from 'react-navigation';
 
 import ArticleListContent from '../views/ArticleListContent';
-import Animation from '../views/Animation';
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
@@ -81,7 +80,6 @@ class ListScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('in component did update list')
         if (this.animation) {
             this._playAnimation();
         }
@@ -214,7 +212,6 @@ class ListScreen extends React.Component {
     _handleArticleSave = article => {
 
         const { activeDomain } = this.props;
-        console.log('in article save', activeDomain)
         this.props.dispatch(saveArticle(article, activeDomain.id))
         this.setState({
             snackbarSavedVisible: true
@@ -222,7 +219,6 @@ class ListScreen extends React.Component {
     }
 
     _handleArticleRemove = articleId => {
-        console.log('in article remove')
         const { activeDomain } = this.props;
         this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
         this.setState({

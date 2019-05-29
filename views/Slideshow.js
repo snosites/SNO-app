@@ -6,12 +6,15 @@ import {
     Text,
     View,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel';
 import HTML from 'react-native-render-html';
 import Colors from '../constants/Colors';
 import TouchableItem from '../constants/TouchableItem';
+
+import { connect } from 'react-redux';
 
 
 const IS_IOS = Platform.OS === 'ios';
@@ -33,21 +36,56 @@ const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 
 
-export default class Slideshow extends React.Component {
+class Slideshow extends React.Component {
 
     state = {
         activeSlide: SLIDER_FIRST_ITEM,
+        photos: [],
+        error: false
+    }
+
+    componentDidMount() {
+        if (this.props.imageIds) {
+            console.log('getting ids')
+            this._getImageData(this.props.imageIds)
+        }
     }
 
     render() {
-        const { activeSlide } = this.state;
+        const { activeSlide, photos, error } = this.state;
+        if(error){
+            return (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text style={{textAlign: 'center'}}>Error loading slideshow</Text>
+                </View>
+            )
+        }
+        if (this.props.imageIds && photos.length == 0) {
+            return (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <ActivityIndicator />
+                </View>
+            )
+        }
         return (
             <View style={{ flex: 1 }}>
                 <Carousel
                     // layout={'stack'}
                     // layoutCardOffset={18}
                     ref={(c) => { this._carousel = c; }}
-                    data={this.props.images}
+                    data={this.props.imageIds ? photos : this.props.images}
                     renderItem={this._renderItem}
                     sliderWidth={sliderWidth}
                     itemWidth={itemWidth}
@@ -66,7 +104,7 @@ export default class Slideshow extends React.Component {
                     })}
                 />
                 <Pagination
-                    dotsLength={this.props.images.length}
+                    dotsLength={this.props.imageIds ? photos.length : this.props.images.length}
                     activeDotIndex={activeSlide}
                     containerStyle={styles.paginationContainer}
                     dotColor={this.props.accentColor}
@@ -80,6 +118,30 @@ export default class Slideshow extends React.Component {
             </View>
 
         )
+    }
+
+    _getImage = async imageId => {
+        const { activeDomain } = this.props;
+        const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
+        return await result.json();
+    }
+
+    _getImageData = async imageIds => {
+        try {
+            console.log('img ids', imageIds)
+            const images = await Promise.all(imageIds.map(async id => {
+                return await this._getImage(id);
+            }))
+            this.setState({
+                photos: images
+            })
+        } catch(err) {
+            console.log('error getting slideshow images', err)
+            this.setState({
+                error: true
+            })
+        }
+        
     }
 
     _renderItem({ item, index }, parallaxProps) {
@@ -98,7 +160,7 @@ export default class Slideshow extends React.Component {
                     <View style={styles.radiusMask} />
                 </View>
                 <View style={styles.textContainer}>
-                    {item.caption ?
+                    {item.caption && item.caption.rendered ?
                         <HTML
                             html={item.caption.rendered}
                             baseFontStyle={{ fontSize: 12 }}
@@ -208,3 +270,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 8
     }
 });
+
+
+const mapStateToProps = state => ({
+    activeDomain: state.activeDomain
+})
+
+export default connect(mapStateToProps)(Slideshow);

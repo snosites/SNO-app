@@ -207,7 +207,6 @@ class SearchScreen extends React.Component {
     }
 
     _handleArticleSave = article => {
-        console.log('in article save')
         const { activeDomain } = this.props;
         this.props.dispatch(saveArticle(article, activeDomain.id))
         this.setState({
@@ -216,7 +215,6 @@ class SearchScreen extends React.Component {
     }
 
     _handleArticleRemove = articleId => {
-        console.log('in article remove')
         const { activeDomain } = this.props;
         this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
         this.setState({

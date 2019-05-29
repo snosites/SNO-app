@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    Platform,
     StatusBar,
     StyleSheet,
     View,
@@ -8,7 +7,8 @@ import {
     ActivityIndicator,
     Animated,
     PanResponder,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
 import { Provider as ReduxProvider, connect } from 'react-redux';
@@ -16,7 +16,10 @@ import { changeActiveDomain, setFromPush } from './redux/actionCreators';
 
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './utils/NavigationService';
+
 import { handleArticlePress } from './utils/articlePress';
+import { asyncFetchFeaturedImage, asyncFetchComments } from './utils/sagaHelpers';
+import FadeInView from './views/FadeInView';
 
 import { Provider as PaperProvider, Portal } from 'react-native-paper';
 import Color from 'color';
@@ -24,7 +27,6 @@ import Moment from 'moment';
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
-
 import Sentry from 'sentry-expo';
 import { secrets } from './env';
 
@@ -40,120 +42,6 @@ import { useScreens } from 'react-native-screens';
 
 Sentry.config(secrets.SENTRYAPI).install();
 
-
-class FadeInView extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            slideAnim: new Animated.Value(-125)
-        }
-
-        this._panResponder = PanResponder.create({
-            // onStartShouldSetPanResponder: (evt, gestureState) => true,
-            // onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => false,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-                //return true if user is swiping, return false if it's a single click
-                const { dx, dy } = gestureState
-                console.log('dy', dy, 'dx', dx)
-                return dy > 2 || dy < -2
-            },
-            onPanResponderTerminationRequest: (evt, gestureState) => true,
-            onPanResponderGrant: (evt, gestureState) => {
-                console.log('pan started', gestureState)
-            },
-            // on each move event, set slideValue to gestureState.dx -- the 
-            // first value `null` ignores the first `event` argument
-            onPanResponderMove: Animated.event([
-                null, {
-                    dy: this.state.slideAnim
-                }
-            ]),
-            onPanResponderRelease: (e, gestureState) => {
-                if (gestureState.dy < -40) {
-                    this._hide();
-                } else {
-                    this._show();
-                }
-            }
-        });
-    }
-
-
-    componentDidMount() {
-        if (this.props.visible) {
-            this._show();
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.visible !== this.props.visible) {
-            this._toggle();
-        }
-    }
-
-    _toggle = () => {
-        if (this.props.visible) {
-            this._show();
-        } else {
-            this._hide();
-        }
-    };
-
-    _show = () => {
-        Animated.timing(
-            this.state.slideAnim,
-            {
-                toValue: 0,
-                duration: 800,
-                // useNativeDriver: true,
-            }
-        ).start();
-    }
-
-    _hide = () => {
-        clearTimeout(this._hideTimeout);
-
-        Animated.timing(this.state.slideAnim, {
-            toValue: -125,
-            duration: 400,
-            // useNativeDriver: true,
-        }).start(({ finished }) => {
-            if (finished) {
-                //
-            }
-        });
-    }
-
-
-
-    render() {
-        let { slideAnim } = this.state;
-
-        return (
-            <Animated.View
-                {...this._panResponder.panHandlers}
-                style={{
-                    ...this.props.style,
-                    // opacity: this.state.slideAnim,
-                    transform: [
-                        {
-                            // translateY: slideAnim
-                            translateY: slideAnim.interpolate({
-                                inputRange: [-125, 0],
-                                outputRange: [0, 125],
-                                extrapolateRight: 'clamp'
-                            }),
-                        },
-                        { perspective: 1000 },
-                    ]
-                }}
-            >
-                {this.props.children}
-            </Animated.View>
-        );
-    }
-}
 
 class AppNavigatorContainer extends React.Component {
     state = {
@@ -183,7 +71,7 @@ class AppNavigatorContainer extends React.Component {
                 this.setState({
                     visible: false
                 })
-            }, 8000)
+            }, 7000)
         }
         else if(notification.origin === 'selected') {
             this._handleNotificationPress();
@@ -191,43 +79,106 @@ class AppNavigatorContainer extends React.Component {
     };
 
     _handleNotificationPress = async () => {
-        console.log('notification press')
-        // const { notification } = this.state;
-        // const { activeDomain, dispatch, domains } = this.props;
-        // this.setState({
-        //     visible: false
-        // })
-        // NavigationService.navigate('FullArticle');
-        // const article = await this._fetchArticleAndComments(activeDomain.url, notification.data.post_id);
-        // if (notification.data.domain_id == activeDomain.id) {
-        //     handleArticlePress(article, activeDomain);
-        // } else {
-        //     // make sure domain origin is a saved domain
-        //     let found = domains.find(domain => {
-        //         return domain.id == notification.data.domain_id;
-        //     })
-        //     if(!found) {
-        //         // user doesnt have this domain saved -- handle further later
-        //         return;
-        //     }
-        //     // sets key for app to look for on new domain load
-        //     dispatch(setFromPush(article));
-        //     // change active domain
-        //     dispatch(changeActiveDomain(notification.domain_id));
-        //     //navigate to auth loading to load initial domain data
-        //     NavigationService.navigate('AuthLoading');
-        // }
+        try {
+            console.log('notification press')
+            const { notification } = this.state;
+            const { activeDomain, domains } = this.props;
+            this.setState({
+                visible: false
+            })
+            // NavigationService.navigate('FullArticle');
+            
+            // if the push is from active domain go to article
+            if (notification.data.domain_id == activeDomain.id) {
+                // get article
+                const article = await this._fetchArticle(activeDomain.url, notification.data.post_id);
+                // get featured image if there is one
+                if (article._links['wp:featuredmedia']) {
+                    await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+                }
+                // get comments
+                await asyncFetchComments(activeDomain.url, article)
+                handleArticlePress(article, activeDomain);
+            } else {
+                // make sure domain origin is a saved domain
+                let found = domains.find(domain => {
+                    console.log(domain.id, notification.data.domain_id)
+                    return domain.id == notification.data.domain_id;
+                })
+                console.log('found', found)
+                if (!found) {
+                    // user doesnt have this domain saved so dont direct anywhere
+                    return;
+                }
+                Alert.alert(
+                    'Switch Active School?',
+                    `Viewing this story will switch your active school to ${notification.data.site_name}.`,
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => {},
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'Proceed',
+                            onPress: () => {
+                                this._notificationSwitchDomain(found.url);
+                            }
+                        }
+                    ],
+                    { cancelable: false },
+                )
+            }
+        } catch(err) {
+            console.log('error in notification press', err)
+            Sentry.captureException(err)
+        }
     }
 
-    _fetchArticleAndComments = async (url, articleId) => {
-        const [articleQuery, commentsQuery] = await Promise.all([
-            await fetch(`https://${url}/wp-json/wp/v2/posts/${articleId}`),
-            await fetch(`https://${url}/wp-json/wp/v2/comments?post=${articleId}`)
-        ])
-        const article = await articleQuery.json();
-        const comments = await commentsQuery.json();
-        article.comments = comments;
-        return article;
+    _notificationSwitchDomain = async (url) => {
+        try{
+            const { notification } = this.state;
+            const { dispatch } = this.props;
+            NavigationService.navigate('AuthLoading', {
+                switchingDomain: true
+            });
+            // get article
+            const article = await this._fetchArticle(url, notification.data.post_id);
+            // get featured image if there is one
+            if (article._links['wp:featuredmedia']) {
+                await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+            }
+            // get comments
+            await asyncFetchComments(url, article)
+            // sets key for app to look for on new domain load
+            dispatch(setFromPush(article));
+            // change active domain
+            console.log('notification.data.domain_id', notification.data, notification.data.domain_id)
+            dispatch(changeActiveDomain(Number(notification.data.domain_id)));
+            //navigate to auth loading to load initial domain data
+            let nav = NavigationService;
+            console.log('nav obj', nav)
+            nav.navigate('AuthLoading', {
+                switchingDomain: false
+            });
+        } catch(err) {
+            console.log('error in notification switch domain func', err)
+            NavigationService.back();
+            Sentry.captureException(err)
+        }
+    }
+
+    _fetchArticle = async (url, articleId) => {
+        try{
+            const result = await fetch(`https://${url}/wp-json/wp/v2/posts/${articleId}`)
+            const article = await result.json();
+            if (result.status != 200) {
+                throw new Error('error getting article from push')
+            }
+            return article;
+        } catch(err) {
+            NavigationService.navigate('HomeStack');
+        }
     }
 
     render() {

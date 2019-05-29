@@ -54,7 +54,6 @@ class ListScreen extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('in component did update saved')
         if (this.animation) {
             this._playAnimation();
         }
@@ -140,7 +139,6 @@ class ListScreen extends React.Component {
     }
 
     _handleArticleRemove = article => {
-        console.log('in article remove')
         const { activeDomain } = this.props;
         this.props.dispatch(removeSavedArticle(article.id, activeDomain.id))
         this.setState({

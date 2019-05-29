@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
-
+import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux';
 import { initialize, setFromPush } from '../redux/actionCreators';
 import { handleArticlePress } from '../utils/articlePress';
@@ -50,15 +50,16 @@ class AppSetupScreen extends React.Component {
                 // check if the user is coming from a push notification
                 if(userInfo.fromPush) {
                     // go to main app
-                    navigation.navigate('MainApp');
+                    NavigationService.nestedNavigate('MainApp', 'RecentStack');
                     // direct to article from push
+                    NavigationService.navigate('FullArticle');
                     handleArticlePress(userInfo.fromPush, activeDomain);
                     // reset push key
                     dispatch(setFromPush(false));
-
+                } else {
+                    console.log('finished loading menus and articles')
+                    navigation.navigate('MainApp');
                 }
-                console.log('finished loading menus and articles')
-                navigation.navigate('MainApp');
             }
         }
     }

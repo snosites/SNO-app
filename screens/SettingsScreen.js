@@ -398,7 +398,6 @@ class SettingsScreen extends React.Component {
     }
 
     _handleDeleteOrg = (domain) => {
-        console.log('in handle delete')
         if (Platform.OS === 'ios') {
             Haptic.selection();
         }
@@ -456,7 +455,6 @@ class SettingsScreen extends React.Component {
                 }
             }
         })
-        console.log('toggle', notification, value)
         // notificationId is category ID in DB
         const { dispatch, userInfo } = this.props;
         if (value) {
