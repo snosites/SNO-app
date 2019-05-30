@@ -96,6 +96,26 @@ class ListScreen extends React.Component {
     render() {
         const { navigation, articlesByCategory, category, theme, activeDomain } = this.props;
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
+        const categoryId = this.props.navigation.getParam('categoryId', null);
+        if(!categoryId) {
+            return (
+                <SafeAreaView
+                    style={{
+                        flex: 1,
+                        marginTop: 20,
+                    }}
+                >
+                    <Lottie
+                        ref={animation => this._saveAnimationRef(animation)}
+                        style={StyleSheet.absoluteFill}
+                        speed={0.8}
+                        loop={true}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/multi-article-loading')}
+                    />
+                </SafeAreaView>
+            )
+        }
         if (articlesByCategory.length === 0 && category.isFetching) {
             return (
                 <SafeAreaView
@@ -261,7 +281,16 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
-    const categoryId = ownProps.navigation.getParam('categoryId', state.menus.items[0].object_id);
+    const categoryId = ownProps.navigation.getParam('categoryId', null);
+    if(!categoryId){
+        return {
+            theme: state.theme,
+            activeDomain: state.activeDomain,
+            menus: state.menus,
+            category: null,
+            articlesByCategory: []
+        }
+    }
     return {
         theme: state.theme,
         activeDomain: state.activeDomain,

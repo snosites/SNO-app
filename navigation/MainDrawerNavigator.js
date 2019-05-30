@@ -16,7 +16,7 @@ import CommentsScreen from '../screens/CommentsScreen';
 import StaffScreen from '../screens/StaffScreen';
 
 const ArticleStack = createStackNavigator({
-    List: ListScreen,
+    List: {screen: ListScreen, params: {categoryId: null}},
     FullArticle: FullArticleScreen,
     Search: SearchScreen,
     Profile: ProfileScreen,
