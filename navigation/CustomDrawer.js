@@ -46,10 +46,12 @@ class CustomDrawerComponent extends React.Component {
 
     componentDidMount() {
         const { menus } = this.props;
-        this.props.navigation.navigate('List', {
-            menuTitle: menus.items[0].title,
-            categoryId: menus.items[0].object_id,
-        })
+        if(menus.items.length > 0) {
+            this.props.navigation.navigate('List', {
+                menuTitle: menus.items[0].title,
+                categoryId: menus.items[0].object_id,
+            })
+        }
     }
 
     render() {
