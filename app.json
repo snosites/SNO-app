@@ -9,7 +9,7 @@
             "ios",
             "android"
         ],
-        "version": "1.4.2",
+        "version": "1.4.3",
         "orientation": "portrait",
         "primaryColor": "#2099CE",
         "icon": "./assets/images/the-source-icon.png",
