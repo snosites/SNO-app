@@ -177,6 +177,8 @@ class AppNavigatorContainer extends React.Component {
             }
             return article;
         } catch(err) {
+            console.log('error getting article', err);
+            Sentry.captureException(err);
             NavigationService.navigate('HomeStack');
         }
     }
