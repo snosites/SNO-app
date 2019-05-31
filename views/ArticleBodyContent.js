@@ -85,7 +85,9 @@ export default class ArticleBodyContent extends React.Component {
                 <View
                     style={{
                         flexDirection: 'row',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        alignItems: 'flex-start',
+                        flexWrap: 'wrap'
                     }}
                 >
                     {this._renderArticleAuthor(article)}
@@ -97,11 +99,11 @@ export default class ArticleBodyContent extends React.Component {
                     <View style={styles.articleContents}>
                         <HTML
                             html={article.content.rendered}
-                            imagesMaxWidth={MEDIAWIDTH}
+                            imagesMaxWidth={viewportWidth}
                             ignoredStyles={['height', 'width', 'display', 'font-family']}
                             allowedStyles={[]}
                             imagesInitialDimensions={{
-                                width: MEDIAWIDTH
+                                width: viewportWidth
                             }}
                             textSelectable={true}
                             onLinkPress={(e, href) => this._viewLink(href)}
@@ -126,8 +128,9 @@ export default class ArticleBodyContent extends React.Component {
                                 },
                                 img: {
                                     marginLeft: -20,
-                                    height: MEDIASIZE,
-                                    width: viewportWidth
+                                    // height: MEDIASIZE,
+                                    width: viewportWidth,
+                                    resizeMode: 'cover'
                                 },
                                 iframe: {
                                     marginLeft: -20,
@@ -177,13 +180,6 @@ export default class ArticleBodyContent extends React.Component {
             </View>
         )
     }
-
-//     "<p>embed pull quote</p>
-//         <p>& nbsp;</p >
-//             <div class='pullquote left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><div class='largequote' style='color: #888888;'>&ldquo;</div><p class='pullquotetext'>This is the pull quote that this person said This is the pull quote that this person said This is the pull quote that this person said&rdquo;</p><p class='quotespeaker'>&mdash; Travis</p></div>
-//             <p>&nbsp;</p>
-//             <p>embed related stories</p>
-//             <div class='related relatedvert left  background-gray shadow borderall sno-animate' style='border-color: #888888;'><h5>Related Stories</h5><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/" title="New political piece"><img src="https://travislang.snodemo.com/wp-content/uploads/2012/07/iStock_000017198608Small-240x150.jpg" style="width:100%" class="catboxphoto" alt="New political piece" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/799/opinions/new-political-piece/">New political piece</a></h5><div class='relateddivider'></div><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/" title="New Entertainment Article"><img src="https://travislang.snodemo.com/wp-content/uploads/2019/04/paint-240x150.jpg" style="width:100%" class="catboxphoto" alt="New Entertainment Article" /></a><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/756/entertainment/new-entertainment-article/">New Entertainment Article</a></h5><div class='relateddivider'></div><h5 class="relatedtitle"><a href="https://travislang.snodemo.com/791/showcase/new-showcase-article/">new showcase article</a></h5><div class="clear"></div></div>
 
 
     _renderFeaturedMedia = article => {

@@ -29,8 +29,9 @@ function* fetchProfileArticles(action) {
     try{
         const { url, writerName } = action;
         // get list of articles written by writer
-        const query = yield call(fetch, `https://${url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=writer&meta_query[0][value]=${writerName}&per_page=50`);
+        const query = yield call(fetch, `https://${url}/wp-json/sns-v2/author_content?name=${writerName}`);
         if(query.status != 200){
+            console.log('query', query)
             throw new Error('error fetching posts by author')
         }
         const articlesByWriter = yield query.json();
@@ -56,8 +57,8 @@ function* fetchProfileArticles(action) {
         yield put(setProfileArticles(verifiedArticlesByWriter))
 
     } catch(err) {
-        console.log('error in fetch profile articles saga', err)
-        if (err === 'error fetching posts by author'){
+        console.log('error in fetch profile articles saga', err.message)
+        if (err.message === 'error fetching posts by author'){
             yield put(setProfileArticleError('error fetching posts by author'))
         }
         Sentry.captureException(err)
