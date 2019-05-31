@@ -11,9 +11,19 @@ import rootSaga from './sagas/rootSaga';
 import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
+import { setupSentry } from '../sentry-utils';
+import createRavenMiddleware from "raven-for-redux";
+import Sentry from 'sentry-expo';
+
+setupSentry();
+
 const sagaMiddleware = createSagaMiddleWare();
 
-const middlewareList = __DEV__ ? [sagaMiddleware, logger] : [sagaMiddleware]
+const sentryMiddleware = createRavenMiddleware(Sentry, {
+    // options for later
+})
+
+const middlewareList = __DEV__ ? [sagaMiddleware, sentryMiddleware, logger] : [sagaMiddleware, sentryMiddleware]
 
 // used to persist redux state to async storage
 const persistConfig = {

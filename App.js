@@ -30,9 +30,9 @@ import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
 import Sentry from 'sentry-expo';
-import { secrets } from './env';
+// import { secrets } from './env';
 
-import { useScreens } from 'react-native-screens';
+// import { useScreens } from 'react-native-screens';
 
 // performance optimization for navigations screens
 // rendering bug -- commented out until fixed
@@ -42,7 +42,7 @@ import { useScreens } from 'react-native-screens';
 // sentry setup
 // Sentry.enableInExpoDevelopment = true;
 
-Sentry.config(secrets.SENTRYAPI).install();
+// Sentry.config(secrets.SENTRYAPI).install();
 
 
 class AppNavigatorContainer extends React.Component {
