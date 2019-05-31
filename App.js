@@ -27,6 +27,8 @@ import Moment from 'moment';
 
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
+import ErrorBoundary from './views/ErrorBoundary';
+
 import Sentry from 'sentry-expo';
 import { secrets } from './env';
 
@@ -296,7 +298,9 @@ export default class App extends React.Component {
             return (
                 <ReduxProvider store={store}>
                     <PersistGate loading={<ActivityIndicator style={{ padding: 50 }} />} persistor={persistor}>
-                        <ConnectedAppNavigator />
+                        <ErrorBoundary>
+                            <ConnectedAppNavigator />
+                        </ErrorBoundary>
                     </PersistGate>
                 </ReduxProvider>
             );
