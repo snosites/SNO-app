@@ -21,12 +21,12 @@ import { connect } from 'react-redux';
 import { WebBrowser, LinearGradient, Haptic } from 'expo';
 import { handleArticlePress } from '../utils/articlePress';
 
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import HTML from 'react-native-render-html';
 // import Colors from '../constants/Colors';
 import { NavigationEvents } from 'react-navigation';
 
-import { Divider, Colors } from 'react-native-paper';
+import { Divider, Colors, Chip } from 'react-native-paper';
 
 
 class ProfileScreen extends React.Component {
@@ -100,15 +100,16 @@ class ProfileScreen extends React.Component {
                                         end={[1, 0.5]}
                                         style={styles.listHeader}>
                                         <Text
-                                            numberOfLines={2}
-                                            ellipsizeMode='middle'
+                                            numberOfLines={3}
+                                            ellipsizeMode='tail'
                                             style={{
                                                 backgroundColor: 'transparent',
                                                 fontSize: 19,
                                                 color: primaryIsDark ? 'white' : 'black',
                                                 textAlign: 'center',
-                                            }}>
-                                            {`Recent Articles Authored By ${profile.custom_fields.name[0]}`}
+                                            }}
+                                        >
+                                            {`Recent Work By ${profile.custom_fields.name[0]}`}
                                         </Text>
                                     </LinearGradient>
                                 </View>
@@ -123,11 +124,6 @@ class ProfileScreen extends React.Component {
                                         data={profiles.articles}
                                         keyExtractor={item => item.id ? item.id.toString() : null}
                                         ItemSeparatorComponent={() => (<Divider />)}
-                                        // onEndReachedThreshold={0.25}
-                                        // onEndReached={this._loadMore}
-                                        // onRefresh={this._handleRefresh}
-                                        // refreshing={category.isFetching}
-
                                         renderItem={(props) => {
                                             const story = props.item;
                                             return (
@@ -175,6 +171,27 @@ class ProfileScreen extends React.Component {
                                                             }}>
                                                             {String(Moment(story.date).format('MMM D YYYY'))}
                                                         </Text>
+                                                        <View
+                                                            style={{
+                                                                flexDirection: 'row', 
+                                                                alignItems: 'center',
+                                                                paddingTop: 5
+                                                            }}
+                                                        >
+                                                            <MaterialIcons 
+                                                                name={story.custom_fields.writer && story.custom_fields.writer[0] == profile.custom_fields.name[0] ? 'edit' : 'camera-alt'} 
+                                                                size={16} 
+                                                                color={accentIsDark ? 'white' : 'black'} 
+                                                            />
+                                                            <Text
+                                                                style={{
+                                                                    color: accentIsDark ? 'white' : 'black',
+                                                                    paddingLeft: 3
+                                                                }}    
+                                                            >
+                                                                {story.custom_fields.writer && story.custom_fields.writer[0] == profile.custom_fields.name[0] ? 'story' : 'media'}
+                                                            </Text>
+                                                        </View>
                                                     </View>
                                                     <Feather
                                                         style={{ marginLeft: 20 }}
@@ -211,7 +228,7 @@ class ProfileScreen extends React.Component {
                 const response = await fetch(`https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`)
                 const profile = await response.json();
                 if (profile.length > 0) {
-                    // if more than one matches uses first one
+                    // if more than one matches use first one
                     const profileId = profile[0].ID;
                     const newResponse = await fetch(`https://${userDomain}/wp-json/wp/v2/posts/${profileId}`)
                     const writerProfile = await newResponse.json();
