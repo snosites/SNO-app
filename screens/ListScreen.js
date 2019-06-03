@@ -77,6 +77,7 @@ class ListScreen extends React.Component {
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
+        throw new Error('testing error boundary')
     }
 
     componentDidUpdate() {

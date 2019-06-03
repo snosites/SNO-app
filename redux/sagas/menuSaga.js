@@ -31,9 +31,12 @@ export function* fetchMenus(action) {
             }
         })
         // get categories from DB
-        const dbCategories = yield call(fetchCategoriesFromDb, {
+        const {dbCategories, err} = yield call(fetchCategoriesFromDb, {
             domainId
         })
+        if(err){
+            throw new Error('error getting categories from DB');
+        }
         //loop through and check if category of menu is in DB -- if not then add it
         for (let menu of menus) {
             let foundCategory = dbCategories.find((category) => {
@@ -111,10 +114,15 @@ function* fetchCategoriesFromDb(action) {
         const userInfo = yield select(getUserInfo)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
         const categories = yield response.json();
-        return categories;
+        return {
+            categories
+        }
     }
     catch (err) {
         console.log('error fetching categories from DB', err)
+        return {
+            err
+        }
     }
 }
 

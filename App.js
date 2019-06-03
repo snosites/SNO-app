@@ -58,8 +58,6 @@ class AppNavigatorContainer extends React.Component {
         }
     }
 
-    // { "category_name": "Opinions", "domain_id": "59162841", "post_id": "34587", "site_name": "Best of SNO", "title": "test" }
-
     _handleNotification = (notification) => {
         console.log('new notification', notification);
         console.log('notification data', notification.data);
@@ -75,7 +73,7 @@ class AppNavigatorContainer extends React.Component {
                 })
             }, 7000)
         }
-        else if(notification.origin === 'selected') {
+        else if (notification.origin === 'selected') {
             this._handleNotificationPress();
         }
     };
@@ -88,8 +86,6 @@ class AppNavigatorContainer extends React.Component {
             this.setState({
                 visible: false
             })
-            // NavigationService.navigate('FullArticle');
-            
             // if the push is from active domain go to article
             if (notification.data.domain_id == activeDomain.id) {
                 // get article
@@ -117,7 +113,7 @@ class AppNavigatorContainer extends React.Component {
                     [
                         {
                             text: 'Cancel',
-                            onPress: () => {},
+                            onPress: () => { },
                             style: 'cancel'
                         },
                         {
@@ -130,14 +126,14 @@ class AppNavigatorContainer extends React.Component {
                     { cancelable: false },
                 )
             }
-        } catch(err) {
+        } catch (err) {
             console.log('error in notification press', err)
             Sentry.captureException(err)
         }
     }
 
     _notificationSwitchDomain = async (url) => {
-        try{
+        try {
             const { notification } = this.state;
             const { dispatch } = this.props;
             NavigationService.navigate('AuthLoading', {
@@ -162,7 +158,7 @@ class AppNavigatorContainer extends React.Component {
             nav.navigate('AuthLoading', {
                 switchingDomain: false
             });
-        } catch(err) {
+        } catch (err) {
             console.log('error in notification switch domain func', err)
             NavigationService.back();
             Sentry.captureException(err)
@@ -170,14 +166,14 @@ class AppNavigatorContainer extends React.Component {
     }
 
     _fetchArticle = async (url, articleId) => {
-        try{
+        try {
             const result = await fetch(`https://${url}/wp-json/wp/v2/posts/${articleId}`)
             const article = await result.json();
             if (result.status != 200) {
                 throw new Error('error getting article from push')
             }
             return article;
-        } catch(err) {
+        } catch (err) {
             console.log('error getting article', err);
             Sentry.captureException(err);
             NavigationService.navigate('HomeStack');
@@ -194,12 +190,14 @@ class AppNavigatorContainer extends React.Component {
                 <PaperProvider theme={theme}>
                     <View style={styles.container}>
                         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-                        <AppNavigator 
-                            screenProps={{ theme: theme }} 
-                            ref={navigatorRef => {
-                                NavigationService.setTopLevelNavigator(navigatorRef);
-                            }}
-                        />
+                        <ErrorBoundary>
+                            <AppNavigator
+                                screenProps={{ theme: theme }}
+                                ref={navigatorRef => {
+                                    NavigationService.setTopLevelNavigator(navigatorRef);
+                                }}
+                            />
+                        </ErrorBoundary>
                     </View>
                     <Portal>
                         <FadeInView
@@ -226,9 +224,9 @@ class AppNavigatorContainer extends React.Component {
                             }}
                         >
                             <TouchableOpacity
-                                style={{ 
+                                style={{
                                     flex: 1,
-                                    justifyContent: 'space-between', 
+                                    justifyContent: 'space-between',
                                 }}
                                 onPress={() => this._handleNotificationPress()}
                             >
@@ -297,9 +295,7 @@ export default class App extends React.Component {
             return (
                 <ReduxProvider store={store}>
                     <PersistGate loading={<ActivityIndicator style={{ padding: 50 }} />} persistor={persistor}>
-                        <ErrorBoundary>
-                            <ConnectedAppNavigator />
-                        </ErrorBoundary>
+                        <ConnectedAppNavigator />
                     </PersistGate>
                 </ReduxProvider>
             );
