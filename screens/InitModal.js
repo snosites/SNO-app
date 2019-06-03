@@ -28,7 +28,7 @@ class initModal extends Component {
                 transparent={false}
                 visible={this.props.modalVisible}
                 onRequestClose={() => {
-                    this.props.nav('Main')
+                    this.props.handleDismiss(this.state.allNotifications);
                 }}
                 onShow={this._startAnimation}
             >

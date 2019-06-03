@@ -7,7 +7,8 @@ import {
     initializeSaved,
     fetchNotifications,
     setAllNotifications,
-    receiveSplash
+    receiveSplash,
+    setFromPush
 } from '../actionCreators';
 
 import { checkNotificationSettings, addAllNotifications } from './userNotifications';
@@ -136,6 +137,8 @@ function* initialize(action) {
     }
     catch (err) {
         console.log('initilize err', err)
+        // clear from push data if any is there
+        yield put(setFromPush(false));
         const domainCheck = yield call(checkWithDb, domainId, userInfo);
         console.log('domain check', domainCheck)
         if (domainCheck.length > 0) {
