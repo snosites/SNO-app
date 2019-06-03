@@ -39,11 +39,6 @@ import Sentry from 'sentry-expo';
 
 // useScreens();
 
-// sentry setup
-// Sentry.enableInExpoDevelopment = true;
-
-// Sentry.config(secrets.SENTRYAPI).install();
-
 
 class AppNavigatorContainer extends React.Component {
     state = {

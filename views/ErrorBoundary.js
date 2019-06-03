@@ -31,18 +31,7 @@ export default class ErrorBoundary extends React.Component {
     componentDidCatch(error, errorInfo) {
         console.log('error boundary error')
         this.setState({ error });
-        Sentry.setEventSentSuccessfully((event) => {
-            console.log('eve ID', event.event_id)
-            console.log('called', Sentry.lastEventId())
-            this.setState({
-                eventId: Sentry.lastEventId()
-            })
-        });
         Sentry.captureException(error, { extra: errorInfo });
-        Sentry.captureMessage('test1')
-        Sentry.captureMessage('test2')
-        console.log('not called', Sentry.lastEventId())
-        
     }
 
     render() {
@@ -98,7 +87,8 @@ export default class ErrorBoundary extends React.Component {
                                             eventId: null,
                                             submitting: false,
                                         })
-                                        NavigationService.navigate('AuthLoading')}
+                                        NavigationService.navigate('AuthLoading')
+                                    }
                                     }
                                 >
                                     Go To Home Screen
@@ -137,29 +127,29 @@ export default class ErrorBoundary extends React.Component {
 
                                     />
                                     {successful ?
-                                    <Text 
-                                        style={{
-                                            textAlign: 'center', 
-                                            fontSize: 17, 
-                                            fontWeight: 'bold'
-                                        }}
-                                    >
-                                        Thank you for your feedback
+                                        <Text
+                                            style={{
+                                                textAlign: 'center',
+                                                fontSize: 17,
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            Thank you for your feedback
                                     </Text>
-                                    :
-                                    <Button
-                                        mode="contained"
-                                        loading={submitting}
-                                        theme={{
-                                            roundness: 7,
-                                            colors: {
-                                                primary: '#2099CE'
-                                            }
-                                        }}
-                                        style={{ marginBottom: 20 }}
-                                        onPress={this._handleSubmit}
-                                    >
-                                        Submit Feedback
+                                        :
+                                        <Button
+                                            mode="contained"
+                                            loading={submitting}
+                                            theme={{
+                                                roundness: 7,
+                                                colors: {
+                                                    primary: '#2099CE'
+                                                }
+                                            }}
+                                            style={{ marginBottom: 20 }}
+                                            onPress={this._handleSubmit}
+                                        >
+                                            Submit Feedback
                                     </Button>
                                     }
                                 </View>
@@ -179,53 +169,68 @@ export default class ErrorBoundary extends React.Component {
         this.setState({
             submitting: true
         })
-        const endpoint = 'https://sentry.io/api/0/projects/travis-lang/student-news-source/user-feedback/'
-
-        let params = {
-            event_id: eventId,
-            name: 'User Feedback',
-            email: 'user@example.com',
-            comments: feedback
-        }
-
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `DSN ${secrets.SENTRYAPI}`
-                },
-                body: JSON.stringify(params)
-            })
-            if(response.status == 200 || response.status == 201) {
-                setTimeout(() => {
-                    this.setState({
-                        successful: false
-                    })
-                    NavigationService.navigate('AuthLoading')
-                }, 1000)
-                this.setState({
-                    error: null,
-                    feedback: '',
-                    eventId: null,
-                    submitting: false,
-                })
-            } else {
-                console.log('response', response)
-                throw new Error('error submitting user feedback')
-            }
-        } catch (err) {
-            console.error('error submitting user feedback', err)
-            Sentry.captureException(err);
+        setTimeout(() => {
             this.setState({
+                successful: true
+            })
+        }, 1000)
+        // const endpoint = 'https://sentry.io/api/0/projects/travis-lang/student-news-source/user-feedback/'
+
+        // let params = {
+        //     event_id: eventId,
+        //     name: 'User Feedback',
+        //     email: 'user@example.com',
+        //     comments: feedback
+        // }
+        Sentry.captureMessage(`FEEDBACK: ${feedback}`);
+        setTimeout(() => {
+            this.setState({
+                successful: false,
                 error: null,
                 feedback: '',
                 eventId: null,
                 submitting: false,
-                successful: false
             })
             NavigationService.navigate('AuthLoading')
-        }
+        }, 2000)
+        // try {
+        //     const response = await fetch(endpoint, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Authorization': `DSN ${secrets.SENTRYAPI}`
+        //         },
+        //         body: JSON.stringify(params)
+        //     })
+        //     if(response.status == 200 || response.status == 201) {
+        //         setTimeout(() => {
+        //             this.setState({
+        //                 successful: false
+        //             })
+        //             NavigationService.navigate('AuthLoading')
+        //         }, 1000)
+        //         this.setState({
+        //             error: null,
+        //             feedback: '',
+        //             eventId: null,
+        //             submitting: false,
+        //         })
+        //     } else {
+        //         console.log('response', response)
+        //         throw new Error('error submitting user feedback')
+        //     }
+        // } catch (err) {
+        //     console.error('error submitting user feedback', err)
+        //     Sentry.captureException(err);
+        //     this.setState({
+        //         error: null,
+        //         feedback: '',
+        //         eventId: null,
+        //         submitting: false,
+        //         successful: false
+        //     })
+        //     NavigationService.navigate('AuthLoading')
+        // }
 
     }
 

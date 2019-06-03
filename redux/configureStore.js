@@ -15,7 +15,11 @@ import { setupSentry } from '../sentry-utils';
 import createRavenMiddleware from "raven-for-redux";
 import Sentry from 'sentry-expo';
 
+// sentry setup
+Sentry.enableInExpoDevelopment = true;
+
 setupSentry();
+
 
 const sagaMiddleware = createSagaMiddleWare();
 
