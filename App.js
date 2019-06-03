@@ -190,14 +190,12 @@ class AppNavigatorContainer extends React.Component {
                 <PaperProvider theme={theme}>
                     <View style={styles.container}>
                         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-                        <ErrorBoundary>
-                            <AppNavigator
-                                screenProps={{ theme: theme }}
-                                ref={navigatorRef => {
-                                    NavigationService.setTopLevelNavigator(navigatorRef);
-                                }}
-                            />
-                        </ErrorBoundary>
+                        <AppNavigator
+                            screenProps={{ theme: theme }}
+                            ref={navigatorRef => {
+                                NavigationService.setTopLevelNavigator(navigatorRef);
+                            }}
+                        />
                     </View>
                     <Portal>
                         <FadeInView

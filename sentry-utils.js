@@ -2,7 +2,7 @@ import Sentry from 'sentry-expo';
 import { secrets } from './env';
 
 // sentry setup
-// Sentry.enableInExpoDevelopment = true;
+Sentry.enableInExpoDevelopment = true;
 
 
 export function setupSentry() {

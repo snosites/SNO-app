@@ -81,9 +81,13 @@ export function* fetchMenus(action) {
             })
         }
         // fetch updated categories list
-        const updatedDbCategories = yield call(fetchCategoriesFromDb, {
+        const dbCategoriesObj = yield call(fetchCategoriesFromDb, {
             domainId
         })
+        if (dbCategoriesObj.err) {
+            throw new Error('error getting updated categories from DB');
+        }
+        const updatedDbCategories = dbCategoriesObj.dbCategories;
         // make sure there is at least one menu
         if(updatedDbCategories.length === 0) {
             throw new Error('no menus in DB for school')
@@ -113,9 +117,9 @@ function* fetchCategoriesFromDb(action) {
         const domainId = action.domainId;
         const userInfo = yield select(getUserInfo)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
-        const categories = yield response.json();
+        const dbCategories = yield response.json();
         return {
-            categories
+            dbCategories
         }
     }
     catch (err) {
