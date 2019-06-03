@@ -6,6 +6,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import Color from 'color';
+import HTML from 'react-native-render-html';
 import { connect } from 'react-redux';
 
 import { DangerZone } from 'expo';
@@ -35,14 +36,34 @@ const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
+//header title
+const HeaderTitle = ({name}) => {
+    return (
+        <HTML
+            html={name}
+            customWrapper={(text) => {
+                return (
+                    <Text
+                        ellipsizeMode='tail'
+                        numberOfLines={1}
+                    >
+                        {text}
+                    </Text>
+                )
+            }}
+        />
+    )
+}
+
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
         const { theme } = screenProps;
         const logo = navigation.getParam('headerLogo', null)
+        const headerName = navigation.getParam('menuTitle', 'Stories');
         let primaryColor = Color(theme.colors.primary);
         let isDark = primaryColor.isDark();
         return {
-            title: navigation.getParam('menuTitle', 'Stories'),
+            headerTitle: <HeaderTitle name={headerName}/>,
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
@@ -77,7 +98,7 @@ class ListScreen extends React.Component {
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
-        throw new Error('testing error boundary')
+        // throw new Error('testing error boundary')
     }
 
     componentDidUpdate() {
