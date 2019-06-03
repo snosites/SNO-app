@@ -1,13 +1,14 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects';
-import { 
-    receiveMenus, 
-    fetchArticlesIfNeeded, 
-    saveTheme, 
-    setError, 
-    initializeSaved, 
-    fetchNotifications, 
-    setAllNotifications ,
-    receiveSplash
+import {
+    receiveMenus,
+    fetchArticlesIfNeeded,
+    saveTheme,
+    setError,
+    initializeSaved,
+    fetchNotifications,
+    setAllNotifications,
+    receiveSplash,
+    setFromPush
 } from '../actionCreators';
 
 import { checkNotificationSettings, addAllNotifications } from './userNotifications';
@@ -31,6 +32,18 @@ function* initialize(action) {
         if (splashResult.status != 200) {
             throw new Error('REST API issue, possibly no route')
         }
+        if (splashScreenId.result != 'false') {
+            // get splash image
+            const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
+            const splashImage = yield splashImageresult.json();
+            // if request was successful set image else set empty string
+            yield put(receiveSplash(splashImageresult.status == 200 ? splashImage[0].source_url : ''))
+            SplashScreen.hide();
+            // request failed or isnt set -- set splash as empty string
+        } else {
+            yield put(receiveSplash(''))
+            SplashScreen.hide();
+        }
         const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
         const splashImage = yield splashImageresult.json();
         console.log('splashes', splashScreenId, splashImage)
@@ -43,7 +56,7 @@ function* initialize(action) {
             domain,
             domainId
         })
-        if(err) {
+        if (err) {
             throw err
         }
 
@@ -122,11 +135,13 @@ function* initialize(action) {
             domainId
         ))
     }
-    catch(err) {
+    catch (err) {
         console.log('initilize err', err)
+        // clear from push data if any is there
+        yield put(setFromPush(false));
         const domainCheck = yield call(checkWithDb, domainId, userInfo);
         console.log('domain check', domainCheck)
-        if(domainCheck.length > 0) {
+        if (domainCheck.length > 0) {
             yield put(setError('initialize-saga error'))
             Sentry.captureException(err)
         } else {

@@ -104,7 +104,6 @@ class AppNavigatorContainer extends React.Component {
             } else {
                 // make sure domain origin is a saved domain
                 let found = domains.find(domain => {
-                    console.log(domain.id, notification.data.domain_id)
                     return domain.id == notification.data.domain_id;
                 })
                 console.log('found', found)
