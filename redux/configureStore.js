@@ -16,7 +16,7 @@ import createRavenMiddleware from "raven-for-redux";
 import Sentry from 'sentry-expo';
 
 // sentry setup
-Sentry.enableInExpoDevelopment = true;
+// Sentry.enableInExpoDevelopment = true;
 
 setupSentry();
 

@@ -16,7 +16,7 @@ const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Button } from 'react-native-paper';
 
 import {
     saveArticle,
@@ -189,6 +189,19 @@ class ListScreen extends React.Component {
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>
+                    <Button
+                        mode="contained"
+                        theme={{
+                            roundness: 7,
+                            colors: {
+                                primary: theme ? theme.colors.primary : '#2099CE'
+                }
+            }}
+                        style={{ padding: 5 }}
+                        onPress={this._handleRefresh}
+                    >
+                        Reload
+                    </Button>
                 </View>
             )
         }

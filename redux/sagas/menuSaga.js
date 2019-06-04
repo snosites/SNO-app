@@ -118,8 +118,12 @@ function* fetchCategoriesFromDb(action) {
         const userInfo = yield select(getUserInfo)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
         const dbCategories = yield response.json();
-        return {
-            dbCategories
+        if(response.status == 200){
+            return {
+                dbCategories
+            }
+        } else {
+            throw new Error('error fetching categories from DB')
         }
     }
     catch (err) {
