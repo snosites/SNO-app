@@ -5,8 +5,6 @@ import {
     View,
     Text,
     ActivityIndicator,
-    Animated,
-    PanResponder,
     TouchableOpacity,
     Alert
 } from 'react-native';
@@ -149,7 +147,6 @@ class AppNavigatorContainer extends React.Component {
             dispatch(changeActiveDomain(Number(notification.data.domain_id)));
             //navigate to auth loading to load initial domain data
             let nav = NavigationService;
-            console.log('nav obj', nav)
             nav.navigate('AuthLoading', {
                 switchingDomain: false
             });
