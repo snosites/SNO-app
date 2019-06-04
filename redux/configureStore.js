@@ -27,7 +27,7 @@ const sentryMiddleware = createRavenMiddleware(Sentry, {
     // options for later
 })
 
-const middlewareList = __DEV__ ? [sagaMiddleware, sentryMiddleware, logger] : [sagaMiddleware, sentryMiddleware]
+const middlewareList = __DEV__ ? [sentryMiddleware, sagaMiddleware, logger] : [, sentryMiddleware, sagaMiddleware]
 
 // used to persist redux state to async storage
 const persistConfig = {

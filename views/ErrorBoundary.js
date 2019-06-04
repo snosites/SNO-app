@@ -29,9 +29,12 @@ export default class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.log('error boundary error')
+        console.log('error boundary')
         this.setState({ error });
         Sentry.captureException(error, { extra: errorInfo });
+        Sentry.setEventSentSuccessfully((event) => {
+            console.log(Sentry.lastEventId())
+        });
     }
 
     render() {

@@ -4,6 +4,8 @@ import {
     Text,
     Image,
     StyleSheet,
+    Platform,
+    Animated
 } from 'react-native';
 import Color from 'color';
 import HTML from 'react-native-render-html';
@@ -36,24 +38,31 @@ const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
-//header title
-const HeaderTitle = ({name}) => {
-    return (
-        <HTML
-            html={name}
-            customWrapper={(text) => {
-                return (
-                    <Text
-                        ellipsizeMode='tail'
-                        numberOfLines={1}
-                    >
-                        {text}
-                    </Text>
-                )
-            }}
-        />
-    )
-}
+//header title -- work on later
+// const HeaderTitle = ({name}) => {
+//     return (
+//         <Animated.Text
+//             numberOfLines={1}
+//             {...rest}
+//             style={[styles.title, style]}
+//             accessibilityTraits="header"
+//         />
+//         <HTML
+//             html={name}
+//             customWrapper={(text) => {
+//                 return (
+//                     <Text
+//                         ellipsizeMode='tail'
+//                         numberOfLines={1}
+//                         style={styles.title}
+//                     >
+//                         {text}
+//                     </Text>
+//                 )
+//             }}
+//         />
+//     )
+// }
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
@@ -63,7 +72,7 @@ class ListScreen extends React.Component {
         let primaryColor = Color(theme.colors.primary);
         let isDark = primaryColor.isDark();
         return {
-            headerTitle: <HeaderTitle name={headerName}/>,
+            title: headerName,
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
@@ -298,6 +307,27 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0
+    },
+    title: {
+        ...Platform.select({
+            ios: {
+                fontSize: 17,
+                fontWeight: '600',
+                color: 'rgba(0, 0, 0, .9)',
+                marginHorizontal: 16,
+            },
+            android: {
+                fontSize: 20,
+                fontWeight: '500',
+                color: 'rgba(0, 0, 0, .9)',
+                marginHorizontal: 16,
+            },
+            default: {
+                fontSize: 18,
+                fontWeight: '400',
+                color: '#3c4043',
+            },
+        }),
     },
 });
 
