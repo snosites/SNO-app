@@ -144,17 +144,6 @@ class Slideshow extends React.Component {
 
     }
 
-    // work on later
-    // _profilePress = (writer) => {
-    //     const profilePress = this.props.profilePress ? this.props.profilePress : null
-    //     console.log('props', this.props);
-    //     if(profilePress){
-    //         return profilePress(writer)
-    //     } else {
-    //         return null
-    //     }
-    // }
-
     _renderItem({ item, index }, parallaxProps) {
         const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : '';
         return (

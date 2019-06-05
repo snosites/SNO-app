@@ -189,7 +189,6 @@ export default class ArticleBodyContent extends React.Component {
                 <Slideshow 
                     accentColor={theme.colors.accent} 
                     images={article.slideshow} 
-                    profilePress={this._handleProfilePress}
                 />
             )
         }
