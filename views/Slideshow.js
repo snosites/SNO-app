@@ -53,7 +53,6 @@ class Slideshow extends React.Component {
 
     render() {
         const { activeSlide, photos, error } = this.state;
-        const { profilePress } = this.props;
         if (error) {
             return (
                 <View
@@ -145,8 +144,18 @@ class Slideshow extends React.Component {
 
     }
 
+    // work on later
+    // _profilePress = (writer) => {
+    //     const profilePress = this.props.profilePress ? this.props.profilePress : null
+    //     console.log('props', this.props);
+    //     if(profilePress){
+    //         return profilePress(writer)
+    //     } else {
+    //         return null
+    //     }
+    // }
+
     _renderItem({ item, index }, parallaxProps) {
-        const { profilePress } = this.props;
         const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : '';
         return (
             <TouchableOpacity
@@ -183,18 +192,12 @@ class Slideshow extends React.Component {
                         :
                         null}
                     {photographer ?
-                        <TouchableItem
-                            onPress={() => {
-                                profilePress ? profilePress(photographer) : null
-                            }}
+                        <Text
+                            style={styles.subtitle}
+                            numberOfLines={2}
                         >
-                            <Text
-                                style={styles.subtitle}
-                                numberOfLines={2}
-                            >
-                                {photographer}
-                            </Text>
-                        </TouchableItem>
+                            {photographer}
+                        </Text>
                         :
                         null}
                 </View>
