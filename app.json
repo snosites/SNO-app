@@ -9,7 +9,7 @@
             "ios",
             "android"
         ],
-        "version": "1.4.4",
+        "version": "1.5.1",
         "orientation": "portrait",
         "primaryColor": "#2099CE",
         "icon": "./assets/images/the-source-icon.png",
@@ -31,13 +31,13 @@
         ],
         "ios": {
             "bundleIdentifier": "com.snosites.studentnewssource",
-            "buildNumber": "1.4.2",
+            "buildNumber": "1.5.1",
             "supportsTablet": false
         },
         "android": {
             "package": "com.snosites.studentnewssource",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 141
+            "versionCode": 151
         },
         "hooks": {
             "postPublish": [
