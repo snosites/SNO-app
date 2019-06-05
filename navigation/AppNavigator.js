@@ -11,6 +11,7 @@ import AppStack from './AppStack';
 
 import InitScreen from '../screens/InitScreen';
 import SelectScreen from '../screens/SelectScreen';
+import ErrorBoundary from '../views/ErrorBoundary';
 
 import { connect } from 'react-redux';
 import { setActiveDomain, getApiKey } from '../redux/actionCreators';
@@ -81,13 +82,28 @@ const AuthStack = createStackNavigator({
     Select: connect(mapStateToProps)(SelectScreen)
 });
 
+class CustomAppNavigator extends React.Component {
+    static router = AppStack.router;
+    render() {
+        const { navigation, screenProps } = this.props;
+        return (
+            <ErrorBoundary navigation={navigation}>
+                <AppStack navigation={navigation} screenProps={screenProps} />
+            </ErrorBoundary>
+        )
+    }
+}
+
 export default AppContainer = createAppContainer(createSwitchNavigator(
     {
         AuthLoading: connect(mapStateToProps)(AuthLoadingScreen),
-        App: AppStack,
+        App: CustomAppNavigator,
         Auth: AuthStack,
     },
     {
         initialRouteName: 'AuthLoading',
     }
 ));
+
+
+

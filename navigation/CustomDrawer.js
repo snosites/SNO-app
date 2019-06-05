@@ -45,6 +45,7 @@ class CustomDrawerComponent extends React.Component {
     }
 
     componentDidMount() {
+        console.log('custom drawer mounted');
         const { menus } = this.props;
         if(menus.items.length > 0) {
             this.props.navigation.navigate('List', {

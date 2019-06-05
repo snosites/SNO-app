@@ -31,9 +31,12 @@ export function* fetchMenus(action) {
             }
         })
         // get categories from DB
-        const dbCategories = yield call(fetchCategoriesFromDb, {
+        const {dbCategories, err} = yield call(fetchCategoriesFromDb, {
             domainId
         })
+        if(err){
+            throw new Error('error getting categories from DB');
+        }
         //loop through and check if category of menu is in DB -- if not then add it
         for (let menu of menus) {
             let foundCategory = dbCategories.find((category) => {
@@ -78,9 +81,13 @@ export function* fetchMenus(action) {
             })
         }
         // fetch updated categories list
-        const updatedDbCategories = yield call(fetchCategoriesFromDb, {
+        const dbCategoriesObj = yield call(fetchCategoriesFromDb, {
             domainId
         })
+        if (dbCategoriesObj.err) {
+            throw new Error('error getting updated categories from DB');
+        }
+        const updatedDbCategories = dbCategoriesObj.dbCategories;
         // make sure there is at least one menu
         if(updatedDbCategories.length === 0) {
             throw new Error('no menus in DB for school')
@@ -110,11 +117,20 @@ function* fetchCategoriesFromDb(action) {
         const domainId = action.domainId;
         const userInfo = yield select(getUserInfo)
         const response = yield call(fetch, `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`)
-        const categories = yield response.json();
-        return categories;
+        const dbCategories = yield response.json();
+        if(response.status == 200){
+            return {
+                dbCategories
+            }
+        } else {
+            throw new Error('error fetching categories from DB')
+        }
     }
     catch (err) {
         console.log('error fetching categories from DB', err)
+        return {
+            err
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy';
 import { put, call, takeLatest, all } from 'redux-saga/effects';
 import { requestProfiles, receiveProfiles, setProfileArticles, setProfileArticleError } from '../actionCreators';
 
@@ -31,10 +32,15 @@ function* fetchProfileArticles(action) {
         // get list of articles written by writer
         const query = yield call(fetch, `https://${url}/wp-json/sns-v2/author_content?name=${writerName}`);
         if(query.status != 200){
-            console.log('query', query)
             throw new Error('error fetching posts by author')
         }
-        const articlesByWriter = yield query.json();
+        const authorArticles = yield query.json();
+        if(authorArticles.length == 0) {
+            throw new Error('no posts')
+        }
+        // filter out duplicates
+        const articlesByWriter = uniqBy(authorArticles, 'ID');
+
         // get the full posts for all articles
         const updatedArticlesByWriter = yield all(articlesByWriter.map(article => {
             return call(fetchAuthorArticle, url, article.ID)
@@ -57,10 +63,14 @@ function* fetchProfileArticles(action) {
         yield put(setProfileArticles(verifiedArticlesByWriter))
 
     } catch(err) {
-        console.log('error in fetch profile articles saga', err.message)
-        if (err.message === 'error fetching posts by author'){
+        if (err.message === 'no posts') {
+            yield put(setProfileArticleError('no posts'))
+            return;
+        }
+        else if (err.message === 'error fetching posts by author') {
             yield put(setProfileArticleError('error fetching posts by author'))
         }
+        console.log('error in fetch profile articles saga', err.message)
         Sentry.captureException(err)
     }
     

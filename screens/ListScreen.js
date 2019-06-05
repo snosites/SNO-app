@@ -4,8 +4,11 @@ import {
     Text,
     Image,
     StyleSheet,
+    Platform,
+    Animated
 } from 'react-native';
 import Color from 'color';
+import HTML from 'react-native-render-html';
 import { connect } from 'react-redux';
 
 import { DangerZone } from 'expo';
@@ -13,7 +16,7 @@ const { Lottie } = DangerZone;
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Button } from 'react-native-paper';
 
 import {
     saveArticle,
@@ -35,14 +38,41 @@ const IoniconsHeaderButton = passMeFurther => (
     <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
 );
 
+//header title -- work on later
+// const HeaderTitle = ({name}) => {
+//     return (
+//         <Animated.Text
+//             numberOfLines={1}
+//             {...rest}
+//             style={[styles.title, style]}
+//             accessibilityTraits="header"
+//         />
+//         <HTML
+//             html={name}
+//             customWrapper={(text) => {
+//                 return (
+//                     <Text
+//                         ellipsizeMode='tail'
+//                         numberOfLines={1}
+//                         style={styles.title}
+//                     >
+//                         {text}
+//                     </Text>
+//                 )
+//             }}
+//         />
+//     )
+// }
+
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
         const { theme } = screenProps;
         const logo = navigation.getParam('headerLogo', null)
+        const headerName = navigation.getParam('menuTitle', 'Stories');
         let primaryColor = Color(theme.colors.primary);
         let isDark = primaryColor.isDark();
         return {
-            title: navigation.getParam('menuTitle', 'Stories'),
+            title: headerName,
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
@@ -77,6 +107,7 @@ class ListScreen extends React.Component {
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
+        // throw new Error('testing error boundary')
     }
 
     componentDidUpdate() {
@@ -158,6 +189,19 @@ class ListScreen extends React.Component {
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
                         Sorry, something went wrong.
                     </Text>
+                    <Button
+                        mode="contained"
+                        theme={{
+                            roundness: 7,
+                            colors: {
+                                primary: theme ? theme.colors.primary : '#2099CE'
+                }
+            }}
+                        style={{ padding: 5 }}
+                        onPress={this._handleRefresh}
+                    >
+                        Reload
+                    </Button>
                 </View>
             )
         }
@@ -276,6 +320,27 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0
+    },
+    title: {
+        ...Platform.select({
+            ios: {
+                fontSize: 17,
+                fontWeight: '600',
+                color: 'rgba(0, 0, 0, .9)',
+                marginHorizontal: 16,
+            },
+            android: {
+                fontSize: 20,
+                fontWeight: '500',
+                color: 'rgba(0, 0, 0, .9)',
+                marginHorizontal: 16,
+            },
+            default: {
+                fontSize: 18,
+                fontWeight: '400',
+                color: '#3c4043',
+            },
+        }),
     },
 });
 

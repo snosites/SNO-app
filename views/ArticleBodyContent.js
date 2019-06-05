@@ -186,7 +186,11 @@ export default class ArticleBodyContent extends React.Component {
         const { theme, handleCaptionClick } = this.props;
         if (article.slideshow) {
             return (
-                <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
+                <Slideshow 
+                    accentColor={theme.colors.accent} 
+                    images={article.slideshow} 
+                    profilePress={this._handleProfilePress}
+                />
             )
         }
 
@@ -298,9 +302,15 @@ export default class ArticleBodyContent extends React.Component {
                                 null
                             }
                             {article.featuredImage.photographer ?
-                                <Text style={{ color: '#bdbdbd' }}>
-                                    {article.featuredImage.photographer[0]}
-                                </Text>
+                                <TouchableItem
+                                    onPress={() => {
+                                        this._handleProfilePress(article.featuredImage.photographer[0])
+                                    }}
+                                >
+                                    <Text style={{ color: '#bdbdbd' }}>
+                                        {article.featuredImage.photographer[0]}
+                                    </Text>
+                                </TouchableItem>
                                 :
                                 null
                             }

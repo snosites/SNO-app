@@ -115,7 +115,7 @@ class ProfileScreen extends React.Component {
                                 </View>
                                 {profiles.error == 'error fetching posts by author' ?
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 17 }}>Error loading articles by author</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 17, paddingTop: 60 }}>Error loading articles by author</Text>
                                     </View>
                                     :
                                     profiles.articles.length > 0 ?
