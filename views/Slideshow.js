@@ -53,7 +53,8 @@ class Slideshow extends React.Component {
 
     render() {
         const { activeSlide, photos, error } = this.state;
-        if(error){
+        const { profilePress } = this.props;
+        if (error) {
             return (
                 <View
                     style={{
@@ -62,7 +63,7 @@ class Slideshow extends React.Component {
                         alignItems: 'center'
                     }}
                 >
-                    <Text style={{textAlign: 'center'}}>Error loading slideshow</Text>
+                    <Text style={{ textAlign: 'center' }}>Error loading slideshow</Text>
                 </View>
             )
         }
@@ -135,16 +136,17 @@ class Slideshow extends React.Component {
             this.setState({
                 photos: images
             })
-        } catch(err) {
+        } catch (err) {
             console.log('error getting slideshow images', err)
             this.setState({
                 error: true
             })
         }
-        
+
     }
 
     _renderItem({ item, index }, parallaxProps) {
+        const { profilePress } = this.props;
         const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : '';
         return (
             <TouchableOpacity
@@ -177,13 +179,24 @@ class Slideshow extends React.Component {
                                     letterSpacing: 0.5,
                                 }
                             }}
-                        /> : null}
-                    <Text
-                        style={styles.subtitle}
-                        numberOfLines={2}
-                    >
-                        {photographer}
-                    </Text>
+                        />
+                        :
+                        null}
+                    {photographer ?
+                        <TouchableItem
+                            onPress={() => {
+                                profilePress ? profilePress(photographer) : null
+                            }}
+                        >
+                            <Text
+                                style={styles.subtitle}
+                                numberOfLines={2}
+                            >
+                                {photographer}
+                            </Text>
+                        </TouchableItem>
+                        :
+                        null}
                 </View>
             </TouchableOpacity>
         );
