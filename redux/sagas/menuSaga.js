@@ -57,8 +57,30 @@ export function* fetchMenus(action) {
                 })
             }
         }
-        //check for any old categories
+        // check if "custom push" category has been added
+        let foundCustom = dbCategories.find((category) => {
+            return  category.category_name === 'custom_push'
+        })
+        if(!foundCustom) {
+            console.log('adding custom push category category')
+            yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    // category: menu.object_id,
+                    domain: domainId,
+                    categoryName: 'custom_push'
+                }),
+            })
+        }
+        
+        //check for any old categories -- ignore custom push category
         let oldCategories = dbCategories.filter((dbCategory) => {
+            if(dbCategory.category_name === 'custom_push'){
+                return false;
+            }
             return !menus.find(menuItem => {
                 return Number(menuItem.object_id) === dbCategory.category_id;
             })

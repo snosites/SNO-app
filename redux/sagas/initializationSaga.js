@@ -11,7 +11,7 @@ import {
     setFromPush
 } from '../actionCreators';
 
-import { checkNotificationSettings, addAllNotifications } from './userNotifications';
+import { checkNotificationSettings, addAllNotifications, addNotification } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
 import { SplashScreen } from 'expo'
@@ -75,6 +75,21 @@ function* initialize(action) {
             })
             // reset all notifications toggle key
             yield put(setAllNotifications(domainId, false))
+        // if not just add custom notifications
+        } else {
+            console.log('adding custom push subscription...')
+            const customPushId = menus.DbCategories.find(category => {
+                return category.category_name === 'custom_push'
+            })
+            if(customPushId){
+                yield call(addNotification, {
+                    payload: {
+                        tokenId: token,
+                        categoryId: customPushId,
+                        domain: domainId
+                    }
+                })
+            }
         }
         yield put(fetchNotifications({
             tokenId: token,
