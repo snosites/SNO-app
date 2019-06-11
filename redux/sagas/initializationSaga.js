@@ -82,10 +82,11 @@ function* initialize(action) {
                 return category.category_name === 'custom_push'
             })
             if(customPushId){
+                console.log('custom push obj', customPushId)
                 yield call(addNotification, {
                     payload: {
                         tokenId: token,
-                        categoryId: customPushId,
+                        categoryId: customPushId.id,
                         domain: domainId
                     }
                 })

@@ -87,6 +87,7 @@ export function* fetchMenus(action) {
         })
         //if any are found
         if (oldCategories.length > 0) {
+            console.log('found old categories', oldCategories);
             //create array of category ID's to remove
             let categoriesToDelete = oldCategories.map(category => {
                 return category.id;
