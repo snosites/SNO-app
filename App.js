@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
-import { AppLoading, Asset, Font, Icon, Notifications } from 'expo';
+import { AppLoading, Asset, Font, Icon, Notifications, WebBrowser } from 'expo';
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import { changeActiveDomain, setFromPush } from './redux/actionCreators';
 
@@ -79,6 +79,10 @@ class AppNavigatorContainer extends React.Component {
             this.setState({
                 visible: false
             })
+            if(notification.data.link){
+                this._viewLink(notification.data.link);
+                return;
+            }
             // if the push is from active domain go to article
             if (notification.data.domain_id == activeDomain.id) {
                 // get article
@@ -171,6 +175,10 @@ class AppNavigatorContainer extends React.Component {
             // NavigationService.navigate('HomeStack');
             throw err
         }
+    }
+
+    _viewLink = async (url) => {
+        let result = await WebBrowser.openBrowserAsync(url);
     }
 
     render() {
