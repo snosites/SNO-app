@@ -62,7 +62,7 @@ export function* fetchMenus(action) {
             return  category.category_name === 'custom_push'
         })
         if(!foundCustom) {
-            console.log('adding custom push category category')
+            console.log('adding custom push category')
             yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
                 method: "POST",
                 headers: {

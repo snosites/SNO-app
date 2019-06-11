@@ -34,7 +34,7 @@ function* fetchNotifications(action) {
     yield put(setNotifications(notifications, domain))
 }
 
-function* addNotification(action) {
+export function* addNotification(action) {
     const { tokenId, categoryId, domain } = action.payload;
     const userInfo = yield select(getUserInfo)
     yield call(fetch, `${ADD_NOTIFICATION_ENDPOINT}?api_token=${userInfo.apiKey}`, {
