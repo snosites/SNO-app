@@ -160,6 +160,7 @@ class AppNavigatorContainer extends React.Component {
     _fetchArticle = async (url, articleId) => {
         try {
             const result = await fetch(`https://${url}/wp-json/wp/v2/posts/${articleId}`)
+            console.log('article from push', result)
             const article = await result.json();
             if (result.status != 200) {
                 throw new Error('error getting article from push')
