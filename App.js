@@ -152,7 +152,7 @@ class AppNavigatorContainer extends React.Component {
             });
         } catch (err) {
             console.log('error in notification switch domain func', err)
-            NavigationService.back();
+            NavigationService.navigate('HomeStack');
             Sentry.captureException(err)
         }
     }
