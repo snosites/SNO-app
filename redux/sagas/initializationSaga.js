@@ -75,23 +75,7 @@ function* initialize(action) {
             })
             // reset all notifications toggle key
             yield put(setAllNotifications(domainId, false))
-        // if not just add custom notifications
-        } else {
-            console.log('adding custom push subscription...')
-            const customPushId = menus.DbCategories.find(category => {
-                return category.category_name === 'custom_push'
-            })
-            if(customPushId){
-                console.log('custom push obj', customPushId)
-                yield call(addNotification, {
-                    payload: {
-                        tokenId: token,
-                        categoryId: customPushId.id,
-                        domain: domainId
-                    }
-                })
-            }
-        }
+        } 
         yield put(fetchNotifications({
             tokenId: token,
             domain: domainId
