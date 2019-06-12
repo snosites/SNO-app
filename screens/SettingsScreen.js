@@ -271,6 +271,26 @@ class SettingsScreen extends React.Component {
                                         }}
                                     /> */}
                                     {domain.notificationCategories.map((item, i) => {
+                                        if (item.category_name == 'custom_push'){
+                                            return (
+                                                <List.Item
+                                                    key={item.id}
+                                                    style={{ paddingVertical: 0, paddingLeft: 60 }}
+                                                    title='Alerts'
+                                                    right={() => {
+                                                        return (
+                                                            <Switch
+                                                                style={{ margin: 10 }}
+                                                                value={notifications[domain.id][item.id]}
+                                                                onValueChange={(value) => { this._toggleNotifications(item.id, value, domain, item) }
+                                                                }
+
+                                                            />
+                                                        )
+                                                    }}
+                                                />
+                                            )
+                                        }
                                         return (
                                             <List.Item
                                                 key={item.id}
