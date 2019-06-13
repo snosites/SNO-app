@@ -57,15 +57,42 @@ class InitScreen extends React.Component {
                 </View>
             )
         }
+        if (this.state.errorMessage) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
+                        {this.state.errorMessage}
+                    </Text>
+                    <Button
+                        mode="contained"
+                        theme={{
+                            roundness: 7,
+                            colors: {
+                                primary: '#2099CE'
+                            }
+                        }}
+                        style={{ padding: 5, marginTop: 50 }}
+                        onPress={() => {
+                            this.setState({
+                                errorMessage: null
+                            })
+                        }}
+                    >
+                        Go Back
+                    </Button>
+                </View>
+            )
+        }
         if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingVertical: 40 }}>
-                    <ActivityIndicator color="#9A1D20" />
+                    <ActivityIndicator />
                 </View>
             )
         }
         return (
             <SafeAreaView style={{ flex: 1 }}>
+                <StatusBar barStyle={'dark-content'} />
                 <ScrollView
                     keyboardShouldPersistTaps={'handled'}>
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
@@ -79,18 +106,18 @@ class InitScreen extends React.Component {
                             <View style={styles.getStartedContainer}>
                                 <Text style={styles.getStartedText}>Get started by finding your school
                                 </Text>
-                                {/* <Button
+                                <Button
                                     mode="contained"
                                     theme={{
                                         roundness: 7,
                                         colors: {
                                         primary: '#2099CE'
                                     }}}
-                                    style={{ padding: 5, marginBottom: 20 }}
+                                    style={{ padding: 10, marginBottom: 30 }}
                                     onPress={this._handleUseLocation}
                                 >
                                     Use Your Current Location
-                                </Button> */}
+                                </Button>
                                 <Button
                                     mode="contained"
                                     theme={{
@@ -155,43 +182,51 @@ class InitScreen extends React.Component {
         this.props.navigation.navigate('Select')
     }
 
-    // _handleUseLocation = () => {
-    //     Haptic.selection();
-    //     if (Platform.OS === 'android' && !Constants.isDevice) {
-    //         this.setState({
-    //             errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-    //         });
-    //     } else {
-    //         this._getLocationAsync();
-    //     }
-    // }
+    _handleUseLocation = () => {
+        Haptic.selection();
+        if (Platform.OS === 'android' && !Constants.isDevice) {
+            this.setState({
+                errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device',
+            });
+        } else {
+            this._getLocationAsync();
+        }
+    }
 
-    // _getLocationAsync = async () => {
-    //     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    //     if (status !== 'granted') {
-    //         this.setState({
-    //             errorMessage: 'Permission to access location was denied, please enter information manually',
-    //         });
-    //     }
-    //     this.setState({
-    //         isLoading: true
-    //     })
-    //     let location = await Location.getCurrentPositionAsync({});
-    //     // console.log('location obj', location)
-    //     let locationObj = {
-    //         latitude: location.coords.latitude,
-    //         longitude: location.coords.longitude
-    //     }
-    //     let cityLocation = await Location.reverseGeocodeAsync(locationObj);
-    //     // console.log('city location', cityLocation)
-    //     this.setState({ cityLocation });
-    //     this.props.navigation.navigate('Select', {
-    //         location: this.state.cityLocation
-    //     })
-    //     this.setState({
-    //         isLoading: false
-    //     })
-    // }
+    _getLocationAsync = async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            this.setState({
+                errorMessage: 'Permission to access location was denied, please select a school using a different method',
+            });
+        }
+        this.setState({
+            isLoading: true
+        })
+        this.props.dispatch(fetchAvailableDomains());
+        let location = await Location.getCurrentPositionAsync({});
+        
+        let locationObj = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+        }
+        console.log('location obj', location)
+        let cityLocation = await Location.reverseGeocodeAsync(locationObj);
+        console.log('city location', cityLocation)
+        
+        if(cityLocation && cityLocation[0]){
+        } else {
+            cityLocation = {}
+        }
+        this.setState({ cityLocation });
+        this.props.navigation.navigate('LocationSelect', {
+            location: cityLocation[0],
+            coords: locationObj
+        })
+        this.setState({
+            isLoading: false
+        })
+    }
 
 }
 

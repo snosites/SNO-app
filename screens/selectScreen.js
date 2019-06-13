@@ -19,7 +19,7 @@ import InitModal from './InitModal';
 
 class SelectScreen extends React.Component {
     static navigationOptions = {
-        title: 'Select Your Publication',
+        title: 'Select Your School',
     };
 
     state = {
@@ -27,85 +27,6 @@ class SelectScreen extends React.Component {
         selectedDomain: ''
     }
 
-    // componentDidMount() {
-    //     const { navigation } = this.props;
-    //     const cityLocation = navigation.getParam('location', null);
-    //     const orgName = navigation.getParam('orgName', null);
-    //     const zipCode = navigation.getParam('zipCode', null);
-    //     if (cityLocation) {
-    //         // fetch capsule entries by city and state
-    //         return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${cityLocation[0].city} ${cityLocation[0].region}&embed=fields,tags`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 Accept: 'application/json',
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${secrets.CAPSULEBEARER}`
-    //             }
-    //         })
-    //             .then((response) => response.json())
-    //             // filter out parties that don't have fields
-    //             .then((responseJson) => {
-    //                 return responseJson.parties.filter(item => {
-    //                     return item.fields.length > 0;
-    //                 })
-    //             })
-    //             // filter out parties that don't have a domain
-    //             .then(filteredArr => {
-    //                 return filteredArr.filter(item => {
-    //                     for (let field of item.fields) {
-    //                         if (field.definition.id == 309073) {
-    //                             return true;
-    //                         }
-    //                     }
-    //                 })
-    //             })
-    //             .then(newFilteredArr => {
-    //                 this.setState({
-    //                     isLoading: false,
-    //                     orgs: newFilteredArr,
-    //                 });
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //     }
-    //     if (orgName) {
-    //         return fetch(`https://api.capsulecrm.com/api/v2/parties/search?q=${orgName}&embed=fields,tags`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 Accept: 'application/json',
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${secrets.CAPSULEBEARER}`
-    //             }
-    //         })
-    //             .then((response) => response.json())
-    //             // filter out parties that don't have fields
-    //             .then((responseJson) => {
-    //                 return responseJson.parties.filter(item => {
-    //                     return item.fields.length > 0;
-    //                 })
-    //             })
-    //             // filter out parties that don't have a domain
-    //             .then(filteredArr => {
-    //                 return filteredArr.filter(item => {
-    //                     for (let field of item.fields) {
-    //                         if (field.definition.id == 534081) {
-    //                             return true;
-    //                         }
-    //                     }
-    //                 })
-    //             })
-    //             .then(newFilteredArr => {
-    //                 this.setState({
-    //                     isLoading: false,
-    //                     orgs: newFilteredArr,
-    //                 });
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //     }
-    // }
 
     render() {
         const { navigation, availableDomains } = this.props;
