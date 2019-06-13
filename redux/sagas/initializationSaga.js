@@ -11,7 +11,7 @@ import {
     setFromPush
 } from '../actionCreators';
 
-import { checkNotificationSettings, addAllNotifications } from './userNotifications';
+import { checkNotificationSettings, addAllNotifications, addNotification } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
 import { SplashScreen } from 'expo'
@@ -75,7 +75,7 @@ function* initialize(action) {
             })
             // reset all notifications toggle key
             yield put(setAllNotifications(domainId, false))
-        }
+        } 
         yield put(fetchNotifications({
             tokenId: token,
             domain: domainId
