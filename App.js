@@ -52,8 +52,6 @@ class AppNavigatorContainer extends React.Component {
     }
 
     _handleNotification = (notification) => {
-        console.log('new notification', notification);
-        console.log('notification data', notification.data);
         this.setState({ notification });
         // if app is open show custom notification
         if (notification.origin === 'received') {

@@ -8,7 +8,7 @@ import {
 import Sentry from 'sentry-expo';
 
 
-const api = 'mobileapi.snosites.net/';
+const api = 'mobileapi.snosites.net';
 const getUserInfo = state => state.userInfo
 
 export function* fetchMenus(action) {

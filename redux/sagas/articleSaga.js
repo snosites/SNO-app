@@ -60,7 +60,7 @@ function* fetchArticles(action) {
         yield put(receiveArticles(category, normalizedData))
     }
     catch (err) {
-        console.log('error fetching articles in saga', err)
+        console.log('error fetching articles in saga', err, category)
         yield put(fetchArticlesFailure(category, 'error in article saga'))
         Sentry.captureException(err)
     }
