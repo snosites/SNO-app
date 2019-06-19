@@ -22,6 +22,9 @@ import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
+import { Amplitude } from 'expo';
+
+
 class LocationSelectScreen extends React.Component {
     static navigationOptions = {
         title: 'Select Your School',
@@ -110,7 +113,7 @@ class LocationSelectScreen extends React.Component {
                         fontSize: 18,
                         fontWeight: 'bold'
                     }}>
-                        School's within {radius} miles
+                        Schools within {radius} miles
                     </Text>
                     <Text style={{
                         textAlign: 'center',
@@ -123,7 +126,7 @@ class LocationSelectScreen extends React.Component {
                         value={20}
                         onValueChange={radius => this.setState({ radius })}
                         onSlidingComplete={this._handleRadiusSearch}
-                        minimumValue={0}
+                        minimumValue={5}
                         maximumValue={100}
                         step={5}
                         thumbTintColor='#2099CE'
@@ -217,7 +220,11 @@ class LocationSelectScreen extends React.Component {
                 this.props.navigation.navigate('AuthLoading');
                 return;
             }
-            // save new domain
+            // save new domain and send analytics
+            Amplitude.logEventWithProperties('add school', {
+                domainId: orgId
+            })
+
             this.props.dispatch(addDomain({
                 id: orgId,
                 name: item.school,

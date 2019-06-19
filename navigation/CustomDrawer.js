@@ -32,6 +32,8 @@ import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
 import { connect } from 'react-redux';
 
+import { Amplitude } from 'expo';
+
 import {
     fetchSearchArticlesIfNeeded,
     invalidateSearchArticles
@@ -138,6 +140,11 @@ class CustomDrawerComponent extends React.Component {
     _handleMenuPress = (item, index) => {
         this.props.navigation.closeDrawer();
         if (item.object === 'category') {
+            // log category press to analytics
+            Amplitude.logEventWithProperties('click category', {
+                categoryId: item.object_id
+            })
+
             this._getArticles(item.object_id);
             this.props.navigation.navigate('List', {
                 menuTitle: item.title,
@@ -149,6 +156,11 @@ class CustomDrawerComponent extends React.Component {
         }
         else if (item.object === 'page') {
             if (item.template === 'snostaff.php') {
+                // log to analytics
+                Amplitude.logEventWithProperties('click page', {
+                    pageType: 'staff'
+                })
+
                 this.props.navigation.navigate('Staff', {
                     menuTitle: item.title,
                     activeYears: item.active_years,

@@ -17,6 +17,9 @@ import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
+import { Amplitude } from 'expo';
+
+
 class SelectScreen extends React.Component {
     static navigationOptions = {
         title: 'Select Your School',
@@ -118,7 +121,11 @@ class SelectScreen extends React.Component {
                 this.props.navigation.navigate('AuthLoading');
                 return;
             }
-            // save new domain
+            // save new domain and log it to analytics
+            Amplitude.logEventWithProperties('add school', {
+                domainId: orgId
+            })
+
             this.props.dispatch(addDomain({
                 id: orgId,
                 name: item.school,

@@ -1,6 +1,10 @@
 import { Platform } from 'react-native';
 import { Haptic } from 'expo';
 import NavigationService from '../utils/NavigationService';
+// import * as Amplitude from 'expo-analytics-amplitude';
+import { Amplitude } from 'expo';
+
+
 
 getAttachmentsAsync = async (article) => {
     const response = await fetch(article._links['wp:attachment'][0].href);
@@ -12,6 +16,12 @@ export const handleArticlePress = (article, activeDomain) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
+
+    // log the article to analytics
+    Amplitude.logEventWithProperties('view story', {
+        storyId: article.id
+    })
+    
     console.log('article press', article)
     if (article.custom_fields.sno_format && 
         (article.custom_fields.sno_format == 'Classic' || article.custom_fields.sno_format == 'Full-Width' || article.custom_fields.sno_format == 'Side-Rails')

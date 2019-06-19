@@ -28,7 +28,7 @@ import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
 import Sentry from 'sentry-expo';
-// import { secrets } from './env';
+import { secrets } from './env';
 
 // import { useScreens } from 'react-native-screens';
 
@@ -36,6 +36,12 @@ import Sentry from 'sentry-expo';
 // rendering bug -- commented out until fixed
 
 // useScreens();
+
+// import * as Amplitude from 'expo-analytics-amplitude';
+import { Amplitude } from 'expo';
+
+
+Amplitude.initialize(secrets.AMPLITUDEAPI);
 
 
 class AppNavigatorContainer extends React.Component {
@@ -71,9 +77,15 @@ class AppNavigatorContainer extends React.Component {
 
     _handleNotificationPress = async () => {
         try {
-            console.log('notification press')
             const { notification } = this.state;
             const { activeDomain, domains } = this.props;
+            console.log('notification press')
+            // send analytics data
+            Amplitude.logEventWithProperties('notification press', {
+                domainId: notification.data.domain_id,
+                storyId: notification.data.post_id
+            })
+
             this.setState({
                 visible: false
             })
@@ -128,6 +140,7 @@ class AppNavigatorContainer extends React.Component {
     }
 
     _notificationSwitchDomain = async (url) => {
+        console.log('switching domain');
         try {
             const { notification } = this.state;
             const { dispatch } = this.props;

@@ -34,6 +34,8 @@ import {
     clearError
 } from '../redux/actionCreators';
 
+import { Amplitude } from 'expo';
+
 
 const ActiveDomainIcon = ({ color }) => (
     <List.Icon
@@ -99,7 +101,7 @@ class SettingsScreen extends React.Component {
             })
             this.props.navigation.navigate('AuthLoading')
         }
-        
+
     }
 
     render() {
@@ -119,7 +121,7 @@ class SettingsScreen extends React.Component {
             errors
         } = this.props;
 
-        if (userInfo.clearingSettings){
+        if (userInfo.clearingSettings) {
             return (
                 <View style={{
                     flex: 1,
@@ -271,7 +273,7 @@ class SettingsScreen extends React.Component {
                                         }}
                                     /> */}
                                     {domain.notificationCategories.map((item, i) => {
-                                        if (item.category_name == 'custom_push'){
+                                        if (item.category_name == 'custom_push') {
                                             return (
                                                 <List.Item
                                                     key={item.id}
@@ -364,7 +366,7 @@ class SettingsScreen extends React.Component {
                         position: 'absolute',
                         bottom: 100, left: 0, right: 0
                     }}
-                    onDismiss={() => dispatch(clearError()) }
+                    onDismiss={() => dispatch(clearError())}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
@@ -444,6 +446,10 @@ class SettingsScreen extends React.Component {
         this.props.dispatch(deleteDomain(domain.id))
         this.setState({
             snackbarVisible: true
+        })
+        // send analytics data
+        Amplitude.logEventWithProperties('remove school', {
+            domainId: domain.id
         })
     }
 

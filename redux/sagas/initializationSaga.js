@@ -16,6 +16,9 @@ import { fetchMenus } from './menuSaga';
 
 import { SplashScreen } from 'expo'
 import Sentry from 'sentry-expo';
+// import * as Amplitude from 'expo-analytics-amplitude';
+import { Amplitude } from 'expo';
+
 
 const api = 'mobileapi.snosites.net';
 const GET_DOMAIN_BY_ID = `http://${api}/api/domains`;
@@ -24,6 +27,10 @@ const getUserInfo = state => state.userInfo
 function* initialize(action) {
     const { domain, domainId } = action;
     const userInfo = yield select(getUserInfo);
+    // set user domain for analytics
+    Amplitude.setUserProperties({
+        activeDomain: domainId
+    })
     try {
         // get splash right away if set
         const splashResult = yield call(fetch, `https://${domain}/wp-json/custom/option?type=sns_splash_screen`);
