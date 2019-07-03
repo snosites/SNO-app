@@ -1,6 +1,10 @@
 import { Platform } from 'react-native';
 import { Haptic } from 'expo';
 import NavigationService from '../utils/NavigationService';
+// import * as Amplitude from 'expo-analytics-amplitude';
+import { Amplitude } from 'expo';
+
+
 
 getAttachmentsAsync = async (article) => {
     const response = await fetch(article._links['wp:attachment'][0].href);
@@ -12,6 +16,12 @@ export const handleArticlePress = (article, activeDomain) => {
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
+
+    // log the article to analytics
+    Amplitude.logEventWithProperties('view story', {
+        storyId: article.id
+    })
+    
     console.log('article press', article)
     if (article.custom_fields.sno_format && 
         (article.custom_fields.sno_format == 'Classic' || article.custom_fields.sno_format == 'Full-Width' || article.custom_fields.sno_format == 'Side-Rails')
@@ -40,6 +50,7 @@ handleRegularArticle = async (article) => {
 }
 
 handleLongFormArticle = async (article, activeDomain) => {
+    console.log('long form article press', article)
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
@@ -48,6 +59,7 @@ handleLongFormArticle = async (article, activeDomain) => {
     if (article.custom_fields.sno_format == "Long-Form") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
+        console.log('story chapters', storyChapters)
     }
     else if (article.custom_fields.sno_format == "Grid") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`)

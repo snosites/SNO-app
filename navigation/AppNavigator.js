@@ -11,6 +11,7 @@ import AppStack from './AppStack';
 
 import InitScreen from '../screens/InitScreen';
 import SelectScreen from '../screens/SelectScreen';
+import LocationSelect from '../screens/LocationSelect';
 import ErrorBoundary from '../views/ErrorBoundary';
 
 import { connect } from 'react-redux';
@@ -79,7 +80,9 @@ const mapStateToProps = state => ({
 
 const AuthStack = createStackNavigator({
     Init: InitScreen,
-    Select: connect(mapStateToProps)(SelectScreen)
+    Select: SelectScreen,
+    LocationSelect: LocationSelect
+
 });
 
 class CustomAppNavigator extends React.Component {

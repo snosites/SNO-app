@@ -17,6 +17,7 @@ import { FAB, Portal, Snackbar } from 'react-native-paper';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import ArticleBodyContent from '../views/ArticleBodyContent';
 
+import { Amplitude } from 'expo';
 
 class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
@@ -154,6 +155,10 @@ class FullArticleScreen extends React.Component {
     }
 
     _shareArticle = article => {
+        // log share to analytics
+        Amplitude.logEventWithProperties('social share', {
+            storyId: article.id
+        })
         Share.share({
             title: article.title.rendered,
             message: article.title.rendered,
