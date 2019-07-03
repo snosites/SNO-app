@@ -14,7 +14,8 @@ import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux';
 import { initialize, setFromPush } from '../redux/actionCreators';
 import { handleArticlePress } from '../utils/articlePress';
-import anim from '../assets/lottiefiles/splash-animation';
+// import anim from '../assets/lottiefiles/splash-animation';
+import anim from '../assets/lottiefiles/infinite-loading-bar';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const ANIMATION_WIDTH = viewportWidth;
