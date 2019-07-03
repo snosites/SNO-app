@@ -46,23 +46,23 @@ class AppSetupScreen extends React.Component {
             console.log('animation found');
             this.animation.play();
         }
-        // if (menus.isLoaded) {
-        //     if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
-        //         // check if the user is coming from a push notification
-        //         if(userInfo.fromPush) {
-        //             // go to main app
-        //             NavigationService.nestedNavigate('MainApp', 'RecentStack');
-        //             // direct to article from push
-        //             NavigationService.navigate('FullArticle');
-        //             handleArticlePress(userInfo.fromPush, activeDomain);
-        //             // reset push key
-        //             dispatch(setFromPush(false));
-        //         } else {
-        //             console.log('finished loading menus and articles')
-        //             navigation.navigate('MainApp');
-        //         }
-        //     }
-        // }
+        if (menus.isLoaded) {
+            if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+                // check if the user is coming from a push notification
+                if(userInfo.fromPush) {
+                    // go to main app
+                    NavigationService.nestedNavigate('MainApp', 'RecentStack');
+                    // direct to article from push
+                    NavigationService.navigate('FullArticle');
+                    handleArticlePress(userInfo.fromPush, activeDomain);
+                    // reset push key
+                    dispatch(setFromPush(false));
+                } else {
+                    console.log('finished loading menus and articles')
+                    navigation.navigate('MainApp');
+                }
+            }
+        }
     }
 
     render() {
