@@ -19,7 +19,7 @@ import anim from '../assets/lottiefiles/infinite-loading-bar';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const ANIMATION_WIDTH = viewportWidth;
-const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.20;
+const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.0;
 
 class AppSetupScreen extends React.Component {
 
@@ -46,23 +46,23 @@ class AppSetupScreen extends React.Component {
             console.log('animation found');
             this.animation.play();
         }
-        if (menus.isLoaded) {
-            if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
-                // check if the user is coming from a push notification
-                if(userInfo.fromPush) {
-                    // go to main app
-                    NavigationService.nestedNavigate('MainApp', 'RecentStack');
-                    // direct to article from push
-                    NavigationService.navigate('FullArticle');
-                    handleArticlePress(userInfo.fromPush, activeDomain);
-                    // reset push key
-                    dispatch(setFromPush(false));
-                } else {
-                    console.log('finished loading menus and articles')
-                    navigation.navigate('MainApp');
-                }
-            }
-        }
+        // if (menus.isLoaded) {
+        //     if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+        //         // check if the user is coming from a push notification
+        //         if(userInfo.fromPush) {
+        //             // go to main app
+        //             NavigationService.nestedNavigate('MainApp', 'RecentStack');
+        //             // direct to article from push
+        //             NavigationService.navigate('FullArticle');
+        //             handleArticlePress(userInfo.fromPush, activeDomain);
+        //             // reset push key
+        //             dispatch(setFromPush(false));
+        //         } else {
+        //             console.log('finished loading menus and articles')
+        //             navigation.navigate('MainApp');
+        //         }
+        //     }
+        // }
     }
 
     render() {
@@ -106,10 +106,10 @@ class AppSetupScreen extends React.Component {
                                 resizeMode="cover"
                                 style={{
                                     width: ANIMATION_WIDTH,
-                                    height: 100,
+                                    height: 325,
                                 }}
                                 loop={true}
-                                speed={0.75}
+                                speed={0.5}
                                 autoPlay={true}
                                 source={anim}
                             />
@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     animationContainer: {
-        width: 200,
-        height: 200,
+        width: 250,
+        height: 250,
     },
 })
 
