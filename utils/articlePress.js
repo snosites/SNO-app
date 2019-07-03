@@ -50,6 +50,7 @@ handleRegularArticle = async (article) => {
 }
 
 handleLongFormArticle = async (article, activeDomain) => {
+    console.log('long form article press', article)
     if (Platform.OS === 'ios') {
         Haptic.selection();
     }
@@ -58,6 +59,7 @@ handleLongFormArticle = async (article, activeDomain) => {
     if (article.custom_fields.sno_format == "Long-Form") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`)
         storyChapters = await results.json();
+        console.log('story chapters', storyChapters)
     }
     else if (article.custom_fields.sno_format == "Grid") {
         let results = await fetch(`https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`)

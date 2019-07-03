@@ -75,6 +75,7 @@ class AppNavigatorContainer extends React.Component {
         }
     };
 
+
     _handleNotificationPress = async () => {
         try {
             const { notification } = this.state;
@@ -85,6 +86,9 @@ class AppNavigatorContainer extends React.Component {
                 domainId: notification.data.domain_id,
                 storyId: notification.data.post_id
             })
+            // Amplitude.logEventWithProperties('view story', {
+            //     storyId: notification.data.post_id
+            // })
 
             this.setState({
                 visible: false
