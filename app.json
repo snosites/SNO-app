@@ -50,6 +50,21 @@
                     }
                 }
             ]
+        },
+        "extra": {
+            "version": "high school",
+            "high school": {
+                "primary": "",
+                "secondary": "",
+                "sentry_key": "",
+                "amplitude_key": ""
+            },
+            "college": {
+                "primary": "#29363f",
+                "secondary": "#f77307",
+                "sentry_key": "",
+                "amplitude_key": ""
+            }
         }
     }
 }
