@@ -17,7 +17,7 @@ import { isPointWithinRadius, getDistance } from 'geolib';
 import { List, Divider } from 'react-native-paper'
 import Slider from "react-native-slider";
 
-import { Haptic } from 'expo';
+import { Haptic, Constants } from 'expo';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
@@ -139,7 +139,7 @@ class LocationSelectScreen extends React.Component {
                         minimumValue={5}
                         maximumValue={100}
                         step={5}
-                        thumbTintColor='#2099CE'
+                        thumbTintColor={Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary}
                         thumbTouchSize={{
                             width: 80,
                             height: 80

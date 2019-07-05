@@ -12,7 +12,7 @@ import {
     SafeAreaView
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Constants, Location, Permissions, Haptic, Constants } from 'expo';
+import { Constants, Location, Permissions, Haptic } from 'expo';
 import { connect } from 'react-redux';
 import { fetchAvailableDomains, searchAvailableDomains, clearError } from '../redux/actionCreators';
 

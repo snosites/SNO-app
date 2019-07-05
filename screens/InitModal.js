@@ -8,7 +8,7 @@ import {
     Platform
 } from 'react-native';
 import { Button, Switch } from 'react-native-paper'
-import { Haptic, DangerZone } from 'expo';
+import { Haptic, DangerZone, Constants } from 'expo';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const { Lottie } = DangerZone;
@@ -59,7 +59,7 @@ class initModal extends Component {
                                 <View style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center'}}>
                                     <Text style={{fontSize: 19, fontWeight: 'bold', paddingRight: 10}}>{this.state.allNotifications ? 'ON' : 'OFF'}</Text>
                                     <Switch
-                                        color='#2099CE'
+                                         color={Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary}
                                         value={this.state.allNotifications}
                                         onValueChange={() => { this.setState({ allNotifications: !this.state.allNotifications }); }
                                         }
@@ -71,7 +71,7 @@ class initModal extends Component {
                                     theme={{
                                         roundness: 7,
                                         colors: {
-                                            primary: '#2099CE'
+                                            primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
                                         }
                                     }}
                                     style={{ padding: 10 }}
