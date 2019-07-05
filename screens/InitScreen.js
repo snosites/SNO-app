@@ -12,7 +12,7 @@ import {
     SafeAreaView
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Constants, Location, Permissions, Haptic } from 'expo';
+import { Constants, Location, Permissions, Haptic, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { fetchAvailableDomains, searchAvailableDomains, clearError } from '../redux/actionCreators';
 
@@ -32,6 +32,14 @@ class InitScreen extends React.Component {
 
     render() {
         const { errors, navigation, dispatch } = this.props;
+
+        const theme = {
+            roundness: 7,
+            colors: {
+                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
+            }
+        }
+
         if (errors.error === 'api-saga error') {
             return (
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20}}>
@@ -40,12 +48,7 @@ class InitScreen extends React.Component {
                     </Text>
                     <Button
                         mode="contained"
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: '#2099CE'
-                            }
-                        }}
+                        theme={theme}
                         style={{ padding: 5, marginTop: 50 }}
                         onPress={() => {
                             dispatch(clearError())
@@ -65,16 +68,12 @@ class InitScreen extends React.Component {
                     </Text>
                     <Button
                         mode="contained"
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: '#2099CE'
-                            }
-                        }}
+                        theme={theme}
                         style={{ padding: 5, marginTop: 50 }}
                         onPress={() => {
                             this.setState({
-                                errorMessage: null
+                                errorMessage: null,
+                                isLoading: false
                             })
                         }}
                     >
@@ -99,7 +98,7 @@ class InitScreen extends React.Component {
                         <View style={styles.container}>
                             <View style={styles.logoContainer}>
                                 <Image
-                                    source={require('../assets/images/the-source-logo.png')}
+                                    source={Constants.manifest.releaseChannel === 'sns' ? require('../assets/images/the-source-logo.png') : require('../assets/images/cns-logo.png')}
                                     style={styles.logoImage}
                                 />
                             </View>
@@ -108,11 +107,7 @@ class InitScreen extends React.Component {
                                 </Text>
                                 <Button
                                     mode="contained"
-                                    theme={{
-                                        roundness: 7,
-                                        colors: {
-                                        primary: '#2099CE'
-                                    }}}
+                                    theme={theme}
                                     style={{ padding: 10, marginBottom: 30 }}
                                     onPress={this._handleUseLocation}
                                 >
@@ -120,12 +115,7 @@ class InitScreen extends React.Component {
                                 </Button>
                                 <Button
                                     mode="contained"
-                                    theme={{
-                                        roundness: 7,
-                                        colors: {
-                                            primary: '#2099CE'
-                                        }
-                                    }}
+                                    theme={theme}
                                     style={{ padding: 10, marginBottom: 50 }}
                                     onPress={this._handleBrowse}
                                 >
@@ -137,10 +127,9 @@ class InitScreen extends React.Component {
                                         label='School Name'
                                         style={{ width: 300, marginBottom: 20 }}
                                         theme={{
-                                            roundness: 7,
+                                            ...theme,
                                             colors: {
-                                                background: 'white',
-                                                primary: '#2099CE'
+                                                background: 'white'
                                             }
                                         }}
                                         mode='outlined'
@@ -155,7 +144,7 @@ class InitScreen extends React.Component {
                                         theme={{
                                             roundness: 7,
                                             colors: {
-                                                primary: '#83B33B'
+                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.secondary : Constants.manifest.extra.college.secondary
                                             }
                                         }}
                                         style={{ padding: 10 }}
@@ -199,6 +188,7 @@ class InitScreen extends React.Component {
             this.setState({
                 errorMessage: 'Permission to access location was denied, please select a school using a different method',
             });
+            return;
         }
         this.setState({
             isLoading: true

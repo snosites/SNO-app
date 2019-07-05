@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
 
 import { List, Divider } from 'react-native-paper'
-import { Haptic } from 'expo';
+import { Haptic, Constants } from 'expo';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
@@ -33,7 +33,13 @@ class SelectScreen extends React.Component {
 
     render() {
         const { navigation, availableDomains } = this.props;
-        // const cityLocation = navigation.getParam('location', null);
+        const theme = {
+            roundness: 7,
+            colors: {
+                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
+            }
+        }
+        
         if (availableDomains.length == 0) {
             return (
                 <View style={{ flex: 1, padding: 20 }}>

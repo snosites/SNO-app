@@ -53,11 +53,11 @@
         },
         "extra": {
             "version": "high school",
-            "high school": {
-                "primary": "",
+            "highSchool": {
+                "primary": "#2099CE",
                 "secondary": "",
                 "sentry_key": "",
-                "amplitude_key": ""
+                "amplitudeKey": ""
             },
             "college": {
                 "primary": "#29363f",
