@@ -77,11 +77,21 @@ class LocationSelectScreen extends React.Component {
                 return 1;
             return 0;
         })
-
-        this.setState({
-            reloading: false,
-            schoolsInRadius: filteredSchoolsWithDistance
-        })
+        // check for dev schools
+        if (__DEV__) {
+            this.setState({
+                reloading: false,
+                schoolsInRadius: filteredSchoolsWithDistance
+            })
+        } else {
+            const filteredDevDomains = filteredSchoolsWithDistance.filter(domain => {
+                return !domain.development
+            })
+            this.setState({
+                reloading: false,
+                schoolsInRadius: filteredDevDomains
+            })
+        } 
     }
 
     render() {
