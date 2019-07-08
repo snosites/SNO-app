@@ -60,7 +60,7 @@ class InitScreen extends React.Component {
                 </View>
             )
         }
-        if (this.state.errorMessage) {
+        else if (this.state.errorMessage) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
                     <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
@@ -82,7 +82,7 @@ class InitScreen extends React.Component {
                 </View>
             )
         }
-        if (this.state.isLoading) {
+        else if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingVertical: 40 }}>
                     <ActivityIndicator />

@@ -1,8 +1,12 @@
 import { put, call, takeLatest, select } from 'redux-saga/effects';
-import { setAvailableDomains } from '../actionCreators';
+import { setAvailableDomains, setError } from '../actionCreators';
+import { Constants } from 'expo';
+
+import Sentry from 'sentry-expo';
 
 const api = 'mobileapi.snosites.net';
 const getUserInfo = state => state.userInfo
+
 // city: "St. Louis Park"
         // development: null
         // domain_id: 40316786
@@ -17,9 +21,17 @@ const getUserInfo = state => state.userInfo
         // zip: 55416
 function* fetchAvailableDomains(action){
     try {
+        let version = '';
+        if (Constants.manifest.releaseChannel === 'sns') {
+            version = 'secondary';
+        } else if (Constants.manifest.releaseChannel === 'cns') {
+            version = 'college';
+        } else {
+            version = 'secondary';
+        }
         const userInfo = yield select(getUserInfo)
         console.log('user info', userInfo)
-        const response = yield call(fetch, `http://${api}/api/domains/all?api_token=${userInfo.apiKey}`);
+        const response = yield call(fetch, `http://${api}/api/domains/all/${version}?api_token=${userInfo.apiKey}`);
         console.log('response', response)
         const availDomains = yield response.json();
         // sort domains
@@ -41,14 +53,24 @@ function* fetchAvailableDomains(action){
     }
     catch(err) {
         console.log('error fetching available domains', err)
+        Sentry.captureException(err)
+        yield put(setError('api-domains error'))
     }
 }
 
 function* searchAvailableDomains(action) {
     try {
+        let version = '';
+        if (Constants.manifest.releaseChannel === 'sns') {
+            version = 'secondary';
+        } else if (Constants.manifest.releaseChannel === 'cns') {
+            version = 'college';
+        } else {
+            version = 'secondary';
+        }
         const userInfo = yield select(getUserInfo)
         console.log('user info', userInfo)
-        const response = yield call(fetch, `http://${api}/api/domains/search/${action.searchTerm}?api_token=${userInfo.apiKey}`);
+        const response = yield call(fetch, `http://${api}/api/domains/search/${action.searchTerm}/${version}?api_token=${userInfo.apiKey}`);
         const availDomains = yield response.json();
         yield put(setAvailableDomains(availDomains));
     }

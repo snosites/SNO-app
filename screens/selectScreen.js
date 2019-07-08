@@ -32,12 +32,22 @@ class SelectScreen extends React.Component {
 
 
     render() {
-        const { navigation, availableDomains } = this.props;
+        const { navigation, availableDomains, errors } = this.props;
         const theme = {
             roundness: 7,
             colors: {
                 primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
             }
+        }
+
+        if (errors.error === 'api-domains error') {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
+                        Sorry, there was a problem loading the schools.  Please try again.
+                    </Text>
+                </View>
+            )
         }
         
         if (availableDomains.length == 0) {
@@ -177,7 +187,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     availableDomains: state.availableDomains,
-    domains: state.domains
+    domains: state.domains,
+    errors: state.errors
 })
 
 export default connect(mapStateToProps)(SelectScreen);
