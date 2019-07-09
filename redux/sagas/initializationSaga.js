@@ -14,7 +14,7 @@ import {
 import { checkNotificationSettings, addAllNotifications, addNotification } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
-import { SplashScreen } from 'expo'
+import { SplashScreen, Constants } from 'expo'
 import Sentry from 'sentry-expo';
 // import * as Amplitude from 'expo-analytics-amplitude';
 import { Amplitude } from 'expo';

@@ -42,8 +42,8 @@ class InitScreen extends React.Component {
 
         if (errors.error === 'api-saga error') {
             return (
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20}}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242'}}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
                         Sorry, there was a problem authenticating your device.  Please try reloading the app.
                     </Text>
                     <Button
@@ -129,6 +129,7 @@ class InitScreen extends React.Component {
                                         theme={{
                                             ...theme,
                                             colors: {
+                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary,
                                                 background: 'white'
                                             }
                                         }}
@@ -136,8 +137,8 @@ class InitScreen extends React.Component {
                                         selectionColor='black'
                                         returnKeyType='search'
                                         value={this.state.orgName}
-                                        onChangeText={(text) => this.setState({ orgName: text })}
-                                        onSubmitEditing={this._handleSubmit}
+                                    onChangeText={(text) => this.setState({ orgName: text })}
+                                    onSubmitEditing={this._handleSubmit}
                                     />
                                     <Button
                                         mode="contained"
@@ -195,7 +196,7 @@ class InitScreen extends React.Component {
         })
         this.props.dispatch(fetchAvailableDomains());
         let location = await Location.getCurrentPositionAsync({});
-        
+
         let locationObj = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude
@@ -203,8 +204,8 @@ class InitScreen extends React.Component {
         console.log('location obj', location)
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
         console.log('city location', cityLocation)
-        
-        if(cityLocation && cityLocation[0]){
+
+        if (cityLocation && cityLocation[0]) {
         } else {
             cityLocation = {}
         }

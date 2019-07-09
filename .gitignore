@@ -8,3 +8,6 @@ release-channel
 .expo
 expo
 SNS.code-workspace
+app.json
+highschool.json
+college.json

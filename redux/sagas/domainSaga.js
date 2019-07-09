@@ -24,10 +24,8 @@ function* fetchAvailableDomains(action){
         let version = '';
         if (Constants.manifest.releaseChannel === 'sns') {
             version = 'secondary';
-        } else if (Constants.manifest.releaseChannel === 'cns') {
-            version = 'college';
         } else {
-            version = 'secondary';
+            version = 'college';
         }
         const userInfo = yield select(getUserInfo)
         console.log('user info', userInfo)
@@ -63,10 +61,8 @@ function* searchAvailableDomains(action) {
         let version = '';
         if (Constants.manifest.releaseChannel === 'sns') {
             version = 'secondary';
-        } else if (Constants.manifest.releaseChannel === 'cns') {
-            version = 'college';
         } else {
-            version = 'secondary';
+            version = 'college';
         }
         const userInfo = yield select(getUserInfo)
         console.log('user info', userInfo)

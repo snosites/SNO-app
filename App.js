@@ -45,10 +45,8 @@ import { secrets } from './env';
 let amplitudeKey = '';
 if(Constants.manifest.releaseChannel === 'sns') {
     amplitudeKey = Constants.manifest.extra.highSchool.amplitudeKey;
-} else if (Constants.manifest.releaseChannel === 'cns') {
-    amplitudeKey = Constants.manifest.extra.college.amplitudeKey;
 } else {
-    amplitudeKey = secrets.AMPLITUDEAPI;
+    amplitudeKey = Constants.manifest.extra.college.amplitudeKey;
 }
 
 console.log('amplitude key', amplitudeKey);
@@ -328,9 +326,14 @@ export default class App extends React.Component {
         return Promise.all([
             Asset.loadAsync([
                 require('./assets/images/anon.png'),
+                // highschool assets
                 require('./assets/images/the-source-icon.png'),
                 require('./assets/images/the-source-logo.png'),
                 require('./assets/images/the-source-splash.png'),
+                //college assets
+                require('./assets/images/cns-icon.png'),
+                require('./assets/images/cns-logo.png'),
+                require('./assets/images/cns-splash.png'),
             ]),
             Font.loadAsync({
                 // This is the font for our tab bar

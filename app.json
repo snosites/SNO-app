@@ -56,14 +56,14 @@
             "highSchool": {
                 "primary": "#2099CE",
                 "secondary": "",
-                "sentry_key": "",
-                "amplitudeKey": ""
+                "sentry_key": "https://26b4550459464bb083d0eb11a3c8e3b1@sentry.io/1452190",
+                "amplitudeKey": "9d8127408b65907d7d54573656506756"
             },
             "college": {
                 "primary": "#29363f",
                 "secondary": "#f77307",
-                "sentry_key": "",
-                "amplitude_key": ""
+                "sentry_key": "https://26b4550459464bb083d0eb11a3c8e3b1@sentry.io/1452190",
+                "amplitude_key": "77832803e615a188dc3847d60f0b432b"
             }
         }
     }

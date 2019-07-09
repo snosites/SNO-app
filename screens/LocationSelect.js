@@ -44,6 +44,9 @@ class LocationSelectScreen extends React.Component {
 
     _handleRadiusSearch = () => {
         const { navigation, availableDomains } = this.props;
+        if(availableDomains[0] == 'none') {
+            return;
+        }
         const coords = navigation.getParam('coords', null);
 
         this.setState({
@@ -95,11 +98,9 @@ class LocationSelectScreen extends React.Component {
     }
 
     render() {
-        
         const { navigation, availableDomains } = this.props;
         const { schoolsInRadius, radius, reloading } = this.state;
         const cityLocation = navigation.getParam('location', null);
-        console.log(schoolsInRadius)
         if (availableDomains.length == 0) {
             return (
                 <View style={{ flex: 1, padding: 20 }}>
@@ -110,7 +111,7 @@ class LocationSelectScreen extends React.Component {
         if (availableDomains[0] == 'none') {
             return (
                 <View style={{ padding: 20 }}>
-                    <Text style={{ textAlign: 'center' }}>Sorry no school's available.</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center' }}>Sorry no school's available.</Text>
                 </View>
             )
         }

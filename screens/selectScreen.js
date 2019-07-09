@@ -60,7 +60,7 @@ class SelectScreen extends React.Component {
         if (availableDomains[0] == 'none') {
             return (
                 <View style={{ padding: 20 }}>
-                    <Text style={{ textAlign: 'center' }}>Sorry no school's match that search term, please try searching again.</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center' }}>Sorry no school's match that search term, please try searching again.</Text>
                 </View>
             )
         }
