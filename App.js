@@ -50,6 +50,7 @@ if(Constants.manifest.releaseChannel === 'sns') {
 }
 
 console.log('amplitude key', amplitudeKey);
+console.log(Constants)
 Amplitude.initialize(amplitudeKey);
 
 
