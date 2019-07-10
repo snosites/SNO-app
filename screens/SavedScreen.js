@@ -94,8 +94,8 @@ class ListScreen extends React.Component {
         if (savedArticles.length == 0) {
             return (
                 <View style={{ flex: 1, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 17, textAlign: 'center', padding: 20 }}>
-                        You have no saved articles yet.
+                    <Text style={{ fontSize: 18, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>
+                        You don't have any saved articles for this school yet
                     </Text>
                 </View>
             )

@@ -17,7 +17,7 @@ import { isPointWithinRadius, getDistance } from 'geolib';
 import { List, Divider } from 'react-native-paper'
 import Slider from "react-native-slider";
 
-import { Haptic } from 'expo';
+import { Haptic, Constants } from 'expo';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
@@ -44,6 +44,9 @@ class LocationSelectScreen extends React.Component {
 
     _handleRadiusSearch = () => {
         const { navigation, availableDomains } = this.props;
+        if(availableDomains[0] == 'none') {
+            return;
+        }
         const coords = navigation.getParam('coords', null);
 
         this.setState({
@@ -77,19 +80,27 @@ class LocationSelectScreen extends React.Component {
                 return 1;
             return 0;
         })
-
-        this.setState({
-            reloading: false,
-            schoolsInRadius: filteredSchoolsWithDistance
-        })
+        // check for dev schools
+        if (__DEV__) {
+            this.setState({
+                reloading: false,
+                schoolsInRadius: filteredSchoolsWithDistance
+            })
+        } else {
+            const filteredDevDomains = filteredSchoolsWithDistance.filter(domain => {
+                return !domain.development
+            })
+            this.setState({
+                reloading: false,
+                schoolsInRadius: filteredDevDomains
+            })
+        } 
     }
 
     render() {
-        
         const { navigation, availableDomains } = this.props;
         const { schoolsInRadius, radius, reloading } = this.state;
         const cityLocation = navigation.getParam('location', null);
-        console.log(schoolsInRadius)
         if (availableDomains.length == 0) {
             return (
                 <View style={{ flex: 1, padding: 20 }}>
@@ -100,7 +111,7 @@ class LocationSelectScreen extends React.Component {
         if (availableDomains[0] == 'none') {
             return (
                 <View style={{ padding: 20 }}>
-                    <Text style={{ textAlign: 'center' }}>Sorry no school's available.</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center' }}>Sorry no school's available.</Text>
                 </View>
             )
         }
@@ -129,7 +140,7 @@ class LocationSelectScreen extends React.Component {
                         minimumValue={5}
                         maximumValue={100}
                         step={5}
-                        thumbTintColor='#2099CE'
+                        thumbTintColor={Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary}
                         thumbTouchSize={{
                             width: 80,
                             height: 80

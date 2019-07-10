@@ -14,7 +14,7 @@ import {
 import { checkNotificationSettings, addAllNotifications, addNotification } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
-import { SplashScreen } from 'expo'
+import { SplashScreen, Constants } from 'expo'
 import Sentry from 'sentry-expo';
 // import * as Amplitude from 'expo-analytics-amplitude';
 import { Amplitude } from 'expo';
@@ -51,11 +51,11 @@ function* initialize(action) {
             yield put(receiveSplash(''))
             SplashScreen.hide();
         }
-        const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
-        const splashImage = yield splashImageresult.json();
-        console.log('splashes', splashScreenId, splashImage)
-        yield put(receiveSplash(splashScreenId.result ? splashImage[0].source_url : ''))
-        SplashScreen.hide();
+        // const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
+        // const splashImage = yield splashImageresult.json();
+        // console.log('splashes', splashScreenId, splashImage)
+        // yield put(receiveSplash(splashScreenId.result ? splashImage[0].source_url : ''))
+        // SplashScreen.hide();
 
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menus and DB categories

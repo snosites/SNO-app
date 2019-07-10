@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
 
 import { List, Divider } from 'react-native-paper'
-import { Haptic } from 'expo';
+import { Haptic, Constants } from 'expo';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
@@ -32,8 +32,24 @@ class SelectScreen extends React.Component {
 
 
     render() {
-        const { navigation, availableDomains } = this.props;
-        // const cityLocation = navigation.getParam('location', null);
+        const { navigation, availableDomains, errors } = this.props;
+        const theme = {
+            roundness: 7,
+            colors: {
+                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
+            }
+        }
+
+        if (errors.error === 'api-domains error') {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
+                        Sorry, there was a problem loading the schools.  Please try again.
+                    </Text>
+                </View>
+            )
+        }
+        
         if (availableDomains.length == 0) {
             return (
                 <View style={{ flex: 1, padding: 20 }}>
@@ -44,7 +60,7 @@ class SelectScreen extends React.Component {
         if (availableDomains[0] == 'none') {
             return (
                 <View style={{ padding: 20 }}>
-                    <Text style={{ textAlign: 'center' }}>Sorry no school's match that search term, please try searching again.</Text>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center' }}>Sorry no school's match that search term, please try searching again.</Text>
                 </View>
             )
         }
@@ -171,7 +187,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     availableDomains: state.availableDomains,
-    domains: state.domains
+    domains: state.domains,
+    errors: state.errors
 })
 
 export default connect(mapStateToProps)(SelectScreen);

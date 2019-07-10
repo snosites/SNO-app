@@ -32,20 +32,23 @@ class InitScreen extends React.Component {
 
     render() {
         const { errors, navigation, dispatch } = this.props;
+
+        const theme = {
+            roundness: 7,
+            colors: {
+                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
+            }
+        }
+
         if (errors.error === 'api-saga error') {
             return (
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20}}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242'}}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
                         Sorry, there was a problem authenticating your device.  Please try reloading the app.
                     </Text>
                     <Button
                         mode="contained"
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: '#2099CE'
-                            }
-                        }}
+                        theme={theme}
                         style={{ padding: 5, marginTop: 50 }}
                         onPress={() => {
                             dispatch(clearError())
@@ -57,7 +60,7 @@ class InitScreen extends React.Component {
                 </View>
             )
         }
-        if (this.state.errorMessage) {
+        else if (this.state.errorMessage) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
                     <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
@@ -65,16 +68,12 @@ class InitScreen extends React.Component {
                     </Text>
                     <Button
                         mode="contained"
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: '#2099CE'
-                            }
-                        }}
+                        theme={theme}
                         style={{ padding: 5, marginTop: 50 }}
                         onPress={() => {
                             this.setState({
-                                errorMessage: null
+                                errorMessage: null,
+                                isLoading: false
                             })
                         }}
                     >
@@ -83,7 +82,7 @@ class InitScreen extends React.Component {
                 </View>
             )
         }
-        if (this.state.isLoading) {
+        else if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingVertical: 40 }}>
                     <ActivityIndicator />
@@ -99,7 +98,7 @@ class InitScreen extends React.Component {
                         <View style={styles.container}>
                             <View style={styles.logoContainer}>
                                 <Image
-                                    source={require('../assets/images/the-source-logo.png')}
+                                    source={Constants.manifest.releaseChannel === 'sns' ? require('../assets/images/the-source-logo.png') : require('../assets/images/cns-logo.png')}
                                     style={styles.logoImage}
                                 />
                             </View>
@@ -108,11 +107,7 @@ class InitScreen extends React.Component {
                                 </Text>
                                 <Button
                                     mode="contained"
-                                    theme={{
-                                        roundness: 7,
-                                        colors: {
-                                        primary: '#2099CE'
-                                    }}}
+                                    theme={theme}
                                     style={{ padding: 10, marginBottom: 30 }}
                                     onPress={this._handleUseLocation}
                                 >
@@ -120,12 +115,7 @@ class InitScreen extends React.Component {
                                 </Button>
                                 <Button
                                     mode="contained"
-                                    theme={{
-                                        roundness: 7,
-                                        colors: {
-                                            primary: '#2099CE'
-                                        }
-                                    }}
+                                    theme={theme}
                                     style={{ padding: 10, marginBottom: 50 }}
                                     onPress={this._handleBrowse}
                                 >
@@ -137,25 +127,25 @@ class InitScreen extends React.Component {
                                         label='School Name'
                                         style={{ width: 300, marginBottom: 20 }}
                                         theme={{
-                                            roundness: 7,
+                                            ...theme,
                                             colors: {
-                                                background: 'white',
-                                                primary: '#2099CE'
+                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary,
+                                                background: 'white'
                                             }
                                         }}
                                         mode='outlined'
                                         selectionColor='black'
                                         returnKeyType='search'
                                         value={this.state.orgName}
-                                        onChangeText={(text) => this.setState({ orgName: text })}
-                                        onSubmitEditing={this._handleSubmit}
+                                    onChangeText={(text) => this.setState({ orgName: text })}
+                                    onSubmitEditing={this._handleSubmit}
                                     />
                                     <Button
                                         mode="contained"
                                         theme={{
                                             roundness: 7,
                                             colors: {
-                                                primary: '#83B33B'
+                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.secondary : Constants.manifest.extra.college.secondary
                                             }
                                         }}
                                         style={{ padding: 10 }}
@@ -199,13 +189,14 @@ class InitScreen extends React.Component {
             this.setState({
                 errorMessage: 'Permission to access location was denied, please select a school using a different method',
             });
+            return;
         }
         this.setState({
             isLoading: true
         })
         this.props.dispatch(fetchAvailableDomains());
         let location = await Location.getCurrentPositionAsync({});
-        
+
         let locationObj = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude
@@ -213,8 +204,8 @@ class InitScreen extends React.Component {
         console.log('location obj', location)
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
         console.log('city location', cityLocation)
-        
-        if(cityLocation && cityLocation[0]){
+
+        if (cityLocation && cityLocation[0]) {
         } else {
             cityLocation = {}
         }

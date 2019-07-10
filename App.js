@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
-import { AppLoading, Asset, Font, Icon, Notifications, WebBrowser } from 'expo';
+import { AppLoading, Asset, Font, Icon, Notifications, WebBrowser, Constants } from 'expo';
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import { changeActiveDomain, setFromPush } from './redux/actionCreators';
 
@@ -28,6 +28,8 @@ import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
 import Sentry from 'sentry-expo';
+import { Amplitude } from 'expo';
+
 import { secrets } from './env';
 
 // import { useScreens } from 'react-native-screens';
@@ -37,11 +39,19 @@ import { secrets } from './env';
 
 // useScreens();
 
-// import * as Amplitude from 'expo-analytics-amplitude';
-import { Amplitude } from 'expo';
 
 
-Amplitude.initialize(secrets.AMPLITUDEAPI);
+//set config based on version
+let amplitudeKey = '';
+if(Constants.manifest.releaseChannel === 'sns') {
+    amplitudeKey = Constants.manifest.extra.highSchool.amplitudeKey;
+} else {
+    amplitudeKey = Constants.manifest.extra.college.amplitudeKey;
+}
+
+console.log('amplitude key', amplitudeKey);
+console.log(Constants)
+Amplitude.initialize(amplitudeKey);
 
 
 class AppNavigatorContainer extends React.Component {
@@ -86,9 +96,6 @@ class AppNavigatorContainer extends React.Component {
                 domainId: notification.data.domain_id,
                 storyId: notification.data.post_id
             })
-            // Amplitude.logEventWithProperties('view story', {
-            //     storyId: notification.data.post_id
-            // })
 
             this.setState({
                 visible: false
@@ -115,7 +122,7 @@ class AppNavigatorContainer extends React.Component {
                 })
                 console.log('found', found)
                 if (!found) {
-                    // user doesnt have this domain saved so dont direct anywhere
+                    // user doesnt have this domain saved so dont direct anywhere -- if this happens it would be a bug
                     return;
                 }
                 Alert.alert(
@@ -320,12 +327,17 @@ export default class App extends React.Component {
         return Promise.all([
             Asset.loadAsync([
                 require('./assets/images/anon.png'),
+                // highschool assets
                 require('./assets/images/the-source-icon.png'),
                 require('./assets/images/the-source-logo.png'),
                 require('./assets/images/the-source-splash.png'),
+                //college assets
+                require('./assets/images/cns-icon.png'),
+                require('./assets/images/cns-logo.png'),
+                require('./assets/images/cns-splash.png'),
             ]),
             Font.loadAsync({
-                // This is the font that we are using for our tab bar
+                // This is the font for our tab bar
                 ...Icon.Ionicons.font,
             }),
         ]);

@@ -8,17 +8,21 @@ import {
     Image,
     ImageBackground
 } from 'react-native';
-import { DangerZone } from 'expo';
+import { DangerZone, Constants } from 'expo';
 const { Lottie } = DangerZone;
 import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux';
 import { initialize, setFromPush } from '../redux/actionCreators';
 import { handleArticlePress } from '../utils/articlePress';
-import anim from '../assets/lottiefiles/splash-animation';
+// import anim from '../assets/lottiefiles/splash-animation';
+
+import anim from '../assets/lottiefiles/infinite-loading-bar';
+import anim2 from '../assets/lottiefiles/cns-splash-loading';
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const ANIMATION_WIDTH = viewportWidth;
-const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.20;
+const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.0;
 
 class AppSetupScreen extends React.Component {
 
@@ -81,6 +85,7 @@ class AppSetupScreen extends React.Component {
             }}>
                 <ImageBackground
                     source={require('../assets/images/the-source-splash.png')}
+                    source={Constants.manifest.releaseChannel === 'sns' ? require('../assets/images/the-source-splash.png') : require('../assets/images/cns-splash.png')}
                     resizeMode='cover'
                     style={{
                         width: viewportWidth,
@@ -105,12 +110,12 @@ class AppSetupScreen extends React.Component {
                                 resizeMode="cover"
                                 style={{
                                     width: ANIMATION_WIDTH,
-                                    height: 100,
+                                    height: 325,
                                 }}
                                 loop={true}
-                                speed={0.75}
+                                speed={0.5}
                                 autoPlay={true}
-                                source={anim}
+                                source={Constants.manifest.releaseChannel === 'sns' ? anim : anim2}
                             />
                     </View>
                         
@@ -140,8 +145,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     animationContainer: {
-        width: 200,
-        height: 200,
+        width: 250,
+        height: 250,
     },
 })
 
