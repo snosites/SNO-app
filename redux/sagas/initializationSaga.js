@@ -39,7 +39,7 @@ function* initialize(action) {
         if (splashResult.status != 200) {
             throw new Error('REST API issue, possibly no route')
         }
-        if (splashScreenId.result != 'false') {
+        if (splashScreenId.result != false) {
             // get splash image
             const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
             const splashImage = yield splashImageresult.json();
@@ -51,7 +51,7 @@ function* initialize(action) {
             yield put(receiveSplash(''))
             SplashScreen.hide();
         }
-        // const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);
+        // const splashImageresult = yield call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${splashScreenId.result}`);`
         // const splashImage = yield splashImageresult.json();
         // console.log('splashes', splashScreenId, splashImage)
         // yield put(receiveSplash(splashScreenId.result ? splashImage[0].source_url : ''))
