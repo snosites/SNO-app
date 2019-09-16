@@ -15,7 +15,6 @@ export function* fetchMenus(action) {
     const { domain, domainId } = action;
     const userInfo = yield select(getUserInfo);
     try {
-        
         yield put(requestMenus())
         const response = yield fetch(`https://${domain}/wp-json/custom/menus/mobile-app-menu`)
         const originalMenus = yield response.json();

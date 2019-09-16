@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     },
     featuredImage: {
         height: MEDIASIZE,
-        resizeMode: 'cover'
+        resizeMode: 'contain'
     },
     imageInfoContainer: {
         flex: 1,
