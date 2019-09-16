@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     StyleSheet,
     Text,
@@ -8,32 +8,30 @@ import {
     Dimensions,
     Platform,
     ActivityIndicator
-} from 'react-native';
+} from 'react-native'
 
-import Moment from 'moment';
-import HTML from 'react-native-render-html';
-import { WebBrowser, Haptic } from 'expo';
+import Moment from 'moment'
+import HTML from 'react-native-render-html'
+import { WebBrowser, Haptic } from 'expo'
 
-import TouchableItem from '../constants/TouchableItem';
-import Slideshow from './Slideshow';
-import { slideshowRenderer, relatedRenderer } from '../utils/Renderers';
+import TouchableItem from '../constants/TouchableItem'
+import Slideshow from './Slideshow'
+import { slideshowRenderer, relatedRenderer } from '../utils/Renderers'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: "1 day",
+        d: '1 day'
     }
-});
+})
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
-const MEDIASIZE = viewportHeight * 0.35;
-const MEDIAWIDTH = viewportWidth * 0.90;
-
+const MEDIASIZE = viewportHeight * 0.35
+const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
-
     render() {
-        const { theme, article } = this.props;
+        const { theme, article } = this.props
         return (
             <View>
                 <View style={styles.featuredMediaContainer}>
@@ -44,10 +42,8 @@ export default class ArticleBodyContent extends React.Component {
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
                         allowedStyles={[]}
-                        customWrapper={(text) => {
-                            return (
-                                <Text>{text}</Text>
-                            )
+                        customWrapper={text => {
+                            return <Text>{text}</Text>
                         }}
                         tagsStyles={{
                             rawtext: {
@@ -59,15 +55,13 @@ export default class ArticleBodyContent extends React.Component {
                             }
                         }}
                     />
-                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ?
+                    {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ? (
                         <HTML
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
                             allowedStyles={[]}
-                            customWrapper={(text) => {
-                                return (
-                                    <Text>{text}</Text>
-                                )
+                            customWrapper={text => {
+                                return <Text>{text}</Text>
                             }}
                             tagsStyles={{
                                 rawtext: {
@@ -78,9 +72,7 @@ export default class ArticleBodyContent extends React.Component {
                                 }
                             }}
                         />
-                        :
-                        null
-                    }
+                    ) : null}
                 </View>
                 <View
                     style={{
@@ -95,7 +87,7 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
                     {this._renderDate(article.date)}
                 </View>
-                {article.content.rendered ?
+                {article.content.rendered ? (
                     <View style={styles.articleContents}>
                         <HTML
                             html={article.content.rendered}
@@ -107,11 +99,10 @@ export default class ArticleBodyContent extends React.Component {
                             }}
                             textSelectable={true}
                             onLinkPress={(e, href) => this._viewLink(href)}
-                            alterChildren={(node) => {
+                            alterChildren={node => {
                                 if (node.name === 'iframe') {
-                                    delete node.attribs.width;
-                                    delete node.attribs.height;
-
+                                    delete node.attribs.width
+                                    delete node.attribs.height
                                 }
                                 // if (node.attribs['data-photo-ids']){
                                 //     console.log('node', node);
@@ -119,7 +110,7 @@ export default class ArticleBodyContent extends React.Component {
                                 //     console.log('node children', node.children)
 
                                 // }
-                                return node.children;
+                                return node.children
                             }}
                             tagsStyles={{
                                 p: {
@@ -139,15 +130,21 @@ export default class ArticleBodyContent extends React.Component {
                                 }
                             }}
                             classesStyles={{
-                                'pullquote': { backgroundColor: '#eeeeee', borderRadius: 8, padding: 10, marginBottom: 15 },
-                                'largequote': { fontSize: 21 },
-                                'pullquotetext': { textAlign: 'left', fontSize: 21 },
-                                'quotespeaker': { textAlign: 'left', fontSize: 14 },
-                                'photowrap': {
+                                pullquote: {
+                                    backgroundColor: '#eeeeee',
+                                    borderRadius: 8,
+                                    padding: 10,
+                                    marginBottom: 15
+                                },
+                                largequote: { fontSize: 21 },
+                                pullquotetext: { textAlign: 'left', fontSize: 21 },
+                                quotespeaker: { textAlign: 'left', fontSize: 14 },
+                                photowrap: {
                                     display: 'none'
                                 },
                                 'wp-caption-text': {
-                                    fontSize: 14, color: '#757575'
+                                    fontSize: 14,
+                                    color: '#757575'
                                 }
                             }}
                             // alterNode={(node) => {
@@ -168,37 +165,26 @@ export default class ArticleBodyContent extends React.Component {
                             //     }
                             //     return node
                             // }}
-                        renderers={{
-                            snsgallery: slideshowRenderer,
-                            snsrelated: relatedRenderer
-                        }}
+                            renderers={{
+                                snsgallery: slideshowRenderer,
+                                snsrelated: relatedRenderer
+                            }}
                         />
                     </View>
-                    :
-                    null
-                }
+                ) : null}
             </View>
         )
     }
 
-
     _renderFeaturedMedia = article => {
-        const { theme, handleCaptionClick } = this.props;
+        const { theme, handleCaptionClick } = this.props
         if (article.slideshow) {
-            return (
-                <Slideshow 
-                    accentColor={theme.colors.accent} 
-                    images={article.slideshow} 
-                />
-            )
-        }
-
-        else if (article.custom_fields.video && article.custom_fields.video[0]) {
-            const source = article.custom_fields.video[0];
+            return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
+        } else if (article.custom_fields.video && article.custom_fields.video[0]) {
+            const source = article.custom_fields.video[0]
             if (source.includes('iframe')) {
-
-                let regex = /<iframe.*?src="(.*?)"/;
-                var src = regex.exec(source)[1];
+                let regex = /<iframe.*?src="(.*?)"/
+                var src = regex.exec(source)[1]
 
                 // console.log('reg ex', src)
                 return (
@@ -207,11 +193,55 @@ export default class ArticleBodyContent extends React.Component {
                         automaticallyAdjustContentInsets={false}
                         scrollEnabled={false}
                         bounces={false}
-                        originWhitelist={["*"]}
+                        originWhitelist={['*']}
                         allowsInlineMediaPlayback={true}
                         javaScriptEnabled
                         startInLoadingState={true}
-                        renderLoading={() => (<View
+                        renderLoading={() => (
+                            <View
+                                style={{
+                                    flex: 1,
+                                    height: MEDIASIZE,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <ActivityIndicator />
+                            </View>
+                        )}
+                        renderError={() => (
+                            <View
+                                style={{
+                                    flex: 1,
+                                    height: MEDIASIZE,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <Text style={{ textAlign: 'center' }}>
+                                    Sorry, the video failed to load
+                                </Text>
+                            </View>
+                        )}
+                        style={{ flex: 1, height: MEDIASIZE }}
+                        source={{ uri: src }}
+                    />
+                )
+            }
+            let embedString = source.replace('watch?v=', 'embed/')
+
+            return (
+                <WebView
+                    scalesPageToFit={true}
+                    automaticallyAdjustContentInsets={false}
+                    scrollEnabled={false}
+                    bounces={false}
+                    originWhitelist={['*']}
+                    allowsInlineMediaPlayback={true}
+                    javaScriptEnabled
+                    startInLoadingState={true}
+                    renderLoading={() => (
+                        <View
                             style={{
                                 flex: 1,
                                 height: MEDIASIZE,
@@ -220,8 +250,10 @@ export default class ArticleBodyContent extends React.Component {
                             }}
                         >
                             <ActivityIndicator />
-                        </View>)}
-                        renderError={() => (<View
+                        </View>
+                    )}
+                    renderError={() => (
+                        <View
                             style={{
                                 flex: 1,
                                 height: MEDIASIZE,
@@ -229,65 +261,38 @@ export default class ArticleBodyContent extends React.Component {
                                 justifyContent: 'center'
                             }}
                         >
-                            <Text style={{ textAlign: 'center' }}>Sorry, the video failed to load</Text>
-                        </View>)}
-                        style={{ flex: 1, height: MEDIASIZE }}
-                        source={{ uri: src }}
-                    />
-                )
-            }
-            let embedString = source.replace('watch?v=', 'embed/');
-
-            return <WebView
-                scalesPageToFit={true}
-                automaticallyAdjustContentInsets={false}
-                scrollEnabled={false}
-                bounces={false}
-                originWhitelist={["*"]}
-                allowsInlineMediaPlayback={true}
-                javaScriptEnabled
-                startInLoadingState={true}
-                renderLoading={() => (<View
-                    style={{
-                        flex: 1,
-                        height: MEDIASIZE,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <ActivityIndicator />
-                </View>)}
-                renderError={() => (<View
-                    style={{
-                        flex: 1,
-                        height: MEDIASIZE,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <Text style={{ textAlign: 'center' }}>Sorry, the video failed to load</Text>
-                </View>)}
-                style={{ flex: 1, height: MEDIASIZE }}
-                source={{ uri: embedString }}
-            />
-        }
-
-        else if (article.featuredImage) {
+                            <Text style={{ textAlign: 'center' }}>
+                                Sorry, the video failed to load
+                            </Text>
+                        </View>
+                    )}
+                    style={{ flex: 1, height: MEDIASIZE }}
+                    source={{ uri: embedString }}
+                />
+            )
+        } else if (article.featuredImage) {
             return (
                 <ImageBackground
                     source={{ uri: article.featuredImage.uri }}
                     style={styles.featuredImage}
+                    resizeMode='contain'
                 >
                     <View style={styles.imageInfoContainer}>
                         <View style={styles.imageInfo}>
-                            {article.featuredImage.caption ?
+                            {article.featuredImage.caption ? (
                                 <HTML
                                     html={article.featuredImage.caption}
                                     baseFontStyle={{ fontSize: 12 }}
                                     allowedStyles={[]}
-                                    customWrapper={(text) => {
+                                    customWrapper={text => {
                                         return (
-                                            <Text ellipsizeMode='tail' numberOfLines={this.props.expandCaption ? null : 2} onPress={handleCaptionClick}>{text}</Text>
+                                            <Text
+                                                ellipsizeMode='tail'
+                                                numberOfLines={this.props.expandCaption ? null : 2}
+                                                onPress={handleCaptionClick}
+                                            >
+                                                {text}
+                                            </Text>
                                         )
                                     }}
                                     tagsStyles={{
@@ -297,35 +302,33 @@ export default class ArticleBodyContent extends React.Component {
                                         }
                                     }}
                                 />
-                                :
-                                null
-                            }
-                            {article.featuredImage.photographer ?
+                            ) : null}
+                            {article.featuredImage.photographer ? (
                                 <TouchableItem
                                     onPress={() => {
-                                        this._handleProfilePress(article.featuredImage.photographer[0])
+                                        this._handleProfilePress(
+                                            article.featuredImage.photographer[0]
+                                        )
                                     }}
                                 >
                                     <Text style={{ color: '#bdbdbd' }}>
                                         {article.featuredImage.photographer[0]}
                                     </Text>
                                 </TouchableItem>
-                                :
-                                null
-                            }
+                            ) : null}
                         </View>
                     </View>
                 </ImageBackground>
             )
         } else {
-            return;
+            return
         }
     }
 
     _handleProfilePress = writerName => {
-        const { navigation } = this.props;
+        const { navigation } = this.props
         if (Platform.OS === 'ios') {
-            Haptic.selection();
+            Haptic.selection()
         }
         navigation.navigate('Profile', {
             writerName
@@ -333,35 +336,38 @@ export default class ArticleBodyContent extends React.Component {
     }
 
     _renderArticleAuthor = article => {
-        const { theme } = this.props;
+        const { theme } = this.props
         if (article.custom_fields.writer && article.custom_fields.writer[0]) {
-            let writers = article.custom_fields.writer;
+            let writers = article.custom_fields.writer
             //if arr of writers dont include job title
             if (writers.length > 1) {
                 return writers.map((writer, i) => {
                     if (i === writers.length - 2) {
                         return (
                             <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
-                                <Text style={{
-                                    fontSize: 17,
-                                    textAlign: 'center',
-                                    paddingTop: 20,
-                                    color: theme.colors.accent
-                                }}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
                                     {`${writer} & `}
                                 </Text>
                             </TouchableItem>
                         )
-                    }
-                    else if (i === writers.length - 1) {
+                    } else if (i === writers.length - 1) {
                         return (
                             <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
-                                <Text style={{
-                                    fontSize: 17,
-                                    textAlign: 'center',
-                                    paddingTop: 20,
-                                    color: theme.colors.accent
-                                }}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
                                     {writer}
                                 </Text>
                             </TouchableItem>
@@ -369,12 +375,14 @@ export default class ArticleBodyContent extends React.Component {
                     } else {
                         return (
                             <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
-                                <Text style={{
-                                    fontSize: 17,
-                                    textAlign: 'center',
-                                    paddingTop: 20,
-                                    color: theme.colors.accent
-                                }}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
                                     {`${writer}, `}
                                 </Text>
                             </TouchableItem>
@@ -385,14 +393,20 @@ export default class ArticleBodyContent extends React.Component {
             // if writer has a jobtitle include it
             if (article.custom_fields.jobtitle) {
                 return (
-                    <TouchableItem onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}>
-                        <Text style={{
-                            fontSize: 17,
-                            textAlign: 'center',
-                            paddingTop: 20,
-                            color: theme.colors.accent
-                        }}>
-                            {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
+                    <TouchableItem
+                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
+                            {`${article.custom_fields.writer[0]} | ${
+                                article.custom_fields.jobtitle[0]
+                            }`}
                         </Text>
                     </TouchableItem>
                 )
@@ -400,20 +414,23 @@ export default class ArticleBodyContent extends React.Component {
             // otherwise just display writer
             else {
                 return (
-                    <TouchableItem onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}>
-                        <Text style={{
-                            fontSize: 17,
-                            textAlign: 'center',
-                            paddingTop: 20,
-                            color: theme.colors.accent
-                        }}>
+                    <TouchableItem
+                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
                             {`${article.custom_fields.writer[0]}`}
                         </Text>
                     </TouchableItem>
                 )
             }
-        }
-        else {
+        } else {
             return null
         }
     }
@@ -421,20 +438,22 @@ export default class ArticleBodyContent extends React.Component {
     _renderDate = date => {
         if (Moment().isAfter(Moment(date).add(7, 'days'))) {
             return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
+                <Text
+                    style={{
+                        fontSize: 15,
+                        color: '#9e9e9e'
+                    }}
                 >
                     {Moment(date).format('MMM D, YYYY')}
                 </Text>
             )
         } else {
             return (
-                <Text style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
+                <Text
+                    style={{
+                        fontSize: 15,
+                        color: '#9e9e9e'
+                    }}
                 >
                     {String(Moment(date).fromNow())}
                 </Text>
@@ -442,22 +461,25 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _viewLink = async (href) => {
-        let result = await WebBrowser.openBrowserAsync(href);
+    _viewLink = async href => {
+        let result = await WebBrowser.openBrowserAsync(href)
     }
-
 }
 
 const styles = StyleSheet.create({
     featuredMediaContainer: {
-        flex: 1,
+        flex: 1
     },
     articleContents: {
-        padding: 20,
+        padding: 20
+    },
+    featuredImageContainer: {
+        // height: MEDIASIZE,
+        width: viewportWidth
     },
     featuredImage: {
-        height: MEDIASIZE,
-        resizeMode: 'contain'
+        width: viewportWidth,
+        height: MEDIASIZE
     },
     imageInfoContainer: {
         flex: 1,
@@ -465,6 +487,6 @@ const styles = StyleSheet.create({
     },
     imageInfo: {
         backgroundColor: 'rgba(0,0,0,0.55)',
-        padding: 10,
-    },
+        padding: 10
+    }
 })
