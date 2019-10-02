@@ -4,7 +4,7 @@ import { requestProfiles, receiveProfiles, setProfileArticles, setProfileArticle
 
 import { fetchFeaturedImage, fetchComments } from '../../utils/sagaHelpers';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
 function* fetchProfiles(action){
     const { domain, year } = action;

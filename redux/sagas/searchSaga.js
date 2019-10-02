@@ -4,7 +4,7 @@ import { requestSearchArticles, receiveSearchArticles, fetchSearchArticlesFailur
 
 import { fetchFeaturedImage, fetchComments } from '../../utils/sagaHelpers';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)

@@ -12,19 +12,16 @@ import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 import { setupSentry } from '../sentry-utils';
-import createRavenMiddleware from "raven-for-redux";
-import Sentry from 'sentry-expo';
+import createSentryMiddleware from 'redux-sentry-middleware'
+import * as Sentry from 'sentry-expo'
 
-// sentry setup
-// Sentry.enableInExpoDevelopment = true;
 
 setupSentry();
 
-
 const sagaMiddleware = createSagaMiddleWare();
 
-const sentryMiddleware = createRavenMiddleware(Sentry, {
-    // options for later
+const sentryMiddleware = createSentryMiddleware(Sentry, {
+    // Optionally pass some options here.
 })
 
 const middlewareList = __DEV__ ? [sentryMiddleware, sagaMiddleware, logger] : [ sentryMiddleware, sagaMiddleware]

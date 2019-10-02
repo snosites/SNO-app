@@ -9,7 +9,7 @@ import { Notifications } from 'expo';
 
 import * as Permissions from 'expo-permissions';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
 const api = 'mobileapi.snosites.net';
 

@@ -15,8 +15,7 @@ import { Button, TextInput } from 'react-native-paper'
 
 import NavigationService from '../utils/NavigationService';
 
-import Sentry from 'sentry-expo';
-import { secrets } from '../env';
+import * as Sentry from 'sentry-expo'
 
 export default class ErrorBoundary extends React.Component {
 
@@ -177,14 +176,6 @@ export default class ErrorBoundary extends React.Component {
                 successful: true
             })
         }, 1000)
-        // const endpoint = 'https://sentry.io/api/0/projects/travis-lang/student-news-source/user-feedback/'
-
-        // let params = {
-        //     event_id: eventId,
-        //     name: 'User Feedback',
-        //     email: 'user@example.com',
-        //     comments: feedback
-        // }
         Sentry.captureMessage(`FEEDBACK: ${feedback}`);
         setTimeout(() => {
             this.setState({
@@ -196,45 +187,7 @@ export default class ErrorBoundary extends React.Component {
             })
             NavigationService.navigate('AuthLoading')
         }, 2000)
-        // try {
-        //     const response = await fetch(endpoint, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Authorization': `DSN ${secrets.SENTRYAPI}`
-        //         },
-        //         body: JSON.stringify(params)
-        //     })
-        //     if(response.status == 200 || response.status == 201) {
-        //         setTimeout(() => {
-        //             this.setState({
-        //                 successful: false
-        //             })
-        //             NavigationService.navigate('AuthLoading')
-        //         }, 1000)
-        //         this.setState({
-        //             error: null,
-        //             feedback: '',
-        //             eventId: null,
-        //             submitting: false,
-        //         })
-        //     } else {
-        //         console.log('response', response)
-        //         throw new Error('error submitting user feedback')
-        //     }
-        // } catch (err) {
-        //     console.error('error submitting user feedback', err)
-        //     Sentry.captureException(err);
-        //     this.setState({
-        //         error: null,
-        //         feedback: '',
-        //         eventId: null,
-        //         submitting: false,
-        //         successful: false
-        //     })
-        //     NavigationService.navigate('AuthLoading')
-        // }
-
+       
     }
 
 }

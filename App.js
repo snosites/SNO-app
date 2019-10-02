@@ -33,9 +33,8 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
-import { secrets } from './env';
 
 // import { useScreens } from 'react-native-screens';
 

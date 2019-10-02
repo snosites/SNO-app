@@ -7,9 +7,8 @@ import {
     View,
     ActivityIndicator
 } from 'react-native';
-import { DangerZone } from 'expo';
 import * as Amplitude from 'expo-analytics-amplitude';
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { saveArticle } from '../redux/actionCreators';
@@ -55,7 +54,7 @@ class FullArticleScreen extends React.Component {
                     }}
                 >
                     {/* <ActivityIndicator /> */}
-                    <Lottie
+                    <LottieView
                         style={StyleSheet.absoluteFill}
                         ref={animation => {
                             this.animation = animation;

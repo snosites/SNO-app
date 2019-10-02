@@ -24,7 +24,7 @@ import Slider from 'react-native-slider'
 import * as Amplitude from 'expo-analytics-amplitude'
 import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
-import Sentry from 'sentry-expo'
+import * as Sentry from 'sentry-expo'
 
 import InitModal from './InitModal'
 

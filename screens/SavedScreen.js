@@ -4,21 +4,11 @@ import {
     Text,
     Image,
     StyleSheet,
-    TouchableOpacity,
-    FlatList,
-    Platform
 } from 'react-native';
-import Moment from 'moment';
 import { connect } from 'react-redux';
-import HTML from 'react-native-render-html';
-import { DangerZone } from 'expo';
+import LottieView from 'lottie-react-native'
 
-
-const { Lottie } = DangerZone;
-
-import Colors from '../constants/Colors'
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { Snackbar, Badge } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 
 import { removeSavedArticle } from '../redux/actionCreators';
 import ArticleListContent from '../views/ArticleListContent';
@@ -75,7 +65,7 @@ class ListScreen extends React.Component {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
-                        <Lottie
+                        <LottieView
                             ref={animation => {
                                 this.animation = animation;
                             }}

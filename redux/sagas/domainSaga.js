@@ -2,7 +2,7 @@ import { put, call, takeLatest, select } from 'redux-saga/effects';
 import { setAvailableDomains, setError } from '../actionCreators';
 import Constants from 'expo-constants';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
 const api = 'mobileapi.snosites.net';
 const getUserInfo = state => state.userInfo

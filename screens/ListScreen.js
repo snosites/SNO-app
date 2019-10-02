@@ -4,15 +4,12 @@ import {
     Text,
     Image,
     StyleSheet,
-    Platform,
-    Animated
+    Platform
 } from 'react-native';
 import Color from 'color';
-import HTML from 'react-native-render-html';
 import { connect } from 'react-redux';
 
-import { DangerZone } from 'expo';
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
@@ -136,7 +133,7 @@ class ListScreen extends React.Component {
                         marginTop: 20,
                     }}
                 >
-                    <Lottie
+                    <LottieView
                         ref={animation => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
@@ -155,7 +152,7 @@ class ListScreen extends React.Component {
                         marginTop: 20,
                     }}
                 >
-                    <Lottie
+                    <LottieView
                         ref={animation => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
@@ -175,7 +172,7 @@ class ListScreen extends React.Component {
                             height: 200
                         }}
                     >
-                        <Lottie
+                        <LottieView
                             ref={animation => this._saveAnimationRef(animation)}
                             style={{
                                 width: 200,

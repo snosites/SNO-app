@@ -7,8 +7,7 @@ import {
     Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
-import { DangerZone } from 'expo';
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 
 import { Snackbar } from 'react-native-paper';
 
@@ -99,7 +98,7 @@ class RecentScreen extends React.Component {
                         marginTop: 20,
                     }}
                 >
-                    <Lottie
+                    <LottieView
                         ref={animation => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
@@ -119,7 +118,7 @@ class RecentScreen extends React.Component {
                             height: 200
                         }}
                     >
-                        <Lottie
+                        <LottieView
                             ref={animation => this._saveAnimationRef(animation)}
                             style={{
                                 width: 200,

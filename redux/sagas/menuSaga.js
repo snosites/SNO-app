@@ -5,7 +5,7 @@ import {
     setError
  } from '../actionCreators';
 
-import Sentry from 'sentry-expo';
+import * as Sentry from 'sentry-expo'
 
 
 const api = 'mobileapi.snosites.net';

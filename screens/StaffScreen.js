@@ -6,8 +6,7 @@ import {
     View,
     Image,
     ActivityIndicator,
-    FlatList,
-    TouchableOpacity
+    FlatList
 } from 'react-native';
 import Moment from 'moment';
 import Color from 'color';
@@ -15,10 +14,9 @@ import { connect } from 'react-redux';
 import { fetchProfiles } from '../redux/actionCreators';
 
 import { NavigationEvents } from 'react-navigation';
-import { DangerZone } from 'expo';
 
-const { Lottie } = DangerZone;
-import { Divider, Colors as PaperColors, Card, Button } from 'react-native-paper';
+import LottieView from 'lottie-react-native'
+import { Colors as PaperColors, Card, Button } from 'react-native-paper';
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
@@ -122,7 +120,7 @@ class StaffScreen extends React.Component {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.animationContainer}>
-                        <Lottie
+                        <LottieView
                             ref={animation => {
                                 this.animation = animation;
                             }}

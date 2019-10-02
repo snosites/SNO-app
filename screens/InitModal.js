@@ -8,12 +8,11 @@ import {
     Platform
 } from 'react-native';
 import { Button, Switch } from 'react-native-paper'
-import { DangerZone } from 'expo';
 import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 
 class initModal extends Component {
     state = {
@@ -37,7 +36,7 @@ class initModal extends Component {
                 <SafeAreaView style={styles.modalContainer}>
                     <ScrollView contentContainerStyle={{alignItems: 'center'}}>
                         <View style={styles.animationContainer}>
-                            <Lottie
+                            <LottieView
                                 ref={animation => {
                                     this.animation = animation;
                                 }}

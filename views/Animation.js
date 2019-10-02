@@ -1,8 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { DangerZone } from 'expo';
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 
 
 export default class Animation extends React.Component {
@@ -12,12 +11,11 @@ export default class Animation extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <View style={{...style}}>
-                    <Lottie
+                    <LottieView
                         ref={animation => saveRef(animation)}
                         style={{...style}}
                         loop={true}
                         autoPlay={true}
-                        // source={require(source)}
                         {...this.props}
                     />
                 </View>

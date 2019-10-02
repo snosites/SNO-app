@@ -8,9 +8,8 @@ import {
     Image,
     ImageBackground
 } from 'react-native';
-import { DangerZone } from 'expo';
 import Constants from 'expo-constants';
-const { Lottie } = DangerZone;
+import LottieView from 'lottie-react-native'
 import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux';
 import { initialize, setFromPush } from '../redux/actionCreators';
@@ -104,7 +103,7 @@ class AppSetupScreen extends React.Component {
                         }}
                     >
                     <View>
-                            <Lottie
+                            <LottieView
                                 ref={animation => {
                                     this.animation = animation;
                                 }}
