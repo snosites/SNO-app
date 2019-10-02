@@ -16,9 +16,7 @@ import { fetchMenus } from './menuSaga';
 
 import { SplashScreen } from 'expo';
 import * as Amplitude from 'expo-analytics-amplitude';
-import Constants from 'expo-constants';
 import Sentry from 'sentry-expo';
-import * as Amplitude from 'expo-analytics-amplitude';
 import Constants from 'expo-constants';
 
 

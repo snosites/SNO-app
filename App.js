@@ -34,12 +34,6 @@ import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
 import Sentry from 'sentry-expo';
-import * as Amplitude from 'expo-analytics-amplitude';
-import Constants from 'expo-constants';
-import * as WebBrowser from 'expo-web-browser';
-import * as Icon from '@expo/vector-icons';
-import * as Font from 'expo-font';
-import { Asset } from 'expo-asset';
 
 import { secrets } from './env';
 

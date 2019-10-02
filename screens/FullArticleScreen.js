@@ -18,8 +18,6 @@ import { FAB, Portal, Snackbar } from 'react-native-paper';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import ArticleBodyContent from '../views/ArticleBodyContent';
 
-import * as Amplitude from 'expo-analytics-amplitude';
-
 class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {
         return {

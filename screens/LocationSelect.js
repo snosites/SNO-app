@@ -24,10 +24,6 @@ import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
-import * as Amplitude from 'expo-analytics-amplitude';
-import Constants from 'expo-constants';
-import * as Haptic from 'expo-haptics';
-
 
 class LocationSelectScreen extends React.Component {
     static navigationOptions = {

@@ -36,10 +36,6 @@ import {
     clearError
 } from '../redux/actionCreators';
 
-import * as Amplitude from 'expo-analytics-amplitude';
-import * as Haptic from 'expo-haptics';
-import * as WebBrowser from 'expo-web-browser';
-
 
 const ActiveDomainIcon = ({ color }) => (
     <List.Icon
