@@ -8,6 +8,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { DangerZone } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
 const { Lottie } = DangerZone;
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
@@ -17,7 +18,7 @@ import { FAB, Portal, Snackbar } from 'react-native-paper';
 import { CustomArticleHeader } from '../components/ArticleHeader';
 import ArticleBodyContent from '../views/ArticleBodyContent';
 
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 class FullArticleScreen extends React.Component {
     static navigationOptions = ({ navigation, navigation: { state } }) => {

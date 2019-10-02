@@ -9,7 +9,7 @@ import {
     StatusBar,
     Platform
 } from 'react-native';
-import { Haptic } from 'expo';
+import * as Haptic from 'expo-haptics';
 import { connect } from 'react-redux';
 import { Button, List, Divider } from 'react-native-paper';
 import { clearError, changeActiveDomain } from '../redux/actionCreators';

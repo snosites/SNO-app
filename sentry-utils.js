@@ -1,7 +1,7 @@
 import Sentry from 'sentry-expo';
 import { secrets } from './env';
 
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 
 let sentryKey = '';
 if (Constants.manifest.releaseChannel === 'sns') {

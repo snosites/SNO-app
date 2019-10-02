@@ -1,6 +1,6 @@
 import { put, call, takeLatest, select } from 'redux-saga/effects';
 import { setAvailableDomains, setError } from '../actionCreators';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 
 import Sentry from 'sentry-expo';
 

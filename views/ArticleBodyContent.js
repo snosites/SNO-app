@@ -12,7 +12,8 @@ import {
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import { WebBrowser, Haptic } from 'expo'
+import * as Haptic from 'expo-haptics';
+import * as WebBrowser from 'expo-web-browser';
 
 import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'

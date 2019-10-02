@@ -17,12 +17,16 @@ import { isPointWithinRadius, getDistance } from 'geolib';
 import { List, Divider } from 'react-native-paper'
 import Slider from "react-native-slider";
 
-import { Haptic, Constants } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as Haptic from 'expo-haptics';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as Haptic from 'expo-haptics';
 
 
 class LocationSelectScreen extends React.Component {

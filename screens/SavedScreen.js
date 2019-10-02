@@ -11,7 +11,9 @@ import {
 import Moment from 'moment';
 import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
-import { Haptic, DangerZone } from 'expo';
+import { DangerZone } from 'expo';
+
+import * as Haptic from 'expo-haptics';
 
 const { Lottie } = DangerZone;
 

@@ -5,7 +5,9 @@ import { requestMenus, saveTokenId, setNotifications, setApiKey, setError, clear
 import NavigationService from '../../utils/NavigationService';
 
 import { persistor } from '../configureStore';
-import { Permissions, Notifications } from 'expo';
+import { Notifications } from 'expo';
+
+import * as Permissions from 'expo-permissions';
 
 import Sentry from 'sentry-expo';
 

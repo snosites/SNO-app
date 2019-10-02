@@ -8,7 +8,8 @@ import {
     Image,
     ImageBackground
 } from 'react-native';
-import { DangerZone, Constants } from 'expo';
+import { DangerZone } from 'expo';
+import Constants from 'expo-constants';
 const { Lottie } = DangerZone;
 import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux';

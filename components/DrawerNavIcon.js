@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native'
-import { Icon } from 'expo';
+import * as Icon from '@expo/vector-icons';
 import { FontAwesome, Foundation } from '@expo/vector-icons';
 
 export default DrawerNavIcon = (props) => {

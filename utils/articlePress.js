@@ -1,8 +1,9 @@
 import { Platform } from 'react-native';
-import { Haptic } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import * as Haptic from 'expo-haptics';
 import NavigationService from '../utils/NavigationService';
-// import * as Amplitude from 'expo-analytics-amplitude';
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import * as Haptic from 'expo-haptics';
 
 
 

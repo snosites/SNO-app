@@ -8,7 +8,13 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
-import { AppLoading, Asset, Font, Icon, Notifications, WebBrowser, Constants } from 'expo';
+import { AppLoading, Notifications } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as WebBrowser from 'expo-web-browser';
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 import { Provider as ReduxProvider, connect } from 'react-redux';
 import { changeActiveDomain, setFromPush } from './redux/actionCreators';
 
@@ -28,7 +34,12 @@ import { persistor, store } from './redux/configureStore';
 import ErrorBoundary from './views/ErrorBoundary';
 
 import Sentry from 'sentry-expo';
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as WebBrowser from 'expo-web-browser';
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 
 import { secrets } from './env';
 

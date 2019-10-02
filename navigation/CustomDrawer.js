@@ -32,7 +32,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
 import { connect } from 'react-redux';
 
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 import {
     fetchSearchArticlesIfNeeded,

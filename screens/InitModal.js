@@ -8,7 +8,9 @@ import {
     Platform
 } from 'react-native';
 import { Button, Switch } from 'react-native-paper'
-import { Haptic, DangerZone, Constants } from 'expo';
+import { DangerZone } from 'expo';
+import Constants from 'expo-constants';
+import * as Haptic from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const { Lottie } = DangerZone;

@@ -18,7 +18,9 @@ import {
 import Moment from 'moment';
 import Color from 'color';
 import { connect } from 'react-redux';
-import { WebBrowser, LinearGradient, Haptic } from 'expo';
+import * as Haptic from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as WebBrowser from 'expo-web-browser';
 import { handleArticlePress } from '../utils/articlePress';
 
 import { Feather, MaterialIcons } from '@expo/vector-icons';

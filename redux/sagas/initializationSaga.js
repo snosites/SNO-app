@@ -14,10 +14,12 @@ import {
 import { checkNotificationSettings, addAllNotifications, addNotification } from './userNotifications';
 import { fetchMenus } from './menuSaga';
 
-import { SplashScreen, Constants } from 'expo'
+import { SplashScreen } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
 import Sentry from 'sentry-expo';
-// import * as Amplitude from 'expo-analytics-amplitude';
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
 
 
 const api = 'mobileapi.snosites.net';

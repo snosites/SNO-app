@@ -12,12 +12,16 @@ import { connect } from 'react-redux';
 import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
 
 import { List, Divider } from 'react-native-paper'
-import { Haptic, Constants } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as Haptic from 'expo-haptics';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
 
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import Constants from 'expo-constants';
+import * as Haptic from 'expo-haptics';
 
 
 class SelectScreen extends React.Component {

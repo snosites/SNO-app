@@ -9,7 +9,9 @@ import {
     Image,
     Alert
 } from 'react-native';
-import { WebBrowser, Haptic } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import * as Haptic from 'expo-haptics';
+import * as WebBrowser from 'expo-web-browser';
 import { connect } from 'react-redux';
 import { persistor } from '../redux/configureStore';
 import NavigationService from '../utils/NavigationService';
@@ -34,7 +36,9 @@ import {
     clearError
 } from '../redux/actionCreators';
 
-import { Amplitude } from 'expo';
+import * as Amplitude from 'expo-analytics-amplitude';
+import * as Haptic from 'expo-haptics';
+import * as WebBrowser from 'expo-web-browser';
 
 
 const ActiveDomainIcon = ({ color }) => (

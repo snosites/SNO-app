@@ -12,7 +12,7 @@ import {
 import Moment from 'moment';
 import Color from 'color';
 import HTML from 'react-native-render-html';
-import { Haptic } from 'expo';
+import * as Haptic from 'expo-haptics';
 
 import { handleArticlePress } from '../utils/articlePress';
 
