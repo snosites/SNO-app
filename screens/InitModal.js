@@ -10,7 +10,7 @@ import {
 import { Button, Switch } from 'react-native-paper'
 import { DangerZone } from 'expo';
 import Constants from 'expo-constants';
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const { Lottie } = DangerZone;
@@ -79,7 +79,7 @@ class initModal extends Component {
                                     style={{ padding: 10 }}
                                     onPress={() => {
                                         if (Platform.OS === 'ios') {
-                                            Haptic.selection();
+                                            Haptics.selectionAsync()
                                         }
                                         this.props.handleDismiss(this.state.allNotifications);
                                     }}

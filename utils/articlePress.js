@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import * as Amplitude from 'expo-analytics-amplitude';
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import NavigationService from '../utils/NavigationService';
 
 
@@ -12,10 +12,6 @@ getAttachmentsAsync = async (article) => {
 }
 
 export const handleArticlePress = (article, activeDomain) => {
-    if (Platform.OS === 'ios') {
-        Haptic.selection();
-    }
-
     // log the article to analytics
     Amplitude.logEventWithProperties('view story', {
         storyId: article.id
@@ -32,9 +28,7 @@ export const handleArticlePress = (article, activeDomain) => {
 }
 
 handleRegularArticle = async (article) => {
-    if (Platform.OS === 'ios') {
-        Haptic.selection();
-    }
+    Haptics.selectionAsync()
     NavigationService.navigate('FullArticle');
     // check if there is a slideshow
     if (article.custom_fields.featureimage && article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images') {
@@ -50,9 +44,7 @@ handleRegularArticle = async (article) => {
 
 handleLongFormArticle = async (article, activeDomain) => {
     console.log('long form article press', article)
-    if (Platform.OS === 'ios') {
-        Haptic.selection();
-    }
+    Haptics.selectionAsync()
     let storyChapters = [];
     NavigationService.navigate('FullArticle');
     if (article.custom_fields.sno_format == "Long-Form") {

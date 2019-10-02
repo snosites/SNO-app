@@ -9,7 +9,7 @@ import {
     StatusBar,
     Platform
 } from 'react-native';
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import { connect } from 'react-redux';
 import { Button, List, Divider } from 'react-native-paper';
 import { clearError, changeActiveDomain } from '../redux/actionCreators';
@@ -105,7 +105,7 @@ class ErrorScreen extends React.Component {
 
     _handleSelect = async (id) => {
         if (Platform.OS === 'ios') {
-            Haptic.selection();
+            Haptics.selectionAsync()
         }
         try {
             const { dispatch, navigation } = this.props;

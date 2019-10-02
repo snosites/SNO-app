@@ -14,7 +14,7 @@ import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotificatio
 import { List, Divider } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude';
 import Constants from 'expo-constants';
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import Sentry from 'sentry-expo';
 
 import InitModal from './InitModal';
@@ -123,9 +123,7 @@ class SelectScreen extends React.Component {
     }
 
     _handleSelect = async (orgId, item) => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
+            Haptics.selectionAsync()
         try {
             const { domains } = this.props;
             const found = domains.find(domain => {
@@ -164,9 +162,7 @@ class SelectScreen extends React.Component {
     }
     // dismiss modal and redirect back to auth loading
     _handleModalDismiss = (allNotifications) => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
+            Haptics.selectionAsync()
         this.props.dispatch(setAllNotifications(this.state.selectedDomain, allNotifications))
         this.props.navigation.navigate('AuthLoading');
         this.props.dispatch(clearAvailableDomains());

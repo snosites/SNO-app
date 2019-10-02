@@ -15,7 +15,6 @@ import Color from 'color';
 import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
 import { DangerZone } from 'expo';
-import * as Haptic from 'expo-haptics';
 const { Lottie } = DangerZone;
 
 import Animation from '../views/Animation';

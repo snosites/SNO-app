@@ -12,7 +12,7 @@ import {
     SafeAreaView
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
@@ -176,7 +176,7 @@ class InitScreen extends React.Component {
     }
 
     _handleUseLocation = () => {
-        Haptic.selection();
+        Haptic.selectionAsync()
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
                 errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device',

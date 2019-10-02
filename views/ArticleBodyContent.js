@@ -12,7 +12,7 @@ import {
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import * as Haptic from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 import * as WebBrowser from 'expo-web-browser';
 
 import TouchableItem from '../constants/TouchableItem'
@@ -328,9 +328,7 @@ export default class ArticleBodyContent extends React.Component {
 
     _handleProfilePress = writerName => {
         const { navigation } = this.props
-        if (Platform.OS === 'ios') {
-            Haptic.selection()
-        }
+        Haptics.selectionAsync()
         navigation.navigate('Profile', {
             writerName
         })

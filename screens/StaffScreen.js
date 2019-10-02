@@ -17,8 +17,6 @@ import { fetchProfiles } from '../redux/actionCreators';
 import { NavigationEvents } from 'react-navigation';
 import { DangerZone } from 'expo';
 
-import * as Haptic from 'expo-haptics';
-
 const { Lottie } = DangerZone;
 import { Divider, Colors as PaperColors, Card, Button } from 'react-native-paper';
 import Colors from '../constants/Colors'

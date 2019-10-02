@@ -1,21 +1,12 @@
-import React from 'react';
-import {
-    ScrollView,
-    StyleSheet,
-    View,
-    TextInput,
-    Text,
-    Platform,
-    Image,
-    Alert
-} from 'react-native';
-import * as Amplitude from 'expo-analytics-amplitude';
-import * as Haptic from 'expo-haptics';
-import * as WebBrowser from 'expo-web-browser';
-import { connect } from 'react-redux';
-import { persistor } from '../redux/configureStore';
-import NavigationService from '../utils/NavigationService';
-import { saveUserInfo, deleteDomain, clearingSettings } from '../redux/actionCreators';
+import React from 'react'
+import { ScrollView, StyleSheet, View, TextInput, Text, Platform, Image, Alert } from 'react-native'
+import * as Amplitude from 'expo-analytics-amplitude'
+import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
+import { connect } from 'react-redux'
+import { persistor } from '../redux/configureStore'
+import NavigationService from '../utils/NavigationService'
+import { saveUserInfo, deleteDomain, clearingSettings } from '../redux/actionCreators'
 import {
     List,
     Divider,
@@ -26,7 +17,7 @@ import {
     Button,
     Portal,
     ActivityIndicator
-} from 'react-native-paper';
+} from 'react-native-paper'
 
 import {
     changeActiveDomain,
@@ -34,32 +25,24 @@ import {
     removeNotification,
     deleteUser,
     clearError
-} from '../redux/actionCreators';
+} from '../redux/actionCreators'
 
-
-const ActiveDomainIcon = ({ color }) => (
-    <List.Icon
-        icon={`star`}
-        color={color}
-    />
-)
+const ActiveDomainIcon = ({ color }) => <List.Icon icon={`star`} color={color} />
 
 class SettingsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Settings',
-            headerLeft: (
-                logo &&
+            headerLeft: logo && (
                 <Image
                     source={{ uri: logo }}
                     style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
                     resizeMode='contain'
                 />
-            ),
+            )
         }
-
-    };
+    }
 
     state = {
         snackbarVisible: false,
@@ -70,10 +53,10 @@ class SettingsScreen extends React.Component {
         notifications: {},
         dialog: false,
         clearedAllSettings: false
-    };
+    }
 
     componentDidMount() {
-        const { userInfo, domains, menus, navigation } = this.props;
+        const { userInfo, domains, menus, navigation } = this.props
         this.setState({
             username: userInfo.username,
             email: userInfo.email
@@ -83,25 +66,24 @@ class SettingsScreen extends React.Component {
         })
 
         this.setState({
-            notifications: domains.reduce(function (map, domain) {
-                map[domain.id] = domain.notificationCategories.reduce(function (map, notification) {
-                    map[notification.id] = notification.active;
-                    return map;
-                }, {});
-                return map;
+            notifications: domains.reduce(function(map, domain) {
+                map[domain.id] = domain.notificationCategories.reduce(function(map, notification) {
+                    map[notification.id] = notification.active
+                    return map
+                }, {})
+                return map
             }, {})
         })
     }
 
     componentDidUpdate() {
         if (this.props.userInfo.resetSettings) {
-            persistor.purge();
+            persistor.purge()
             this.props.dispatch({
                 type: 'PURGE_USER_STATE'
             })
             this.props.navigation.navigate('AuthLoading')
         }
-
     }
 
     render() {
@@ -111,23 +93,19 @@ class SettingsScreen extends React.Component {
             editingEmail,
             username,
             email,
-            notifications,
-        } = this.state;
-        const {
-            domains,
-            userInfo,
-            dispatch,
-            theme,
-            errors
-        } = this.props;
+            notifications
+        } = this.state
+        const { domains, userInfo, dispatch, theme, errors } = this.props
 
         if (userInfo.clearingSettings) {
             return (
-                <View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
                     <ActivityIndicator />
                 </View>
             )
@@ -138,24 +116,26 @@ class SettingsScreen extends React.Component {
                 <View style={{ flex: 1 }}>
                     <List.Section>
                         <List.Subheader>User Preferences</List.Subheader>
-                        {editingUsername ?
+                        {editingUsername ? (
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
-                                onBlur={(text) => {
-                                    dispatch(saveUserInfo({
-                                        username: username,
-                                        email: email
-                                    }))
+                                onBlur={text => {
+                                    dispatch(
+                                        saveUserInfo({
+                                            username: username,
+                                            email: email
+                                        })
+                                    )
                                     this.setState({
-                                        editingUsername: false,
+                                        editingUsername: false
                                     })
                                 }}
                                 autoFocus={true}
                                 returnKeyType='done'
                                 value={username}
-                                onChangeText={(text) => this.setState({ username: text })}
+                                onChangeText={text => this.setState({ username: text })}
                             />
-                            :
+                        ) : (
                             <List.Item
                                 title={userInfo.username || 'Not Set'}
                                 description={'Username'}
@@ -163,7 +143,7 @@ class SettingsScreen extends React.Component {
                                 right={() => {
                                     return (
                                         <IconButton
-                                            icon="create"
+                                            icon='create'
                                             color={Colors.grey300}
                                             size={28}
                                             onPress={() => this._handleUserInfoEdit('username')}
@@ -171,42 +151,43 @@ class SettingsScreen extends React.Component {
                                     )
                                 }}
                             />
-                        }
-                        {
-                            editingEmail ?
-                                <TextInput
-                                    style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
-                                    onBlur={() => {
-                                        dispatch(saveUserInfo({
+                        )}
+                        {editingEmail ? (
+                            <TextInput
+                                style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
+                                onBlur={() => {
+                                    dispatch(
+                                        saveUserInfo({
                                             username: username,
                                             email: email
-                                        }))
-                                        this.setState({
-                                            editingEmail: false,
                                         })
-                                    }}
-                                    autoFocus={true}
-                                    returnKeyType='done'
-                                    value={email}
-                                    onChangeText={(text) => this.setState({ email: text })}
-                                />
-                                :
-                                <List.Item
-                                    title={userInfo.email || 'Not Set'}
-                                    description={'email'}
-                                    style={styles.inactiveItem}
-                                    right={() => {
-                                        return (
-                                            <IconButton
-                                                icon="create"
-                                                color={Colors.grey300}
-                                                size={28}
-                                                onPress={() => this._handleUserInfoEdit('email')}
-                                            />
-                                        )
-                                    }}
-                                />
-                        }
+                                    )
+                                    this.setState({
+                                        editingEmail: false
+                                    })
+                                }}
+                                autoFocus={true}
+                                returnKeyType='done'
+                                value={email}
+                                onChangeText={text => this.setState({ email: text })}
+                            />
+                        ) : (
+                            <List.Item
+                                title={userInfo.email || 'Not Set'}
+                                description={'email'}
+                                style={styles.inactiveItem}
+                                right={() => {
+                                    return (
+                                        <IconButton
+                                            icon='create'
+                                            color={Colors.grey300}
+                                            size={28}
+                                            onPress={() => this._handleUserInfoEdit('email')}
+                                        />
+                                    )
+                                }}
+                            />
+                        )}
                     </List.Section>
                     <Divider />
                     <List.Section>
@@ -221,28 +202,30 @@ class SettingsScreen extends React.Component {
                                     left={() => {
                                         if (item.active) {
                                             return <ActiveDomainIcon color={theme.colors.accent} />
-                                        }
-                                        else {
+                                        } else {
                                             return null
                                         }
                                     }}
                                     right={() => {
                                         return (
                                             <IconButton
-                                                icon="delete"
+                                                icon='delete'
                                                 color={Colors.red700}
                                                 size={28}
                                                 onPress={() => this._handleDeleteOrg(item)}
                                             />
                                         )
                                     }}
-                                    onPress={() => { this._switchDomain(item.id) }}
+                                    onPress={() => {
+                                        this._switchDomain(item.id)
+                                    }}
                                 />
                             )
                         })}
                     </List.Section>
                     <Divider />
-                    <List.Item style={{ paddingVertical: 0 }}
+                    <List.Item
+                        style={{ paddingVertical: 0 }}
                         title='Add New Organization'
                         left={() => <List.Icon icon={`add`} />}
                         onPress={this._handleAddNewOrg}
@@ -250,14 +233,15 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {userInfo.tokenId ? domains.map(domain => {
-                            return (
-                                <List.Accordion
-                                    key={domain.id}
-                                    title={domain.name}
-                                    left={props => <List.Icon {...props} icon="folder-open" />}
-                                >
-                                    {/* <List.Item
+                        {userInfo.tokenId ? (
+                            domains.map(domain => {
+                                return (
+                                    <List.Accordion
+                                        key={domain.id}
+                                        title={domain.name}
+                                        left={props => <List.Icon {...props} icon='folder-open' />}
+                                    >
+                                        {/* <List.Item
                                         style={{ paddingVertical: 0, paddingLeft: 60 }}
                                         titleStyle={{ fontWeight: 'bold' }}
                                         title={'All Notifications'}
@@ -272,70 +256,89 @@ class SettingsScreen extends React.Component {
                                             )
                                         }}
                                     /> */}
-                                    {domain.notificationCategories.map((item, i) => {
-                                        if (item.category_name == 'custom_push') {
+                                        {domain.notificationCategories.map((item, i) => {
+                                            if (item.category_name == 'custom_push') {
+                                                return (
+                                                    <List.Item
+                                                        key={item.id}
+                                                        style={{
+                                                            paddingVertical: 0,
+                                                            paddingLeft: 60
+                                                        }}
+                                                        title='Alerts'
+                                                        right={() => {
+                                                            return (
+                                                                <Switch
+                                                                    style={{ margin: 10 }}
+                                                                    value={
+                                                                        notifications[domain.id][
+                                                                            item.id
+                                                                        ]
+                                                                    }
+                                                                    onValueChange={value => {
+                                                                        this._toggleNotifications(
+                                                                            item.id,
+                                                                            value,
+                                                                            domain,
+                                                                            item
+                                                                        )
+                                                                    }}
+                                                                />
+                                                            )
+                                                        }}
+                                                    />
+                                                )
+                                            }
                                             return (
                                                 <List.Item
                                                     key={item.id}
                                                     style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                                    title='Alerts'
+                                                    title={item.category_name}
                                                     right={() => {
                                                         return (
                                                             <Switch
                                                                 style={{ margin: 10 }}
-                                                                value={notifications[domain.id][item.id]}
-                                                                onValueChange={(value) => { this._toggleNotifications(item.id, value, domain, item) }
+                                                                value={
+                                                                    notifications[domain.id][
+                                                                        item.id
+                                                                    ]
                                                                 }
-
+                                                                onValueChange={value => {
+                                                                    this._toggleNotifications(
+                                                                        item.id,
+                                                                        value,
+                                                                        domain,
+                                                                        item
+                                                                    )
+                                                                }}
                                                             />
                                                         )
                                                     }}
                                                 />
                                             )
-                                        }
-                                        return (
-                                            <List.Item
-                                                key={item.id}
-                                                style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                                title={item.category_name}
-                                                right={() => {
-                                                    return (
-                                                        <Switch
-                                                            style={{ margin: 10 }}
-                                                            value={notifications[domain.id][item.id]}
-                                                            onValueChange={(value) => { this._toggleNotifications(item.id, value, domain, item) }
-                                                            }
-
-                                                        />
-                                                    )
-                                                }}
-                                            />
-                                        )
-                                    }
-                                    )
-                                    }
-                                </List.Accordion>
-                            )
-                        })
-                            :
+                                        })}
+                                    </List.Accordion>
+                                )
+                            })
+                        ) : (
                             <Text style={{ textAlign: 'center' }}>
                                 You have disabled push notifications for this app
-                    </Text>
-                        }
+                            </Text>
+                        )}
                     </List.Section>
                     <Divider />
                     <List.Item
                         title='Privacy Policy'
                         style={{ paddingVertical: 0 }}
-                        left={props => <List.Icon {...props} icon="supervisor-account" />}
+                        left={props => <List.Icon {...props} icon='supervisor-account' />}
                         onPress={this._viewLink}
                     />
                     <View>
                         <Button
-                            icon="delete-forever"
-                            mode="outlined"
+                            icon='delete-forever'
+                            mode='outlined'
                             color={Colors.red700}
-                            style={{ padding: 10, }}
+                            style={{ padding: 10 }}
                             onPress={this._showDialog}
                         >
                             Clear All Settings
@@ -347,7 +350,9 @@ class SettingsScreen extends React.Component {
                     duration={3000}
                     style={{
                         position: 'absolute',
-                        bottom: 0, left: 0, right: 0
+                        bottom: 0,
+                        left: 0,
+                        right: 0
                     }}
                     onDismiss={() => this.setState({ snackbarVisible: false })}
                     action={{
@@ -364,7 +369,9 @@ class SettingsScreen extends React.Component {
                     duration={3000}
                     style={{
                         position: 'absolute',
-                        bottom: 100, left: 0, right: 0
+                        bottom: 100,
+                        left: 0,
+                        right: 0
                     }}
                     onDismiss={() => dispatch(clearError())}
                     action={{
@@ -377,72 +384,72 @@ class SettingsScreen extends React.Component {
                     Sorry there was an error clearing your settings. Please try again later.
                 </Snackbar>
                 <Portal>
-                    {this.state.dialog ? Alert.alert(
-                        'Clear all settings?',
-                        'This will clear all of your saved schools, articles, and notification settings.',
-                        [
-                            {
-                                text: 'Cancel',
-                                onPress: this._hideDialog,
-                                style: 'cancel'
-                            },
-                            {
-                                text: 'Clear',
-                                onPress: () => {
-                                    this.props.dispatch(clearingSettings(true))
-                                    this.props.dispatch(deleteUser(userInfo.tokenId, userInfo.apiKey))
-                                    this._hideDialog();
-                                }
-                            }
-                        ],
-                        { cancelable: false },
-                    )
-                        :
-                        null}
+                    {this.state.dialog
+                        ? Alert.alert(
+                              'Clear all settings?',
+                              'This will clear all of your saved schools, articles, and notification settings.',
+                              [
+                                  {
+                                      text: 'Cancel',
+                                      onPress: this._hideDialog,
+                                      style: 'cancel'
+                                  },
+                                  {
+                                      text: 'Clear',
+                                      onPress: () => {
+                                          this.props.dispatch(clearingSettings(true))
+                                          this.props.dispatch(
+                                              deleteUser(userInfo.tokenId, userInfo.apiKey)
+                                          )
+                                          this._hideDialog()
+                                      }
+                                  }
+                              ],
+                              { cancelable: false }
+                          )
+                        : null}
                 </Portal>
             </ScrollView>
         )
     }
 
-    _showDialog = () => this.setState({ dialog: true });
+    _showDialog = () => this.setState({ dialog: true })
 
-    _hideDialog = () => this.setState({ dialog: false });
+    _hideDialog = () => this.setState({ dialog: false })
 
     _viewLink = async () => {
-        let result = await WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/');
+        let result = await WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/')
     }
 
     _handleAddNewOrg = () => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
+        Haptics.selectionAsync()
         this.props.navigation.navigate('Auth')
     }
 
-    _handleDeleteOrg = (domain) => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
-        const { domains, navigation, userInfo } = this.props;
+    _handleDeleteOrg = domain => {
+        Haptics.selectionAsync()
+        const { domains, navigation, userInfo } = this.props
         if (domain.active) {
             let found = domains.find(domain => {
                 return !domain.active
             })
             if (found) {
-                this._switchDomain(found.id);
+                this._switchDomain(found.id)
             } else {
-                navigation.navigate('AuthLoading');
+                navigation.navigate('AuthLoading')
             }
         }
         // get all the category IDs to remove them from DB
         const categoryIds = domain.notificationCategories.map(category => {
             return category.id
         })
-        this.props.dispatch(removeNotification({
-            tokenId: userInfo.tokenId,
-            categoryId: categoryIds,
-            domain: domain.id
-        }))
+        this.props.dispatch(
+            removeNotification({
+                tokenId: userInfo.tokenId,
+                categoryId: categoryIds,
+                domain: domain.id
+            })
+        )
         this.props.dispatch(deleteDomain(domain.id))
         this.setState({
             snackbarVisible: true
@@ -453,24 +460,20 @@ class SettingsScreen extends React.Component {
         })
     }
 
-    _handleUserInfoEdit = (userPref) => {
+    _handleUserInfoEdit = userPref => {
         if (userPref === 'username') {
             this.setState({
                 editingUsername: true
             })
-        }
-        else if (userPref === 'email') {
+        } else if (userPref === 'email') {
             this.setState({
                 editingEmail: true
             })
         }
     }
 
-
     _toggleNotifications = (notificationId, value, domain, notification) => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
+        Haptics.selectionAsync()
         // stops lag of DB call for switch value
         this.setState({
             notifications: {
@@ -482,40 +485,39 @@ class SettingsScreen extends React.Component {
             }
         })
         // notificationId is category ID in DB
-        const { dispatch, userInfo } = this.props;
+        const { dispatch, userInfo } = this.props
         if (value) {
-            dispatch(addNotification({
-                tokenId: userInfo.tokenId,
-                categoryId: notificationId,
-                domain: domain.id
-            }))
-        }
-        else {
-            dispatch(removeNotification({
-                tokenId: userInfo.tokenId,
-                categoryId: notificationId,
-                domain: domain.id
-            }))
+            dispatch(
+                addNotification({
+                    tokenId: userInfo.tokenId,
+                    categoryId: notificationId,
+                    domain: domain.id
+                })
+            )
+        } else {
+            dispatch(
+                removeNotification({
+                    tokenId: userInfo.tokenId,
+                    categoryId: notificationId,
+                    domain: domain.id
+                })
+            )
         }
     }
 
-    _switchDomain = (id) => {
-        if (Platform.OS === 'ios') {
-            Haptic.selection();
-        }
-        const { dispatch, navigation } = this.props;
+    _switchDomain = id => {
+        Haptics.selectionAsync()
+        const { dispatch, navigation } = this.props
 
         dispatch(changeActiveDomain(id))
-        navigation.navigate('AuthLoading');
+        navigation.navigate('AuthLoading')
     }
-
 }
-
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#fff'
         // justifyContent: 'space-between',
     },
     inactiveItem: {
