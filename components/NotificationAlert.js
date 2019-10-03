@@ -9,13 +9,13 @@ import * as Amplitude from 'expo-analytics-amplitude'
 import Constants from 'expo-constants'
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
-import { changeActiveDomain, setFromPush } from './redux/actionCreators'
+import { changeActiveDomain, setFromPush } from '../redux/actionCreators'
 
-import NavigationService from './utils/NavigationService'
+import NavigationService from '../utils/NavigationService'
 
-import { handleArticlePress } from './utils/articlePress'
-import { asyncFetchFeaturedImage, asyncFetchComments } from './utils/sagaHelpers'
-import FadeInView from './views/FadeInView'
+import { handleArticlePress } from '../utils/articlePress'
+import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
+import FadeInView from '../views/FadeInView'
 
 import { Portal } from 'react-native-paper'
 import Moment from 'moment'

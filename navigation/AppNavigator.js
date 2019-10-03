@@ -1,6 +1,4 @@
 import React from 'react'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
-import { SplashScreen } from 'expo'
 import { createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation'
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen'
@@ -10,11 +8,6 @@ import InitScreen from '../screens/InitScreen'
 import SelectScreen from '../screens/SelectScreen'
 import LocationSelect from '../screens/LocationSelect'
 import ErrorBoundary from '../views/ErrorBoundary'
-
-import { connect } from 'react-redux'
-import { setActiveDomain, getApiKey } from '../redux/actionCreators'
-
-
 
 
 const AuthStack = createStackNavigator({

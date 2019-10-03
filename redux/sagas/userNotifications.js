@@ -175,6 +175,7 @@ function* deleteUser(action){
             })
         });
         const deleted = yield response.json();
+        console.log('deleted', deleted)
         if (response.status != 200){
             yield put(clearingSettings(false))
             throw new Error(response.status)
