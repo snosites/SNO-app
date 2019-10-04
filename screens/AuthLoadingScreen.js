@@ -11,17 +11,17 @@ const AuthLoadingScreen = props => {
     const { dispatch, userInfo, domains, navigation } = props
 
     useEffect(() => {
+        if(!userInfo.apiKey) {
+            dispatch(getApiKey())
+        }
+    }, [userInfo.apiKey])
+
+    useEffect(() => {
         if (switchingDomain) {
             return
         }
         _getDomainAsync()
     }, [switchingDomain])
-
-    useEffect(() => {
-        if(!userInfo.apiKey) {
-            dispatch(getApiKey())
-        }
-    }, [userInfo.apiKey])
 
     _getDomainAsync = async () => {
         if (!userInfo.apiKey) {
