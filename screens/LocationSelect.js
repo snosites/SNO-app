@@ -61,8 +61,6 @@ const LocationSelectScreen = props => {
 
     const { schoolsInRadius, radius, reloading } = state
 
-    console.log('this is state', state, radius)
-
     _handleRadiusSearch = () => {
         if (availableDomains.length === 0) {
             return
@@ -119,34 +117,34 @@ const LocationSelectScreen = props => {
         })
     }
 
-    _handleSelect = async (orgId, item) => {
+    _handleSelect = async (selectedDomain) => {
         Haptics.selectionAsync()
         try {
             const found = domains.find(domain => {
-                return domain.id == orgId
+                return domain.id == selectedDomain.id
             })
             // if already added then set as active -- dont save
             if (found) {
-                setActiveDomain(orgId)
+                setActiveDomain(selectedDomain.id)
                 navigation.navigate('AuthLoading')
                 return
             }
             // save new domain and send analytics
             Amplitude.logEventWithProperties('add school', {
-                domainId: orgId
+                domainId: selectedDomain.id
             })
 
             addDomain({
-                id: orgId,
-                name: item.school,
-                publication: item.publication,
+                id: selectedDomain.id,
+                name: selectedDomain.school,
+                publication: selectedDomain.publication,
                 active: false,
                 notificationCategories: [],
-                url: item.url
+                url: selectedDomain.url
             })
 
             // set new domain as active
-            setActiveDomain(orgId)
+            setActiveDomain(selectedDomain.id)
 
             setState({
                 ...state,
@@ -282,7 +280,7 @@ const LocationSelectScreen = props => {
                                             }
                                         }}
                                         onPress={() => {
-                                            _handleSelect(item.domain_id, item)
+                                            _handleSelect(item)
                                             setState({
                                                 ...state,
                                                 selectedDomain: item.domain_id
