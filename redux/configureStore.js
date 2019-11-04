@@ -5,10 +5,9 @@ import storage from 'redux-persist/lib/storage'
 import createSagaMiddleWare from 'redux-saga';
 import logger from 'redux-logger';
 
-import rootReducer from './reducers/rootReducer';
-import rootSaga from './sagas/rootSaga';
+import rootReducer from './rootReducer';
+import rootSaga from '../sagas/rootSaga';
 
-import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 import { setupSentry } from '../sentry-utils';
@@ -30,7 +29,8 @@ const middlewareList = __DEV__ ? [sentryMiddleware, sagaMiddleware, logger] : [ 
 const persistConfig = {
     key: 'primary',
     storage,
-    whitelist: ['domains', 'savedArticlesBySchool', 'userInfo'],
+    // whitelist: ['domains', 'savedArticlesBySchool', 'user'],
+    whitelist: ['domains'],
     debug: true,
     timeout: 10000,
     stateReconciler: autoMergeLevel2
@@ -42,5 +42,5 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 export const store = createStore(persistedReducer, {}, applyMiddleware(...middlewareList));
 
 export const persistor = persistStore(store);
-// persistor.purge();
+persistor.purge();
 sagaMiddleware.run(rootSaga);

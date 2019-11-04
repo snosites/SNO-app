@@ -17,6 +17,8 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
+
+import { actions as globalActions } from '../redux/global'
 import { fetchAvailableDomains, searchAvailableDomains, clearError } from '../redux/actionCreators';
 
 class InitScreen extends React.Component {
@@ -28,13 +30,12 @@ class InitScreen extends React.Component {
         isLoading: false,
         orgName: '',
         zipCode: '',
-        cityLocation: null,
         errorMessage: null,
     }
 
 
     render() {
-        const { errors, navigation, dispatch } = this.props;
+        const { errors, navigation, fetchAvailableDomains } = this.props;
 
         const theme = {
             roundness: 7,
@@ -43,27 +44,7 @@ class InitScreen extends React.Component {
             }
         }
 
-        if (errors.error === 'api-saga error') {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
-                        Sorry, there was a problem authenticating your device.  Please try reloading the app.
-                    </Text>
-                    <Button
-                        mode="contained"
-                        theme={theme}
-                        style={{ padding: 5, marginTop: 50 }}
-                        onPress={() => {
-                            dispatch(clearError())
-                            navigation.navigate('AuthLoading')
-                        }}
-                    >
-                        Reload
-                    </Button>
-                </View>
-            )
-        }
-        else if (this.state.errorMessage) {
+        if (this.state.errorMessage) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
                     <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
@@ -95,36 +76,42 @@ class InitScreen extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <StatusBar barStyle={'dark-content'} />
-                <ScrollView
-                    keyboardShouldPersistTaps={'handled'}>
-                    <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" enabled>
+                <ScrollView keyboardShouldPersistTaps={'handled'}>
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior='position' enabled>
                         <View style={styles.container}>
                             <View style={styles.logoContainer}>
                                 <Image
-                                    source={Constants.manifest.releaseChannel === 'sns' ? require('../assets/images/the-source-logo.png') : require('../assets/images/cns-logo.png')}
+                                    source={
+                                        Constants.manifest.releaseChannel === 'sns'
+                                            ? require('../assets/images/the-source-logo.png')
+                                            : require('../assets/images/cns-logo.png')
+                                    }
                                     style={styles.logoImage}
                                 />
                             </View>
                             <View style={styles.getStartedContainer}>
-                                <Text style={styles.getStartedText}>Get started by finding your school
+                                <Text style={styles.getStartedText}>
+                                    Get started by finding your school
                                 </Text>
                                 <Button
-                                    mode="contained"
+                                    mode='contained'
                                     theme={theme}
-                                    style={{ padding: 10, marginBottom: 30 }}
+                                    style={{ padding: 10, marginBottom: 30, width: 300 }}
                                     onPress={this._handleUseLocation}
                                 >
                                     Use Your Current Location
                                 </Button>
                                 <Button
-                                    mode="contained"
+                                    mode='contained'
                                     theme={theme}
-                                    style={{ padding: 10, marginBottom: 50 }}
+                                    style={{ padding: 10, marginBottom: 50, width: 300 }}
                                     onPress={this._handleBrowse}
                                 >
                                     Browse All Schools
                                 </Button>
-                                <Text style={styles.locationContainerText}>Or search for a school below</Text>
+                                <Text style={styles.locationContainerText}>
+                                    Or search for a school below
+                                </Text>
                                 <View style={styles.formContainer}>
                                     <TextInput
                                         label='School Name'
@@ -132,7 +119,11 @@ class InitScreen extends React.Component {
                                         theme={{
                                             ...theme,
                                             colors: {
-                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary,
+                                                primary:
+                                                    Constants.manifest.releaseChannel === 'sns'
+                                                        ? Constants.manifest.extra.highSchool
+                                                              .primary
+                                                        : Constants.manifest.extra.college.primary,
                                                 background: 'white'
                                             }
                                         }}
@@ -140,29 +131,33 @@ class InitScreen extends React.Component {
                                         selectionColor='black'
                                         returnKeyType='search'
                                         value={this.state.orgName}
-                                    onChangeText={(text) => this.setState({ orgName: text })}
-                                    onSubmitEditing={this._handleSubmit}
+                                        onChangeText={text => this.setState({ orgName: text })}
+                                        onSubmitEditing={this._handleSubmit}
                                     />
                                     <Button
-                                        mode="contained"
+                                        mode='contained'
                                         theme={{
                                             roundness: 7,
                                             colors: {
-                                                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.secondary : Constants.manifest.extra.college.secondary
+                                                primary:
+                                                    Constants.manifest.releaseChannel === 'sns'
+                                                        ? Constants.manifest.extra.highSchool
+                                                              .secondary
+                                                        : Constants.manifest.extra.college.secondary
                                             }
                                         }}
-                                        style={{ padding: 10 }}
+                                        style={{ padding: 10, width: 300 }}
                                         onPress={this._handleSubmit}
                                     >
                                         Search
-                                </Button>
+                                    </Button>
                                 </View>
                             </View>
                         </View>
                     </KeyboardAvoidingView>
                 </ScrollView>
             </SafeAreaView>
-        );
+        )
     }
 
     _handleSubmit = () => {
@@ -197,22 +192,21 @@ class InitScreen extends React.Component {
         this.setState({
             isLoading: true
         })
-        this.props.dispatch(fetchAvailableDomains());
+        
+
         let location = await Location.getCurrentPositionAsync({});
 
         let locationObj = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude
         }
-        console.log('location obj', location)
+
         let cityLocation = await Location.reverseGeocodeAsync(locationObj);
-        console.log('city location', cityLocation)
 
         if (cityLocation && cityLocation[0]) {
         } else {
-            cityLocation = {}
+            cityLocation = []
         }
-        this.setState({ cityLocation });
         this.props.navigation.navigate('LocationSelect', {
             location: cityLocation[0],
             coords: locationObj
@@ -266,4 +260,11 @@ const mapStateToProps = state => ({
     errors: state.errors
 })
 
-export default connect(mapStateToProps)(InitScreen);
+const mapDispatchToProps = dispatch => ({
+    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains())
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(InitScreen)

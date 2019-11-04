@@ -2,6 +2,8 @@ import { put, call, takeLatest, all, select } from 'redux-saga/effects';
 import { normalize, schema } from 'normalizr';
 import { requestMenus, saveTokenId, setNotifications, setApiKey, setError, clearingSettings, resetSettings } from '../actionCreators';
 
+import apiService from '../../api/api'
+
 import NavigationService from '../../utils/NavigationService';
 
 import { persistor } from '../configureStore';
@@ -151,10 +153,9 @@ function* savePushNotifications(token) {
 function* getApiKey() {
     try {
         
-        let response = yield call(fetch, GET_API_TOKEN_ENDPOINT);
+        let response = yield call(apiService.getApiToken);
         console.log('repsonse', response)
-        let apiKey = yield response.json();
-        yield put(setApiKey(apiKey))
+        yield put(setApiKey(response.apiKey))
     } catch(err) {
         console.log('error getting api key in saga', err)
         yield put(setError('api-saga error'))

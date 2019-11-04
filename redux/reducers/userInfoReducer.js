@@ -9,8 +9,7 @@ import {
     RESET_SETTINGS
 } from '../actionCreators/userInfo'
 
-
-export function userInfo(state = {
+const initialState = {
     username: '',
     email: '',
     tokenId: '',
@@ -19,14 +18,17 @@ export function userInfo(state = {
     allNotifications: {},
     commentPosted: false,
     deletedInfo: false,
-    resetSettings: false
-}, action) {
+    resetSettings: false,
+    user: {}
+}
+
+export function userInfo(state = initialState, action) {
     switch (action.type) {
         case SAVE_USERINFO:
             return {
                 ...state,
                 username: action.payload.username,
-                email: action.payload.email,
+                email: action.payload.email
             }
         case SAVE_TOKEN_ID:
             return {
