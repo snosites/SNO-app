@@ -64,6 +64,8 @@ class AppSetupScreen extends React.Component {
                     console.log('finished loading menus and articles')
                     navigation.navigate('MainApp');
                 }
+            } else {
+                console.log('error in app setup')
             }
         }
     }
