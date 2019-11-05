@@ -2,8 +2,7 @@ import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 import { normalize, schema } from 'normalizr'
 import Constants from 'expo-constants'
 
-
-import { types as userTypes, actions as userActions } from '../redux/user'
+import { types as userTypes, actions as userActions, getApiToken } from '../redux/user'
 
 import apiService from '../api/api'
 
@@ -29,16 +28,68 @@ const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`
 
 const getUserInfo = state => state.userInfo
 
-function* createUser() {
+function* findOrCreateUser() {
     try {
-        yield put(userActions.createUserRequest())
-        let response = yield call(apiService.createUser, Constants.installationId)
-        yield put(userActions.createUserSuccess(response))
+        yield put(userActions.findOrCreateUserRequest())
+        let response = yield call(apiService.findOrCreateUser, Constants.installationId)
+        yield put(userActions.findOrCreateUserSuccess(response))
     } catch (err) {
         console.log('error creating user in saga', err, err.response)
-        yield put(userActions.createUserError('error creating user'))
+        yield put(userActions.findOrCreateUserError('error creating user'))
         Sentry.captureException(err)
     }
+}
+
+function* fetchNotificationSubscriptions(action) {
+    const { domain } = action.payload
+
+    const apiToken = yield select(getApiToken)
+
+    const response = yield call(
+        fetch,
+        `${FETCH_NOTIFICATIONS_ENDPOINT}/${String(tokenId)}?api_token=${userInfo.apiKey}`
+    )
+    const notifications = yield response.json()
+    yield put(setNotifications(notifications, domain))
+}
+
+function* subscribe(action) {
+    try {
+        const { subscriptionTypes, ids, domain } = action.payload
+        yield put(userActions.subscribeRequest())
+
+        const apiToken = yield select(getApiToken)
+
+        yield call(apiService.subscribe, apiToken, subscriptionType, ids)
+
+        // yield call(fetchNotifications, {
+        //     payload: {
+        //         tokenId,
+        //         domain
+        //     }
+        // })
+        yield put(userActions.subscribeSuccess())
+    } catch (err) {
+        console.log('error in subscribe user saga', err, err.response)
+        yield put(userActions.subscribeError('error subscribing user'))
+    }
+}
+
+function* addAllNotifications(action) {
+    const { tokenId, categoryIds } = action.payload
+    const userInfo = yield select(getUserInfo)
+    console.log('in add all', tokenId, categoryIds)
+    yield call(fetch, `${ADD_ALL_NOTIFICATIONS_ENDPOINT}?api_token=${userInfo.apiKey}`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            tokenId,
+            categoryIds
+        })
+    })
 }
 
 // function* fetchNotifications(action) {
@@ -56,27 +107,6 @@ function* createUser() {
 //     yield put(setNotifications(notifications, domain))
 // }
 
-// export function* addNotification(action) {
-//     const { tokenId, categoryId, domain } = action.payload
-//     const userInfo = yield select(getUserInfo)
-//     yield call(fetch, `${ADD_NOTIFICATION_ENDPOINT}?api_token=${userInfo.apiKey}`, {
-//         method: 'POST',
-//         headers: {
-//             Accept: 'application/json',
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             tokenId,
-//             categoryId
-//         })
-//     })
-//     yield call(fetchNotifications, {
-//         payload: {
-//             tokenId,
-//             domain
-//         }
-//     })
-// }
 
 // export function* addAllNotifications(action) {
 //     const { tokenId, categoryIds } = action.payload
@@ -170,18 +200,6 @@ function* createUser() {
 //     return tokenId[0].id
 // }
 
-// function* getApiKey() {
-//     try {
-//         let response = yield call(apiService.getApiToken)
-//         console.log('repsonse', response)
-//         yield put(setApiKey(response.apiKey))
-//     } catch (err) {
-//         console.log('error getting api key in saga', err)
-//         yield put(setError('api-saga error'))
-//         Sentry.captureException(err)
-//     }
-// }
-
 // function* deleteUser(action) {
 //     try {
 //         let response = yield call(fetch, `${DELETE_USER_ENDPOINT}?api_token=${action.apiKey}`, {
@@ -211,14 +229,15 @@ function* createUser() {
 
 function* userSaga() {
     yield all([
-        takeLatest(userTypes.CREATE_USER, createUser)
-    // yield takeLatest('ADD_NOTIFICATION', addNotification)
-    // yield takeLatest('ADD_ALL_NOTIFICATIONS', addAllNotifications)
-    // yield takeLatest('REMOVE_NOTIFICATION', removeNotification)
-    // yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications)
-    // yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
-    // yield takeLatest('GET_API_KEY', getApiKey)
-    // yield takeLatest('DELETE_USER', deleteUser)
+        takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
+        takeLatest(userTypes.SUBSCRIBE, subscribe),
+        // yield takeLatest('ADD_NOTIFICATION', addNotification)
+        // yield takeLatest('ADD_ALL_NOTIFICATIONS', addAllNotifications)
+        // yield takeLatest('REMOVE_NOTIFICATION', removeNotification)
+        // yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications)
+        // yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
+        // yield takeLatest('GET_API_KEY', getApiKey)
+        // yield takeLatest('DELETE_USER', deleteUser)
     ])
 }
 

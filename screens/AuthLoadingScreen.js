@@ -15,15 +15,15 @@ const primaryColor =
     Constants.manifest.releaseChannel === 'sns'
         ? Constants.manifest.extra.highschool.primary
         : Constants.manifest.extra.college.primary
-const createUserErrorSelector = createErrorMessageSelector([userTypes.CREATE_USER])
+const createUserErrorSelector = createErrorMessageSelector([userTypes.FIND_OR_CREATE_USER])
 
 const AuthLoadingScreen = props => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
-    const { createUser, setActiveDomain, user, domains, navigation, error } = props
+    const { findOrCreateUser, setActiveDomain, user, domains, navigation, error } = props
 
     useEffect(() => {
         if (!user.user.api_token) {
-            createUser()
+            findOrCreateUser()
             return
         }
         // if (switchingDomain) {
@@ -95,7 +95,7 @@ const AuthLoadingScreen = props => {
                         }
                     }}
                     style={{ padding: 5, marginBottom: 20, marginHorizontal: 30 }}
-                    onPress={() => createUser()}
+                    onPress={() => findOrCreateUser()}
                 >
                     Try Again
                 </Button>
@@ -120,7 +120,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-    createUser: () => dispatch(userActions.createUser()),
+    findOrCreateUser: () => dispatch(userActions.findOrCreateUser()),
     setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId))
 })
 

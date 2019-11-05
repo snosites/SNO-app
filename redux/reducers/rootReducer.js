@@ -4,7 +4,7 @@ import { activeDomain } from './activeDomainReducer';
 import { entities, articlesByCategory } from './articlesReducer';
 import { domains } from './domainsReducer';
 import { errors } from './errorsReducer';
-import { availableDomains } from './initializationReducer';
+// import { availableDomains } from './initializationReducer';
 import { menus } from './menusReducer';
 import { profiles } from './profilesReducer';
 import { recentArticles } from './recentArticlesReducer';
@@ -20,7 +20,7 @@ const appReducer = combineReducers({
     articlesByCategory,
     domains,
     errors,
-    availableDomains,
+    // availableDomains,
     menus,
     profiles,
     recentArticles,

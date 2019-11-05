@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
 import {
     ScrollView,
     StyleSheet,
@@ -7,69 +7,156 @@ import {
     Text,
     Platform,
     Image
-} from 'react-native';
-import { connect } from 'react-redux';
-import { addDomain, changeActiveDomain, clearAvailableDomains, setAllNotifications } from '../redux/actionCreators';
+} from 'react-native'
+import { connect } from 'react-redux'
+
+import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { actions as domainsActions } from '../redux/domains'
+import { types as userTypes, actions as userActions } from '../redux/user'
+import { createLoadingSelector } from '../redux/loading'
+import { createErrorMessageSelector } from '../redux/errors'
 
 import { List, Divider } from 'react-native-paper'
-import * as Amplitude from 'expo-analytics-amplitude';
-import Constants from 'expo-constants';
-import * as Haptics from 'expo-haptics';
+import * as Amplitude from 'expo-analytics-amplitude'
+import Constants from 'expo-constants'
+import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import InitModal from './InitModal';
+import InitModal from './InitModal'
 
+const theme = {
+    roundness: 7,
+    colors: {
+        primary:
+            Constants.manifest.releaseChannel === 'sns'
+                ? Constants.manifest.extra.highSchool.primary
+                : Constants.manifest.extra.college.primary
+    }
+}
 
-class SelectScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Select Your School',
-    };
+const SelectScreen = props => {
+    const {
+        navigation,
+        availableDomains,
+        domains,
+        fetchAvailableDomains,
+        searchAvailableDomains,
+        clearAvailableDomains,
+        setActiveDomain,
+        setSubscribeAll,
+        addDomain,
+        isLoading,
+        error
+    } = props
 
-    state = {
-        modalVisible: false,
-        selectedDomain: ''
+    useEffect(() => {
+        const searchTerm = navigation.getParam('searchTerm', null)
+        if (searchTerm) {
+            searchAvailableDomains(searchTerm)
+        } else {
+            fetchAvailableDomains()
+        }
+    }, [])
+
+    const [modalVisible, setModalVisible] = useState(false)
+
+    _handleSelect = async selectedDomain => {
+        console.log('this is selected domain', selectedDomain)
+        Haptics.selectionAsync()
+        try {
+            const found = domains.find(domain => {
+                return domain.id == selectedDomain.id
+            })
+            // if already added then set as active -- dont save
+            if (found) {
+                setActiveDomain(selectedDomain.id)
+                navigation.navigate('AuthLoading')
+                return
+            }
+            // save new domain and send analytics
+            Amplitude.logEventWithProperties('add school', {
+                domainId: selectedDomain.id
+            })
+
+            addDomain({
+                id: selectedDomain.id,
+                name: selectedDomain.school,
+                publication: selectedDomain.publication,
+                active: false,
+                notificationCategories: [],
+                url: selectedDomain.url
+            })
+
+            // set new domain as active
+            setActiveDomain(selectedDomain.id)
+
+            setModalVisible(true)
+        } catch (error) {
+            console.log('error saving users org', error)
+        }
     }
 
+    // dismiss modal and redirect back to auth loading
+    _handleModalDismiss = allNotifications => {
+        Haptics.selectionAsync()
+        setSubscribeAll(allNotifications)
+        navigation.navigate('AuthLoading')
+        clearAvailableDomains()
+        setModalVisible(false)
+    }
 
-    render() {
-        const { navigation, availableDomains, errors } = this.props;
-        const theme = {
-            roundness: 7,
-            colors: {
-                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
-            }
-        }
-
-        if (errors.error === 'api-domains error') {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
-                        Sorry, there was a problem loading the schools.  Please try again.
-                    </Text>
-                </View>
-            )
-        }
-        
-        if (availableDomains.length == 0) {
-            return (
-                <View style={{ flex: 1, padding: 20 }}>
-                    <ActivityIndicator />
-                </View>
-            )
-        }
-        if (availableDomains[0] == 'none') {
-            return (
-                <View style={{ padding: 20 }}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center' }}>Sorry no school's match that search term, please try searching again.</Text>
-                </View>
-            )
-        }
-
+    if (error) {
         return (
-            <ScrollView style={styles.container}>
-                {availableDomains.map(item => {
-                    return (
-                        item.school &&
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 20
+                }}
+            >
+                <Text
+                    style={{
+                        fontSize: 19,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        color: '#424242'
+                    }}
+                >
+                    Sorry, there was a problem loading the schools. Please try again.
+                </Text>
+            </View>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, padding: 70 }}>
+                <ActivityIndicator />
+            </View>
+        )
+    }
+    if (availableDomains.length == 0) {
+        return (
+            <View style={{ padding: 20 }}>
+                <Text
+                    style={{
+                        fontSize: 19,
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }}
+                >
+                    Sorry no school's match that search term, please try searching again.
+                </Text>
+            </View>
+        )
+    }
+
+    return (
+        <ScrollView style={styles.container}>
+            {availableDomains.map(item => {
+                return (
+                    item.school && (
                         <View key={item.id}>
                             <List.Item
                                 title={item.school}
@@ -80,111 +167,82 @@ class SelectScreen extends React.Component {
                                 left={props => {
                                     if (item.icon) {
                                         return (
-                                            <List.Icon {...props}
+                                            <List.Icon
+                                                {...props}
                                                 icon={({ size, color }) => (
                                                     <Image
                                                         source={{
                                                             uri: item.icon
                                                         }}
-                                                        style={{ 
-                                                            width: size + 5, height: size + 5,
+                                                        style={{
+                                                            width: size + 5,
+                                                            height: size + 5,
                                                             borderRadius: 4
                                                         }}
                                                     />
-                                                )} />
+                                                )}
+                                            />
                                         )
                                     } else {
-                                        return (
-                                            <List.Icon {...props}
-                                                icon="chevron-right" />
-                                        )
+                                        return <List.Icon {...props} icon='chevron-right' />
                                     }
-                                }
-                                }
+                                }}
                                 onPress={() => {
-                                    this._handleSelect(item.domain_id, item)
-                                    this.setState({
-                                        selectedDomain: item.domain_id
-                                    })
+                                    _handleSelect(item)
                                 }}
                             />
                             <Divider />
                         </View>
                     )
-                })}
-                <InitModal
-                    modalVisible={this.state.modalVisible}
-                    handleDismiss={this._handleModalDismiss}
-                    navigation={this.props.navigation}
-                />
-            </ScrollView>
+                )
+            })}
+            <InitModal
+                modalVisible={modalVisible}
+                handleDismiss={_handleModalDismiss}
+                navigation={navigation}
+            />
+        </ScrollView>
+    )
+}
 
-        );
-    }
-
-    _handleSelect = async (orgId, item) => {
-            Haptics.selectionAsync()
-        try {
-            const { domains } = this.props;
-            const found = domains.find(domain => {
-                return domain.id == orgId
-            })
-            // if already added set as active -- dont save
-            if (found) {
-                this.props.dispatch(changeActiveDomain(orgId));
-                this.props.navigation.navigate('AuthLoading');
-                return;
-            }
-            // save new domain and log it to analytics
-            Amplitude.logEventWithProperties('add school', {
-                domainId: orgId
-            })
-
-            this.props.dispatch(addDomain({
-                id: orgId,
-                name: item.school,
-                publication: item.publication,
-                active: true,
-                notificationCategories: [],
-                url: item.url
-            }))
-            // set new domain as active
-            this.props.dispatch(changeActiveDomain(orgId))
-            this.setState({
-                modalVisible: true
-            })
-
-        }
-        catch (error) {
-            console.log('error saving users org')
-            console.log(error)
-        }
-    }
-    // dismiss modal and redirect back to auth loading
-    _handleModalDismiss = (allNotifications) => {
-            Haptics.selectionAsync()
-        this.props.dispatch(setAllNotifications(this.state.selectedDomain, allNotifications))
-        this.props.navigation.navigate('AuthLoading');
-        this.props.dispatch(clearAvailableDomains());
-        this.setState({
-            modalVisible: false,
-            selectedDomain: ''
-        })
-    }
-
+SelectScreen.navigationOptions = {
+    title: 'Select Your School'
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-    },
-});
-
-const mapStateToProps = state => ({
-    availableDomains: state.availableDomains,
-    domains: state.domains,
-    errors: state.errors
+        backgroundColor: '#fff'
+    }
 })
 
-export default connect(mapStateToProps)(SelectScreen);
+const availableDomainsLoadingSelector = createLoadingSelector([
+    globalTypes.FETCH_AVAILABLE_DOMAINS,
+    globalTypes.SEARCH_AVAILABLE_DOMAINS
+])
+const availableDomainsErrorSelector = createErrorMessageSelector([
+    globalTypes.FETCH_AVAILABLE_DOMAINS,
+    globalTypes.SEARCH_AVAILABLE_DOMAINS
+])
+
+const mapStateToProps = state => ({
+    availableDomains: state.global.availableDomains,
+    domains: state.domains,
+    isLoading: availableDomainsLoadingSelector(state),
+    error: availableDomainsErrorSelector(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
+    searchAvailableDomains: searchTerm =>
+        dispatch(globalActions.searchAvailableDomains(searchTerm)),
+    setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
+    addDomain: domain => dispatch(domainsActions.addDomain(domain)),
+    clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
+    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SelectScreen)

@@ -8,7 +8,6 @@ import Constants from 'expo-constants'
 
 import * as Sentry from 'sentry-expo'
 
-
 const version = Constants.manifest.releaseChannel === 'cns' ? 'college' : 'secondary'
 
 // city: "St. Louis Park"
@@ -52,31 +51,40 @@ function* fetchAvailableDomains() {
     }
 }
 
-// function* searchAvailableDomains(action) {
-//     try {
-//         let version = ''
-//         if (Constants.manifest.releaseChannel === 'sns') {
-//             version = 'secondary'
-//         } else {
-//             version = 'college'
-//         }
-//         const userInfo = yield select(getUserInfo)
-//         console.log('user info', userInfo)
-//         const response = yield call(
-//             fetch,
-//             `http://${api}/api/domains/search/${action.searchTerm}/${version}?api_token=${userInfo.apiKey}`
-//         )
-//         const availDomains = yield response.json()
-//         yield put(setAvailableDomains(availDomains))
-//     } catch (err) {
-//         console.log('error fetching available domains', err)
-//     }
-// }
+function* searchAvailableDomains(action) {
+    try {
+        yield put(globalActions.searchAvailableDomainsRequest())
+        const apiToken = yield select(getApiToken)
+
+        const response = yield call(api.searchAvailableDomains, apiToken, version, action.searchTerm)
+
+        // sort domains
+        if (response.length > 0) {
+            response.sort(function(a, b) {
+                if (a.school < b.school) return -1
+                if (a.school > b.school) return 1
+                return 0
+            })
+        }
+
+        if (__DEV__) {
+            yield put(globalActions.searchAvailableDomainsSuccess(response))
+        } else {
+            const filteredDomains = response.filter(domain => {
+                return !domain.development
+            })
+            yield put(globalActions.searchAvailableDomainsSuccess(filteredDomains))
+        }
+    } catch (err) {
+        console.log('error in search available domains saga', err)
+        yield put(globalActions.searchAvailableDomainsError('error searching available domains'))
+    }
+}
 
 function* globalSaga() {
     yield all([
         takeLatest(globalTypes.FETCH_AVAILABLE_DOMAINS, fetchAvailableDomains),
-        // takeLatest('SEARCH_AVAILABLE_DOMAINS', searchAvailableDomains)
+        takeLatest(globalTypes.SEARCH_AVAILABLE_DOMAINS, searchAvailableDomains)
     ])
 }
 

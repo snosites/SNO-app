@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { actions as domainsActions } from '../redux/domains'
+import { types as userTypes, actions as userActions } from '../redux/user'
 import { createLoadingSelector } from '../redux/loading'
 import { createErrorMessageSelector } from '../redux/errors'
 
@@ -28,13 +29,6 @@ import * as Sentry from 'sentry-expo'
 
 import InitModal from './InitModal'
 
-const initialState = {
-    modalVisible: false,
-    selectedDomain: '',
-    schoolsInRadius: [],
-    radius: 20,
-    reloading: false
-}
 
 const LocationSelectScreen = props => {
     const {
@@ -45,11 +39,17 @@ const LocationSelectScreen = props => {
         isLoading,
         error,
         setActiveDomain,
-        addDomain
+        addDomain,
+        clearAvailableDomains,
+        setSubscribeAll
     } = props
+    
     const cityLocation = navigation.getParam('location', null)
 
-    const [state, setState] = useState(initialState)
+    const [ modalVisible, setModalVisible ] = useState(false)
+    const [ schoolsInRadius, setSchoolsInRadius ] = useState([])
+    const [ radius, setRadius ] = useState(20)
+    const [ reloading, setReloading ] = useState(false)
 
     useEffect(() => {
         fetchAvailableDomains()
@@ -59,18 +59,13 @@ const LocationSelectScreen = props => {
         _handleRadiusSearch()
     }, [availableDomains])
 
-    const { schoolsInRadius, radius, reloading } = state
-
     _handleRadiusSearch = () => {
         if (availableDomains.length === 0) {
             return
         }
         const coords = navigation.getParam('coords', {})
 
-        setState({
-            ...state,
-            reloading: true
-        })
+        setReloading(true)
 
         let searchRadius = radius * 1609.34
 
@@ -110,11 +105,8 @@ const LocationSelectScreen = props => {
             return 0
         })
 
-        setState({
-            ...state,
-            reloading: false,
-            schoolsInRadius: filteredSchoolsWithDistance
-        })
+        setReloading(false)
+        setSchoolsInRadius(filteredSchoolsWithDistance)
     }
 
     _handleSelect = async (selectedDomain) => {
@@ -146,26 +138,22 @@ const LocationSelectScreen = props => {
             // set new domain as active
             setActiveDomain(selectedDomain.id)
 
-            setState({
-                ...state,
-                modalVisible: true
-            })
+            setModalVisible(true)
+            
         } catch (error) {
             console.log('error saving users domain selection', error)
         }
     }
 
     // dismiss modal and redirect back to auth loading
-    // _handleModalDismiss = allNotifications => {
-    //     Haptics.selectionAsync()
-    //     this.props.dispatch(setAllNotifications(this.state.selectedDomain, allNotifications))
-    //     this.props.navigation.navigate('AuthLoading')
-    //     this.props.dispatch(clearAvailableDomains())
-    //     this.setState({
-    //         modalVisible: false,
-    //         selectedDomain: ''
-    //     })
-    // }
+    _handleModalDismiss = allNotifications => {
+        Haptics.selectionAsync()
+        setSubscribeAll(allNotifications)
+        navigation.navigate('AuthLoading')
+
+        clearAvailableDomains()
+        setModalVisible(false)
+    }
 
     if (isLoading) {
         return (
@@ -213,7 +201,7 @@ const LocationSelectScreen = props => {
                 </Text>
                 <Slider
                     value={20}
-                    onValueChange={radius => setState({ ...state, radius })}
+                    onValueChange={radius => setRadius(radius)}
                     onSlidingComplete={_handleRadiusSearch}
                     minimumValue={5}
                     maximumValue={100}
@@ -241,7 +229,7 @@ const LocationSelectScreen = props => {
                     </Text>
                 </View>
             ) : (
-                <ScrollView style={{flex: 1}}>
+                <ScrollView style={{ flex: 1 }}>
                     {schoolsInRadius.map(item => {
                         return (
                             item.school && (
@@ -281,10 +269,6 @@ const LocationSelectScreen = props => {
                                         }}
                                         onPress={() => {
                                             _handleSelect(item)
-                                            setState({
-                                                ...state,
-                                                selectedDomain: item.domain_id
-                                            })
                                         }}
                                     />
                                     <Divider />
@@ -292,11 +276,11 @@ const LocationSelectScreen = props => {
                             )
                         )
                     })}
-                    {/* <InitModal
-                        modalVisible={this.state.modalVisible}
-                        handleDismiss={this._handleModalDismiss}
-                        navigation={this.props.navigation}
-                    /> */}
+                    <InitModal
+                        modalVisible={modalVisible}
+                        handleDismiss={_handleModalDismiss}
+                        navigation={navigation}
+                    />
                 </ScrollView>
             )}
         </SafeAreaView>
@@ -323,7 +307,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
     setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
-    addDomain: domain => dispatch(domainsActions.addDomain(domain))
+    addDomain: domain => dispatch(domainsActions.addDomain(domain)),
+    clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
+    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload))
 })
 
 export default connect(

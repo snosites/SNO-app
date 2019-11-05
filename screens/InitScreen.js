@@ -161,12 +161,10 @@ class InitScreen extends React.Component {
     }
 
     _handleSubmit = () => {
-        this.props.dispatch(searchAvailableDomains(this.state.orgName))
-        this.props.navigation.navigate('Select')
+        this.props.navigation.navigate('Select', {searchTerm: this.state.orgName})
     }
 
     _handleBrowse = () => {
-        this.props.dispatch(fetchAvailableDomains());
         this.props.navigation.navigate('Select')
     }
 
@@ -192,7 +190,6 @@ class InitScreen extends React.Component {
         this.setState({
             isLoading: true
         })
-        
 
         let location = await Location.getCurrentPositionAsync({});
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     ActivityIndicator,
     StatusBar,
@@ -16,6 +16,9 @@ import { initialize, setFromPush } from '../redux/actionCreators';
 import { handleArticlePress } from '../utils/articlePress';
 // import anim from '../assets/lottiefiles/splash-animation';
 
+import { actions as globalActions } from '../redux/global'
+import { getActiveDomain } from '../redux/domains'
+
 import anim from '../assets/lottiefiles/infinite-loading-bar';
 import anim2 from '../assets/lottiefiles/cns-splash-loading';
 
@@ -24,14 +27,19 @@ const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window'
 const ANIMATION_WIDTH = viewportWidth;
 const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.0;
 
-class AppSetupScreen extends React.Component {
+const AppSetupScreen = props => {
+    const { user, activeDomain, startup, splashScreen } = props
 
-    componentDidMount() {
-        if (this.animation) {
-            this.animation.play();
+    const animationRef = useRef(null)
+
+    useEffect(() => {
+        if (animationRef.current) {
+            animationRef.current.reset();
+            animationRef.current.play();
         }
-        this._loadSettings();
-    }
+        //run startup saga
+        startup(activeDomain)
+    },[])
 
     componentDidUpdate() {
         const { activeDomain, menus, articlesByCategory, navigation, errors, userInfo, dispatch } = this.props;
@@ -69,13 +77,10 @@ class AppSetupScreen extends React.Component {
             }
         }
     }
-
-    render() {
-        const { menus } = this.props;
-        if(menus.splashScreen) {
+        if(splashScreen) {
             return (
                     <Image
-                        source={{ uri: menus.splashScreen }}
+                        source={{ uri: splashScreen }}
                         style={{ width: viewportWidth, height: viewportHeight }}
                         resizeMode='cover'
                     />
@@ -104,41 +109,29 @@ class AppSetupScreen extends React.Component {
                             paddingBottom: ANIMATION_BOTTOM_PADDING,
                         }}
                     >
-                    <View>
-                            <LottieView
-                                ref={animation => {
-                                    this.animation = animation;
-                                }}
-                                resizeMode="cover"
-                                style={{
-                                    width: ANIMATION_WIDTH,
-                                    height: 325,
-                                }}
-                                loop={true}
-                                speed={0.5}
-                                autoPlay={true}
-                                source={Constants.manifest.releaseChannel === 'sns' ? anim : anim2}
-                            />
-                    </View>
-                        
+                        <View>
+                                <LottieView
+                                    ref={animationRef}
+                                    resizeMode="cover"
+                                    style={{
+                                        width: ANIMATION_WIDTH,
+                                        height: 325,
+                                    }}
+                                    loop={true}
+                                    speed={0.5}
+                                    autoPlay={true}
+                                    source={Constants.manifest.releaseChannel === 'sns' ? anim : anim2}
+                                />
+                        </View>
                     </View>
                 </ImageBackground>
             </View>
         );
     }
 
-    _loadSettings = async () => {
-        const { url, id } = this.props.activeDomain;
-        //fetch menus
-        this.props.dispatch(initialize(url, id));
-    };
+    
 
-    _playAnimation = () => {
-        this.animation.reset();
-        this.animation.play();
-    };
 
-}
 
 const styles = StyleSheet.create({
     rootContainer: {
@@ -152,12 +145,18 @@ const styles = StyleSheet.create({
     },
 })
 
-const mapStateToProps = store => ({
-    activeDomain: store.activeDomain,
-    menus: store.menus,
+const mapStateToProps = state => ({
+    activeDomain: getActiveDomain(state),
+    user: state.user,
+    splashScreen: state.global.splashScreen,
+    menus: state.menus,
     articlesByCategory: store.articlesByCategory,
-    userInfo: store.userInfo,
+    
     errors: store.errors
 })
 
-export default connect(mapStateToProps)(AppSetupScreen);
+const mapDispatchToProps = dispatch => ({
+    startup: domain => dispatch(globalActions.startup(domain))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppSetupScreen);

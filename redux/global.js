@@ -1,19 +1,37 @@
 
 export const types = {
-    FETCH_AVAILABLE_DOMAINS: 'FETCH_AVAILABLE_DOMAINS',
-    FETCH_AVAILABLE_DOMAINS_REQUEST: 'FETCH_AVAILABLE_DOMAINS_REQUEST',
-    FETCH_AVAILABLE_DOMAINS_SUCCESS: 'FETCH_AVAILABLE_DOMAINS_SUCCESS',
-    FETCH_AVAILABLE_DOMAINS_ERROR: 'FETCH_AVAILABLE_DOMAINS_ERROR',
-    CLEAR_AVAILABLE_DOMAINS: 'CLEAR_AVAILABLE_DOMAINS'
-}
+           FETCH_AVAILABLE_DOMAINS: 'FETCH_AVAILABLE_DOMAINS',
+           FETCH_AVAILABLE_DOMAINS_REQUEST: 'FETCH_AVAILABLE_DOMAINS_REQUEST',
+           FETCH_AVAILABLE_DOMAINS_SUCCESS: 'FETCH_AVAILABLE_DOMAINS_SUCCESS',
+           FETCH_AVAILABLE_DOMAINS_ERROR: 'FETCH_AVAILABLE_DOMAINS_ERROR',
+           SEARCH_AVAILABLE_DOMAINS: 'SEARCH_AVAILABLE_DOMAINS',
+           SEARCH_AVAILABLE_DOMAINS_REQUEST: 'SEARCH_AVAILABLE_DOMAINS_REQUEST',
+           SEARCH_AVAILABLE_DOMAINS_SUCCESS: 'SEARCH_AVAILABLE_DOMAINS_SUCCESS',
+           SEARCH_AVAILABLE_DOMAINS_ERROR: 'SEARCH_AVAILABLE_DOMAINS_ERROR',
+           CLEAR_AVAILABLE_DOMAINS: 'CLEAR_AVAILABLE_DOMAINS',
+           STARTUP: 'STARTUP',
+           STARTUP_REQUEST: 'STARTUP_REQUEST',
+           STARTUP_SUCCESS: 'STARTUP_SUCCESS',
+           STARTUP_ERROR: 'STARTUP_ERROR',
+           RECEIVE_SPLASH: 'RECEIVE_SPLASH',
+           FETCH_MENUS: 'FETCH_MENUS',
+           FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
+           FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
+           FETCH_MENUS_ERROR: 'FETCH_MENUS_ERROR',
+       }
 
 const initialState = {
-    availableDomains: []
+    availableDomains: [],
+    splashScreen: '',
+    header: '',
+    headerSmall: '',
+    menuItems: []
 }
 
 export default function global(state = initialState, action) {
     switch (action.type) {
         case types.FETCH_AVAILABLE_DOMAINS_SUCCESS:
+        case types.SEARCH_AVAILABLE_DOMAINS_SUCCESS:
             return {
                 ...state,
                 availableDomains: action.payload
@@ -22,6 +40,16 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 availableDomains: []
+            }
+        case types.RECEIVE_SPLASH:
+            return {
+                ...state,
+                splashScreen: action.splash
+            }
+        case types.FETCH_MENUS_SUCCESS:
+            return {
+                ...state,
+                menuItems: action.payload,
             }
         default:
             return state
@@ -39,5 +67,18 @@ export const actions = {
         type: types.FETCH_AVAILABLE_DOMAINS_ERROR,
         error
     }),
-    clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS })
+    searchAvailableDomains: searchTerm => ({ type: types.SEARCH_AVAILABLE_DOMAINS, searchTerm }),
+    searchAvailableDomainsRequest: () => ({ type: types.SEARCH_AVAILABLE_DOMAINS_REQUEST }),
+    searchAvailableDomainsSuccess: payload => ({ type: types.SEARCH_AVAILABLE_DOMAINS_SUCCESS, payload }),
+    searchAvailableDomainsError: error => ({ type: types.SEARCH_AVAILABLE_DOMAINS_ERROR, error }),
+    clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS }),
+    startup: domain => ({ type: types.STARTUP, domain }),
+    startupRequest: () => ({ type: types.STARTUP_REQUEST }),
+    startupSuccess: () => ({ type: types.STARTUP_SUCCESS }),
+    startupError: error => ({ type: types.STARTUP_ERROR, error }),
+    receiveSplash: splash => ({ type: types.RECEIVE_SPLASH, splash }),
+    fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
+    fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
+    fetchMenusSuccess: payload => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
+    fetchMenusError: error => ({ type: types.FETCH_MENUS_ERROR, error }),
 }
