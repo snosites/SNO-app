@@ -92,8 +92,7 @@ const apiService = {
             const response = await axios.get(`/user/categories?api_token=${apiToken}`, {
                 baseURL: BASE_URL
             })
-            console.log('resp', response.data)
-            // return response.data
+            return response.data
         } catch (err) {
             console.log('error in get user subscriptions api call', err)
             throw err
