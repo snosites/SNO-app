@@ -1,28 +1,22 @@
 import { put, call, takeLatest, select } from 'redux-saga/effects'
-import { requestMenus, setNotificationCategories, setError } from '../actionCreators'
 
 import { getApiToken } from '../redux/user'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { actions as domainsActions } from '../redux/domains'
 import apiService from '../api/api'
 import domainApiService from '../api/domain'
 
 import * as Sentry from 'sentry-expo'
 
 const api = 'mobileapi.snosites.net'
-const getUserInfo = state => state.userInfo
 
-export function* fetchMenus(action) {
+export function* fetchMenu(action) {
     try {
         const { domain } = action
         yield put(globalActions.fetchMenusRequest())
-
         const apiToken = yield select(getApiToken)
 
         const mobileMenu = yield call(domainApiService.getMobileMenu, domain.url)
-        
-        if (typeof mobileMenu != 'object') {
-            throw new Error('REST API issue fetching menus, possibly no route')
-        }
 
         //filter out all menu items that are custom
         let filteredMobileMenu = mobileMenu.filter(menu => {
@@ -30,32 +24,47 @@ export function* fetchMenus(action) {
                 return menu
             }
         })
-        
+
         // get categories from DB
-        const { dbCategories, err } = yield call(fetchCategoriesFromDb, {
-            domainId
-        })
-        if (err) {
-            throw new Error('error getting categories from DB')
+        const dbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
+
+        yield call(syncDbCategories, dbCategories, filteredMobileMenu, domain)
+
+        // fetch updated categories list
+        const updatedDbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
+
+        console.log('updated db categories', updatedDbCategories)
+        // // make sure there is at least one menu
+        if (updatedDbCategories.length === 0) {
+            throw new Error('no menus in DB for school')
         }
+        yield put(domainsActions.setNotificationCategories(domain.id, updatedDbCategories))
+
+        return {
+            menu: filteredMobileMenu,
+            dbCategories: updatedDbCategories
+        }
+    } catch (err) {
+        console.log('error fetching menus in saga', err)
+        throw err
+    }
+}
+
+function* syncDbCategories(dbCategories, mobileMenu, domain) {
+    try {
+        const apiToken = yield select(getApiToken)
         //loop through and check if category of menu is in DB -- if not then add it
-        for (let menu of menus) {
+        for (let menu of mobileMenu) {
             let foundCategory = dbCategories.find(category => {
                 return Number(menu.object_id) === category.category_id
             })
             if (!foundCategory && menu.object_id) {
-                console.log('adding new category', menu.object_id)
-                yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        category: menu.object_id,
-                        domain: domainId,
-                        categoryName: menu.title
-                    })
-                })
+                const postObj = {
+                    categoryId: menu.object_id,
+                    organizationId: domain.id,
+                    categoryName: menu.title
+                }
+                yield call(domainApiService.addDbCategory, apiToken, postObj)
             }
         }
         // check if "custom push" category has been added
@@ -63,18 +72,12 @@ export function* fetchMenus(action) {
             return category.category_name === 'custom_push'
         })
         if (!foundCustom) {
-            console.log('adding custom push category')
-            yield call(fetch, `http://${api}/api/categories/add?api_token=${userInfo.apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    // category: menu.object_id,
-                    domain: domainId,
-                    categoryName: 'custom_push'
-                })
-            })
+            //add custom push category
+            const postObj = {
+                organizationId: domain.id,
+                categoryName: 'custom_push'
+            }
+            yield call(domainApiService.addDbCategory, apiToken, postObj)
         }
 
         //check for any old categories -- ignore custom push category
@@ -82,82 +85,37 @@ export function* fetchMenus(action) {
             if (dbCategory.category_name === 'custom_push') {
                 return false
             }
-            return !menus.find(menuItem => {
+            return !mobileMenu.find(menuItem => {
                 return Number(menuItem.object_id) === dbCategory.category_id
             })
         })
         //if any are found
         if (oldCategories.length > 0) {
-            console.log('found old categories', oldCategories)
             //create array of category ID's to remove
-            let categoriesToDelete = oldCategories.map(category => {
+            const categoriesToDelete = oldCategories.map(category => {
                 return category.id
             })
             //remove them
-            yield call(fetch, `http://${api}/api/categories/delete?api_token=${userInfo.apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    categoriesId: categoriesToDelete
-                })
+            yield call(domainApiService.deleteDbCategories, {
+                categoryIds: categoriesToDelete
             })
         }
-        // fetch updated categories list
-        const dbCategoriesObj = yield call(fetchCategoriesFromDb, {
-            domainId
-        })
-        if (dbCategoriesObj.err) {
-            throw new Error('error getting updated categories from DB')
-        }
-        const updatedDbCategories = dbCategoriesObj.dbCategories
-        // make sure there is at least one menu
-        if (updatedDbCategories.length === 0) {
-            throw new Error('no menus in DB for school')
-        }
-        yield put(
-            setNotificationCategories({
-                id: domainId,
-                notificationCategories: updatedDbCategories
-            })
-        )
-
-        return {
-            menus: {
-                menus,
-                DbCategories: updatedDbCategories
-            }
-        }
+        console.log('sync successful')
+        return
     } catch (err) {
-        console.log('error fetching menus in saga', err)
-        return {
-            err
-        }
+        console.log('error syncing DB categories with mobile menu', err)
+        throw err
     }
 }
 
-function* fetchCategoriesFromDb(action) {
+function* fetchCategoriesFromDb(apiToken, domainId) {
     try {
-        const domainId = action.domainId
-        const userInfo = yield select(getUserInfo)
-        const response = yield call(
-            fetch,
-            `http://${api}/api/categories/${domainId}?api_token=${userInfo.apiKey}`
-        )
-        const dbCategories = yield response.json()
-        if (response.status == 200) {
-            return {
-                dbCategories
-            }
-        } else {
-            throw new Error('error fetching categories from DB')
-        }
+        const dbCategories = yield call(domainApiService.getDbCategories, apiToken, domainId)
+
+        return dbCategories
     } catch (err) {
         console.log('error fetching categories from DB', err)
-        return {
-            err
-        }
+        throw err
     }
 }
 

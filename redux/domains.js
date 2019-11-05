@@ -34,19 +34,17 @@ export default function domains(state = [], action) {
             })
         case types.SET_NOTIFICATION_CATEGORIES:
             return state.map(domain => {
-                if (domain.id === action.payload.id) {
+                if (domain.id === action.domainId) {
                     return {
                         ...domain,
-                        notificationCategories: action.payload.notificationCategories
+                        notificationCategories: action.notificationCategories
                     }
                 }
-                return {
-                    ...domain
-                }
+                return domain
             })
         case types.SET_NOTIFICATIONS:
             return state.map(domain => {
-                if (domain.id === action.domain) {
+                if (domain.id === action.domainId) {
                     return {
                         ...domain,
                         notificationCategories: domain.notificationCategories.map(notification => {
@@ -83,17 +81,18 @@ export const actions = {
                return { type: types.DELETE_DOMAIN, domainId }
            },
 
-           setNotificationCategories: payload => {
+           setNotificationCategories: (domainId, notificationCategories) => {
                return {
                    type: types.SET_NOTIFICATION_CATEGORIES,
-                   payload
+                   domainId,
+                   notificationCategories
                }
            },
-           setNotifications: (notifications, domain) => {
+           setNotifications: (domainId, notifications) => {
                return {
                    type: types.SET_NOTIFICATIONS,
+                   domainId,
                    notifications,
-                   domain
                }
            }
        }

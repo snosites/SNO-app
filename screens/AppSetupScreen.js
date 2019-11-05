@@ -41,42 +41,42 @@ const AppSetupScreen = props => {
         startup(activeDomain)
     },[])
 
-    componentDidUpdate() {
-        const { activeDomain, menus, articlesByCategory, navigation, errors, userInfo, dispatch } = this.props;
-        if (errors.error == 'initialize-saga error' || errors.error == 'menu-saga error') {
-            navigation.navigate('Error', {
-                errorMessage: 'Sorry, this school is currently unavailable'
-            });
-        }
-        if (errors.error == 'no school') {
-            navigation.navigate('Error', {
-                errorMessage: 'Sorry, this school did not renew its Student News Source subscription'
-            });
-        }
-        if (this.animation) {
-            console.log('animation found');
-            this.animation.play();
-        }
-        if (menus.isLoaded) {
-            if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
-                // check if the user is coming from a push notification
-                if(userInfo.fromPush) {
-                    // go to main app
-                    NavigationService.nestedNavigate('MainApp', 'RecentStack');
-                    // direct to article from push
-                    NavigationService.navigate('FullArticle');
-                    handleArticlePress(userInfo.fromPush, activeDomain);
-                    // reset push key
-                    dispatch(setFromPush(false));
-                } else {
-                    console.log('finished loading menus and articles')
-                    navigation.navigate('MainApp');
-                }
-            } else {
-                console.log('error in app setup')
-            }
-        }
-    }
+    // componentDidUpdate() {
+    //     const { activeDomain, menus, articlesByCategory, navigation, errors, userInfo, dispatch } = this.props;
+    //     if (errors.error == 'initialize-saga error' || errors.error == 'menu-saga error') {
+    //         navigation.navigate('Error', {
+    //             errorMessage: 'Sorry, this school is currently unavailable'
+    //         });
+    //     }
+    //     if (errors.error == 'no school') {
+    //         navigation.navigate('Error', {
+    //             errorMessage: 'Sorry, this school did not renew its Student News Source subscription'
+    //         });
+    //     }
+    //     if (this.animation) {
+    //         console.log('animation found');
+    //         this.animation.play();
+    //     }
+    //     if (menus.isLoaded) {
+    //         if (articlesByCategory[menus.items[0].object_id] && !articlesByCategory[menus.items[0].object_id].isFetching) {
+    //             // check if the user is coming from a push notification
+    //             if(userInfo.fromPush) {
+    //                 // go to main app
+    //                 NavigationService.nestedNavigate('MainApp', 'RecentStack');
+    //                 // direct to article from push
+    //                 NavigationService.navigate('FullArticle');
+    //                 handleArticlePress(userInfo.fromPush, activeDomain);
+    //                 // reset push key
+    //                 dispatch(setFromPush(false));
+    //             } else {
+    //                 console.log('finished loading menus and articles')
+    //                 navigation.navigate('MainApp');
+    //             }
+    //         } else {
+    //             console.log('error in app setup')
+    //         }
+    //     }
+    // }
         if(splashScreen) {
             return (
                     <Image
@@ -133,26 +133,26 @@ const AppSetupScreen = props => {
 
 
 
-const styles = StyleSheet.create({
-    rootContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    animationContainer: {
-        width: 250,
-        height: 250,
-    },
-})
+// const styles = StyleSheet.create({
+//     rootContainer: {
+//         flex: 1,
+//         justifyContent: 'center',
+//         alignItems: 'center'
+//     },
+//     animationContainer: {
+//         width: 250,
+//         height: 250,
+//     },
+// })
 
 const mapStateToProps = state => ({
     activeDomain: getActiveDomain(state),
     user: state.user,
     splashScreen: state.global.splashScreen,
-    menus: state.menus,
-    articlesByCategory: store.articlesByCategory,
+    // menus: state.menus,
+    // articlesByCategory: store.articlesByCategory,
     
-    errors: store.errors
+    // errors: store.errors
 })
 
 const mapDispatchToProps = dispatch => ({

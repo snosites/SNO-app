@@ -8,8 +8,8 @@ export const types = {
     SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
     SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
     SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
+    SET_USER: 'SET_USER',
 
-    SAVE_TOKEN_ID: 'SAVE_TOKEN_ID',
     DELETE_USER: 'DELETE_USER',
     SET_FROM_PUSH: 'SET_FROM_PUSH',
     SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
@@ -32,6 +32,11 @@ export default function user(state = initialState, action) {
         //         username: action.payload.username,
         //         email: action.payload.email
         //     }
+        case types.SET_USER:
+            return {
+                ...state,
+                user: action.payload
+            }
         case types.FIND_OR_CREATE_USER_SUCCESS:
             return {
                 ...state,
@@ -56,8 +61,10 @@ export const actions = {
     subscribeRequest: () => ({ type: types.SUBSCRIBE_REQUEST }),
     subscribeSuccess: () => ({ type: types.SUBSCRIBE_SUCCESS }),
     subscribeError: error => ({ type: types.SUBSCRIBE_ERROR, error }),
-    setSubscribeAll: payload => ({ type: types.SET_SUBSCRIBE_ALL, payload })
+    setSubscribeAll: payload => ({ type: types.SET_SUBSCRIBE_ALL, payload }),
+    setUser: payload => ({ type: types.SET_USER, payload })
 }
 
 //selectors
 export const getApiToken = state => state.user.user.api_token
+export const getUser = state => state.user.user
