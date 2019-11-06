@@ -6,6 +6,8 @@ import domains from './domains'
 import errors from './errors'
 import loading from './loading'
 import global from './global'
+import articlesByCategory, { entities } from './articles'
+import savedArticlesBySchool from './savedArticles'
 
 const appReducer = combineReducers({
     user,
@@ -13,7 +15,10 @@ const appReducer = combineReducers({
     domains,
     errors,
     loading,
-    global
+    global,
+    articlesByCategory,
+    entities,
+    savedArticlesBySchool
 })
 
 // if user chnges domain clear out domain specific state data

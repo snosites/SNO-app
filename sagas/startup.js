@@ -2,29 +2,33 @@ import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { actions as userActions, getApiToken, getUser } from '../redux/user'
-import apiService from '../api/api'
-import domainApiService from '../api/domain'
+import { actions as themeActions } from '../redux/theme'
+import { actions as articleActions } from '../redux/articles'
+import { actions as savedArticleActions } from '../redux/savedArticles'
 
 import { fetchMenu } from '../sagas/menu'
 import { checkNotificationSettings, subscribe, fetchNotificationSubscriptions } from '../sagas/user'
+
+import domainApiService from '../api/domain'
+import apiService from '../api/api'
+
+import NavigationService from '../utils/NavigationService'
 
 import { SplashScreen } from 'expo'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Sentry from 'sentry-expo'
 import Constants from 'expo-constants'
 
-const api = 'mobileapi.snosites.net'
-const GET_DOMAIN_BY_ID = `http://${api}/api/domains`
-
 function* startup(action) {
     const { domain } = action
-    const apiToken = yield select(getApiToken)
     const user = yield select(getUser)
-    // set user domain for analytics
-    Amplitude.setUserProperties({
-        activeDomain: domain.id
-    })
     try {
+        // set user domain for analytics
+        Amplitude.setUserProperties({
+            activeDomain: domain.id
+        })
+
+        yield put(globalActions.startupRequest())
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
         yield put(globalActions.receiveSplash(splashScreenUrl))
@@ -51,75 +55,104 @@ function* startup(action) {
         // // reset all notifications toggle key
         yield put(userActions.setSubscribeAll(false))
 
+        // get users notification subscriptions
         yield call(fetchNotificationSubscriptions, domain.id)
 
-        // // get user options
-        // const [result, result2, result3, result4, result5] = yield all([
-        //     call(fetch, `https://${domain}/wp-json/custom/option?type=sns_nav_header`),
-        //     call(fetch, `https://${domain}/wp-json/custom/option?type=sns_header_logo`),
-        //     call(fetch, `https://${domain}/wp-json/custom/option?type=sns_theme`),
-        //     call(fetch, `https://${domain}/wp-json/custom/option?type=sns_primary_color`),
-        //     call(fetch, `https://${domain}/wp-json/custom/option?type=sns_accent_color`)
-        // ])
-        // const headerImageId = yield result.json()
-        // const headerSmallId = yield result2.json()
-        // const theme = yield result3.json()
-        // const primary = yield result4.json()
-        // const accent = yield result5.json()
+        //get domains custom options
+        yield call(getCustomOptions, domain)
 
-        // // get actual images
-        // const [imgResult1, imgResult2] = yield all([
-        //     call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerImageId.result}`),
-        //     call(fetch, `https://${domain}/wp-json/wp/v2/media?include=${headerSmallId.result}`)
-        // ])
-        // const headerImage = yield imgResult1.json()
-        // const headerSmall = yield imgResult2.json()
+        yield put(
+            articleActions.fetchArticlesIfNeeded({
+                domain: domain.url,
+                category: menu[0].object_id
+            })
+        )
+        yield put(savedArticleActions.initializeSaved(domain.id))
 
-        // if (!theme.result) {
-        //     theme.result = 'light'
-        // }
-        // if (!primary.result) {
-        //     primary.result = '#2099CE'
-        //     if (!accent.result) {
-        //         accent.result = '#83B33B'
-        //     }
+        // if (userInfo.fromPush) {
+        //     // go to main app
+        //     NavigationService.nestedNavigate('MainApp', 'RecentStack')
+        //     // direct to article from push
+        //     NavigationService.navigate('FullArticle')
+        //     handleArticlePress(userInfo.fromPush, activeDomain)
+        //     // reset push key
+        //     dispatch(setFromPush(false))
+        // } else {
+        //     console.log('finished loading menus and articles')
+        //     navigation.navigate('MainApp')
         // }
 
-        // yield put(
-        //     saveTheme({
-        //         theme: theme.result,
-        //         primary: primary.result,
-        //         accent: accent.result
-        //     })
-        // )
-
-        // // if image is set otherwise empty string
-        // yield put(
-        //     receiveMenus({
-        //         menus: menus.menus,
-        //         header: headerImageId.result ? headerImage[0].source_url : '',
-        //         headerSmall: headerSmallId.result ? headerSmall[0].source_url : ''
-        //     })
-        // )
-        // yield put(
-        //     fetchArticlesIfNeeded({
-        //         domain,
-        //         category: menus.menus[0].object_id
-        //     })
-        // )
-        // yield put(initializeSaved(domainId))
+        yield put(globalActions.startupSuccess())
+        
+        NavigationService.navigate('MainApp')
     } catch (err) {
         console.log('initilize err', err)
         // clear from push data if any is there
         // yield put(setFromPush(false))
-        // const domainCheck = yield call(checkWithDb, domainId, userInfo)
-        // console.log('domain check', domainCheck)
-        // if (domainCheck.length > 0) {
-        //     yield put(setError('initialize-saga error'))
-        //     Sentry.captureException(err)
-        // } else {
-        //     yield put(setError('no school'))
-        // }
+
+        // check if domain is still in DB
+        const domainCheck = yield call(checkIfDomainIsInDb, domain.id)
+
+        if (domainCheck.length > 0) {
+            yield put(globalActions.startupError('error initializing app'))
+            Sentry.captureException(err)
+        } else {
+            yield put(globalActions.startupError('school not in DB'))
+        }
+    }
+}
+
+function* getCustomOptions(domain) {
+    try {
+        // // get user options
+        const [headerImage, headerLogo, theme, primary, accent] = yield all([
+            call(domainApiService.getCustomHeader, domain.url),
+            call(domainApiService.getCustomHeaderLogo, domain.url),
+            call(domainApiService.getCustomTheme, domain.url),
+            call(domainApiService.getCustomPrimaryColor, domain.url),
+            call(domainApiService.getCustomAccentColor, domain.url)
+        ])
+
+        if (!theme.result) {
+            theme.result = 'light'
+        }
+        if (!primary.result) {
+            primary.result = '#2099CE'
+        }
+        if (!accent.result) {
+            accent.result = '#83B33B'
+        }
+
+        yield put(
+            themeActions.saveTheme({
+                theme: theme.result,
+                primary: primary.result,
+                accent: accent.result
+            })
+        )
+        // // save if images are set otherwise empty string
+        yield put(
+            globalActions.receiveHeader(
+                headerImage[0] && headerImage[0].source_url ? headerImage[0].source_url : ''
+            )
+        )
+        yield put(
+            globalActions.receiveHeaderLogo(
+                headerLogo[0] && headerLogo[0].source_url ? headerLogo[0].source_url : ''
+            )
+        )
+    } catch (err) {
+        console.log('error in get custom domain options saga', err)
+        // default options for theme
+        yield put(
+            themeActions.saveTheme({
+                theme: 'light',
+                primary: '#2099CE',
+                accent: '#83B33B'
+            })
+        )
+        yield put(globalActions.receiveHeader(''))
+        yield put(globalActions.receiveHeaderLogo(''))
     }
 }
 
@@ -149,14 +182,18 @@ function* getSplashScreenImage(domain) {
     }
 }
 
-// function* checkWithDb(domainId, userInfo) {
-//     const response = yield call(
-//         fetch,
-//         `${GET_DOMAIN_BY_ID}/${domainId}?api_token=${userInfo.apiKey}`
-//     )
-//     const dbDomain = yield response.json()
-//     return dbDomain
-// }
+function* checkIfDomainIsInDb(domainId) {
+    try {
+        const apiToken = yield select(getApiToken)
+
+        const dbDomain = yield call(apiService.findDomain, apiToken, domainId)
+        return dbDomain
+
+    } catch (err) {
+        console.log('error getting domain from DB', err)
+        return []
+    }
+}
 
 function* startupSaga() {
     yield takeLatest(globalTypes.STARTUP, startup)

@@ -45,6 +45,7 @@ export async function asyncFetchFeaturedImage(url, story) {
         photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
         caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
     }
+    return
 }
 
 export async function asyncFetchComments(url, story) {

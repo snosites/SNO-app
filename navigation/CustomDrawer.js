@@ -4,31 +4,20 @@ import {
     StyleSheet,
     Text,
     View,
-    AsyncStorage,
-    StatusBar,
-    ActivityIndicator,
     Image
 } from 'react-native';
 import {
     Drawer,
-    withTheme,
-    Switch,
-    TouchableRipple,
-    Text as PaperText,
     Colors,
-    Divider,
     Searchbar
 } from 'react-native-paper';
-
 import HTML from 'react-native-render-html';
 
-import { fetchArticlesIfNeeded } from '../redux/actionCreators';
+import { actions as articlesActions } from '../redux/articles'
+
+import { getActiveDomain } from '../redux/domains'
 
 import { SafeAreaView } from 'react-navigation';
-
-import TouchableItem from '../constants/TouchableItem';
-import { Feather } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
 import DrawerNavIcon from '../components/DrawerNavIcon';
 import { connect } from 'react-redux';
 
@@ -47,52 +36,57 @@ class CustomDrawerComponent extends React.Component {
     }
 
     componentDidMount() {
-        console.log('custom drawer mounted');
         const { menus } = this.props;
-        if(menus.items.length > 0) {
+        if(menus.length > 0) {
             this.props.navigation.navigate('List', {
-                menuTitle: menus.items[0].title,
-                categoryId: menus.items[0].object_id,
+                menuTitle: menus[0].title,
+                categoryId: menus[0].object_id,
             })
         }
     }
 
     render() {
-        const { menus, activeDomain } = this.props;
+        const { menus, activeDomain, globals } = this.props
         return (
             <View style={styles.rootContainer}>
-                <SafeAreaView style={styles.rootContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
+                <SafeAreaView
+                    style={styles.rootContainer}
+                    forceInset={{ top: 'always', horizontal: 'never' }}
+                >
                     <ScrollView style={styles.container}>
-                        {menus.header ?
+                        {globals.header ? (
                             <Image
-                                source={{ uri: menus.header }}
+                                source={{ uri: globals.header }}
                                 style={{ width: 280, height: 70 }}
                                 resizeMode='contain'
                             />
-                            :
+                        ) : (
                             <Text
                                 numberOfLines={2}
                                 ellipsizeMode='tail'
-                                style={{ fontSize: 20, fontWeight: 'bold', padding: 20 }}>
+                                style={{ fontSize: 20, fontWeight: 'bold', padding: 20 }}
+                            >
                                 {activeDomain.publication}
                             </Text>
-                        }
+                        )}
                         <Searchbar
-                            placeholder="Search Articles"
+                            placeholder='Search Articles'
                             onIconPress={this._searchArticles}
                             onSubmitEditing={this._searchArticles}
-                            onChangeText={query => { this.setState({ searchTerm: query }); }}
+                            onChangeText={query => {
+                                this.setState({ searchTerm: query })
+                            }}
                             value={this.state.searchTerm}
                         />
-                        <Drawer.Section title="Categories">
-                            {this.props.menus.items.map((item, index) => {
+                        <Drawer.Section title='Categories'>
+                            {menus.map((item, index) => {
                                 return (
                                     <Drawer.Item
                                         key={item.ID}
                                         label={
                                             <HTML
                                                 html={item.title}
-                                                customWrapper={(text) => {
+                                                customWrapper={text => {
                                                     return (
                                                         <Text
                                                             ellipsizeMode='tail'
@@ -109,14 +103,14 @@ class CustomDrawerComponent extends React.Component {
                                         icon={passedProps => {
                                             return DrawerNavIcon({
                                                 ...passedProps,
-                                                style: item.menu_icon_dir, name: item.menu_icon_name
+                                                style: item.menu_icon_dir,
+                                                name: item.menu_icon_name
                                             })
                                         }}
                                     />
                                 )
                             })}
                         </Drawer.Section>
-                        
                     </ScrollView>
                 </SafeAreaView>
             </View>
@@ -124,14 +118,14 @@ class CustomDrawerComponent extends React.Component {
     }
 
     _searchArticles = () => {
-        const { dispatch, activeDomain, navigation } = this.props;
+        const { activeDomain, navigation, invalidateSearchArticles } = this.props
         const { searchTerm } = this.state;
-        dispatch(invalidateSearchArticles());
+        invalidateSearchArticles()
+        fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
         navigation.navigate('Search', {
             searchTerm
-        });
-        navigation.closeDrawer();
-        dispatch(fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm));
+        })
+        navigation.closeDrawer()
         this.setState({
             searchTerm: ''
         })
@@ -182,11 +176,8 @@ class CustomDrawerComponent extends React.Component {
 
 
     _getArticles = (category) => {
-        const { articlesByCategory } = this.props;
-        this.props.dispatch(fetchArticlesIfNeeded({
-            domain: this.props.activeDomain.url,
-            category,
-        }))
+        const { fetchArticlesIfNeeded, activeDomain } = this.props
+        fetchArticlesIfNeeded(activeDomain.url, category)
     }
 }
 
@@ -222,11 +213,27 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapStateToProps = store => ({
-    activeDomain: store.activeDomain,
-    menus: store.menus,
-    articlesByCategory: store.articlesByCategory
+const mapStateToProps = state => ({
+    activeDomain: getActiveDomain(state),
+    menus: state.global.menuItems,
+    articlesByCategory: state.articlesByCategory,
+    globals: state.global
+})
+
+const mapDispatchToProps = dispatch => ({
+    fetchArticlesIfNeeded: (domainUrl, category) =>
+        dispatch(
+            articlesActions.fetchArticlesIfNeeded({
+                domain: domainUrl,
+                category
+            })
+        ),
+    fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) => dispatch(articlesActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
+    invalidateSearchArticles: () => dispatch(articlesActions.invalidateSearchArticles())
 })
 
 
-export default connect(mapStateToProps)(CustomDrawerComponent);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(CustomDrawerComponent)

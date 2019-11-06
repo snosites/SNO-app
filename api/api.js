@@ -97,6 +97,17 @@ const apiService = {
             console.log('error in get user subscriptions api call', err)
             throw err
         }
+    },
+    findDomain: async (apiToken, domainId) => {
+        try {
+            const response = await axios.get(`/domains/${domainId}?api_token=${apiToken}`, {
+                baseURL: BASE_URL
+            })
+            return response.data
+        } catch (err) {
+            console.log('error in find domain api call', err)
+            throw err
+        }
     }
 }
 

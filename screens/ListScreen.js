@@ -23,6 +23,8 @@ import {
     removeSavedArticle
 } from '../redux/actionCreators';
 
+import { getActiveDomain } from '../redux/domains'
+
 import { SafeAreaView } from 'react-navigation';
 
 import ArticleListContent from '../views/ArticleListContent';
@@ -97,12 +99,12 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { menus, navigation } = this.props;
+        const { navigation, global } = this.props;
         if (this.animation) {
             this._playAnimation();
         }
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
         // throw new Error('testing error boundary')
     }
@@ -344,28 +346,31 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', null);
+    const activeDomain = getActiveDomain(state)
     if(!categoryId){
         return {
             theme: state.theme,
-            activeDomain: state.activeDomain,
-            menus: state.menus,
+            activeDomain,
+            menus: state.global.menuItems,
             category: null,
-            articlesByCategory: []
+            articlesByCategory: [],
+            global: state.global
         }
     }
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
-        menus: state.menus,
+        activeDomain,
+        menus: state.global.menuItems,
+        global: state.global,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
-            const found = state.savedArticlesBySchool[state.activeDomain.id].find(savedArticle => {
-                return savedArticle.id == articleId;
+            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+                return savedArticle.id == articleId
             })
             if (found) {
-                state.entities.articles[articleId].saved = true;
+                state.entities.articles[articleId].saved = true
             } else {
-                state.entities.articles[articleId].saved = false;
+                state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
         })

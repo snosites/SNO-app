@@ -14,6 +14,8 @@ export const types = {
            STARTUP_SUCCESS: 'STARTUP_SUCCESS',
            STARTUP_ERROR: 'STARTUP_ERROR',
            RECEIVE_SPLASH: 'RECEIVE_SPLASH',
+           RECEIVE_HEADER: 'RECEIVE_HEADER',
+           RECEIVE_HEADER_LOGO: 'RECEIVE_HEADER_LOGO',
            FETCH_MENUS: 'FETCH_MENUS',
            FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
            FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -46,6 +48,16 @@ export default function global(state = initialState, action) {
                 ...state,
                 splashScreen: action.splash
             }
+        case types.RECEIVE_HEADER:
+            return {
+                ...state,
+                header: action.header
+            }
+        case types.RECEIVE_HEADER_LOGO:
+            return {
+                ...state,
+                headerSmall: action.headerLogo
+            }
         case types.FETCH_MENUS_SUCCESS:
             return {
                 ...state,
@@ -77,6 +89,8 @@ export const actions = {
     startupSuccess: () => ({ type: types.STARTUP_SUCCESS }),
     startupError: error => ({ type: types.STARTUP_ERROR, error }),
     receiveSplash: splash => ({ type: types.RECEIVE_SPLASH, splash }),
+    receiveHeader: header => ({ type: types.RECEIVE_HEADER, header }),
+    receiveHeaderLogo: headerLogo => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
     fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
     fetchMenusSuccess: payload => ({ type: types.FETCH_MENUS_SUCCESS, payload }),

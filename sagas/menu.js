@@ -40,12 +40,14 @@ export function* fetchMenu(action) {
         }
         yield put(domainsActions.setNotificationCategories(domain.id, updatedDbCategories))
 
+         yield put(globalActions.fetchMenusSuccess(filteredMobileMenu))
         return {
             menu: filteredMobileMenu,
             dbCategories: updatedDbCategories
         }
     } catch (err) {
         console.log('error fetching menus in saga', err)
+        yield put(globalActions.fetchMenusError('error fetching menus'))
         throw err
     }
 }
