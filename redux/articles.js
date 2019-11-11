@@ -10,13 +10,6 @@ export const types = {
     REQUEST_ARTICLES: 'REQUEST_ARTICLES',
     RECEIVE_ARTICLES: 'RECEIVE_ARTICLES',
     FETCH_ARTICLES_FAILURE: 'FETCH_ARTICLES_FAILURE',
-    // recent articles
-    INVALIDATE_RECENT_ARTICLES: 'INVALIDATE_RECENT_ARTICLES',
-    FETCH_RECENT_ARTICLES_IF_NEEDED: 'FETCH_RECENT_ARTICLES_IF_NEEDED',
-    FETCH_MORE_RECENT_ARTICLES_IF_NEEDED: 'FETCH_MORE_RECENT_ARTICLES_IF_NEEDED',
-    REQUEST_RECENT_ARTICLES: 'REQUEST_RECENT_ARTICLES',
-    RECEIVE_RECENT_ARTICLES: 'RECEIVE_RECENT_ARTICLES',
-    FETCH_RECENT_ARTICLES_FAILURE: 'FETCH_RECENT_ARTICLES_FAILURE',
     //comments
     UPDATE_COMMENTS: 'UPDATE_COMMENTS',
     REFETCH_COMMENTS: 'REFETCH_COMMENTS',
@@ -153,43 +146,6 @@ export const actions = {
         return {
             type: types.FETCH_ARTICLES_FAILURE,
             category,
-            error,
-            recievedAt: Date.now()
-        }
-    },
-    // RECENT ARTICLES
-    invalidateRecentArticles() {
-        return {
-            type: types.INVALIDATE_RECENT_ARTICLES
-        }
-    },
-    fetchRecentArticlesIfNeeded(domain) {
-        return {
-            type: types.FETCH_RECENT_ARTICLES_IF_NEEDED,
-            domain
-        }
-    },
-    fetchMoreRecentArticlesIfNeeded(domain) {
-        return {
-            type: types.FETCH_MORE_RECENT_ARTICLES_IF_NEEDED,
-            domain
-        }
-    },
-    requestRecentArticles() {
-        return {
-            type: types.REQUEST_RECENT_ARTICLES
-        }
-    },
-    receiveRecentArticles(response) {
-        return {
-            type: types.RECEIVE_RECENT_ARTICLES,
-            response,
-            receivedAt: Date.now()
-        }
-    },
-    fetchRecentArticlesFailure(error) {
-        return {
-            type: types.FETCH_RECENT_ARTICLES_FAILURE,
             error,
             recievedAt: Date.now()
         }

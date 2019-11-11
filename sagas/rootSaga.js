@@ -6,6 +6,7 @@ import startupSaga from './startup'
 import articleSaga from './article'
 import searchSaga from './search'
 import profileSaga from './profile'
+import recentSaga from './recent'
 
 export default function* rootSaga() {
     yield all([
@@ -14,6 +15,7 @@ export default function* rootSaga() {
         startupSaga(),
         articleSaga(),
         searchSaga(),
-        profileSaga()
+        profileSaga(),
+        recentSaga()
     ])
 }

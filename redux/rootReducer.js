@@ -10,6 +10,7 @@ import articlesByCategory, { entities } from './articles'
 import savedArticlesBySchool from './savedArticles'
 import searchArticles from './search'
 import profiles from './profiles'
+import recentArticles from './recent'
 
 const appReducer = combineReducers({
     user,
@@ -22,7 +23,8 @@ const appReducer = combineReducers({
     entities,
     savedArticlesBySchool,
     searchArticles,
-    profiles
+    profiles,
+    recentArticles
 })
 
 // if user chnges domain clear out domain specific state data
