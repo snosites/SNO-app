@@ -1,41 +1,34 @@
-import React from 'react';
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-    Platform
-} from 'react-native';
-import Color from 'color';
-import { connect } from 'react-redux';
+import React from 'react'
+import { View, Text, Image, StyleSheet, Platform } from 'react-native'
+import Color from 'color'
+import { connect } from 'react-redux'
 
 import LottieView from 'lottie-react-native'
 
 import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons';
-import { Snackbar, Button } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons'
+import { Snackbar, Button } from 'react-native-paper'
 
-import {
-    saveArticle,
-    fetchArticlesIfNeeded,
-    fetchMoreArticlesIfNeeded,
-    invalidateArticles,
-    removeSavedArticle
-} from '../redux/actionCreators';
+import { actions as savedArticleActions } from '../redux/savedArticles'
+import { actions as articlesActions } from '../redux/articles'
 
 import { getActiveDomain } from '../redux/domains'
 
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-navigation'
 
-import ArticleListContent from '../views/ArticleListContent';
+import ArticleListContent from '../views/ArticleListContent'
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
-
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
-);
+    <HeaderButton
+        {...passMeFurther}
+        IconComponent={Ionicons}
+        iconSize={30}
+        color={Colors.tintColor}
+    />
+)
 
 //header title -- work on later
 // const HeaderTitle = ({name}) => {
@@ -65,24 +58,24 @@ const IoniconsHeaderButton = passMeFurther => (
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps;
+        const { theme } = screenProps
         const logo = navigation.getParam('headerLogo', null)
-        const headerName = navigation.getParam('menuTitle', 'Stories');
-        let primaryColor = Color(theme.colors.primary);
-        let isDark = primaryColor.isDark();
+        const headerName = navigation.getParam('menuTitle', 'Stories')
+        let primaryColor = Color(theme.colors.primary)
+        let isDark = primaryColor.isDark()
         return {
             title: headerName,
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
-                        title="menu"
-                        iconName="ios-menu"
+                        title='menu'
+                        iconName='ios-menu'
                         buttonStyle={{ color: isDark ? 'white' : 'black' }}
-                        onPress={() => navigation.openDrawer()} />
+                        onPress={() => navigation.openDrawer()}
+                    />
                 </HeaderButtons>
             ),
-            headerLeft: (
-                logo &&
+            headerLeft: logo && (
                 <Image
                     source={{ uri: logo }}
                     style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
@@ -90,8 +83,8 @@ class ListScreen extends React.Component {
                 />
             ),
             headerBackTitle: null
-        };
-    };
+        }
+    }
 
     state = {
         snackbarSavedVisible: false,
@@ -99,40 +92,39 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { navigation, global } = this.props;
+        const { navigation, global } = this.props
         if (this.animation) {
-            this._playAnimation();
+            this._playAnimation()
         }
         navigation.setParams({
             headerLogo: global.headerSmall
         })
-        // throw new Error('testing error boundary')
     }
 
     componentDidUpdate() {
         if (this.animation) {
-            this._playAnimation();
+            this._playAnimation()
         }
-        const { navigation } = this.props;
+        const { navigation } = this.props
         if (navigation.state.params && navigation.state.params.scrollToTop) {
             if (this.flatListRef) {
                 // scroll list to top
-                this._scrollToTop();
+                this._scrollToTop()
             }
             navigation.setParams({ scrollToTop: false })
         }
     }
 
     render() {
-        const { navigation, articlesByCategory, category, theme, activeDomain } = this.props;
-        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
-        const categoryId = this.props.navigation.getParam('categoryId', null);
-        if(!categoryId) {
+        const { navigation, articlesByCategory, category, theme, activeDomain } = this.props
+        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state
+        const categoryId = this.props.navigation.getParam('categoryId', null)
+        if (!categoryId) {
             return (
                 <SafeAreaView
                     style={{
                         flex: 1,
-                        marginTop: 20,
+                        marginTop: 20
                     }}
                 >
                     <LottieView
@@ -151,7 +143,7 @@ class ListScreen extends React.Component {
                 <SafeAreaView
                     style={{
                         flex: 1,
-                        marginTop: 20,
+                        marginTop: 20
                     }}
                 >
                     <LottieView
@@ -189,13 +181,13 @@ class ListScreen extends React.Component {
                         Sorry, something went wrong.
                     </Text>
                     <Button
-                        mode="contained"
+                        mode='contained'
                         theme={{
                             roundness: 7,
                             colors: {
                                 primary: theme ? theme.colors.primary : '#2099CE'
-                }
-            }}
+                            }
+                        }}
                         style={{ padding: 5 }}
                         onPress={this._handleRefresh}
                     >
@@ -248,69 +240,66 @@ class ListScreen extends React.Component {
                     Article Removed From Saved List
                 </Snackbar>
             </View>
-
-        );
+        )
     }
 
     _scrollToTop = () => {
-        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _saveRef = (ref) => {
-        this.flatListRef = ref;
+    _saveRef = ref => {
+        this.flatListRef = ref
     }
 
-    _saveAnimationRef = (ref) => {
-        this.animation = ref;
+    _saveAnimationRef = ref => {
+        this.animation = ref
     }
 
     _saveRemoveToggle = article => {
         if (article.saved) {
-            this._handleArticleRemove(article.id);
+            this._handleArticleRemove(article.id)
         } else {
-            this._handleArticleSave(article);
+            this._handleArticleSave(article)
         }
     }
 
     _handleArticleSave = article => {
-
-        const { activeDomain } = this.props;
-        this.props.dispatch(saveArticle(article, activeDomain.id))
+        const { activeDomain, saveArticle } = this.props
+        saveArticle(article, activeDomain.id)
         this.setState({
             snackbarSavedVisible: true
         })
     }
 
     _handleArticleRemove = articleId => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
+        const { activeDomain } = this.props
+        this.props.removeSavedArticle(articleId, activeDomain.id)
         this.setState({
             snackbarRemovedVisible: true
         })
     }
 
     _loadMore = () => {
-        const { activeDomain, category } = this.props;
-        this.props.dispatch(fetchMoreArticlesIfNeeded({
+        const { activeDomain, category, fetchMoreArticlesIfNeeded } = this.props
+        fetchMoreArticlesIfNeeded({
             domain: activeDomain.url,
-            category: category.categoryId,
-        }))
+            category: category.categoryId
+        })
     }
 
     _handleRefresh = () => {
-        const { dispatch, activeDomain, category } = this.props;
-        dispatch(invalidateArticles(category.categoryId));
-        dispatch(fetchArticlesIfNeeded({
+        const { activeDomain, category, invalidateArticles, fetchArticlesIfNeeded } = this.props
+        invalidateArticles(category.categoryId)
+        fetchArticlesIfNeeded({
             domain: activeDomain.url,
-            category: category.categoryId,
-        }))
+            category: category.categoryId
+        })
     }
 
     _playAnimation = () => {
-        this.animation.reset();
-        this.animation.play();
-    };
-
+        this.animation.reset()
+        this.animation.play()
+    }
 }
 
 const styles = StyleSheet.create({
@@ -326,28 +315,28 @@ const styles = StyleSheet.create({
                 fontSize: 17,
                 fontWeight: '600',
                 color: 'rgba(0, 0, 0, .9)',
-                marginHorizontal: 16,
+                marginHorizontal: 16
             },
             android: {
                 fontSize: 20,
                 fontWeight: '500',
                 color: 'rgba(0, 0, 0, .9)',
-                marginHorizontal: 16,
+                marginHorizontal: 16
             },
             default: {
                 fontSize: 18,
                 fontWeight: '400',
-                color: '#3c4043',
-            },
-        }),
-    },
-});
+                color: '#3c4043'
+            }
+        })
+    }
+})
 
 const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
-    const categoryId = ownProps.navigation.getParam('categoryId', null);
+    const categoryId = ownProps.navigation.getParam('categoryId', null)
     const activeDomain = getActiveDomain(state)
-    if(!categoryId){
+    if (!categoryId) {
         return {
             theme: state.theme,
             activeDomain,
@@ -377,4 +366,18 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-export default connect(mapStateToProps)(ListScreen);
+const mapDispatchToProps = dispatch => ({
+    saveArticle: (article, domainId) =>
+        dispatch(savedArticleActions.saveArticle(article, domainId)),
+    removeSavedArticle: (articleId, domainId) =>
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
+    invalidateArticles: categoryId => dispatch(articlesActions.invalidateArticles(categoryId)),
+    fetchArticlesIfNeeded: payload => dispatch(articlesActions.fetchArticlesIfNeeded(payload)),
+    fetchMoreArticlesIfNeeded: payload =>
+        dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ListScreen)

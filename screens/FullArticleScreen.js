@@ -11,7 +11,9 @@ import * as Amplitude from 'expo-analytics-amplitude';
 import LottieView from 'lottie-react-native'
 import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { saveArticle } from '../redux/actionCreators';
+
+import { actions as savedArticleActions } from '../redux/savedArticles'
+
 import { FAB, Portal, Snackbar } from 'react-native-paper';
 
 import { CustomArticleHeader } from '../components/ArticleHeader';
@@ -165,8 +167,8 @@ class FullArticleScreen extends React.Component {
     }
 
     _handleArticleSave = article => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(saveArticle(article, activeDomain.id))
+        const { activeDomain, saveArticle } = this.props
+        saveArticle(article, activeDomain.id)
         this.setState({
             snackbarSavedVisible: true
         })
@@ -201,4 +203,11 @@ const mapStateToProps = state => ({
     activeDomain: state.activeDomain
 })
 
-export default connect(mapStateToProps)(FullArticleScreen);
+const mapDispatchToProps = dispatch => ({
+    saveArticle: (article, domainId) => dispatch(savedArticleActions.saveArticle(article, domainId))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(FullArticleScreen)
