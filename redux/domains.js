@@ -1,8 +1,8 @@
 export const types = {
            SET_ACTIVE_DOMAIN: 'SET_ACTIVE_DOMAIN',
            ADD_DOMAIN: 'ADD_DOMAIN',
-
            DELETE_DOMAIN: 'DELETE_DOMAIN',
+           
            SET_NOTIFICATION_CATEGORIES: 'SET_NOTIFICATION_CATEGORIES',
            SET_NOTIFICATIONS: 'SET_NOTIFICATIONS',
            

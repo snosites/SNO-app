@@ -1,30 +1,39 @@
 export const types = {
-    FIND_OR_CREATE_USER: 'FIND_OR_CREATE_USER',
-    FIND_OR_CREATE_USER_REQUEST: 'FIND_OR_CREATE_USER_REQUEST',
-    FIND_OR_CREATE_USER_SUCCESS: 'FIND_OR_CREATE_USER_SUCCESS',
-    FIND_OR_CREATE_USER_ERROR: 'FIND_OR_CREATE_USER_ERROR',
-    SUBSCRIBE: 'SUBSCRIBE',
-    SUBSCRIBE_REQUEST: 'SUBSCRIBE_REQUEST',
-    SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
-    SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
-    SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
-    SET_USER: 'SET_USER',
-    SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
-    SAVE_USERINFO: 'SAVE_USERINFO',
+           FIND_OR_CREATE_USER: 'FIND_OR_CREATE_USER',
+           FIND_OR_CREATE_USER_REQUEST: 'FIND_OR_CREATE_USER_REQUEST',
+           FIND_OR_CREATE_USER_SUCCESS: 'FIND_OR_CREATE_USER_SUCCESS',
+           FIND_OR_CREATE_USER_ERROR: 'FIND_OR_CREATE_USER_ERROR',
+           SUBSCRIBE: 'SUBSCRIBE',
+           SUBSCRIBE_REQUEST: 'SUBSCRIBE_REQUEST',
+           SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
+           SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
+           UNSUBSCRIBE: 'UNSUBSCRIBE',
+           UNSUBSCRIBE_REQUEST: 'UNSUBSCRIBE_REQUEST',
+           UNSUBSCRIBE_SUCCESS: 'UNSUBSCRIBE_SUCCESS',
+           UNSUBSCRIBE_ERROR: 'UNSUBSCRIBE_ERROR',
+           SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
+           SET_USER: 'SET_USER',
+           SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
+           SAVE_USERINFO: 'SAVE_USERINFO',
+           DELETE_USER: 'DELETE_USER',
+           DELETE_USER_REQUEST: 'DELETE_USER_REQUEST',
+           DELETE_USER_SUCCESS: 'DELETE_USER_SUCCESS',
+           DELETE_USER_ERROR: 'DELETE_USER_ERROR',
+           CLEARING_SETTINGS: 'CLEARING_SETTINGS',
 
-    DELETE_USER: 'DELETE_USER',
-    SET_FROM_PUSH: 'SET_FROM_PUSH',
 
-    CLEARING_SETTINGS: 'CLEARING_SETTINGS',
-    RESET_SETTINGS: 'RESET_SETTINGS'
-}
+           SET_FROM_PUSH: 'SET_FROM_PUSH',
+
+           RESET_SETTINGS: 'RESET_SETTINGS'
+       }
 
 const initialState = {
     username: '',
     email: '',
     subscribeAll: false,
     user: {},
-    commentPosted: false
+    commentPosted: false,
+    clearingSettings: false
 }
 
 export default function user(state = initialState, action) {
@@ -55,6 +64,11 @@ export default function user(state = initialState, action) {
                 ...state,
                 commentPosted: action.payload
             }
+        case types.CLEARING_SETTINGS:
+            return {
+                ...state,
+                clearingSettings: action.payload
+            }
         default:
             return state
     }
@@ -69,10 +83,19 @@ export const actions = {
     subscribeRequest: () => ({ type: types.SUBSCRIBE_REQUEST }),
     subscribeSuccess: () => ({ type: types.SUBSCRIBE_SUCCESS }),
     subscribeError: error => ({ type: types.SUBSCRIBE_ERROR, error }),
+    unsubscribe: payload => ({ type: types.UNSUBSCRIBE, payload }),
+    unsubscribeRequest: () => ({ type: types.UNSUBSCRIBE_REQUEST }),
+    unsubscribeSuccess: () => ({ type: types.UNSUBSCRIBE_SUCCESS }),
+    unsubscribeError: error => ({ type: types.UNSUBSCRIBE_ERROR, error }),
     setSubscribeAll: payload => ({ type: types.SET_SUBSCRIBE_ALL, payload }),
     setUser: payload => ({ type: types.SET_USER, payload }),
     setCommentPosted: payload => ({ type: types.SET_COMMENT_POSTED, payload }),
-    saveUserInfo: payload => ({ type: types.SAVE_USERINFO, payload })
+    saveUserInfo: payload => ({ type: types.SAVE_USERINFO, payload }),
+    deleteUser: () => ({ type: types.DELETE_USER }),
+    deleteUserRequest: () => ({ type: types.DELETE_USER_REQUEST }),
+    deleteUserSuccess: () => ({ type: types.DELETE_USER_SUCCESS }),
+    deleteUserError: error => ({ type: types.DELETE_USER_ERROR, error }),
+    clearingSettings: payload => ({ type: types.CLEARING_SETTINGS, payload })
 }
 
 //selectors

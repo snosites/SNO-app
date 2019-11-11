@@ -7,7 +7,8 @@ import { actions as domainsActions } from '../redux/domains'
 
 import apiService from '../api/api'
 
-// import NavigationService from '../../utils/NavigationService'
+import { persistor } from '../redux/configureStore'
+import NavigationService from '../utils/NavigationService'
 
 // import { persistor } from '../configureStore'
 import { Notifications } from 'expo'
@@ -19,12 +20,10 @@ import * as Sentry from 'sentry-expo'
 // const GET_API_TOKEN_ENDPOINT = `http://${api}/api/key`
 // const GET_USERS_ENDPOINT = `http://${api}/api/users`
 // const PUSH_ENDPOINT = `http://${api}/api/users/add_token`
-// const DELETE_USER_ENDPOINT = `http://${api}/api/users/delete`
 // const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`
 // const ADD_ALL_NOTIFICATIONS_ENDPOINT = `http://${api}/api/subscribe/all`
 // const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`
 // const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`
-
 
 function* findOrCreateUser() {
     try {
@@ -49,14 +48,14 @@ export function* fetchNotificationSubscriptions(domainId) {
 
 function* subscribe(action) {
     try {
-        const { subscriptionType, ids, domain } = action.payload
+        const { subscriptionType, ids, domainId } = action.payload
         yield put(userActions.subscribeRequest())
 
         const apiToken = yield select(getApiToken)
 
         yield call(apiService.subscribe, apiToken, subscriptionType, ids)
 
-        // yield call(fetchNotificationSubscriptions, domain.id)
+        if (domainId) yield call(fetchNotificationSubscriptions, domainId)
 
         yield put(userActions.subscribeSuccess())
     } catch (err) {
@@ -107,27 +106,23 @@ export function* checkNotificationSettings() {
     }
 }
 
-// function* removeNotification(action) {
-//     const { tokenId, categoryId, domain } = action.payload
-//     const userInfo = yield select(getUserInfo)
-//     yield call(fetch, `${REMOVE_NOTIFICATION_ENDPOINT}?api_token=${userInfo.apiKey}`, {
-//         method: 'POST',
-//         headers: {
-//             Accept: 'application/json',
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             tokenId,
-//             categoryId
-//         })
-//     })
-//     yield call(fetchNotifications, {
-//         payload: {
-//             tokenId,
-//             domain
-//         }
-//     })
-// }
+function* unsubscribe(action) {
+    try {
+        const { subscriptionType, ids, domainId } = action.payload
+        yield put(userActions.unsubscribeRequest())
+
+        const apiToken = yield select(getApiToken)
+
+        yield call(apiService.unsubscribe, apiToken, subscriptionType, ids)
+
+        if (domainId) yield call(fetchNotificationSubscriptions, domainId)
+
+        yield put(userActions.unsubscribeSuccess())
+    } catch (err) {
+        console.log('error in unsubscribe user saga', err, err.response)
+        yield put(userActions.unsubscribeError('error unsubscribing user'))
+    }
+}
 
 // export function* checkNotificationSettings() {
 //     const userInfo = yield select(getUserInfo)
@@ -182,44 +177,37 @@ export function* checkNotificationSettings() {
 //     return tokenId[0].id
 // }
 
-// function* deleteUser(action) {
-//     try {
-//         let response = yield call(fetch, `${DELETE_USER_ENDPOINT}?api_token=${action.apiKey}`, {
-//             method: 'POST',
-//             headers: {
-//                 Accept: 'application/json',
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//                 token_id: action.tokenId
-//             })
-//         })
-//         const deleted = yield response.json()
-//         console.log('deleted', deleted)
-//         if (response.status != 200) {
-//             yield put(clearingSettings(false))
-//             throw new Error(response.status)
-//         } else {
-//             yield put(resetSettings())
-//         }
-//     } catch (err) {
-//         console.log('error deleting user in saga', err)
-//         yield put(setError('delete user-saga error'))
-//         Sentry.captureException(err)
-//     }
-// }
+function* deleteUser() {
+    try {
+        yield put(userActions.deleteUserRequest())
+        const apiToken = yield select(getApiToken)
+
+        yield call(apiService.deleteUser, apiToken)
+
+        persistor.purge()
+        yield put({
+            type: 'PURGE_USER_STATE'
+        })
+
+        NavigationService.navigate('AuthLoading')
+
+        yield put(userActions.deleteUserSuccess())
+    } catch (err) {
+        console.log('error deleting user in saga', err)
+        yield put(userActions.deleteUserError('delete user-saga error'))
+        Sentry.captureException(err)
+    }
+}
 
 function* userSaga() {
     yield all([
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
-        takeLatest(userTypes.SUBSCRIBE, subscribe)
-        // yield takeLatest('ADD_NOTIFICATION', addNotification)
-        // yield takeLatest('ADD_ALL_NOTIFICATIONS', addAllNotifications)
-        // yield takeLatest('REMOVE_NOTIFICATION', removeNotification)
+        takeLatest(userTypes.SUBSCRIBE, subscribe),
+        takeLatest(userTypes.SUBSCRIBE, subscribe),
+        takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
         // yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications)
         // yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
-        // yield takeLatest('GET_API_KEY', getApiKey)
-        // yield takeLatest('DELETE_USER', deleteUser)
+        takeLatest(userTypes.DELETE_USER, deleteUser)
     ])
 }
 

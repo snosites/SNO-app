@@ -45,7 +45,6 @@ function* startup(action) {
         // // check if user selected all notifications
         if (token && user.subscribeAll) {
             yield call(subscribe, {
-                domain,
                 subscriptionType: 'categories',
                 ids: dbCategories.map(category => {
                     return category.id

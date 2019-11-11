@@ -42,6 +42,20 @@ const apiService = {
             throw err
         }
     },
+    deleteUser: async (apiToken) => {
+        try {
+            const response = await axios.delete(
+                `/user?api_token=${apiToken}`,
+                {
+                    baseURL: BASE_URL
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in delete user api', err, err.repsonse)
+            throw err
+        }
+    },
     fetchAvailableDomains: async (apiToken, version) => {
         try {
             const response = await axios.get(`/domains/all/${version}?api_token=${apiToken}`, {
@@ -75,7 +89,7 @@ const apiService = {
                 `/user/subscribe?api_token=${apiToken}`,
                 {
                     subscriptionType,
-                    ids
+                    categoryIds: ids
                 },
                 {
                     baseURL: BASE_URL
@@ -84,6 +98,25 @@ const apiService = {
             return response.data
         } catch (err) {
             console.log('error in user subscribe api call', err)
+            throw err
+        }
+    },
+    // subscriptionType either categories or writers
+    unsubscribe: async (apiToken, subscriptionType, ids) => {
+        try {
+            const response = await axios.post(
+                `/user/unsubscribe?api_token=${apiToken}`,
+                {
+                    subscriptionType,
+                    categoryIds: ids
+                },
+                {
+                    baseURL: BASE_URL
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in user unsubscribe api call', err)
             throw err
         }
     },

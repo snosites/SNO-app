@@ -1,12 +1,10 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View, TextInput, Text, Platform, Image, Alert } from 'react-native'
+import { ScrollView, StyleSheet, View, TextInput, Text, Image, Alert } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
-import { persistor } from '../redux/configureStore'
-import NavigationService from '../utils/NavigationService'
-import { saveUserInfo, deleteDomain, clearingSettings } from '../redux/actionCreators'
+
 import {
     List,
     Divider,
@@ -19,13 +17,13 @@ import {
     ActivityIndicator
 } from 'react-native-paper'
 
-import {
-    changeActiveDomain,
-    addNotification,
-    removeNotification,
-    deleteUser,
-    clearError
-} from '../redux/actionCreators'
+import { actions as domainActions, getActiveDomain } from '../redux/domains'
+import { types as userTypes, actions as userActions } from '../redux/user'
+import { createLoadingSelector } from '../redux/loading'
+import { createErrorMessageSelector } from '../redux/errors'
+
+const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
+const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])
 
 const ActiveDomainIcon = ({ color }) => <List.Icon icon={`star`} color={color} />
 
@@ -56,13 +54,13 @@ class SettingsScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { userInfo, domains, menus, navigation } = this.props
+        const { userInfo, domains, global, navigation } = this.props
         this.setState({
             username: userInfo.username,
             email: userInfo.email
         })
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
 
         this.setState({
@@ -76,16 +74,6 @@ class SettingsScreen extends React.Component {
         })
     }
 
-    componentDidUpdate() {
-        if (this.props.userInfo.resetSettings) {
-            persistor.purge()
-            this.props.dispatch({
-                type: 'PURGE_USER_STATE'
-            })
-            this.props.navigation.navigate('AuthLoading')
-        }
-    }
-
     render() {
         const {
             snackbarVisible,
@@ -95,9 +83,18 @@ class SettingsScreen extends React.Component {
             email,
             notifications
         } = this.state
-        const { domains, userInfo, dispatch, theme, errors } = this.props
+        const {
+            domains,
+            userInfo,
+            theme,
+            errors,
+            deleteUser,
+            clearingSettings,
+            saveUserInfo,
+            isLoading
+        } = this.props
 
-        if (userInfo.clearingSettings) {
+        if (isLoading) {
             return (
                 <View
                     style={{
@@ -120,12 +117,10 @@ class SettingsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
                                 onBlur={text => {
-                                    dispatch(
-                                        saveUserInfo({
-                                            username: username,
-                                            email: email
-                                        })
-                                    )
+                                    saveUserInfo({
+                                        username: username,
+                                        email: email
+                                    })
                                     this.setState({
                                         editingUsername: false
                                     })
@@ -156,12 +151,10 @@ class SettingsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
                                 onBlur={() => {
-                                    dispatch(
-                                        saveUserInfo({
-                                            username: username,
-                                            email: email
-                                        })
-                                    )
+                                    saveUserInfo({
+                                        username: username,
+                                        email: email
+                                    })
                                     this.setState({
                                         editingEmail: false
                                     })
@@ -365,7 +358,7 @@ class SettingsScreen extends React.Component {
                     Organization Removed
                 </Snackbar>
                 <Snackbar
-                    visible={errors.error === 'delete user-saga error'}
+                    visible={errors}
                     duration={3000}
                     style={{
                         position: 'absolute',
@@ -373,12 +366,10 @@ class SettingsScreen extends React.Component {
                         left: 0,
                         right: 0
                     }}
-                    onDismiss={() => dispatch(clearError())}
+                    onDismiss={() => {}}
                     action={{
                         label: 'Dismiss',
-                        onPress: () => {
-                            dispatch(clearError())
-                        }
+                        onPress: () => {}
                     }}
                 >
                     Sorry there was an error clearing your settings. Please try again later.
@@ -397,10 +388,8 @@ class SettingsScreen extends React.Component {
                                   {
                                       text: 'Clear',
                                       onPress: () => {
-                                          this.props.dispatch(clearingSettings(true))
-                                          this.props.dispatch(
-                                              deleteUser(userInfo.tokenId, userInfo.apiKey)
-                                          )
+                                          clearingSettings(true)
+                                          deleteUser(userInfo.tokenId, userInfo.apiKey)
                                           this._hideDialog()
                                       }
                                   }
@@ -428,7 +417,7 @@ class SettingsScreen extends React.Component {
 
     _handleDeleteOrg = domain => {
         Haptics.selectionAsync()
-        const { domains, navigation, userInfo } = this.props
+        const { domains, navigation, deleteDomain, unsubscribe } = this.props
         if (domain.active) {
             let found = domains.find(domain => {
                 return !domain.active
@@ -443,14 +432,14 @@ class SettingsScreen extends React.Component {
         const categoryIds = domain.notificationCategories.map(category => {
             return category.id
         })
-        this.props.dispatch(
-            removeNotification({
-                tokenId: userInfo.tokenId,
-                categoryId: categoryIds,
-                domain: domain.id
+        if(categoryIds) {
+            unsubscribe({
+                subscriptionType: 'categories',
+                ids: categoryIds,
+                domainId: domain.id
             })
-        )
-        this.props.dispatch(deleteDomain(domain.id))
+        }
+        deleteDomain(domain.id)
         this.setState({
             snackbarVisible: true
         })
@@ -484,32 +473,28 @@ class SettingsScreen extends React.Component {
                 }
             }
         })
-        // notificationId is category ID in DB
-        const { dispatch, userInfo } = this.props
+
+        const { subscribe, unsubscribe } = this.props
         if (value) {
-            dispatch(
-                addNotification({
-                    tokenId: userInfo.tokenId,
-                    categoryId: notificationId,
-                    domain: domain.id
-                })
-            )
+            subscribe({
+                subscriptionType: 'categories',
+                ids: [notificationId],
+                domainId: domain.id
+            })
         } else {
-            dispatch(
-                removeNotification({
-                    tokenId: userInfo.tokenId,
-                    categoryId: notificationId,
-                    domain: domain.id
-                })
-            )
+            unsubscribe({
+                subscriptionType: 'categories',
+                ids: [notificationId],
+                domainId: domain.id
+            })
         }
     }
 
     _switchDomain = id => {
         Haptics.selectionAsync()
-        const { dispatch, navigation } = this.props
+        const { changeActiveDomain, navigation } = this.props
 
-        dispatch(changeActiveDomain(id))
+        changeActiveDomain(id)
         navigation.navigate('AuthLoading')
     }
 }
@@ -525,13 +510,31 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapStateToProps = store => ({
-    theme: store.theme,
-    domains: store.domains,
-    userInfo: store.userInfo,
-    menus: store.menus,
-    activeDomain: store.activeDomain,
-    errors: store.errors
-})
+const mapStateToProps = state => {
+    return {
+        theme: state.theme,
+        domains: state.domains,
+        userInfo: state.user,
+        global: state.global,
+        activeDomain: getActiveDomain(state),
+        errors: deleteUserErrorSelector(state),
+        isLoading: deleteUserLoadingSelector(state)
+    }
+}
 
-export default connect(mapStateToProps)(SettingsScreen)
+const mapDispatchToProps = dispatch => {
+    return {
+        changeActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId)),
+        deleteUser: () => dispatch(userActions.deleteUser()),
+        clearingSettings: payload => dispatch(userActions.clearingSettings(payload)),
+        saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload)),
+        deleteDomain: domainId => dispatch(domainActions.deleteDomain(domainId)),
+        subscribe: payload => dispatch(userActions.subscribe(payload)),
+        unsubscribe: payload => dispatch(userActions.unsubscribe(payload))
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SettingsScreen)
