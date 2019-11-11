@@ -4,12 +4,16 @@ import userSaga from './user'
 import globalSaga from './global'
 import startupSaga from './startup'
 import articleSaga from './article'
+import searchSaga from './search'
+import profileSaga from './profile'
 
 export default function* rootSaga() {
     yield all([
         userSaga(),
         globalSaga(),
         startupSaga(),
-        articleSaga()
+        articleSaga(),
+        searchSaga(),
+        profileSaga()
     ])
 }

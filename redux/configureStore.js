@@ -29,8 +29,7 @@ const middlewareList = __DEV__ ? [sentryMiddleware, sagaMiddleware, logger] : [ 
 const persistConfig = {
     key: 'primary',
     storage,
-    // whitelist: ['domains', 'savedArticlesBySchool', 'user'],
-    whitelist: ['domains'],
+    whitelist: ['domains', 'savedArticlesBySchool', 'user'],
     debug: true,
     timeout: 10000,
     stateReconciler: autoMergeLevel2

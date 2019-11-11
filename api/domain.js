@@ -149,6 +149,51 @@ const domainApiService = {
             throw err
         }
     },
+    fetchArticle: async (domainUrl, articleId) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/posts/${articleId}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch article api', err, err.response)
+            throw err
+        }
+    },
+    searchArticles: async (options) => {
+        const { domainUrl, searchTerm, page } = options
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/posts?search=${searchTerm}&page=${page}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in search articles api', err, err.response)
+            throw err
+        }
+    },
+    fetchProfileArticles: async (domainUrl, writerName) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/author_content?name=${writerName}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch profile articles api', err, err.response)
+            throw err
+        }
+    },
+    fetchProfiles: async (domainUrl, year) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/get_profiles?year=${year}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch profiles api', err, err.response)
+            throw err
+        }
+    },
 }
 
 export default domainApiService

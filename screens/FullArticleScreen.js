@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 
 import { actions as savedArticleActions } from '../redux/savedArticles'
+import { getActiveDomain } from '../redux/domains'
 
 import { FAB, Portal, Snackbar } from 'react-native-paper';
 
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     theme: state.theme,
-    activeDomain: state.activeDomain
+    activeDomain: getActiveDomain(state)
 })
 
 const mapDispatchToProps = dispatch => ({

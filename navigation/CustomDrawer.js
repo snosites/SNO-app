@@ -14,7 +14,7 @@ import {
 import HTML from 'react-native-render-html';
 
 import { actions as articlesActions } from '../redux/articles'
-
+import { actions as searchActions } from '../redux/search'
 import { getActiveDomain } from '../redux/domains'
 
 import { SafeAreaView } from 'react-navigation';
@@ -22,11 +22,6 @@ import DrawerNavIcon from '../components/DrawerNavIcon';
 import { connect } from 'react-redux';
 
 import * as Amplitude from 'expo-analytics-amplitude';
-
-import {
-    fetchSearchArticlesIfNeeded,
-    invalidateSearchArticles
-} from '../redux/actionCreators';
 
 
 class CustomDrawerComponent extends React.Component {
@@ -118,7 +113,12 @@ class CustomDrawerComponent extends React.Component {
     }
 
     _searchArticles = () => {
-        const { activeDomain, navigation, invalidateSearchArticles } = this.props
+        const {
+            activeDomain,
+            navigation,
+            invalidateSearchArticles,
+            fetchSearchArticlesIfNeeded
+        } = this.props
         const { searchTerm } = this.state;
         invalidateSearchArticles()
         fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
@@ -228,8 +228,9 @@ const mapDispatchToProps = dispatch => ({
                 category
             })
         ),
-    fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) => dispatch(articlesActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
-    invalidateSearchArticles: () => dispatch(articlesActions.invalidateSearchArticles())
+    fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
+        dispatch(searchActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
+    invalidateSearchArticles: () => dispatch(searchActions.invalidateSearchArticles())
 })
 
 
