@@ -70,7 +70,7 @@ export const actions = {
     },
     receiveProfiles(profiles) {
         return {
-            type: RECEIVE_PROFILES,
+            type: types.RECEIVE_PROFILES,
             profiles
         }
     },

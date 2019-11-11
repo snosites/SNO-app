@@ -12,7 +12,7 @@ function* fetchProfiles(action) {
     const { domain, year } = action
     try {
         yield put(profileActions.requestProfiles())
-        const profiles = yield fetch(domainApiService.fetchProfiles, domain, year)
+        const profiles = yield call(domainApiService.fetchProfiles, domain, year)
         yield put(profileActions.receiveProfiles(profiles))
     } catch (err) {
         console.log('error fetching profiles in saga', err)

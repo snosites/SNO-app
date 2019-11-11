@@ -11,7 +11,9 @@ import {
 import Moment from 'moment';
 import Color from 'color';
 import { connect } from 'react-redux';
-import { fetchProfiles } from '../redux/actionCreators';
+
+import { actions as profileActions } from '../redux/profiles'
+import { getActiveDomain } from '../redux/domains'
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -62,12 +64,9 @@ class StaffScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { menus, navigation } = this.props;
-        // if (this.animation) {
-        //     this._playAnimation();
-        // }
+        const { navigation, global } = this.props
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
         let years = navigation.getParam('activeYears', null);
         let customDisplay = navigation.getParam('customDisplay', null);
@@ -217,9 +216,9 @@ class StaffScreen extends React.Component {
     }
 
     _getProfiles = (year) => {
-        const { activeDomain, dispatch } = this.props;
+        const { activeDomain, fetchProfiles } = this.props
         const url = activeDomain.url;
-        dispatch(fetchProfiles(url, year));
+        fetchProfiles(url, year)
     }
 
     _scrollToIndex = (index) => {
@@ -284,10 +283,17 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
-        menus: state.menus,
+        activeDomain: getActiveDomain(state),
+        global: state.global,
         profiles: state.profiles
     }
 }
 
-export default connect(mapStateToProps)(StaffScreen);
+const mapDispatchToProps = dispatch => ({
+    fetchProfiles: (domainUrl, year) => dispatch(profileActions.fetchProfiles(domainUrl, year))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(StaffScreen)
