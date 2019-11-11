@@ -2,6 +2,7 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects'
 import { normalize, schema } from 'normalizr'
 
 import { types as articleTypes, actions as articleActions } from '../redux/articles'
+import { actions as userActions } from '../redux/user'
 import domainApiService from '../api/domain'
 
 import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
@@ -11,33 +12,22 @@ import * as Sentry from 'sentry-expo'
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
-// function* addComment(action) {
-//     const { domain, articleId, username, email, comment } = action.payload
-//     let objToSend = {
-//         author_email: email,
-//         author_name: username,
-//         content: comment,
-//         post: articleId
-//     }
-//     try {
-//         const response = yield call(fetch, `https://${domain}/wp-json/wp/v2/comments`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(objToSend)
-//         })
-//         if (response.status !== 201) {
-//             yield put(setCommentPosted('error'))
-//             throw new Error(response._bodyText)
-//         } else {
-//             yield put(setCommentPosted('posted'))
-//         }
-//     } catch (err) {
-//         console.log('error adding comment in saga', err)
-//         Sentry.captureException(err)
-//     }
-// }
+function* addComment(action) {
+    const { domain, articleId, username, email, comment } = action.payload
+    let objToSend = {
+        author_email: email,
+        author_name: username,
+        content: comment,
+        post: articleId
+    }
+    try {
+        yield call(domainApiService.addComment, domain, objToSend)
+        yield put(userActions.setCommentPosted('posted'))
+    } catch (err) {
+        console.log('error adding comment in saga', err)
+        yield put(userActions.setCommentPosted('error'))
+    }
+}
 
 function* fetchArticles(action) {
     const { domain, category, page } = action
@@ -128,10 +118,11 @@ function* fetchMoreArticlesIfNeeded(action) {
 }
 
 function* articleSaga() {
-    yield takeLatest(articleTypes.FETCH_ARTICLES_IF_NEEDED, fetchArticlesIfNeeded)
-    yield takeLatest(articleTypes.FETCH_MORE_ARTICLES_IF_NEEDED, fetchMoreArticlesIfNeeded)
-    // yield takeLatest('REFETCH_COMMENTS', refetchComments);
-    // yield takeLatest(articleTypes.ADD_C'ADD_COMMENT', addComment)
+    yield all([
+        takeLatest(articleTypes.FETCH_ARTICLES_IF_NEEDED, fetchArticlesIfNeeded),
+        takeLatest(articleTypes.FETCH_MORE_ARTICLES_IF_NEEDED, fetchMoreArticlesIfNeeded),
+        takeLatest(articleTypes.ADD_COMMENT, addComment)
+    ])
 }
 
 export default articleSaga

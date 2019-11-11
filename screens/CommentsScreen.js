@@ -15,7 +15,11 @@ import {
     ActivityIndicator
 } from 'react-native'
 import { connect } from 'react-redux'
-import { saveUserInfo, addComment, setCommentPosted } from '../redux/actionCreators'
+
+import { actions as articleActions } from '../redux/articles'
+import { actions as userActions } from '../redux/user'
+import { getActiveDomain } from '../redux/domains'
+
 import Moment from 'moment'
 import Color from 'color'
 import HTML from 'react-native-render-html'
@@ -58,7 +62,7 @@ class CommentsScreen extends React.Component {
     }
 
     render() {
-        const { navigation, userInfo, dispatch, theme } = this.props
+        const { navigation, userInfo, saveUserInfo, theme, setCommentPosted } = this.props
         const { modalVisible, username, email, commentInput } = this.state
         let comments = navigation.getParam('comments', null)
 
@@ -188,12 +192,10 @@ class CommentsScreen extends React.Component {
                                     theme={{ roundness: 10 }}
                                     style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
                                     onPress={() => {
-                                        dispatch(
-                                            saveUserInfo({
-                                                username,
-                                                email
-                                            })
-                                        )
+                                        saveUserInfo({
+                                            username,
+                                            email
+                                        })
                                         this._hideModal()
                                     }}
                                 >
@@ -206,7 +208,7 @@ class CommentsScreen extends React.Component {
                 <Snackbar
                     visible={userInfo.commentPosted}
                     onDismiss={() => {
-                        dispatch(setCommentPosted(false))
+                        setCommentPosted(false)
                         this.setState({
                             commentSent: false
                         })
@@ -215,7 +217,7 @@ class CommentsScreen extends React.Component {
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
-                            dispatch(setCommentPosted(false))
+                            setCommentPosted(false)
                             this.setState({
                                 commentSent: false
                             })
@@ -234,17 +236,16 @@ class CommentsScreen extends React.Component {
     _hideModal = () => this.setState({ modalVisible: false })
 
     _addComment = () => {
-        const { activeDomain, userInfo, dispatch, navigation } = this.props
+        const { activeDomain, userInfo, addComment, navigation } = this.props
         const articleId = navigation.getParam('articleId', null)
-        dispatch(
-            addComment({
-                domain: activeDomain.url,
-                articleId,
-                username: userInfo.username,
-                email: userInfo.email,
-                comment: this.state.commentInput
-            })
-        )
+        addComment({
+            domain: activeDomain.url,
+            articleId,
+            username: userInfo.username,
+            email: userInfo.email,
+            comment: this.state.commentInput
+        })
+
         this.setState({
             commentInput: '',
             commentSent: true
@@ -319,12 +320,21 @@ const styles = StyleSheet.create({
     }
 })
 
-mapStateToProps = state => {
+const mapStateToProps = state => {
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
-        userInfo: state.userInfo
+        activeDomain: getActiveDomain(state),
+        userInfo: state.user
     }
 }
 
-export default connect(mapStateToProps)(CommentsScreen)
+const mapDispatchToProps = dispatch => ({
+    addComment: payload => dispatch(articleActions.addComment(payload)),
+    setCommentPosted: payload => dispatch(userActions.setCommentPosted(payload)),
+    saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(CommentsScreen)

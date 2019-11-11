@@ -194,6 +194,18 @@ const domainApiService = {
             throw err
         }
     },
+    addComment: async (domainUrl, postObj) => {
+        try {
+            const response = await axios.post(
+                `https://${domainUrl}/wp-json/wp/v2/comments`,
+                postObj
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in add comment api', err, err.response)
+            throw err
+        }
+    },
 }
 
 export default domainApiService

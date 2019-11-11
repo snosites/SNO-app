@@ -17,7 +17,10 @@ export const types = {
     REQUEST_RECENT_ARTICLES: 'REQUEST_RECENT_ARTICLES',
     RECEIVE_RECENT_ARTICLES: 'RECEIVE_RECENT_ARTICLES',
     FETCH_RECENT_ARTICLES_FAILURE: 'FETCH_RECENT_ARTICLES_FAILURE',
-    
+    //comments
+    UPDATE_COMMENTS: 'UPDATE_COMMENTS',
+    REFETCH_COMMENTS: 'REFETCH_COMMENTS',
+    ADD_COMMENT: 'ADD_COMMENT'
 }
 
 // ARTICLES REDUCERS //
@@ -189,6 +192,26 @@ export const actions = {
             type: types.FETCH_RECENT_ARTICLES_FAILURE,
             error,
             recievedAt: Date.now()
+        }
+    },
+    //comments
+    updateComments(payload) {
+        return {
+            type: types.UPDATE_COMMENTS,
+            payload
+        }
+    },
+    refetchComments(domain, articleId) {
+        return {
+            type: types.REFETCH_COMMENTS,
+            domain,
+            articleId
+        }
+    },
+    addComment(payload) {
+        return {
+            type: types.ADD_COMMENT,
+            payload
         }
     }
 }

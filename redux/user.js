@@ -9,10 +9,12 @@ export const types = {
     SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
     SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
     SET_USER: 'SET_USER',
+    SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
+    SAVE_USERINFO: 'SAVE_USERINFO',
 
     DELETE_USER: 'DELETE_USER',
     SET_FROM_PUSH: 'SET_FROM_PUSH',
-    SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
+
     CLEARING_SETTINGS: 'CLEARING_SETTINGS',
     RESET_SETTINGS: 'RESET_SETTINGS'
 }
@@ -21,17 +23,18 @@ const initialState = {
     username: '',
     email: '',
     subscribeAll: false,
-    user: {}
+    user: {},
+    commentPosted: false
 }
 
 export default function user(state = initialState, action) {
     switch (action.type) {
-        // case types.SAVE_USERINFO:
-        //     return {
-        //         ...state,
-        //         username: action.payload.username,
-        //         email: action.payload.email
-        //     }
+        case types.SAVE_USERINFO:
+            return {
+                ...state,
+                username: action.payload.username,
+                email: action.payload.email
+            }
         case types.SET_USER:
             return {
                 ...state,
@@ -46,6 +49,11 @@ export default function user(state = initialState, action) {
             return {
                 ...state,
                 subscribeAll: action.payload
+            }
+        case types.SET_COMMENT_POSTED:
+            return {
+                ...state,
+                commentPosted: action.payload
             }
         default:
             return state
@@ -62,7 +70,9 @@ export const actions = {
     subscribeSuccess: () => ({ type: types.SUBSCRIBE_SUCCESS }),
     subscribeError: error => ({ type: types.SUBSCRIBE_ERROR, error }),
     setSubscribeAll: payload => ({ type: types.SET_SUBSCRIBE_ALL, payload }),
-    setUser: payload => ({ type: types.SET_USER, payload })
+    setUser: payload => ({ type: types.SET_USER, payload }),
+    setCommentPosted: payload => ({ type: types.SET_COMMENT_POSTED, payload }),
+    saveUserInfo: payload => ({ type: types.SAVE_USERINFO, payload })
 }
 
 //selectors
