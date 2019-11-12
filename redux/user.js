@@ -100,4 +100,5 @@ export const actions = {
 
 //selectors
 export const getApiToken = state => state.user.user.api_token
+export const getPushToken = state => state.user.user.push_token
 export const getUser = state => state.user.user

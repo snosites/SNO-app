@@ -151,7 +151,11 @@ const domainApiService = {
         const { domainUrl, category, page } = options
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/posts?categories=${category}&page=${page}`
+                `https://${domainUrl}/wp-json/wp/v2/posts?categories=${category}&page=${page}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {

@@ -12,8 +12,8 @@ import {
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import * as Haptics from 'expo-haptics';
-import * as WebBrowser from 'expo-web-browser';
+import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 
 import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'
@@ -336,7 +336,100 @@ export default class ArticleBodyContent extends React.Component {
 
     _renderArticleAuthor = article => {
         const { theme } = this.props
-        if (article.custom_fields.writer && article.custom_fields.writer[0]) {
+        if (article.custom_fields.terms && article.custom_fields.terms[0]) {
+            let writers = article.custom_fields.terms
+            //if arr of writers dont include job title
+            if (writers.length > 1) {
+                return writers.map((writer, i) => {
+                    if (i === writers.length - 2) {
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {`${writer.name} & `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    } else if (i === writers.length - 1) {
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {writer.name}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    } else {
+                        return (
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {`${writer.name}, `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    }
+                })
+            }
+            // if writer has a jobtitle include it
+            if (article.custom_fields.jobtitle) {
+                return (
+                    <TouchableItem
+                        onPress={() => this._handleProfilePress(article.custom_fields.terms[0].name)}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
+                            {`${article.custom_fields.terms[0].name} | ${
+                                article.custom_fields.jobtitle[0]
+                            }`}
+                        </Text>
+                    </TouchableItem>
+                )
+            }
+            // otherwise just display writer
+            else {
+                return (
+                    <TouchableItem
+                        onPress={() => this._handleProfilePress(article.custom_fields.terms[0].name)}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
+                            {`${article.custom_fields.terms[0].name}`}
+                        </Text>
+                    </TouchableItem>
+                )
+            }
+        } else if (article.custom_fields.writer && article.custom_fields.writer[0]) {
             let writers = article.custom_fields.writer
             //if arr of writers dont include job title
             if (writers.length > 1) {
