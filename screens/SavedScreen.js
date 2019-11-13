@@ -10,7 +10,7 @@ import { getActiveDomain } from '../redux/domains'
 
 import ArticleListContent from '../views/ArticleListContent'
 
-class ListScreen extends React.Component {
+class SavedArticlesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const logo = navigation.getParam('headerLogo', null)
         return {
@@ -165,6 +165,8 @@ const mapStateToProps = state => {
         theme: state.theme,
         global: state.global,
         savedArticles: state.savedArticlesBySchool[activeDomain.id]
+            ? state.savedArticlesBySchool[activeDomain.id]
+            : []
     }
 }
 
@@ -176,4 +178,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ListScreen)
+)(SavedArticlesScreen)

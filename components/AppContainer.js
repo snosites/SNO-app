@@ -24,7 +24,7 @@ const AppContainer = ({ theme }) => {
                     }}
                 />
             </View>
-            {/* <NotificationAlert /> */}
+            <NotificationAlert />
         </PaperProvider>
     )
 }

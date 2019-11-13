@@ -119,6 +119,7 @@ class ListScreen extends React.Component {
         const { navigation, articlesByCategory, category, theme, activeDomain } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
+
         if (!categoryId) {
             return (
                 <SafeAreaView
@@ -202,7 +203,7 @@ class ListScreen extends React.Component {
                 <ArticleListContent
                     articleList={articlesByCategory}
                     isFetching={category.isFetching}
-                    isRefreshing={category.didInvalidate}
+                    isRefreshing={category.didInvalidate || false}
                     loadMore={this._loadMore}
                     handleRefresh={this._handleRefresh}
                     saveRef={this._saveRef}
@@ -336,12 +337,15 @@ const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', null)
     const activeDomain = getActiveDomain(state)
-    if (!categoryId) {
+    if (!categoryId || !state.articlesByCategory[categoryId]) {
+        console.log('returning default....')
         return {
             theme: state.theme,
             activeDomain,
             menus: state.global.menuItems,
-            category: null,
+            category: {
+                isFetching: false
+            },
             articlesByCategory: [],
             global: state.global
         }

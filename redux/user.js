@@ -21,7 +21,6 @@ export const types = {
     DELETE_USER_ERROR: 'DELETE_USER_ERROR',
     CLEARING_SETTINGS: 'CLEARING_SETTINGS',
     SET_WRITER_SUBSCRIPTIONS: 'SET_WRITER_SUBSCRIPTIONS',
-
     SET_FROM_PUSH: 'SET_FROM_PUSH',
 
     RESET_SETTINGS: 'RESET_SETTINGS'
@@ -33,8 +32,8 @@ const initialState = {
     subscribeAll: false,
     user: {},
     commentPosted: false,
-    clearingSettings: false,
-    writerSubscriptions: []
+    writerSubscriptions: [],
+    fromPush: false
 }
 
 export default function user(state = initialState, action) {
@@ -65,15 +64,15 @@ export default function user(state = initialState, action) {
                 ...state,
                 commentPosted: action.payload
             }
-        case types.CLEARING_SETTINGS:
-            return {
-                ...state,
-                clearingSettings: action.payload
-            }
         case types.SET_WRITER_SUBSCRIPTIONS:
             return {
                 ...state,
                 writerSubscriptions: action.payload
+            }
+        case types.SET_FROM_PUSH:
+            return {
+                ...state,
+                fromPush: action.payload
             }
         default:
             return state
@@ -101,11 +100,11 @@ export const actions = {
     deleteUserRequest: () => ({ type: types.DELETE_USER_REQUEST }),
     deleteUserSuccess: () => ({ type: types.DELETE_USER_SUCCESS }),
     deleteUserError: error => ({ type: types.DELETE_USER_ERROR, error }),
-    clearingSettings: payload => ({ type: types.CLEARING_SETTINGS, payload }),
     setWriterSubscriptions: payload => ({
         type: types.SET_WRITER_SUBSCRIPTIONS,
         payload
-    })
+    }),
+    setFromPush: payload => ({ type: types.SET_FROM_PUSH, payload})
 }
 
 //selectors

@@ -98,4 +98,11 @@ export const actions = {
        }
 
 //selectors 
-export const getActiveDomain = state => state.domains.find(domain => domain.active === true)
+export const getActiveDomain = state => {
+    const found = state.domains.find(domain => domain.active === true)
+    if(found){
+        return found
+    } else {
+        return {}
+    }
+}

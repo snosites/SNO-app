@@ -42,10 +42,11 @@ function back() {
 }
 
 function navigateReset(routeName, params) {
+    console.log('this is navigator', _navigator)
     _navigator.dispatch(
         StackActions.reset({
             index: 0,
-            key: undefined,
+            key: null,
             actions: [NavigationActions.navigate({ 
                 routeName: routeName,
                 params 
@@ -53,10 +54,6 @@ function navigateReset(routeName, params) {
         })
     )
 }
-
-
-
-// add other navigation functions that you need and export them
 
 export default {
     navigate,

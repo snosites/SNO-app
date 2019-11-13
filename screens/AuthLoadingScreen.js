@@ -26,11 +26,11 @@ const AuthLoadingScreen = props => {
             findOrCreateUser()
             return
         }
-        // if (switchingDomain) {
-        //     return
-        // }
+        if (switchingDomain) {
+            return
+        }
         _getDomainAsync()
-    }, [user.user.api_token])
+    }, [user.user.api_token, switchingDomain])
 
     _getDomainAsync = async () => {
         const activeDomain = domains.filter(domain => {

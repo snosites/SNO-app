@@ -99,7 +99,6 @@ class SettingsScreen extends React.Component {
             theme,
             errors,
             deleteUser,
-            clearingSettings,
             saveUserInfo,
             isLoading,
             unsubscribe,
@@ -262,7 +261,9 @@ class SettingsScreen extends React.Component {
                                                         title={writerObj.writer_name}
                                                         right={() => {
                                                             return unsubscribeLoading ? (
-                                                                <ActivityIndicator style={{paddingRight: 10}} />
+                                                                <ActivityIndicator
+                                                                    style={{ paddingRight: 10 }}
+                                                                />
                                                             ) : (
                                                                 <IconButton
                                                                     icon='delete'
@@ -360,7 +361,14 @@ class SettingsScreen extends React.Component {
                                 )
                             })
                         ) : (
-                            <Text style={{ textAlign: 'center' }}>
+                            <Text
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: 18,
+                                    fontWeight: 'bold',
+                                    paddingBottom: 10
+                                }}
+                            >
                                 You have disabled push notifications for this app
                             </Text>
                         )}
@@ -434,8 +442,7 @@ class SettingsScreen extends React.Component {
                                   {
                                       text: 'Clear',
                                       onPress: () => {
-                                          clearingSettings(true)
-                                          deleteUser(userInfo.tokenId, userInfo.apiKey)
+                                          deleteUser()
                                           this._hideDialog()
                                       }
                                   }
@@ -565,7 +572,7 @@ const mapStateToProps = state => {
         activeDomain: getActiveDomain(state),
         errors: deleteUserErrorSelector(state),
         isLoading: deleteUserLoadingSelector(state),
-        unsubscribeLoading: unsubscribeLoadingSelector(state)
+        unsubscribeLoading: unsubscribeLoadingSelector(state),
     }
 }
 
@@ -573,7 +580,6 @@ const mapDispatchToProps = dispatch => {
     return {
         changeActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId)),
         deleteUser: () => dispatch(userActions.deleteUser()),
-        clearingSettings: payload => dispatch(userActions.clearingSettings(payload)),
         saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload)),
         deleteDomain: domainId => dispatch(domainActions.deleteDomain(domainId)),
         subscribe: payload => dispatch(userActions.subscribe(payload)),
