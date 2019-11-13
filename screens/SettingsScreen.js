@@ -1,5 +1,14 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View, TextInput, Text, Image, Alert } from 'react-native'
+import {
+    ScrollView,
+    StyleSheet,
+    View,
+    TextInput,
+    Text,
+    Image,
+    Alert,
+    ActivityIndicator
+} from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
@@ -13,8 +22,7 @@ import {
     Colors,
     Snackbar,
     Button,
-    Portal,
-    ActivityIndicator
+    Portal
 } from 'react-native-paper'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
@@ -24,6 +32,8 @@ import { createErrorMessageSelector } from '../redux/errors'
 
 const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
 const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])
+
+const unsubscribeLoadingSelector = createLoadingSelector([userTypes.UNSUBSCRIBE])
 
 const ActiveDomainIcon = ({ color }) => <List.Icon icon={`star`} color={color} />
 
@@ -91,7 +101,9 @@ class SettingsScreen extends React.Component {
             deleteUser,
             clearingSettings,
             saveUserInfo,
-            isLoading
+            isLoading,
+            unsubscribe,
+            unsubscribeLoading
         } = this.props
 
         if (isLoading) {
@@ -226,29 +238,63 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {userInfo.tokenId ? (
+                        {!userInfo.user.pushToken ? (
                             domains.map(domain => {
+                                const writerSubs = userInfo.writerSubscriptions.filter(
+                                    writer => writer.organization_id === domain.id
+                                )
                                 return (
                                     <List.Accordion
                                         key={domain.id}
                                         title={domain.name}
                                         left={props => <List.Icon {...props} icon='folder-open' />}
                                     >
-                                        {/* <List.Item
-                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                        titleStyle={{ fontWeight: 'bold' }}
-                                        title={'All Notifications'}
-                                        right={() => {
-                                            return (
-                                                <Switch
-                                                    style={{ margin: 10 }}
-                                                    value={false}
-                                                // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                // }
-                                                />
-                                            )
-                                        }}
-                                    /> */}
+                                        <List.Subheader>Writer Notifications</List.Subheader>
+                                        {writerSubs.length > 0 ? (
+                                            writerSubs.map(writerObj => {
+                                                return (
+                                                    <List.Item
+                                                        key={writerObj.id}
+                                                        style={{
+                                                            paddingVertical: 0,
+                                                            paddingLeft: 60
+                                                        }}
+                                                        title={writerObj.writer_name}
+                                                        right={() => {
+                                                            return unsubscribeLoading ? (
+                                                                <ActivityIndicator style={{paddingRight: 10}} />
+                                                            ) : (
+                                                                <IconButton
+                                                                    icon='delete'
+                                                                    color={Colors.red700}
+                                                                    size={20}
+                                                                    onPress={() =>
+                                                                        unsubscribe({
+                                                                            subscriptionType:
+                                                                                'writers',
+                                                                            ids: [writerObj.id],
+                                                                            domainId: domain.id
+                                                                        })
+                                                                    }
+                                                                />
+                                                            )
+                                                        }}
+                                                    />
+                                                )
+                                            })
+                                        ) : (
+                                            <Text
+                                                style={{
+                                                    fontSize: 18,
+                                                    fontWeight: 'bold',
+                                                    paddingBottom: 10
+                                                }}
+                                            >
+                                                You aren't following any writers yet
+                                            </Text>
+                                        )}
+
+                                        <List.Subheader>Category Notifications</List.Subheader>
                                         {domain.notificationCategories.map((item, i) => {
                                             if (item.category_name == 'custom_push') {
                                                 return (
@@ -432,7 +478,7 @@ class SettingsScreen extends React.Component {
         const categoryIds = domain.notificationCategories.map(category => {
             return category.id
         })
-        if(categoryIds) {
+        if (categoryIds) {
             unsubscribe({
                 subscriptionType: 'categories',
                 ids: categoryIds,
@@ -518,7 +564,8 @@ const mapStateToProps = state => {
         global: state.global,
         activeDomain: getActiveDomain(state),
         errors: deleteUserErrorSelector(state),
-        isLoading: deleteUserLoadingSelector(state)
+        isLoading: deleteUserLoadingSelector(state),
+        unsubscribeLoading: unsubscribeLoadingSelector(state)
     }
 }
 

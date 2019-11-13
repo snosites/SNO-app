@@ -1,31 +1,31 @@
 export const types = {
-           FIND_OR_CREATE_USER: 'FIND_OR_CREATE_USER',
-           FIND_OR_CREATE_USER_REQUEST: 'FIND_OR_CREATE_USER_REQUEST',
-           FIND_OR_CREATE_USER_SUCCESS: 'FIND_OR_CREATE_USER_SUCCESS',
-           FIND_OR_CREATE_USER_ERROR: 'FIND_OR_CREATE_USER_ERROR',
-           SUBSCRIBE: 'SUBSCRIBE',
-           SUBSCRIBE_REQUEST: 'SUBSCRIBE_REQUEST',
-           SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
-           SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
-           UNSUBSCRIBE: 'UNSUBSCRIBE',
-           UNSUBSCRIBE_REQUEST: 'UNSUBSCRIBE_REQUEST',
-           UNSUBSCRIBE_SUCCESS: 'UNSUBSCRIBE_SUCCESS',
-           UNSUBSCRIBE_ERROR: 'UNSUBSCRIBE_ERROR',
-           SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
-           SET_USER: 'SET_USER',
-           SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
-           SAVE_USERINFO: 'SAVE_USERINFO',
-           DELETE_USER: 'DELETE_USER',
-           DELETE_USER_REQUEST: 'DELETE_USER_REQUEST',
-           DELETE_USER_SUCCESS: 'DELETE_USER_SUCCESS',
-           DELETE_USER_ERROR: 'DELETE_USER_ERROR',
-           CLEARING_SETTINGS: 'CLEARING_SETTINGS',
+    FIND_OR_CREATE_USER: 'FIND_OR_CREATE_USER',
+    FIND_OR_CREATE_USER_REQUEST: 'FIND_OR_CREATE_USER_REQUEST',
+    FIND_OR_CREATE_USER_SUCCESS: 'FIND_OR_CREATE_USER_SUCCESS',
+    FIND_OR_CREATE_USER_ERROR: 'FIND_OR_CREATE_USER_ERROR',
+    SUBSCRIBE: 'SUBSCRIBE',
+    SUBSCRIBE_REQUEST: 'SUBSCRIBE_REQUEST',
+    SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
+    SUBSCRIBE_ERROR: 'SUBSCRIBE_ERROR',
+    UNSUBSCRIBE: 'UNSUBSCRIBE',
+    UNSUBSCRIBE_REQUEST: 'UNSUBSCRIBE_REQUEST',
+    UNSUBSCRIBE_SUCCESS: 'UNSUBSCRIBE_SUCCESS',
+    UNSUBSCRIBE_ERROR: 'UNSUBSCRIBE_ERROR',
+    SET_SUBSCRIBE_ALL: 'SET_SUBSCRIBE_ALL',
+    SET_USER: 'SET_USER',
+    SET_COMMENT_POSTED: 'SET_COMMENT_POSTED',
+    SAVE_USERINFO: 'SAVE_USERINFO',
+    DELETE_USER: 'DELETE_USER',
+    DELETE_USER_REQUEST: 'DELETE_USER_REQUEST',
+    DELETE_USER_SUCCESS: 'DELETE_USER_SUCCESS',
+    DELETE_USER_ERROR: 'DELETE_USER_ERROR',
+    CLEARING_SETTINGS: 'CLEARING_SETTINGS',
+    SET_WRITER_SUBSCRIPTIONS: 'SET_WRITER_SUBSCRIPTIONS',
 
+    SET_FROM_PUSH: 'SET_FROM_PUSH',
 
-           SET_FROM_PUSH: 'SET_FROM_PUSH',
-
-           RESET_SETTINGS: 'RESET_SETTINGS'
-       }
+    RESET_SETTINGS: 'RESET_SETTINGS'
+}
 
 const initialState = {
     username: '',
@@ -33,7 +33,8 @@ const initialState = {
     subscribeAll: false,
     user: {},
     commentPosted: false,
-    clearingSettings: false
+    clearingSettings: false,
+    writerSubscriptions: []
 }
 
 export default function user(state = initialState, action) {
@@ -69,6 +70,11 @@ export default function user(state = initialState, action) {
                 ...state,
                 clearingSettings: action.payload
             }
+        case types.SET_WRITER_SUBSCRIPTIONS:
+            return {
+                ...state,
+                writerSubscriptions: action.payload
+            }
         default:
             return state
     }
@@ -95,10 +101,15 @@ export const actions = {
     deleteUserRequest: () => ({ type: types.DELETE_USER_REQUEST }),
     deleteUserSuccess: () => ({ type: types.DELETE_USER_SUCCESS }),
     deleteUserError: error => ({ type: types.DELETE_USER_ERROR, error }),
-    clearingSettings: payload => ({ type: types.CLEARING_SETTINGS, payload })
+    clearingSettings: payload => ({ type: types.CLEARING_SETTINGS, payload }),
+    setWriterSubscriptions: payload => ({
+        type: types.SET_WRITER_SUBSCRIPTIONS,
+        payload
+    })
 }
 
 //selectors
 export const getApiToken = state => state.user.user.api_token
 export const getPushToken = state => state.user.user.push_token
 export const getUser = state => state.user.user
+export const getWriterSubscriptions = state => state.user.writerSubscriptions

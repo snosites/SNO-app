@@ -40,10 +40,14 @@ function* findOrCreateUser() {
 export function* fetchNotificationSubscriptions(domainId) {
     const apiToken = yield select(getApiToken)
 
-    const notifications = yield call(apiService.getSubscriptions, apiToken)
+    const [notifications, writerNotifications] = yield all([
+        call(apiService.getSubscriptions, apiToken),
+        call(apiService.getWriterSubscriptions, apiToken)
+    ])
 
-    console.log('notifications', notifications)
+    console.log('notifications', notifications, writerNotifications)
     yield put(domainsActions.setNotifications(domainId, notifications))
+    yield put(userActions.setWriterSubscriptions(writerNotifications))
 }
 
 function* subscribe(action) {
@@ -53,7 +57,7 @@ function* subscribe(action) {
 
         const apiToken = yield select(getApiToken)
 
-        yield call(apiService.subscribe, apiToken, subscriptionType, ids)
+        yield call(apiService.subscribe, apiToken, subscriptionType, ids, domainId)
 
         if (domainId) yield call(fetchNotificationSubscriptions, domainId)
 
@@ -61,6 +65,24 @@ function* subscribe(action) {
     } catch (err) {
         console.log('error in subscribe user saga', err, err.response)
         yield put(userActions.subscribeError('error subscribing user'))
+    }
+}
+
+function* unsubscribe(action) {
+    try {
+        const { subscriptionType, ids, domainId } = action.payload
+        yield put(userActions.unsubscribeRequest())
+
+        const apiToken = yield select(getApiToken)
+
+        yield call(apiService.unsubscribe, apiToken, subscriptionType, ids)
+
+        if (domainId) yield call(fetchNotificationSubscriptions, domainId)
+
+        yield put(userActions.unsubscribeSuccess())
+    } catch (err) {
+        console.log('error in unsubscribe user saga', err, err.response)
+        yield put(userActions.unsubscribeError('error unsubscribing user'))
     }
 }
 
@@ -106,58 +128,6 @@ export function* checkNotificationSettings() {
     }
 }
 
-function* unsubscribe(action) {
-    try {
-        const { subscriptionType, ids, domainId } = action.payload
-        yield put(userActions.unsubscribeRequest())
-
-        const apiToken = yield select(getApiToken)
-
-        yield call(apiService.unsubscribe, apiToken, subscriptionType, ids)
-
-        if (domainId) yield call(fetchNotificationSubscriptions, domainId)
-
-        yield put(userActions.unsubscribeSuccess())
-    } catch (err) {
-        console.log('error in unsubscribe user saga', err, err.response)
-        yield put(userActions.unsubscribeError('error unsubscribing user'))
-    }
-}
-
-// export function* checkNotificationSettings() {
-//     const userInfo = yield select(getUserInfo)
-//     const { status: existingStatus } = yield call(Permissions.getAsync, Permissions.NOTIFICATIONS)
-//     let finalStatus = existingStatus
-//     if (existingStatus !== 'granted') {
-//         const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS)
-//         finalStatus = status
-//     }
-//     // Stop here if the user did not grant permissions -- save token as 0
-//     if (finalStatus !== 'granted') {
-//         console.log('notification status is not granted')
-//         yield put(saveTokenId(0))
-//         return
-//     }
-//     // Get the token that uniquely identifies this device
-//     let token = yield call(Notifications.getExpoPushTokenAsync)
-//     let response = yield call(
-//         fetch,
-//         `${GET_USERS_ENDPOINT}/${userInfo.apiKey}?api_token=${userInfo.apiKey}`
-//     )
-//     let tokenResponse = yield response.json()
-//     let tokenId
-//     // if there is already a token saved in DB update it in redux
-//     if (tokenResponse[0].token) {
-//         console.log('token response', tokenResponse[0])
-//         tokenId = tokenResponse[0].id
-//         yield put(saveTokenId(tokenResponse[0].id))
-//         // if not save it in DB and then save in redux
-//     } else {
-//         tokenId = yield call(savePushNotifications, token)
-//     }
-//     return tokenId
-// }
-
 // function* savePushNotifications(token) {
 //     // POST the token to backend server
 //     const userInfo = yield select(getUserInfo)
@@ -202,7 +172,6 @@ function* deleteUser() {
 function* userSaga() {
     yield all([
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
-        takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
         // yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications)
