@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
-    ActivityIndicator,
-    StatusBar,
-    StyleSheet,
     View,
     Dimensions,
     Image,
@@ -10,11 +7,7 @@ import {
 } from 'react-native'
 import Constants from 'expo-constants'
 import LottieView from 'lottie-react-native'
-import NavigationService from '../utils/NavigationService'
 import { connect } from 'react-redux'
-// import { initialize, setFromPush } from '../redux/actionCreators'
-import { handleArticlePress } from '../utils/articlePress'
-// import anim from '../assets/lottiefiles/splash-animation';
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { getActiveDomain } from '../redux/domains'
@@ -46,13 +39,6 @@ const AppSetupScreen = props => {
     } = props
 
     const animationRef = useRef(null)
-
-    // const animationRef = useCallback(node => {
-    //     if (node !== null) {
-    //         node.reset()
-    //         node.play()
-    //     }
-    // }, [])
 
     useEffect(() => {
         if (animationRef.current) {

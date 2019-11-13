@@ -19,7 +19,6 @@ import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 
 import { actions as globalActions } from '../redux/global'
-import { fetchAvailableDomains, searchAvailableDomains, clearError } from '../redux/actionCreators';
 
 class InitScreen extends React.Component {
     static navigationOptions = {

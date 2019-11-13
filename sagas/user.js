@@ -128,25 +128,6 @@ export function* checkNotificationSettings() {
     }
 }
 
-// function* savePushNotifications(token) {
-//     // POST the token to backend server
-//     const userInfo = yield select(getUserInfo)
-//     let response = yield call(fetch, `${PUSH_ENDPOINT}?api_token=${userInfo.apiKey}`, {
-//         method: 'POST',
-//         headers: {
-//             Accept: 'application/json',
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             token,
-//             api_token: userInfo.apiKey
-//         })
-//     })
-//     let tokenId = yield response.json()
-//     yield put(saveTokenId(Number(tokenId[0].id)))
-//     return tokenId[0].id
-// }
-
 function* deleteUser() {
     try {
         yield put(userActions.deleteUserRequest())
@@ -174,8 +155,6 @@ function* userSaga() {
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
-        // yield takeLatest('FETCH_NOTIFICATIONS', fetchNotifications)
-        // yield takeLatest('CHECK_NOTIFICATION_SETTINGS', checkNotificationSettings)
         takeLatest(userTypes.DELETE_USER, deleteUser)
     ])
 }

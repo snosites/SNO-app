@@ -9,7 +9,6 @@ import * as Amplitude from 'expo-analytics-amplitude'
 
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
-import { changeActiveDomain, setFromPush } from '../redux/actionCreators'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { actions as userActions } from '../redux/user'
@@ -17,7 +16,7 @@ import { actions as userActions } from '../redux/user'
 import NavigationService from '../utils/NavigationService'
 
 import { handleArticlePress } from '../utils/articlePress'
-import { asyncFetchFeaturedImage, asyncFetchComments, asyncFetchArticle } from '../utils/sagaHelpers'
+import { asyncFetchArticle } from '../utils/sagaHelpers'
 import FadeInView from '../views/FadeInView'
 
 import { Portal } from 'react-native-paper'
