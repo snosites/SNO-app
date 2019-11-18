@@ -1,20 +1,19 @@
 export const types = {
-           SET_ACTIVE_DOMAIN: 'SET_ACTIVE_DOMAIN',
-           ADD_DOMAIN: 'ADD_DOMAIN',
-           DELETE_DOMAIN: 'DELETE_DOMAIN',
-           
-           SET_NOTIFICATION_CATEGORIES: 'SET_NOTIFICATION_CATEGORIES',
-           SET_NOTIFICATIONS: 'SET_NOTIFICATIONS',
-           
-       }
+    LOAD_ACTIVE_DOMAIN: 'LOAD_ACTIVE_DOMAIN',
+    LOAD_ACTIVE_DOMAIN_REQUEST: 'LOAD_ACTIVE_DOMAIN_REQUEST',
+    LOAD_ACTIVE_DOMAIN_SUCCESS: 'LOAD_ACTIVE_DOMAIN_SUCCESS',
+    LOAD_ACTIVE_DOMAIN_ERROR: 'LOAD_ACTIVE_DOMAIN_ERROR',
+    SET_ACTIVE_DOMAIN: 'SET_ACTIVE_DOMAIN',
+    ADD_DOMAIN: 'ADD_DOMAIN',
+    DELETE_DOMAIN: 'DELETE_DOMAIN',
+    SET_NOTIFICATION_CATEGORIES: 'SET_NOTIFICATION_CATEGORIES',
+    SET_NOTIFICATIONS: 'SET_NOTIFICATIONS'
+}
 
 export default function domains(state = [], action) {
     switch (action.type) {
         case types.ADD_DOMAIN:
-            return [
-                ...state,
-                action.payload
-            ]
+            return [...state, action.payload]
         case types.DELETE_DOMAIN:
             return state.filter(domain => {
                 return domain.id !== action.domainId
@@ -70,39 +69,44 @@ export default function domains(state = [], action) {
 }
 
 export const actions = {
-           setActiveDomain: domainId => {
-               return { type: types.SET_ACTIVE_DOMAIN, domainId }
-           },
-           addDomain: payload => {
-               return { type: types.ADD_DOMAIN, payload }
-           },
-           
-           deleteDomain: domainId => {
-               return { type: types.DELETE_DOMAIN, domainId }
-           },
+    loadActiveDomain: () => ({ type: types.LOAD_ACTIVE_DOMAIN }),
+    loadActiveDomainRequest: () => ({ type: types.LOAD_ACTIVE_DOMAIN_REQUEST }),
+    loadActiveDomainSuccess: () => ({ type: types.LOAD_ACTIVE_DOMAIN_SUCCESS }),
+    loadActiveDomainError: error => ({ type: types.LOAD_ACTIVE_DOMAIN_ERROR, error }),
+    setActiveDomain: domainId => {
+        return { type: types.SET_ACTIVE_DOMAIN, domainId }
+    },
+    addDomain: payload => {
+        return { type: types.ADD_DOMAIN, payload }
+    },
 
-           setNotificationCategories: (domainId, notificationCategories) => {
-               return {
-                   type: types.SET_NOTIFICATION_CATEGORIES,
-                   domainId,
-                   notificationCategories
-               }
-           },
-           setNotifications: (domainId, notifications) => {
-               return {
-                   type: types.SET_NOTIFICATIONS,
-                   domainId,
-                   notifications,
-               }
-           }
-       }
+    deleteDomain: domainId => {
+        return { type: types.DELETE_DOMAIN, domainId }
+    },
 
-//selectors 
+    setNotificationCategories: (domainId, notificationCategories) => {
+        return {
+            type: types.SET_NOTIFICATION_CATEGORIES,
+            domainId,
+            notificationCategories
+        }
+    },
+    setNotifications: (domainId, notifications) => {
+        return {
+            type: types.SET_NOTIFICATIONS,
+            domainId,
+            notifications
+        }
+    }
+}
+
+//selectors
 export const getActiveDomain = state => {
     const found = state.domains.find(domain => domain.active === true)
-    if(found){
+    if (found) {
         return found
     } else {
         return {}
     }
 }
+export const getSavedDomains = state => state.domains

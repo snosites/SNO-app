@@ -54,6 +54,11 @@ export default function user(state = initialState, action) {
                 ...state,
                 user: action.user
             }
+        case types.FIND_OR_CREATE_USER_ERROR:
+            return {
+                ...state,
+                user: {}
+            }
         case types.SET_SUBSCRIBE_ALL:
             return {
                 ...state,
@@ -111,4 +116,5 @@ export const actions = {
 export const getApiToken = state => state.user.user.api_token
 export const getPushToken = state => state.user.user.push_token
 export const getUser = state => state.user.user
+export const getSubscribeAll = state => state.user.subscribeAll
 export const getWriterSubscriptions = state => state.user.writerSubscriptions

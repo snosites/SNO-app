@@ -151,8 +151,8 @@ const LocationSelectScreen = props => {
         setSubscribeAll(allNotifications)
         navigation.navigate('AuthLoading')
 
-        clearAvailableDomains()
         setModalVisible(false)
+        clearAvailableDomains()
     }
 
     if (isLoading) {

@@ -1,27 +1,16 @@
 import { put, call, takeLatest, select, all } from 'redux-saga/effects'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { getApiToken } from '../redux/user'
+import { actions as domainsActions, getSavedDomains } from '../redux/domains'
+import { actions as userActions, getApiToken } from '../redux/user'
 
+import NavigationService from '../utils/NavigationService'
 import api from '../api/api'
 
 import Constants from 'expo-constants'
-
-import * as Sentry from 'sentry-expo'
+import { SplashScreen } from 'expo'
 
 const version = Constants.manifest.releaseChannel === 'cns' ? 'college' : 'secondary'
 
-// city: "St. Louis Park"
-// development: null
-// domain_id: 40316786
-// id: 33
-// latitude: "44.959700"
-// level: "secondary"
-// longitude: "-93.370200"
-// publication: "Knight Errant"
-// school: "Benilde-St. Margaret's School"
-// state: "MN"
-// url: "bsmknighterrant.org"
-// zip: 55416
 function* fetchAvailableDomains() {
     try {
         yield put(globalActions.fetchAvailableDomainsRequest())
@@ -78,6 +67,35 @@ function* searchAvailableDomains(action) {
     } catch (err) {
         console.log('error in search available domains saga', err)
         yield put(globalActions.searchAvailableDomainsError('error searching available domains'))
+    }
+}
+
+export function* loadActiveDomain() {
+    try {
+        yield put(domainsActions.loadActiveDomainRequest())
+
+        const domains = yield select(getSavedDomains)
+
+        const activeDomain = domains.filter(domain => {
+            if (domain.active) {
+                return domain
+            }
+        })
+        // sets active domain for app and then navigates to app
+        if (activeDomain.length > 0) {
+            yield put(domainsActions.setActiveDomain(activeDomain[0].id))
+            NavigationService.navigate('App')
+        }
+        // no active domain navigate to auth
+        else {
+            SplashScreen.hide()
+            NavigationService.navigate('Auth')
+        }
+        yield put(domainsActions.loadActiveDomainSuccess())
+    } catch (err) {
+        console.log('error in load active domain saga', err)
+        yield put(domainsActions.loadActiveDomainError('error loading active domain'))
+        NavigationService.navigate('Auth')
     }
 }
 

@@ -1,5 +1,4 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects'
-import { normalize, schema } from 'normalizr'
 import Constants from 'expo-constants'
 
 import { types as userTypes, actions as userActions, getApiToken } from '../redux/user'
@@ -10,30 +9,47 @@ import apiService from '../api/api'
 import { persistor } from '../redux/configureStore'
 import NavigationService from '../utils/NavigationService'
 
-// import { persistor } from '../configureStore'
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
 import * as Sentry from 'sentry-expo'
 
-// const api = 'mobileapi.snosites.net'
 
-// const GET_API_TOKEN_ENDPOINT = `http://${api}/api/key`
-// const GET_USERS_ENDPOINT = `http://${api}/api/users`
-// const PUSH_ENDPOINT = `http://${api}/api/users/add_token`
-// const ADD_NOTIFICATION_ENDPOINT = `http://${api}/api/subscribe`
-// const ADD_ALL_NOTIFICATIONS_ENDPOINT = `http://${api}/api/subscribe/all`
-// const REMOVE_NOTIFICATION_ENDPOINT = `http://${api}/api/unsubscribe`
-// const FETCH_NOTIFICATIONS_ENDPOINT = `http://${api}/api/notifications`
-
-function* findOrCreateUser() {
+export function* findOrCreateUser() {
     try {
         yield put(userActions.findOrCreateUserRequest())
-        let response = yield call(apiService.findOrCreateUser, Constants.installationId)
+        const pushToken = yield call(getPushToken)
+        let response = yield call(apiService.findOrCreateUser, Constants.installationId, pushToken)
         yield put(userActions.findOrCreateUserSuccess(response))
     } catch (err) {
         console.log('error creating user in saga', err, err.response)
         yield put(userActions.findOrCreateUserError('error creating user'))
         Sentry.captureException(err)
+    }
+}
+
+function* getPushToken() {
+    try {
+        const { status: existingStatus } = yield call(
+            Permissions.getAsync,
+            Permissions.NOTIFICATIONS
+        )
+        let finalStatus = existingStatus
+
+        if (existingStatus !== 'granted') {
+            const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS)
+            finalStatus = status
+        }
+        // Stop here if the user did not grant permissions
+        if (finalStatus !== 'granted') {
+            return null
+        }
+        // Get the token that uniquely identifies this device
+        let token = yield call(Notifications.getExpoPushTokenAsync)
+
+        return token
+    } catch (err) {
+        console.log('error in get push token saga', err)
+        throw err
     }
 }
 

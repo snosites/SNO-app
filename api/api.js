@@ -1,14 +1,23 @@
 import axios from 'axios'
 
-// const BASE_URL = 'https://mobileapi.snosites.net'
-const BASE_URL = 'http://localhost:8888/api'
+const BASE_URL = 'https://mobileapi.snosites.com/api'
+// const BASE_URL = 'http://localhost:8888/api'
+
+axios.interceptors.response.use(function(response) {
+    const contentType = response.headers['content-type']
+    if (contentType && contentType.indexOf('application/json') !== -1) {
+        return response
+    } else {
+        throw new Error('not a valid JSON response')
+    }
+})
 
 const apiService = {
-    findOrCreateUser: async deviceId => {
+    findOrCreateUser: async (deviceId, pushToken) => {
         try {
             const response = await axios.post(
                 '/user/find-or-create',
-                { deviceId },
+                { deviceId, pushToken },
                 {
                     baseURL: BASE_URL
                 }

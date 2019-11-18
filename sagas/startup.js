@@ -1,13 +1,19 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as userActions, getApiToken, getUser } from '../redux/user'
+import { actions as userActions, getApiToken, getSubscribeAll } from '../redux/user'
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
 import { actions as savedArticleActions } from '../redux/savedArticles'
 
 import { fetchMenu } from '../sagas/menu'
-import { checkNotificationSettings, subscribe, fetchNotificationSubscriptions } from '../sagas/user'
+import {
+    checkNotificationSettings,
+    subscribe,
+    fetchNotificationSubscriptions,
+    findOrCreateUser
+} from '../sagas/user'
+import { loadActiveDomain } from '../sagas/global'
 
 import domainApiService from '../api/domain'
 import apiService from '../api/api'
@@ -21,7 +27,7 @@ import Constants from 'expo-constants'
 
 function* startup(action) {
     const { domain } = action
-    const user = yield select(getUser)
+    const userSubscribeAll = yield select(getSubscribeAll)
     try {
         // set user domain for analytics
         Amplitude.setUserProperties({
@@ -43,8 +49,8 @@ function* startup(action) {
         const token = yield call(checkNotificationSettings)
 
         // // check if user selected all notifications
-        if (token && user.subscribeAll) {
-            yield call(subscribe, {
+        if (token && userSubscribeAll) {
+            yield call(apiService.subscribe, {
                 subscriptionType: 'categories',
                 ids: dbCategories.map(category => {
                     return category.id
@@ -82,7 +88,7 @@ function* startup(action) {
         // }
 
         yield put(globalActions.startupSuccess())
-        
+
         NavigationService.navigate('MainApp')
     } catch (err) {
         console.log('initilize err', err)
@@ -187,15 +193,31 @@ function* checkIfDomainIsInDb(domainId) {
 
         const dbDomain = yield call(apiService.findDomain, apiToken, domainId)
         return dbDomain
-
     } catch (err) {
         console.log('error getting domain from DB', err)
         return []
     }
 }
 
+function* initializeUser() {
+    try {
+        yield put(globalActions.initializeUserRequest())
+
+        yield call(findOrCreateUser)
+        yield call(loadActiveDomain)
+
+        yield put(globalActions.initializeUserSuccess())
+    } catch (err) {
+        console.log('error initializing user in saga', err)
+        yield put(globalActions.initializeUserError('error initializing user'))
+    }
+}
+
 function* startupSaga() {
-    yield takeLatest(globalTypes.STARTUP, startup)
+    yield all([
+        takeLatest(globalTypes.STARTUP, startup),
+        takeLatest(globalTypes.INITIALIZE_USER, initializeUser)
+    ])
 }
 
 export default startupSaga

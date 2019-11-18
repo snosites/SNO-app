@@ -101,8 +101,9 @@ const SelectScreen = props => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
         navigation.navigate('AuthLoading')
-        clearAvailableDomains()
+        
         setModalVisible(false)
+        clearAvailableDomains()
     }
 
     if (error) {

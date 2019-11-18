@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import { ActivityIndicator, StatusBar, View, Text, Image } from 'react-native'
-import { SplashScreen } from 'expo'
 import Constants from 'expo-constants'
 
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { actions as domainsActions } from '../redux/domains'
+import { types as userTypes } from '../redux/user'
+import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { createErrorMessageSelector } from '../redux/errors'
 
 import { Button } from 'react-native-paper'
@@ -15,40 +14,23 @@ const primaryColor =
     Constants.manifest.releaseChannel === 'sns'
         ? Constants.manifest.extra.highschool.primary
         : Constants.manifest.extra.college.primary
-const createUserErrorSelector = createErrorMessageSelector([userTypes.FIND_OR_CREATE_USER])
+        
+const createUserErrorSelector = createErrorMessageSelector([
+    userTypes.FIND_OR_CREATE_USER,
+    globalTypes.INITIALIZE_USER
+])
 
 const AuthLoadingScreen = props => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
-    const { findOrCreateUser, setActiveDomain, user, domains, navigation, error } = props
+    const { initializeUser, error } = props
 
     useEffect(() => {
-        if (!user.user.api_token) {
-            findOrCreateUser()
-            return
-        }
         if (switchingDomain) {
             return
         }
-        _getDomainAsync()
-    }, [user.user.api_token, switchingDomain])
+        initializeUser()
+    }, [switchingDomain])
 
-    _getDomainAsync = async () => {
-        const activeDomain = domains.filter(domain => {
-            if (domain.active) {
-                return domain
-            }
-        })
-        // sets active domain for app and then navigates to app
-        if (activeDomain.length > 0) {
-            setActiveDomain(activeDomain[0].id)
-            navigation.navigate('App')
-        }
-        // no active domain navigate to auth
-        else {
-            SplashScreen.hide()
-            navigation.navigate('Auth')
-        }
-    }
 
     if (error) {
         return (
@@ -95,7 +77,7 @@ const AuthLoadingScreen = props => {
                         }
                     }}
                     style={{ padding: 5, marginBottom: 20, marginHorizontal: 30 }}
-                    onPress={() => findOrCreateUser()}
+                    onPress={() => initializeUser()}
                 >
                     Try Again
                 </Button>
@@ -113,15 +95,12 @@ const AuthLoadingScreen = props => {
 
 const mapStateToProps = state => {
     return {
-        domains: state.domains,
-        user: state.user,
         error: createUserErrorSelector(state)
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    findOrCreateUser: () => dispatch(userActions.findOrCreateUser()),
-    setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId))
+    initializeUser: () => dispatch(globalActions.initializeUser())
 })
 
 export default connect(
