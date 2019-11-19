@@ -7,6 +7,10 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 import LottieView from 'lottie-react-native'
 
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
 const initModal = props => {
     const { modalVisible, handleDismiss } = props
 
@@ -79,7 +83,7 @@ const initModal = props => {
                                 </Text>
                                 <Switch
                                     color={
-                                        Constants.manifest.releaseChannel === 'sns'
+                                        version === 'sns'
                                             ? Constants.manifest.extra.highSchool.primary
                                             : Constants.manifest.extra.college.primary
                                     }
@@ -99,7 +103,7 @@ const initModal = props => {
                                     roundness: 7,
                                     colors: {
                                         primary:
-                                            Constants.manifest.releaseChannel === 'sns'
+                                            version === 'sns'
                                                 ? Constants.manifest.extra.highSchool.primary
                                                 : Constants.manifest.extra.college.primary
                                     }

@@ -12,3 +12,16 @@ export function getAmplitudeKey() {
     }
     return null
 }
+
+export function getReleaseChannel() {
+    const releaseChannel = Constants.manifest.releaseChannel
+
+    if (releaseChannel === undefined) return null // since releaseChannels are undefined in dev
+    if (releaseChannel.indexOf('sns') !== -1) {
+        return 'sns'
+    }
+    if (releaseChannel.indexOf('cns') !== -1) {
+        return 'cns'
+    }
+    return null
+}

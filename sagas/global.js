@@ -9,7 +9,9 @@ import api from '../api/api'
 import Constants from 'expo-constants'
 import { SplashScreen } from 'expo'
 
-const version = Constants.manifest.releaseChannel === 'cns' ? 'college' : 'secondary'
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel() === 'cns' ? 'college' : 'secondary'
 
 function* fetchAvailableDomains() {
     try {

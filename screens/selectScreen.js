@@ -24,11 +24,15 @@ import * as Sentry from 'sentry-expo'
 
 import InitModal from './InitModal'
 
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
 const theme = {
     roundness: 7,
     colors: {
         primary:
-            Constants.manifest.releaseChannel === 'sns'
+            version === 'sns'
                 ? Constants.manifest.extra.highSchool.primary
                 : Constants.manifest.extra.college.primary
     }

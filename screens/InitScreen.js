@@ -20,6 +20,10 @@ import { connect } from 'react-redux';
 
 import { actions as globalActions } from '../redux/global'
 
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
 class InitScreen extends React.Component {
     static navigationOptions = {
         header: null,
@@ -39,7 +43,10 @@ class InitScreen extends React.Component {
         const theme = {
             roundness: 7,
             colors: {
-                primary: Constants.manifest.releaseChannel === 'sns' ? Constants.manifest.extra.highSchool.primary : Constants.manifest.extra.college.primary
+                primary:
+                    version === 'sns'
+                        ? Constants.manifest.extra.highSchool.primary
+                        : Constants.manifest.extra.college.primary
             }
         }
 
@@ -81,7 +88,7 @@ class InitScreen extends React.Component {
                             <View style={styles.logoContainer}>
                                 <Image
                                     source={
-                                        Constants.manifest.releaseChannel === 'sns'
+                                        version === 'sns'
                                             ? require('../assets/images/the-source-logo.png')
                                             : require('../assets/images/cns-logo.png')
                                     }
@@ -119,7 +126,7 @@ class InitScreen extends React.Component {
                                             ...theme,
                                             colors: {
                                                 primary:
-                                                    Constants.manifest.releaseChannel === 'sns'
+                                                    version === 'sns'
                                                         ? Constants.manifest.extra.highSchool
                                                               .primary
                                                         : Constants.manifest.extra.college.primary,
@@ -139,7 +146,7 @@ class InitScreen extends React.Component {
                                             roundness: 7,
                                             colors: {
                                                 primary:
-                                                    Constants.manifest.releaseChannel === 'sns'
+                                                    version === 'sns'
                                                         ? Constants.manifest.extra.highSchool
                                                               .secondary
                                                         : Constants.manifest.extra.college.secondary

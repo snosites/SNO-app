@@ -282,7 +282,6 @@ class ProfileScreen extends React.Component {
                         }
                     )
                     const writerProfile = await newResponse.json()
-                    console.log('writer profile', writerProfile, profile, profileId)
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(

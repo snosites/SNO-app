@@ -29,6 +29,10 @@ import * as Sentry from 'sentry-expo'
 
 import InitModal from './InitModal'
 
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
 
 const LocationSelectScreen = props => {
     const {
@@ -207,7 +211,7 @@ const LocationSelectScreen = props => {
                     maximumValue={100}
                     step={5}
                     thumbTintColor={
-                        Constants.manifest.releaseChannel === 'sns'
+                        version === 'sns'
                             ? Constants.manifest.extra.highSchool.primary
                             : Constants.manifest.extra.college.primary
                     }

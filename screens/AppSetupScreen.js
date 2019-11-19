@@ -17,6 +17,10 @@ import { createErrorMessageSelector } from '../redux/errors'
 import anim from '../assets/lottiefiles/infinite-loading-bar'
 import anim2 from '../assets/lottiefiles/cns-splash-loading'
 
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
 const ANIMATION_WIDTH = viewportWidth
@@ -81,7 +85,7 @@ const AppSetupScreen = props => {
             <ImageBackground
                 source={require('../assets/images/the-source-splash.png')}
                 source={
-                    Constants.manifest.releaseChannel === 'sns'
+                    version === 'sns'
                         ? require('../assets/images/the-source-splash.png')
                         : require('../assets/images/cns-splash.png')
                 }
@@ -112,7 +116,7 @@ const AppSetupScreen = props => {
                             loop={true}
                             speed={0.5}
                             autoPlay={true}
-                            source={Constants.manifest.releaseChannel === 'sns' ? anim : anim2}
+                            source={version === 'sns' ? anim : anim2}
                         />
                     </View>
                 </View>

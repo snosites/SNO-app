@@ -9,9 +9,11 @@ import { createErrorMessageSelector } from '../redux/errors'
 import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'
+import { getReleaseChannel } from '../constants/config'
 
+const version = getReleaseChannel()
 const primaryColor =
-    Constants.manifest.releaseChannel === 'sns'
+    version === 'sns'
         ? Constants.manifest.extra.highschool.primary
         : Constants.manifest.extra.college.primary
         
@@ -45,7 +47,7 @@ const AuthLoadingScreen = props => {
                 <StatusBar barStyle='light-content' />
                 <Image
                     source={
-                        Constants.manifest.releaseChannel === 'sns'
+                        version === 'sns'
                             ? require('../assets/images/the-source-logo.png')
                             : require('../assets/images/cns-logo.png')
                     }
