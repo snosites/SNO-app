@@ -17,8 +17,7 @@ import * as Sentry from 'sentry-expo'
 export function* findOrCreateUser() {
     try {
         yield put(userActions.findOrCreateUserRequest())
-        const pushToken = yield call(getPushToken)
-        let response = yield call(apiService.findOrCreateUser, Constants.installationId, pushToken)
+        let response = yield call(apiService.findOrCreateUser, Constants.installationId)
         yield put(userActions.findOrCreateUserSuccess(response))
     } catch (err) {
         console.log('error creating user in saga', err, err.response)
@@ -27,31 +26,6 @@ export function* findOrCreateUser() {
     }
 }
 
-function* getPushToken() {
-    try {
-        const { status: existingStatus } = yield call(
-            Permissions.getAsync,
-            Permissions.NOTIFICATIONS
-        )
-        let finalStatus = existingStatus
-
-        if (existingStatus !== 'granted') {
-            const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS)
-            finalStatus = status
-        }
-        // Stop here if the user did not grant permissions
-        if (finalStatus !== 'granted') {
-            return null
-        }
-        // Get the token that uniquely identifies this device
-        let token = yield call(Notifications.getExpoPushTokenAsync)
-
-        return token
-    } catch (err) {
-        console.log('error in get push token saga', err)
-        throw err
-    }
-}
 
 export function* fetchNotificationSubscriptions(domainId) {
     const apiToken = yield select(getApiToken)

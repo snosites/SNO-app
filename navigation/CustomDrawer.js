@@ -150,6 +150,7 @@ class CustomDrawerComponent extends React.Component {
         }
         else if (item.object === 'page') {
             if (item.template === 'snostaff.php') {
+                console.log('staff page', item)
                 // log to analytics
                 Amplitude.logEventWithProperties('click page', {
                     pageType: 'staff'
