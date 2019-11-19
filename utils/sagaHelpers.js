@@ -47,8 +47,6 @@ export async function asyncFetchArticle(domainUrl, articleId) {
     try {
         const article = await domainApiService.fetchArticle(domainUrl, articleId)
 
-        console.log('in saga helper', article)
-
         if (
             article._links &&
             article._links['wp:featuredmedia'] &&

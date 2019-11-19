@@ -164,12 +164,10 @@ const domainApiService = {
         }
     },
     fetchArticle: async (domainUrl, articleId) => {
-        console.log('in fetch article', domainUrl, articleId)
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/wp/v2/posts/${articleId}`
             )
-            console.log('this is respo', response)
             return response.data
         } catch (err) {
             console.log('error in fetch article api', err, err.response)
