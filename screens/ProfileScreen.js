@@ -71,6 +71,16 @@ class ProfileScreen extends React.Component {
                             This person does not appear to have a profile page
                         </Text>
                     </View>
+                ) : profile == 'error' ? (
+                    <View style={{ flex: 1, alignItems: 'center', padding: 20 }}>
+                        <Image
+                            style={styles.noProfileImage}
+                            source={require('../assets/images/anon.png')}
+                        />
+                        <Text style={{ fontSize: 28, textAlign: 'center', paddingVertical: 20 }}>
+                            There was an error loading the selected profile
+                        </Text>
+                    </View>
                 ) : (
                     <View style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
@@ -255,20 +265,24 @@ class ProfileScreen extends React.Component {
     _loadProfile = async payload => {
         const { navigation, activeDomain, fetchProfileArticles } = this.props
         try {
-            const userDomain = activeDomain.url
             const writerName = navigation.getParam('writerName', 'unknown')
             if (writerName !== 'unknown') {
                 const response = await fetch(
-                    `https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`
+                    `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`
                 )
                 const profile = await response.json()
                 if (profile.length > 0) {
                     // if more than one matches use first one
                     const profileId = profile[0].ID
                     const newResponse = await fetch(
-                        `https://${userDomain}/wp-json/wp/v2/posts/${profileId}`
+                        `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileId}`, {
+                            headers: {
+                                'Cache-Control': 'no-cache'
+                            }
+                        }
                     )
                     const writerProfile = await newResponse.json()
+                    console.log('writer profile', writerProfile, profile, profileId)
                     // if featured image is avail then get it
                     if (writerProfile._links['wp:featuredmedia']) {
                         const response = await fetch(
@@ -282,13 +296,16 @@ class ProfileScreen extends React.Component {
                         profile: writerProfile
                     })
                     // get list of articles written by writer
-                    fetchProfileArticles(userDomain, writerName)
+                    fetchProfileArticles(activeDomain.url, writerName)
                 } else {
                     navigation.setParams({ profile: 'none' })
                 }
             }
         } catch (err) {
             console.log('error fetching profile page', err)
+            navigation.setParams({
+                profile: 'error'
+            })
         }
     }
 

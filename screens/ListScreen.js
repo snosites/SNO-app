@@ -338,7 +338,6 @@ const mapStateToProps = (state, ownProps) => {
     const categoryId = ownProps.navigation.getParam('categoryId', null)
     const activeDomain = getActiveDomain(state)
     if (!categoryId || !state.articlesByCategory[categoryId]) {
-        console.log('returning default....')
         return {
             theme: state.theme,
             activeDomain,
