@@ -1,59 +1,35 @@
-// export function* fetchFeaturedImage(url, story) {
-//     const imgResponse = yield fetch(url);
-//     const featuredImage = yield imgResponse.json();
-//     if (!featuredImage.meta_fields) {
-//         story.featuredImage = {
-//             uri: featuredImage.source_url,
-//             photographer: '',
-//             caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-//         }
-//         return;
-//     }
-//     story.featuredImage = {
-//         uri: featuredImage.source_url,
-//         photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
-//         caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-//     }
-// }
-
-// export function* fetchComments(url, story) {
-//     const response = yield fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-//     const comments = yield response.json();
-//     if (response.status == 200) {
-//         story.comments = comments
-//     } else {
-//         story.comments = []
-//     }
-//     return;
-// }
-
-const domainApiService = require('../api/domain')
+import domainApiService from '../api/domain'
 
 export async function asyncFetchFeaturedImage(url, story) {
-    const imgResponse = await fetch(url)
-    const featuredImage = await imgResponse.json()
-    if (!featuredImage.meta_fields) {
+    try {
+        const imgResponse = await fetch(url)
+        const featuredImage = await imgResponse.json()
+        if (!featuredImage.meta_fields) {
+            story.featuredImage = {
+                uri: featuredImage.source_url,
+                photographer: '',
+                caption:
+                    featuredImage.caption && featuredImage.caption.rendered
+                        ? featuredImage.caption.rendered
+                        : ''
+            }
+            return
+        }
         story.featuredImage = {
             uri: featuredImage.source_url,
-            photographer: '',
+            photographer: featuredImage.meta_fields.photographer
+                ? featuredImage.meta_fields.photographer
+                : '',
             caption:
                 featuredImage.caption && featuredImage.caption.rendered
                     ? featuredImage.caption.rendered
                     : ''
         }
         return
+    } catch(err){
+        console.log('error trying to fetch article featured image', err)
+        return
     }
-    story.featuredImage = {
-        uri: featuredImage.source_url,
-        photographer: featuredImage.meta_fields.photographer
-            ? featuredImage.meta_fields.photographer
-            : '',
-        caption:
-            featuredImage.caption && featuredImage.caption.rendered
-                ? featuredImage.caption.rendered
-                : ''
-    }
-    return
 }
 
 export async function asyncFetchComments(url, story) {
@@ -71,12 +47,20 @@ export async function asyncFetchArticle(domainUrl, articleId) {
     try {
         const article = await domainApiService.fetchArticle(domainUrl, articleId)
 
-        await asyncFetchFeaturedImage(domainUrl, article)
+        console.log('in saga helper', article)
+
+        if (
+            article._links &&
+            article._links['wp:featuredmedia'] &&
+            article._links['wp:featuredmedia'][0]
+        ) {
+            await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
+        }
         await asyncFetchComments(domainUrl, article)
 
         return article
     } catch (err) {
-        console.log('error fethcing article async', err)
-        return null
+        console.log('error fetching article async', err)
+        throw err
     }
 }

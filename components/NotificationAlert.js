@@ -31,16 +31,17 @@ const amplitudeKey = getAmplitudeKey()
 Amplitude.initialize(amplitudeKey)
 
 const NotificationAlert = props => {
+    const { user, activeDomain, domains, setActiveDomain, setFromPush } = props
+
     const [notification, setNotification] = useState({})
     const [visible, setVisible] = useState(false)
 
-    const { user, activeDomain, domains, setActiveDomain, setFromPush } = props
-
     useEffect(() => {
         if (user.push_token) {
-            const notificationSubscription = Notifications.addListener(notification =>
+            const notificationSubscription = Notifications.addListener(notification => {
                 setNotification(notification)
-            )
+                console.log('notification received...', notification)
+            })
             return () => notificationSubscription.remove()
         }
     }, [user])
@@ -76,10 +77,6 @@ const NotificationAlert = props => {
                 // get article
                 const article = await asyncFetchArticle(activeDomain.url, notification.data.post_id)
 
-                //if error fetching article then return
-                if(!article){
-                    throw new Error('failed to fetch push notification article')
-                }
                 handleArticlePress(article, activeDomain)
             } else {
                 // make sure domain origin is a saved domain
@@ -123,10 +120,6 @@ const NotificationAlert = props => {
                 // get article
                 const article = await asyncFetchArticle(domainUrl, notification.data.post_id)
 
-                //if error fetching article then return
-                if (!article) {
-                    throw new Error('failed to fetch push notification article')
-                }
                 // sets key for app to look for on new domain load
                 setFromPush(article)
                 // change active domain
@@ -141,7 +134,6 @@ const NotificationAlert = props => {
             NavigationService.navigate('AuthLoading', {
                 switchingDomain: false
             })
-            NavigationService.navigate('HomeStack')
             Sentry.captureException(err)
         }
     }

@@ -118,3 +118,4 @@ export const getPushToken = state => state.user.user.push_token
 export const getUser = state => state.user.user
 export const getSubscribeAll = state => state.user.subscribeAll
 export const getWriterSubscriptions = state => state.user.writerSubscriptions
+export const getFromPush = state => state.user.fromPush

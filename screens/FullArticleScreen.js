@@ -120,13 +120,9 @@ class FullArticleScreen extends React.Component {
         let article = navigation.getParam('article', 'loading')
         let articleChapters = navigation.getParam('articleChapters', [])
 
-        const unsubscribedWriters = this._getFilteredWriters(
-            activeDomain.id,
-            article.custom_fields.terms,
-            writerSubscriptions
-        )
+        console.log('this is the article', article)
 
-        if (article === 'loading') {
+        if (!article || article === 'loading') {
             return (
                 <View
                     style={{
@@ -148,6 +144,12 @@ class FullArticleScreen extends React.Component {
                 </View>
             )
         }
+
+        const unsubscribedWriters = this._getFilteredWriters(
+            activeDomain.id,
+            article.custom_fields.terms,
+            writerSubscriptions
+        )
 
         return (
             <View style={{ flex: 1 }}>

@@ -66,7 +66,7 @@ export function* fetchNotificationSubscriptions(domainId) {
     yield put(userActions.setWriterSubscriptions(writerNotifications))
 }
 
-function* subscribe(action) {
+export function* subscribe(action) {
     try {
         const { subscriptionType, ids, domainId } = action.payload
         yield put(userActions.subscribeRequest())

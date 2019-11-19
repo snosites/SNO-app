@@ -1,7 +1,7 @@
 import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as userActions, getApiToken, getSubscribeAll } from '../redux/user'
+import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } from '../redux/user'
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
 import { actions as savedArticleActions } from '../redux/savedArticles'
@@ -19,6 +19,7 @@ import domainApiService from '../api/domain'
 import apiService from '../api/api'
 
 import NavigationService from '../utils/NavigationService'
+import { handleArticlePress } from '../utils/articlePress'
 
 import { SplashScreen } from 'expo'
 import * as Amplitude from 'expo-analytics-amplitude'
@@ -28,6 +29,7 @@ import Constants from 'expo-constants'
 function* startup(action) {
     const { domain } = action
     const userSubscribeAll = yield select(getSubscribeAll)
+    const fromPush = yield select(getFromPush)
     try {
         // set user domain for analytics
         Amplitude.setUserProperties({
@@ -50,12 +52,13 @@ function* startup(action) {
 
         // // check if user selected all notifications
         if (token && userSubscribeAll) {
-            yield call(apiService.subscribe, {
+            yield call(subscribe, {payload: {
                 subscriptionType: 'categories',
+                domainId: domain.id,
                 ids: dbCategories.map(category => {
                     return category.id
                 })
-            })
+            }})
         }
         // // reset all notifications toggle key
         yield put(userActions.setSubscribeAll(false))
@@ -74,26 +77,22 @@ function* startup(action) {
         )
         yield put(savedArticleActions.initializeSaved(domain.id))
 
-        // if (userInfo.fromPush) {
-        //     // go to main app
-        //     NavigationService.nestedNavigate('MainApp', 'RecentStack')
-        //     // direct to article from push
-        //     NavigationService.navigate('FullArticle')
-        //     handleArticlePress(userInfo.fromPush, activeDomain)
-        //     // reset push key
-        //     dispatch(setFromPush(false))
-        // } else {
-        //     console.log('finished loading menus and articles')
-        //     navigation.navigate('MainApp')
-        // }
+        if (fromPush) {
+            // go to main app
+            NavigationService.nestedNavigate('MainApp', 'RecentStack')
+
+            yield call(handleArticlePress, fromPush, domain)
+            // reset push key
+            yield put(userActions.setFromPush(false))
+        } else {
+            NavigationService.navigate('MainApp')
+        }
 
         yield put(globalActions.startupSuccess())
-
-        NavigationService.navigate('MainApp')
     } catch (err) {
         console.log('initilize err', err)
         // clear from push data if any is there
-        // yield put(setFromPush(false))
+        yield put(userActions.setFromPush(false))
 
         // check if domain is still in DB
         const domainCheck = yield call(checkIfDomainIsInDb, domain.id)

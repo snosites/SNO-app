@@ -12,6 +12,8 @@ import {
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
+import Constants from 'expo-constants'
+
 import { connect } from 'react-redux'
 
 import {
@@ -60,7 +62,8 @@ class SettingsScreen extends React.Component {
         email: '',
         notifications: {},
         dialog: false,
-        clearedAllSettings: false
+        clearedAllSettings: false,
+        showDeviceId: false
     }
 
     componentDidMount() {
@@ -386,7 +389,12 @@ class SettingsScreen extends React.Component {
                             mode='outlined'
                             color={Colors.red700}
                             style={{ padding: 10 }}
-                            onPress={this._showDialog}
+                            onPress={() => {
+                                this.setState({
+                                    dialog: true,
+                                    showDeviceId: !this.state.showDeviceId
+                                })
+                            }}
                         >
                             Clear All Settings
                         </Button>
@@ -451,11 +459,21 @@ class SettingsScreen extends React.Component {
                           )
                         : null}
                 </Portal>
+                {this.state.showDeviceId && (
+                    <Text
+                        style={{
+                            alignSelf: 'flex-end',
+                            marginTop: 'auto',
+                            fontSize: 9,
+                            color: Colors.grey400
+                        }}
+                    >
+                        {Constants.installationId}
+                    </Text>
+                )}
             </ScrollView>
         )
     }
-
-    _showDialog = () => this.setState({ dialog: true })
 
     _hideDialog = () => this.setState({ dialog: false })
 
@@ -572,7 +590,7 @@ const mapStateToProps = state => {
         activeDomain: getActiveDomain(state),
         errors: deleteUserErrorSelector(state),
         isLoading: deleteUserLoadingSelector(state),
-        unsubscribeLoading: unsubscribeLoadingSelector(state),
+        unsubscribeLoading: unsubscribeLoadingSelector(state)
     }
 }
 
