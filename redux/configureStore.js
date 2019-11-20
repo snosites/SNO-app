@@ -27,7 +27,7 @@ const middlewareList = __DEV__ ? [sentryMiddleware, sagaMiddleware, logger] : [ 
 
 const migrations = {
     //transform old state to new structure
-    5: prevState => {
+    7: prevState => {
         let newDomains = []
         if (prevState.domains) {
             newDomains = prevState.domains.map(domain => {
@@ -36,6 +36,7 @@ const migrations = {
                     id: domain.id,
                     name: domain.name,
                     publication: domain.publication,
+                    notificationCategories: [],
                     url: domain.url
                 }
                 return newDomain
@@ -76,7 +77,7 @@ const migrations = {
 // used to persist redux state to async storage
 const persistConfig = {
     key: 'primary',
-    version: 5,
+    version: 7,
     storage,
     migrate: createMigrate(migrations, { debug: true }),
     whitelist: ['domains', 'savedArticlesBySchool', 'user'],
