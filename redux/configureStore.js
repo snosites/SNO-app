@@ -55,9 +55,13 @@ const migrations = {
                 fromPush: false
             }
         }
+        let updatedSavedArticlesBySchool = {}
+        if(state.savedArticlesBySchool) {
+            updatedSavedArticlesBySchool = state.savedArticlesBySchool
+        }
         return {
             domains: newDomains,
-            savedArticlesBySchool: state.savedArticlesBySchool,
+            savedArticlesBySchool: updatedSavedArticlesBySchool,
             user: newUserObj
         }
     }
