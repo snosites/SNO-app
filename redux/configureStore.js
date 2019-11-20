@@ -43,17 +43,17 @@ const migrations = {
         }
         const filteredDomains = newDomains.filter(newDomain => {
             if (newDomain.id) {
-                return newDomain
+                return true
             } else {
                 return false
             }
         })
         
         let newUserObj = undefined
-        if(state.userInfo){
+        if (prevState.userInfo) {
             newUserObj = {
-                username: state.userInfo.username,
-                email: state.userInfo.email,
+                username: prevState.userInfo.username ? prevState.userInfo.username : '',
+                email: prevState.userInfo.email ? prevState.userInfo.email : '',
                 subscribeAll: false,
                 user: {},
                 commentPosted: false,
@@ -62,8 +62,8 @@ const migrations = {
             }
         }
         let updatedSavedArticlesBySchool = {}
-        if(state.savedArticlesBySchool) {
-            updatedSavedArticlesBySchool = state.savedArticlesBySchool
+        if (prevState.savedArticlesBySchool) {
+            updatedSavedArticlesBySchool = prevState.savedArticlesBySchool
         }
         return {
             domains: filteredDomains,
