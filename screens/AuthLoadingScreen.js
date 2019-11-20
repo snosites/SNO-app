@@ -12,9 +12,11 @@ import { connect } from 'react-redux'
 import { getReleaseChannel } from '../constants/config'
 
 const version = getReleaseChannel()
+
+console.log('this is version', version, Constants.manifest)
 const primaryColor =
     version === 'sns'
-        ? Constants.manifest.extra.highschool.primary
+        ? Constants.manifest.extra.highSchool.primary
         : Constants.manifest.extra.college.primary
         
 const createUserErrorSelector = createErrorMessageSelector([
