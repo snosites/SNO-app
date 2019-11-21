@@ -15,6 +15,8 @@ import AppContainer from './components/AppContainer'
 
 import * as Sentry from 'sentry-expo'
 
+import UpdateApp from './components/UpdateApp'
+
 
 export default App = () => {
     const [isLoadingComplete, setIsLoadingComplete] = useState(false)
@@ -59,7 +61,8 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 50 }} />}
                     persistor={persistor}
                 >
-                    <AppContainer />
+                    {/* <AppContainer /> */}
+                    <UpdateApp />
                 </PersistGate>
             </ReduxProvider>
         )
