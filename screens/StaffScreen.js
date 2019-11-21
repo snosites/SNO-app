@@ -69,9 +69,18 @@ class StaffScreen extends React.Component {
         navigation.setParams({
             headerLogo: menus.headerSmall
         })
-        let years = navigation.getParam('activeYears', null);
+        let yearsParam = navigation.getParam('activeYears', null);
         let customDisplay = navigation.getParam('customDisplay', null);
         let staffDisplay = navigation.getParam('staffDisplay', null);
+
+        let years = []
+        if (yearsParam && !Array.isArray(yearsParam)) {
+            Object.keys(yearsParam).map(objKey => {
+                years.push(yearsParam[objKey])
+            })
+        } else {
+            years = yearsParam
+        }
 
         let sortedYears = years.sort();
         let indexNum;
