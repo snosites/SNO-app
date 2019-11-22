@@ -3,7 +3,6 @@ import {
     StyleSheet,
     Text,
     View,
-    WebView,
     ImageBackground,
     Dimensions,
     Platform,
@@ -14,6 +13,7 @@ import Moment from 'moment'
 import HTML from 'react-native-render-html'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
+import { WebView } from 'react-native-webview'
 
 import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'
@@ -38,6 +38,7 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={styles.featuredMediaContainer}>
                     {this._renderFeaturedMedia(article)}
                 </View>
+                {/* {this._renderFeaturedMedia(article)} */}
                 <View style={{ paddingHorizontal: 20, paddingTop: 10, alignItems: 'center' }}>
                     <HTML
                         html={article.title.rendered}
@@ -190,33 +191,21 @@ export default class ArticleBodyContent extends React.Component {
                 // console.log('reg ex', src)
                 return (
                     <WebView
-                        scalesPageToFit={true}
-                        automaticallyAdjustContentInsets={false}
                         scrollEnabled={false}
                         bounces={false}
                         originWhitelist={['*']}
                         allowsInlineMediaPlayback={true}
-                        javaScriptEnabled
                         startInLoadingState={true}
-                        renderLoading={() => (
-                            <View
-                                style={{
-                                    flex: 1,
-                                    height: MEDIASIZE,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <ActivityIndicator />
-                            </View>
-                        )}
                         renderError={() => (
                             <View
                                 style={{
+                                    position: 'absolute',
                                     flex: 1,
-                                    height: MEDIASIZE,
+                                    justifyContent: 'center',
                                     alignItems: 'center',
-                                    justifyContent: 'center'
+                                    height: '100%',
+                                    width: '100%',
+                                    backgroundColor: 'white'
                                 }}
                             >
                                 <Text style={{ textAlign: 'center' }}>
@@ -224,7 +213,10 @@ export default class ArticleBodyContent extends React.Component {
                                 </Text>
                             </View>
                         )}
-                        style={{ flex: 1, height: MEDIASIZE }}
+                        onError={syntheticEvent => {
+                            const { nativeEvent } = syntheticEvent
+                            console.warn('WebView error: ', nativeEvent)
+                        }}
                         source={{ uri: src }}
                     />
                 )
@@ -233,33 +225,21 @@ export default class ArticleBodyContent extends React.Component {
 
             return (
                 <WebView
-                    scalesPageToFit={true}
-                    automaticallyAdjustContentInsets={false}
                     scrollEnabled={false}
                     bounces={false}
                     originWhitelist={['*']}
                     allowsInlineMediaPlayback={true}
-                    javaScriptEnabled
                     startInLoadingState={true}
-                    renderLoading={() => (
-                        <View
-                            style={{
-                                flex: 1,
-                                height: MEDIASIZE,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                        >
-                            <ActivityIndicator />
-                        </View>
-                    )}
                     renderError={() => (
                         <View
                             style={{
+                                position: 'absolute',
                                 flex: 1,
-                                height: MEDIASIZE,
+                                justifyContent: 'center',
                                 alignItems: 'center',
-                                justifyContent: 'center'
+                                height: '100%',
+                                width: '100%',
+                                backgroundColor: 'white'
                             }}
                         >
                             <Text style={{ textAlign: 'center' }}>
@@ -267,7 +247,10 @@ export default class ArticleBodyContent extends React.Component {
                             </Text>
                         </View>
                     )}
-                    style={{ flex: 1, height: MEDIASIZE }}
+                    onError={syntheticEvent => {
+                        const { nativeEvent } = syntheticEvent
+                        console.warn('WebView error: ', nativeEvent)
+                    }}
                     source={{ uri: embedString }}
                 />
             )
@@ -560,7 +543,9 @@ export default class ArticleBodyContent extends React.Component {
 
 const styles = StyleSheet.create({
     featuredMediaContainer: {
-        flex: 1
+        flex: 0,
+        height: MEDIASIZE,
+        backgroundColor: 'blue'
     },
     articleContents: {
         padding: 20

@@ -42,7 +42,8 @@
     "redux-saga": "^1.0.2",
     "redux-sentry-middleware": "0.0.15",
     "sentry-expo": "~2.0.0",
-    "ws": "^7.0.0"
+    "ws": "^7.0.0",
+    "react-native-webview": "7.0.5"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",

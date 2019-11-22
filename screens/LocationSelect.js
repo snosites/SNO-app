@@ -176,7 +176,7 @@ const LocationSelectScreen = props => {
                         textAlign: 'center'
                     }}
                 >
-                    Sorry, no school's are available
+                    Sorry, no schools are available
                 </Text>
             </View>
         )

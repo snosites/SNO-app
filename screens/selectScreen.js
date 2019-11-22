@@ -151,7 +151,7 @@ const SelectScreen = props => {
                         textAlign: 'center'
                     }}
                 >
-                    Sorry no school's match that search term, please try searching again.
+                    Sorry no schools match that search term, please try searching again.
                 </Text>
             </View>
         )
