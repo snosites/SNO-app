@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {
     ActivityIndicator,
+    Platform
 } from 'react-native'
 import { AppLoading } from 'expo'
 import * as Icon from '@expo/vector-icons'
@@ -61,7 +62,7 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 50 }} />}
                     persistor={persistor}
                 >
-                    {/* <AppContainer /> */}
+                    {Platform.OS === 'ios' ? <UpdateApp /> : <AppContainer />}
                     <UpdateApp />
                 </PersistGate>
             </ReduxProvider>
