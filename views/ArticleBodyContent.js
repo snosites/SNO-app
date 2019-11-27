@@ -38,7 +38,6 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={styles.featuredMediaContainer}>
                     {this._renderFeaturedMedia(article)}
                 </View>
-                {/* {this._renderFeaturedMedia(article)} */}
                 <View style={{ paddingHorizontal: 20, paddingTop: 10, alignItems: 'center' }}>
                     <HTML
                         html={article.title.rendered}
@@ -545,18 +544,15 @@ const styles = StyleSheet.create({
     featuredMediaContainer: {
         flex: 0,
         height: MEDIASIZE,
-        backgroundColor: 'blue'
+        backgroundColor: 'black'
     },
     articleContents: {
         padding: 20
     },
-    featuredImageContainer: {
-        // height: MEDIASIZE,
-        width: viewportWidth
-    },
     featuredImage: {
         width: viewportWidth,
-        height: MEDIASIZE
+        height: MEDIASIZE,
+        resizeMode: 'contain'
     },
     imageInfoContainer: {
         flex: 1,
