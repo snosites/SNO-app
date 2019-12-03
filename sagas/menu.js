@@ -98,7 +98,7 @@ function* syncDbCategories(dbCategories, mobileMenu, domain) {
                 return category.id
             })
             //remove them
-            yield call(domainApiService.deleteDbCategories, {
+            yield call(domainApiService.deleteDbCategories, apiToken, {
                 categoryIds: categoriesToDelete
             })
         }
