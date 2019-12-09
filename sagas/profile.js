@@ -31,10 +31,12 @@ function* fetchAuthorArticle(url, articleId) {
 
 function* fetchProfileArticles(action) {
     try {
-        const { url, writerName } = action
+        const { url, writerTermId } = action
 
         // get list of articles written by writer
-        const authorArticles = yield call(domainApiService.fetchProfileArticles, url, writerName)
+        const authorArticles = yield call(domainApiService.fetchProfileArticles, url, writerTermId)
+
+        console.log('writer aeticles', authorArticles)
 
         if (authorArticles.length == 0) {
             throw new Error('no posts')

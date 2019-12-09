@@ -186,10 +186,15 @@ const domainApiService = {
             throw err
         }
     },
-    fetchProfileArticles: async (domainUrl, writerName) => {
+    fetchProfileArticles: async (domainUrl, writerTermId) => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/sns-v2/author_content?name=${writerName}`
+                `https://${domainUrl}/wp-json/sns-v2/author_content?authorTermId=${writerTermId}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {

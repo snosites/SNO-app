@@ -176,8 +176,11 @@ class StaffScreen extends React.Component {
                             // })
                             // if (temp.length > 0) {
                                 return (
-                                    <View key={profile.ID} style={{ padding: 20, alignItems: 'center', width: 175 }}>
-                                        {profile.featuredImage ?
+                                    <View
+                                        key={profile.ID}
+                                        style={{ padding: 20, alignItems: 'center', width: 175 }}
+                                    >
+                                        {profile.featuredImage ? (
                                             <Image
                                                 source={{ uri: profile.featuredImage }}
                                                 style={{
@@ -186,7 +189,7 @@ class StaffScreen extends React.Component {
                                                     borderRadius: 75
                                                 }}
                                             />
-                                            :
+                                        ) : (
                                             <Image
                                                 source={require('../assets/images/anon.png')}
                                                 style={{
@@ -195,17 +198,29 @@ class StaffScreen extends React.Component {
                                                     borderRadius: 75
                                                 }}
                                             />
-                                        }
-                                        <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 10 }}
-                                            numberOfLines={2} ellipsizeMode='tail'
-                                        >{profile.customFields.name[0]}</Text>
-                                        <Text style={{ fontSize: 18, color: 'grey' }}>{profile.customFields.staffposition[0]}</Text>
-                                        <Button 
-                                            mode="contained"
+                                        )}
+                                        <Text
+                                            style={{
+                                                textAlign: 'center',
+                                                fontSize: 25,
+                                                paddingTop: 10
+                                            }}
+                                            numberOfLines={2}
+                                            ellipsizeMode='tail'
+                                        >
+                                            {profile.post_title}
+                                        </Text>
+                                        <Text style={{ fontSize: 18, color: 'grey' }}>
+                                            {profile.post_excerpt}
+                                        </Text>
+                                        <Button
+                                            mode='contained'
                                             color={theme.colors.accent}
-                                            style={{borderRadius: 4,
-                                            margin: 5}}
-                                            onPress={() => this._handleProfileClick(profile.customFields.name[0])}>
+                                            style={{ borderRadius: 4, margin: 5 }}
+                                            onPress={() =>
+                                                this._handleProfileClick(profile.ID)
+                                            }
+                                        >
                                             View
                                         </Button>
                                     </View>
@@ -234,10 +249,10 @@ class StaffScreen extends React.Component {
         this.flatListRef.scrollToIndex({ animated: true, index: index, viewPosition: 0.5 });
     }
 
-    _handleProfileClick = (name) => {
+    _handleProfileClick = (id) => {
         const { navigation } = this.props;
         navigation.navigate('Profile', {
-            writerName: name
+            writerId: id
         })
     }
 

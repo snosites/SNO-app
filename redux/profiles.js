@@ -74,11 +74,11 @@ export const actions = {
             profiles
         }
     },
-    fetchProfileArticles(url, writerName) {
+    fetchProfileArticles(url, writerTermId) {
         return {
             type: types.FETCH_PROFILE_ARTICLES,
             url,
-            writerName
+            writerTermId
         }
     },
     setProfileArticles(payload) {

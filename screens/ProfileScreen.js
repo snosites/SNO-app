@@ -88,9 +88,7 @@ class ProfileScreen extends React.Component {
                                 {this._renderProfileImage(profile)}
                             </View>
                             <Text style={styles.title}>{profile.title.rendered}</Text>
-                            <Text style={styles.position}>
-                                {profile.custom_fields.staffposition[0]}
-                            </Text>
+                            <Text style={styles.position}>{profile.excerpt}</Text>
                             {profile.content.rendered ? (
                                 <HTML
                                     html={profile.content.rendered}
@@ -125,7 +123,7 @@ class ProfileScreen extends React.Component {
                                             textAlign: 'center'
                                         }}
                                     >
-                                        {`Recent Work By ${profile.custom_fields.name[0]}`}
+                                        {`Recent Work By ${profile.title.rendered}`}
                                     </Text>
                                 </LinearGradient>
                             </View>
@@ -210,7 +208,7 @@ class ProfileScreen extends React.Component {
                                                             name={
                                                                 story.custom_fields.writer &&
                                                                 story.custom_fields.writer[0] ==
-                                                                    profile.custom_fields.name[0]
+                                                                    profile.title.rendered
                                                                     ? 'edit'
                                                                     : 'camera-alt'
                                                             }
@@ -227,7 +225,7 @@ class ProfileScreen extends React.Component {
                                                         >
                                                             {story.custom_fields.writer &&
                                                             story.custom_fields.writer[0] ==
-                                                                profile.custom_fields.name[0]
+                                                                profile.title.rendered
                                                                 ? 'story'
                                                                 : 'media'}
                                                         </Text>
@@ -265,37 +263,37 @@ class ProfileScreen extends React.Component {
     _loadProfile = async payload => {
         const { navigation, activeDomain, fetchProfileArticles } = this.props
         try {
-            const writerName = navigation.getParam('writerName', 'unknown')
-            if (writerName !== 'unknown') {
+            const writerId = navigation.getParam('writerId', null)
+            if (writerId) {
                 const response = await fetch(
-                    `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`
+                    `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${writerId}`,
+                    {
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    }
                 )
                 const profile = await response.json()
-                if (profile.length > 0) {
-                    // if more than one matches use first one
-                    const profileId = profile[0].ID
-                    const newResponse = await fetch(
-                        `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileId}`, {
-                            headers: {
-                                'Cache-Control': 'no-cache'
-                            }
-                        }
-                    )
-                    const writerProfile = await newResponse.json()
+                console.log('this is profile', profile)
+                if (profile) {
                     // if featured image is avail then get it
-                    if (writerProfile._links['wp:featuredmedia']) {
-                        const response = await fetch(
-                            writerProfile._links['wp:featuredmedia'][0].href
-                        )
+                    if (profile._links['wp:featuredmedia']) {
+                        const response = await fetch(profile._links['wp:featuredmedia'][0].href)
                         const profileImage = await response.json()
-                        writerProfile.profileImage = profileImage.source_url
+                        profile.profileImage = profileImage.source_url
                     }
                     //set profile
                     navigation.setParams({
-                        profile: writerProfile
+                        profile: profile
+                    })
+
+                    const autherTermId = profile.custom_fields.terms.find(termObj => {
+                        if(termObj.taxonomy === 'staff_name') {
+                            return termObj
+                        }
                     })
                     // get list of articles written by writer
-                    fetchProfileArticles(activeDomain.url, writerName)
+                    fetchProfileArticles(activeDomain.url, autherTermId.term_id)
                 } else {
                     navigation.setParams({ profile: 'none' })
                 }
