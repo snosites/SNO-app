@@ -11,7 +11,9 @@ import {
 import Moment from 'moment';
 import Color from 'color';
 import { connect } from 'react-redux';
-import { fetchProfiles } from '../redux/actionCreators';
+
+import { actions as profileActions } from '../redux/profiles'
+import { getActiveDomain } from '../redux/domains'
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -62,14 +64,11 @@ class StaffScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { menus, navigation } = this.props;
-        // if (this.animation) {
-        //     this._playAnimation();
-        // }
+        const { navigation, global } = this.props
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
-        let yearsParam = navigation.getParam('activeYears', null);
+        let yearsParam = navigation.getParam('activeYears', []);
         let customDisplay = navigation.getParam('customDisplay', null);
         let staffDisplay = navigation.getParam('staffDisplay', null);
 
@@ -177,8 +176,11 @@ class StaffScreen extends React.Component {
                             // })
                             // if (temp.length > 0) {
                                 return (
-                                    <View key={profile.ID} style={{ padding: 20, alignItems: 'center', width: 175 }}>
-                                        {profile.featuredImage ?
+                                    <View
+                                        key={profile.ID}
+                                        style={{ padding: 20, alignItems: 'center', width: 175 }}
+                                    >
+                                        {profile.featuredImage ? (
                                             <Image
                                                 source={{ uri: profile.featuredImage }}
                                                 style={{
@@ -187,7 +189,7 @@ class StaffScreen extends React.Component {
                                                     borderRadius: 75
                                                 }}
                                             />
-                                            :
+                                        ) : (
                                             <Image
                                                 source={require('../assets/images/anon.png')}
                                                 style={{
@@ -196,17 +198,29 @@ class StaffScreen extends React.Component {
                                                     borderRadius: 75
                                                 }}
                                             />
-                                        }
-                                        <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 10 }}
-                                            numberOfLines={2} ellipsizeMode='tail'
-                                        >{profile.customFields.name[0]}</Text>
-                                        <Text style={{ fontSize: 18, color: 'grey' }}>{profile.customFields.staffposition[0]}</Text>
-                                        <Button 
-                                            mode="contained"
+                                        )}
+                                        <Text
+                                            style={{
+                                                textAlign: 'center',
+                                                fontSize: 25,
+                                                paddingTop: 10
+                                            }}
+                                            numberOfLines={2}
+                                            ellipsizeMode='tail'
+                                        >
+                                            {profile.post_title}
+                                        </Text>
+                                        <Text style={{ fontSize: 18, color: 'grey' }}>
+                                            {profile.post_excerpt}
+                                        </Text>
+                                        <Button
+                                            mode='contained'
                                             color={theme.colors.accent}
-                                            style={{borderRadius: 4,
-                                            margin: 5}}
-                                            onPress={() => this._handleProfileClick(profile.customFields.name[0])}>
+                                            style={{ borderRadius: 4, margin: 5 }}
+                                            onPress={() =>
+                                                this._handleProfileClick(profile.ID)
+                                            }
+                                        >
                                             View
                                         </Button>
                                     </View>
@@ -226,19 +240,19 @@ class StaffScreen extends React.Component {
     }
 
     _getProfiles = (year) => {
-        const { activeDomain, dispatch } = this.props;
+        const { activeDomain, fetchProfiles } = this.props
         const url = activeDomain.url;
-        dispatch(fetchProfiles(url, year));
+        fetchProfiles(url, year)
     }
 
     _scrollToIndex = (index) => {
         this.flatListRef.scrollToIndex({ animated: true, index: index, viewPosition: 0.5 });
     }
 
-    _handleProfileClick = (name) => {
+    _handleProfileClick = (id) => {
         const { navigation } = this.props;
         navigation.navigate('Profile', {
-            writerName: name
+            writerId: id
         })
     }
 
@@ -293,10 +307,17 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
-        menus: state.menus,
+        activeDomain: getActiveDomain(state),
+        global: state.global,
         profiles: state.profiles
     }
 }
 
-export default connect(mapStateToProps)(StaffScreen);
+const mapDispatchToProps = dispatch => ({
+    fetchProfiles: (domainUrl, year) => dispatch(profileActions.fetchProfiles(domainUrl, year))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(StaffScreen)

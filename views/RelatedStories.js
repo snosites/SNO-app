@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     View,
     FlatList,
@@ -8,24 +8,24 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform
-} from 'react-native';
-import Moment from 'moment';
-import Color from 'color';
-import HTML from 'react-native-render-html';
+} from 'react-native'
+import Moment from 'moment'
+import Color from 'color'
+import HTML from 'react-native-render-html'
 
-import { handleArticlePress } from '../utils/articlePress';
+import { getActiveDomain } from '../redux/domains'
+import { handleArticlePress } from '../utils/articlePress'
+import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
 
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: "1 day",
+        d: '1 day'
     }
-});
-
+})
 
 class RelatedStoriesList extends React.Component {
-
     state = {
         stories: [],
         error: ''
@@ -36,7 +36,6 @@ class RelatedStoriesList extends React.Component {
             this._fetchRelatedStories(this.props.relatedStoryIds)
         }
     }
-
 
     render() {
         return (
@@ -58,21 +57,15 @@ class RelatedStoriesList extends React.Component {
     }
 
     _renderRelatedStories = () => {
-        const { relatedStoryIds } = this.props;
-        const { stories, error } = this.state;
+        const { relatedStoryIds } = this.props
+        const { stories, error } = this.state
         if (error) {
+            return <Text style={{ textAlign: 'center' }}>Error loading related stories</Text>
+        } else if (relatedStoryIds && stories.length == 0) {
+            return <ActivityIndicator />
+        } else {
             return (
-                <Text style={{ textAlign: 'center' }}>Error loading related stories</Text>
-            )
-        }
-        else if (relatedStoryIds && stories.length == 0) {
-            return (
-                <ActivityIndicator />
-            )
-        }
-        else {
-            return (
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                     <FlatList
                         // style={{ flex: 1, marginVertical: 5 }}
                         data={stories}
@@ -85,32 +78,27 @@ class RelatedStoriesList extends React.Component {
     }
 
     _renderItem = ({ item }) => {
-        const { theme, activeDomain } = this.props;
-        const article = item;
+        const { theme, activeDomain } = this.props
+        const article = item
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
                 onPress={() => handleArticlePress(article, activeDomain)}
             >
                 <View style={styles.storyContainer}>
-                    {article.featuredImage ?
+                    {article.featuredImage ? (
                         <Image
                             source={{ uri: article.featuredImage.uri }}
                             style={styles.featuredImage}
                         />
-                        :
-                        null
-                    }
+                    ) : null}
                     <View style={styles.storyInfo}>
                         <HTML
                             html={article.title.rendered}
                             baseFontStyle={{ fontSize: 16 }}
-                            customWrapper={(text) => {
+                            customWrapper={text => {
                                 return (
-                                    <Text
-                                        ellipsizeMode='tail'
-                                        numberOfLines={2}
-                                    >
+                                    <Text ellipsizeMode='tail' numberOfLines={2}>
                                         {text}
                                     </Text>
                                 )
@@ -131,7 +119,9 @@ class RelatedStoriesList extends React.Component {
                                 fontSize: 14
                             }}
                         >
-                            {article.custom_fields.writer ? this._renderWriters(article.custom_fields.writer) : ''}
+                            {article.custom_fields.writer
+                                ? this._renderWriters(article.custom_fields.writer)
+                                : ''}
                         </Text>
                         <View
                             style={{
@@ -147,100 +137,66 @@ class RelatedStoriesList extends React.Component {
                     </View>
                 </View>
             </TouchableOpacity>
-
         )
     }
 
     _renderDate = date => {
         return (
-            <Text style={{
-                fontSize: 14,
-                color: '#9e9e9e'
-            }}
+            <Text
+                style={{
+                    fontSize: 14,
+                    color: '#9e9e9e'
+                }}
             >
                 {Moment().isAfter(Moment(date).add(7, 'days'))
-                    ?
-                    String(Moment(date).format('MMM D, YYYY'))
-                    :
-                    String(Moment(date).fromNow())
-                }
+                    ? String(Moment(date).format('MMM D, YYYY'))
+                    : String(Moment(date).fromNow())}
             </Text>
         )
     }
 
     _renderWriters = writers => {
-        let newArr = '';
+        let newArr = ''
         for (let i = 0; i < writers.length; i++) {
             if (i === writers.length - 2) {
                 newArr += `${writers[i]} & `
-            }
-            else if (i === writers.length - 1) {
+            } else if (i === writers.length - 1) {
                 newArr += `${writers[i]}`
             } else {
                 newArr += `${writers[i]}, `
             }
         }
-        return newArr;
-    }
-
-    _fetchFeaturedImage = async (url, story) => {
-        const imgResponse = await fetch(url);
-        const featuredImage = await imgResponse.json();
-        if (!featuredImage.meta_fields) {
-            story.featuredImage = {
-                uri: featuredImage.source_url,
-                photographer: '',
-                caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-            }
-            return;
-        }
-        story.featuredImage = {
-            uri: featuredImage.source_url,
-            photographer: featuredImage.meta_fields.photographer ? featuredImage.meta_fields.photographer : '',
-            caption: featuredImage.caption && featuredImage.caption.rendered ? featuredImage.caption.rendered : ''
-        }
-    }
-
-    _fetchComments = async (url, story) => {
-        const response = await fetch(`https://${url}/wp-json/wp/v2/comments?post=${story.id}`);
-        const comments = await response.json();
-        if (response.status == 200) {
-            story.comments = comments
-        } else {
-            story.comments = []
-        }
-        return;
+        return newArr
     }
 
     _getStory = async id => {
-        const { activeDomain } = this.props;
+        const { activeDomain } = this.props
         const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/posts/${id}`)
-        const post = await result.json();
+        const post = await result.json()
         if (post._links['wp:featuredmedia']) {
-            await this._fetchFeaturedImage(`${post._links['wp:featuredmedia'][0].href}`, post)
+            await asyncFetchFeaturedImage(`${post._links['wp:featuredmedia'][0].href}`, post)
         }
-        await this._fetchComments(activeDomain.url, post)
-        return post;
+        await asyncFetchComments(activeDomain.url, post)
+        return post
     }
 
     _fetchRelatedStories = async storyIds => {
-
         try {
-            const stories = await Promise.all(storyIds.map(async id => {
-                return await this._getStory(id)
-            }))
+            const stories = await Promise.all(
+                storyIds.map(async id => {
+                    return await this._getStory(id)
+                })
+            )
             this.setState({
                 stories
             })
-        }
-        catch (err) {
+        } catch (err) {
             console.log('error fetching related stories', err)
             this.setState({
                 error: true
             })
         }
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -248,7 +204,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 10,
-        marginVertical: 10,
+        marginVertical: 10
     },
     featuredImage: {
         width: 95,
@@ -259,13 +215,12 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
         justifyContent: 'space-between'
-    },
-
+    }
 })
 
 const mapStateToProps = state => ({
-    activeDomain: state.activeDomain,
+    activeDomain: getActiveDomain(state),
     theme: state.theme
 })
 
-export default connect(mapStateToProps)(RelatedStoriesList);
+export default connect(mapStateToProps)(RelatedStoriesList)

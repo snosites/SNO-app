@@ -1,25 +1,21 @@
-import React from 'react';
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-} from 'react-native';
-import { connect } from 'react-redux';
+import React from 'react'
+import { View, Text, Image, StyleSheet } from 'react-native'
+import { connect } from 'react-redux'
 import LottieView from 'lottie-react-native'
 
-import { Snackbar } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper'
 
-import { removeSavedArticle } from '../redux/actionCreators';
-import ArticleListContent from '../views/ArticleListContent';
+import { actions as savedArticleActions } from '../redux/savedArticles'
+import { getActiveDomain } from '../redux/domains'
 
-class ListScreen extends React.Component {
+import ArticleListContent from '../views/ArticleListContent'
+
+class SavedArticlesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const logo = navigation.getParam('headerLogo', null)
         return {
             title: 'Saved Stories',
-            headerLeft: (
-                logo &&
+            headerLeft: logo && (
                 <Image
                     source={{ uri: logo }}
                     style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
@@ -27,51 +23,51 @@ class ListScreen extends React.Component {
                 />
             ),
             headerBackTitle: null
-        };
-    };
+        }
+    }
 
     state = {
         snackbarVisible: false
     }
 
     componentDidMount() {
-        const { navigation, menus } = this.props;
+        const { navigation, global } = this.props
         if (this.animation) {
-            this._playAnimation();
+            this._playAnimation()
         }
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
     }
 
     componentDidUpdate() {
         if (this.animation) {
-            this._playAnimation();
+            this._playAnimation()
         }
-        const { navigation } = this.props;
+        const { navigation } = this.props
         if (navigation.state.params && navigation.state.params.scrollToTop) {
             if (this.flatListRef) {
                 // scroll list to top
-                this._scrollToTop();
+                this._scrollToTop()
             }
             navigation.setParams({ scrollToTop: false })
         }
     }
 
     render() {
-        const { savedArticles, activeDomain, theme, navigation } = this.props;
-        const { snackbarVisible } = this.state;
+        const { savedArticles, activeDomain, theme, navigation } = this.props
+        const { snackbarVisible } = this.state
         if (savedArticles === 'loading') {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
                         <LottieView
                             ref={animation => {
-                                this.animation = animation;
+                                this.animation = animation
                             }}
                             style={{
                                 width: 400,
-                                height: 400,
+                                height: 400
                             }}
                             loop={true}
                             speed={1}
@@ -85,7 +81,14 @@ class ListScreen extends React.Component {
         if (savedArticles.length == 0) {
             return (
                 <View style={{ flex: 1, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 18, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>
+                    <Text
+                        style={{
+                            fontSize: 18,
+                            textAlign: 'center',
+                            padding: 20,
+                            fontWeight: 'bold'
+                        }}
+                    >
                         You don't have any saved articles for this school yet
                     </Text>
                 </View>
@@ -117,37 +120,35 @@ class ListScreen extends React.Component {
                     Article Removed
                 </Snackbar>
             </View>
-
-        );
+        )
     }
 
-    _saveRef = (ref) => {
-        this.flatListRef = ref;
+    _saveRef = ref => {
+        this.flatListRef = ref
     }
 
     _scrollToTop = () => {
-        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
     _handleArticleRemove = article => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(article.id, activeDomain.id))
+        const { activeDomain, removeSavedArticle } = this.props
+        removeSavedArticle(article.id, activeDomain.id)
         this.setState({
             snackbarVisible: true
         })
     }
 
     _playAnimation = () => {
-        this.animation.reset();
-        this.animation.play();
-    };
-
+        this.animation.reset()
+        this.animation.play()
+    }
 }
 
 const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
-        height: 400,
+        height: 400
     },
     snackbar: {
         position: 'absolute',
@@ -155,13 +156,26 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0
     }
-});
-
-const mapStateToProps = store => ({
-    activeDomain: store.activeDomain,
-    theme: store.theme,
-    menus: store.menus,
-    savedArticles: store.savedArticlesBySchool[store.activeDomain.id]
 })
 
-export default connect(mapStateToProps)(ListScreen);
+const mapStateToProps = state => {
+    const activeDomain = getActiveDomain(state)
+    return {
+        activeDomain,
+        theme: state.theme,
+        global: state.global,
+        savedArticles: state.savedArticlesBySchool[activeDomain.id]
+            ? state.savedArticlesBySchool[activeDomain.id]
+            : []
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    removeSavedArticle: (articleId, domainId) =>
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SavedArticlesScreen)

@@ -9,11 +9,9 @@ import {
     FlatList,
     TouchableOpacity
 } from 'react-native'
-import {
-    fetchProfileArticles,
-    clearProfileArticles,
-    clearProfileError
-} from '../redux/actionCreators'
+
+import { actions as profileActions } from '../redux/profiles'
+import { getActiveDomain } from '../redux/domains'
 
 import Moment from 'moment'
 import Color from 'color'
@@ -37,7 +35,14 @@ class ProfileScreen extends React.Component {
     }
 
     render() {
-        const { navigation, theme, profiles, activeDomain, dispatch } = this.props
+        const {
+            navigation,
+            theme,
+            profiles,
+            activeDomain,
+            clearProfileArticles,
+            clearProfileError
+        } = this.props
         const profile = navigation.getParam('profile', 'loading')
         let primaryColor = Color(theme.colors.primary)
         let primaryIsDark = primaryColor.isDark()
@@ -48,8 +53,8 @@ class ProfileScreen extends React.Component {
                 <NavigationEvents
                     onWillFocus={payload => this._loadProfile(payload)}
                     onWillBlur={() => {
-                        dispatch(clearProfileArticles())
-                        dispatch(clearProfileError())
+                        clearProfileArticles()
+                        clearProfileError()
                     }}
                 />
                 {profile == 'loading' ? (
@@ -83,9 +88,7 @@ class ProfileScreen extends React.Component {
                                 {this._renderProfileImage(profile)}
                             </View>
                             <Text style={styles.title}>{profile.title.rendered}</Text>
-                            <Text style={styles.position}>
-                                {profile.custom_fields.staffposition[0]}
-                            </Text>
+                            <Text style={styles.position}>{profile.excerpt}</Text>
                             {profile.content.rendered ? (
                                 <HTML
                                     html={profile.content.rendered}
@@ -120,7 +123,7 @@ class ProfileScreen extends React.Component {
                                             textAlign: 'center'
                                         }}
                                     >
-                                        {`Recent Work By ${profile.custom_fields.name[0]}`}
+                                        {`Recent Work By ${profile.title.rendered}`}
                                     </Text>
                                 </LinearGradient>
                             </View>
@@ -205,7 +208,7 @@ class ProfileScreen extends React.Component {
                                                             name={
                                                                 story.custom_fields.writer &&
                                                                 story.custom_fields.writer[0] ==
-                                                                    profile.custom_fields.name[0]
+                                                                    profile.title.rendered
                                                                     ? 'edit'
                                                                     : 'camera-alt'
                                                             }
@@ -222,7 +225,7 @@ class ProfileScreen extends React.Component {
                                                         >
                                                             {story.custom_fields.writer &&
                                                             story.custom_fields.writer[0] ==
-                                                                profile.custom_fields.name[0]
+                                                                profile.title.rendered
                                                                 ? 'story'
                                                                 : 'media'}
                                                         </Text>
@@ -258,44 +261,93 @@ class ProfileScreen extends React.Component {
     }
 
     _loadProfile = async payload => {
-        const { navigation, activeDomain, dispatch } = this.props
+        const { navigation, activeDomain, fetchProfileArticles } = this.props
         try {
-            const userDomain = activeDomain.url
-            const writerName = navigation.getParam('writerName', 'unknown')
-            if (writerName !== 'unknown') {
+            const writerId = navigation.getParam('writerId', null)
+            const writerTermId = navigation.getParam('writerTermId', null)
+            if (writerId) {
                 const response = await fetch(
-                    `https://${userDomain}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=name&meta_query[0][value]=${writerName}`
+                    `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${writerId}`,
+                    {
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    }
                 )
                 const profile = await response.json()
-                if (profile.length > 0) {
-                    // if more than one matches use first one
-                    const profileId = profile[0].ID
-                    const newResponse = await fetch(
-                        `https://${userDomain}/wp-json/wp/v2/staff_profile/${profileId}`,
+                if (profile) {
+                    // if featured image is avail then get it
+                    if (profile._links['wp:featuredmedia']) {
+                        const response = await fetch(profile._links['wp:featuredmedia'][0].href)
+                        const profileImage = await response.json()
+                        profile.profileImage = profileImage.source_url
+                    }
+                    //set profile
+                    navigation.setParams({
+                        profile: profile
+                    })
+
+                    const autherTermId = profile.custom_fields.terms.find(termObj => {
+                        if (termObj.taxonomy === 'staff_name') {
+                            return termObj
+                        }
+                    })
+                    // get list of articles written by writer
+                    fetchProfileArticles(activeDomain.url, autherTermId.term_id)
+                } else {
+                    navigation.setParams({ profile: 'none' })
+                }
+            } else if (writerTermId) {
+                const profileIdRes = await fetch(
+                    `https://${activeDomain.url}/wp-json/sns-v2/get_profile?autherTermId=${writerTermId}`,
+                    {
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    }
+                )
+                const profileIdResponse = await profileIdRes.json()
+                if(profileIdResponse[0] && profileIdResponse[0].ID) {
+                    const response = await fetch(
+                        `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileIdResponse[0].ID}`,
                         {
                             headers: {
                                 'Cache-Control': 'no-cache'
                             }
                         }
                     )
-                    const writerProfile = await newResponse.json()
-                    // if featured image is avail then get it
-                    if (writerProfile._links['wp:featuredmedia']) {
-                        const response = await fetch(
-                            writerProfile._links['wp:featuredmedia'][0].href
-                        )
-                        const profileImage = await response.json()
-                        writerProfile.profileImage = profileImage.source_url
+                    const profile = await response.json()
+                    if (profile) {
+                        // if featured image is avail then get it
+                        if (profile._links['wp:featuredmedia']) {
+                            const response = await fetch(profile._links['wp:featuredmedia'][0].href)
+                            const profileImage = await response.json()
+                            profile.profileImage = profileImage.source_url
+                        }
+                        //set profile
+                        navigation.setParams({
+                            profile: profile
+                        })
+
+                        const autherTermId = profile.custom_fields.terms.find(termObj => {
+                            if (termObj.taxonomy === 'staff_name') {
+                                return termObj
+                            }
+                        })
+                        // get list of articles written by writer
+                        fetchProfileArticles(activeDomain.url, autherTermId.term_id)
+                    } else {
+                        navigation.setParams({ profile: 'error' })
                     }
-                    //set profile
-                    navigation.setParams({
-                        profile: writerProfile
-                    })
-                    // get list of articles written by writer
-                    dispatch(fetchProfileArticles(userDomain, writerName))
                 } else {
-                    navigation.setParams({ profile: 'none' })
+                    navigation.setParams({
+                        profile: 'none'
+                    })
                 }
+            } else {
+                navigation.setParams({
+                    profile: 'error'
+                })
             }
         } catch (err) {
             console.log('error fetching profile page', err)
@@ -384,10 +436,17 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-        activeDomain: state.activeDomain,
+        activeDomain: getActiveDomain(state),
         theme: state.theme,
         profiles: state.profiles
     }
 }
 
-export default connect(mapStateToProps)(ProfileScreen)
+const mapDispatchToProps = dispatch => ({
+    fetchProfileArticles: (domainUrl, name) =>
+        dispatch(profileActions.fetchProfileArticles(domainUrl, name)),
+    clearProfileArticles: () => dispatch(profileActions.clearProfileArticles()),
+    clearProfileError: () => dispatch(profileActions.clearProfileError())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen)

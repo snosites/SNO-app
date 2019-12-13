@@ -59,7 +59,7 @@ export default App = () => {
         return (
             <ReduxProvider store={store}>
                 <PersistGate
-                    loading={<ActivityIndicator style={{ padding: 50 }} />}
+                    loading={<ActivityIndicator style={{ padding: 100 }} />}
                     persistor={persistor}
                 >
                     <UpdateApp />

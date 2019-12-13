@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    StyleSheet,
     ScrollView,
     View,
     Text,
@@ -12,8 +11,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { connect } from 'react-redux';
 import { Button, List, Divider } from 'react-native-paper';
-import { clearError, changeActiveDomain } from '../redux/actionCreators';
-
+import { actions as domainActions } from '../redux/domains'
 
 class ErrorScreen extends React.Component {
     static navigationOptions = {
@@ -25,7 +23,7 @@ class ErrorScreen extends React.Component {
     }
 
     render() {
-        const { domains, navigation } = this.props;
+        const { domains, navigation } = this.props
         const { modalVisible } = this.state;
         const errorMessage = navigation.getParam('errorMessage', null);
         return (
@@ -94,7 +92,6 @@ class ErrorScreen extends React.Component {
 
     _handleSelectAgain = () => {
         this.props.navigation.navigate('Auth');
-        this.props.dispatch(clearError());
     }
 
     _handleSelectActive = () => {
@@ -104,20 +101,22 @@ class ErrorScreen extends React.Component {
     }
 
     _handleSelect = async (id) => {
-        if (Platform.OS === 'ios') {
-            Haptics.selectionAsync()
-        }
         try {
-            const { dispatch, navigation } = this.props;
-            dispatch(changeActiveDomain(id))
+            Haptics.selectionAsync()
+
+            const { setActiveDomain, navigation } = this.props
+            setActiveDomain(id)
             this.setState({
                 modalVisibile: false
             })
             navigation.navigate('AuthLoading');
-            this.props.dispatch(clearError());
         }
         catch (error) {
             console.log('error selecting school from error page')
+            this.setState({
+                modalVisibile: false
+            })
+            navigation.navigate('AuthLoading')
         }
     }
 }
@@ -128,4 +127,11 @@ const mapStateToProps = store => ({
     domains: store.domains,
 })
 
-export default connect(mapStateToProps)(ErrorScreen)
+const mapDispatchToProps = dispatch => ({
+    setActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ErrorScreen)

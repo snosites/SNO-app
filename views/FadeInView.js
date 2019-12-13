@@ -17,12 +17,10 @@ export default class FadeInView extends React.Component {
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 //return true if user is swiping, return false if it's a single click
                 const { dx, dy } = gestureState
-                console.log('dy', dy, 'dx', dx)
                 return dy > 2 || dy < -2
             },
             onPanResponderTerminationRequest: (evt, gestureState) => true,
             onPanResponderGrant: (evt, gestureState) => {
-                console.log('pan started', gestureState)
             },
             onPanResponderMove: Animated.event([
                 null, {

@@ -1,46 +1,92 @@
 import React, { useEffect } from 'react'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
-import { SplashScreen } from 'expo'
+import { ActivityIndicator, StatusBar, View, Text, Image } from 'react-native'
+import Constants from 'expo-constants'
+
+import { types as userTypes } from '../redux/user'
+import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { createErrorMessageSelector } from '../redux/errors'
+
+import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'
-import { setActiveDomain } from '../redux/actionCreators/savedDomains'
-import { getApiKey } from '../redux/actionCreators/userInfo'
+import { getReleaseChannel } from '../constants/config'
+
+const version = getReleaseChannel()
+
+console.log('this is version', version, Constants.manifest)
+const primaryColor =
+    version === 'sns'
+        ? Constants.manifest.extra.highSchool.primary
+        : Constants.manifest.extra.college.primary
+        
+const createUserErrorSelector = createErrorMessageSelector([
+    userTypes.FIND_OR_CREATE_USER,
+    globalTypes.INITIALIZE_USER
+])
 
 const AuthLoadingScreen = props => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
-    const { dispatch, userInfo, domains, navigation } = props
+    const { initializeUser, error } = props
 
     useEffect(() => {
-        if (!userInfo.apiKey) {
-            dispatch(getApiKey())
-        }
         if (switchingDomain) {
             return
         }
-        _getDomainAsync()
-    }, [userInfo.apiKey, switchingDomain])
+        initializeUser()
+    }, [switchingDomain])
 
 
-    _getDomainAsync = async () => {
-        if (!userInfo.apiKey) {
-            dispatch(getApiKey())
-        }
-
-        const activeDomain = domains.filter(domain => {
-            if (domain.active) {
-                return domain
-            }
-        })
-        // sets active domain for app and then navigates to app
-        if (activeDomain.length > 0) {
-            dispatch(setActiveDomain(activeDomain[0]))
-            navigation.navigate('App')
-        }
-        // no active domain navigate to auth
-        else {
-            SplashScreen.hide()
-            navigation.navigate('Auth')
-        }
+    if (error) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'white'
+                }}
+            >
+                <StatusBar barStyle='light-content' />
+                <Image
+                    source={
+                        version === 'sns'
+                            ? require('../assets/images/the-source-logo.png')
+                            : require('../assets/images/cns-logo.png')
+                    }
+                    style={{
+                        width: 250,
+                        height: 100,
+                        resizeMode: 'contain',
+                        marginBottom: 50
+                    }}
+                />
+                <Text
+                    style={{
+                        textAlign: 'center',
+                        padding: 20,
+                        paddingBottom: 50,
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: 'black'
+                    }}
+                >
+                    Sorry, there was a problem authenticating your device.
+                </Text>
+                <Button
+                    mode='contained'
+                    theme={{
+                        roundness: 7,
+                        colors: {
+                            primary: primaryColor
+                        }
+                    }}
+                    style={{ padding: 5, marginBottom: 20, marginHorizontal: 30 }}
+                    onPress={() => initializeUser()}
+                >
+                    Try Again
+                </Button>
+            </View>
+        )
     }
 
     return (
@@ -51,9 +97,17 @@ const AuthLoadingScreen = props => {
     )
 }
 
-const mapStateToProps = state => ({
-    domains: state.domains,
-    userInfo: state.userInfo
+const mapStateToProps = state => {
+    return {
+        error: createUserErrorSelector(state)
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    initializeUser: () => dispatch(globalActions.initializeUser())
 })
 
-export default connect(mapStateToProps)(AuthLoadingScreen)
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AuthLoadingScreen)

@@ -3,7 +3,6 @@ import {
     StyleSheet,
     Text,
     View,
-    WebView,
     ImageBackground,
     Dimensions,
     Platform,
@@ -12,8 +11,9 @@ import {
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import * as Haptics from 'expo-haptics';
-import * as WebBrowser from 'expo-web-browser';
+import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
+import { WebView } from 'react-native-webview'
 
 import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'
@@ -38,7 +38,13 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={styles.featuredMediaContainer}>
                     {this._renderFeaturedMedia(article)}
                 </View>
-                <View style={{ paddingHorizontal: 20, paddingTop: 10, alignItems: 'center' }}>
+                <View
+                    style={{
+                        paddingHorizontal: 20,
+                        paddingTop: 10,
+                        alignItems: 'center'
+                    }}
+                >
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
@@ -85,7 +91,13 @@ export default class ArticleBodyContent extends React.Component {
                 >
                     {this._renderArticleAuthor(article)}
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        paddingTop: 10
+                    }}
+                >
                     {this._renderDate(article.date)}
                 </View>
                 {article.content.rendered ? (
@@ -190,33 +202,21 @@ export default class ArticleBodyContent extends React.Component {
                 // console.log('reg ex', src)
                 return (
                     <WebView
-                        scalesPageToFit={true}
-                        automaticallyAdjustContentInsets={false}
                         scrollEnabled={false}
                         bounces={false}
                         originWhitelist={['*']}
                         allowsInlineMediaPlayback={true}
-                        javaScriptEnabled
                         startInLoadingState={true}
-                        renderLoading={() => (
-                            <View
-                                style={{
-                                    flex: 1,
-                                    height: MEDIASIZE,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <ActivityIndicator />
-                            </View>
-                        )}
                         renderError={() => (
                             <View
                                 style={{
+                                    position: 'absolute',
                                     flex: 1,
-                                    height: MEDIASIZE,
+                                    justifyContent: 'center',
                                     alignItems: 'center',
-                                    justifyContent: 'center'
+                                    height: '100%',
+                                    width: '100%',
+                                    backgroundColor: 'white'
                                 }}
                             >
                                 <Text style={{ textAlign: 'center' }}>
@@ -224,7 +224,10 @@ export default class ArticleBodyContent extends React.Component {
                                 </Text>
                             </View>
                         )}
-                        style={{ flex: 1, height: MEDIASIZE }}
+                        onError={syntheticEvent => {
+                            const { nativeEvent } = syntheticEvent
+                            console.warn('WebView error: ', nativeEvent)
+                        }}
                         source={{ uri: src }}
                     />
                 )
@@ -233,33 +236,21 @@ export default class ArticleBodyContent extends React.Component {
 
             return (
                 <WebView
-                    scalesPageToFit={true}
-                    automaticallyAdjustContentInsets={false}
                     scrollEnabled={false}
                     bounces={false}
                     originWhitelist={['*']}
                     allowsInlineMediaPlayback={true}
-                    javaScriptEnabled
                     startInLoadingState={true}
-                    renderLoading={() => (
-                        <View
-                            style={{
-                                flex: 1,
-                                height: MEDIASIZE,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                        >
-                            <ActivityIndicator />
-                        </View>
-                    )}
                     renderError={() => (
                         <View
                             style={{
+                                position: 'absolute',
                                 flex: 1,
-                                height: MEDIASIZE,
+                                justifyContent: 'center',
                                 alignItems: 'center',
-                                justifyContent: 'center'
+                                height: '100%',
+                                width: '100%',
+                                backgroundColor: 'white'
                             }}
                         >
                             <Text style={{ textAlign: 'center' }}>
@@ -267,7 +258,10 @@ export default class ArticleBodyContent extends React.Component {
                             </Text>
                         </View>
                     )}
-                    style={{ flex: 1, height: MEDIASIZE }}
+                    onError={syntheticEvent => {
+                        const { nativeEvent } = syntheticEvent
+                        console.warn('WebView error: ', nativeEvent)
+                    }}
                     source={{ uri: embedString }}
                 />
             )
@@ -326,24 +320,130 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _handleProfilePress = writerName => {
+
+    _handleProfilePress = writerId => {
         const { navigation } = this.props
+        console.log('pressed view prof', writerId)
         Haptics.selectionAsync()
         navigation.navigate('Profile', {
-            writerName
+            writerTermId: writerId
         })
     }
 
     _renderArticleAuthor = article => {
         const { theme } = this.props
-        if (article.custom_fields.writer && article.custom_fields.writer[0]) {
+        if (article.custom_fields.terms && article.custom_fields.terms[0]) {
+            let writers = article.custom_fields.terms
+            //if arr of writers dont include job title
+            if (writers.length > 1) {
+                return writers.map((writer, i) => {
+                    if (i === writers.length - 2) {
+                        return (
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {`${writer.name} & `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    } else if (i === writers.length - 1) {
+                        return (
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {writer.name}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    } else {
+                        return (
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        textAlign: 'center',
+                                        paddingTop: 20,
+                                        color: theme.colors.accent
+                                    }}
+                                >
+                                    {`${writer.name}, `}
+                                </Text>
+                            </TouchableItem>
+                        )
+                    }
+                })
+            }
+            // if writer has a jobtitle include it
+            if (article.custom_fields.jobtitle) {
+                return (
+                    <TouchableItem
+                        onPress={() =>
+                            this._handleProfilePress(article.custom_fields.terms[0].term_id)
+                        }
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
+                            {`${article.custom_fields.terms[0].name} | ${article.custom_fields.jobtitle[0]}`}
+                        </Text>
+                    </TouchableItem>
+                )
+            }
+            // otherwise just display writer
+            else {
+                return (
+                    <TouchableItem
+                        onPress={() =>
+                            this._handleProfilePress(article.custom_fields.terms[0].term_id)
+                        }
+                    >
+                        <Text
+                            style={{
+                                fontSize: 17,
+                                textAlign: 'center',
+                                paddingTop: 20,
+                                color: theme.colors.accent
+                            }}
+                        >
+                            {`${article.custom_fields.terms[0].name}`}
+                        </Text>
+                    </TouchableItem>
+                )
+            }
+        } else if (article.custom_fields.writer && article.custom_fields.writer[0]) {
             let writers = article.custom_fields.writer
             //if arr of writers dont include job title
             if (writers.length > 1) {
                 return writers.map((writer, i) => {
                     if (i === writers.length - 2) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -358,7 +458,7 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else if (i === writers.length - 1) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -373,7 +473,7 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -392,9 +492,7 @@ export default class ArticleBodyContent extends React.Component {
             // if writer has a jobtitle include it
             if (article.custom_fields.jobtitle) {
                 return (
-                    <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
-                    >
+                    <TouchableItem onPress={() => this._handleProfilePress(null)}>
                         <Text
                             style={{
                                 fontSize: 17,
@@ -403,9 +501,7 @@ export default class ArticleBodyContent extends React.Component {
                                 color: theme.colors.accent
                             }}
                         >
-                            {`${article.custom_fields.writer[0]} | ${
-                                article.custom_fields.jobtitle[0]
-                            }`}
+                            {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
                         </Text>
                     </TouchableItem>
                 )
@@ -413,9 +509,7 @@ export default class ArticleBodyContent extends React.Component {
             // otherwise just display writer
             else {
                 return (
-                    <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
-                    >
+                    <TouchableItem onPress={() => this._handleProfilePress()}>
                         <Text
                             style={{
                                 fontSize: 17,
@@ -467,18 +561,17 @@ export default class ArticleBodyContent extends React.Component {
 
 const styles = StyleSheet.create({
     featuredMediaContainer: {
-        flex: 1
+        flex: 0,
+        height: MEDIASIZE,
+        backgroundColor: 'black'
     },
     articleContents: {
         padding: 20
     },
-    featuredImageContainer: {
-        // height: MEDIASIZE,
-        width: viewportWidth
-    },
     featuredImage: {
         width: viewportWidth,
-        height: MEDIASIZE
+        height: MEDIASIZE,
+        resizeMode: 'contain'
     },
     imageInfoContainer: {
         flex: 1,

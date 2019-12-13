@@ -1,53 +1,54 @@
-import React from 'react';
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-} from 'react-native';
-import Color from 'color';
-import { connect } from 'react-redux';
+import React from 'react'
+import { View, Text, Image, StyleSheet } from 'react-native'
+import Color from 'color'
+import { connect } from 'react-redux'
 
-import Animation from '../views/Animation';
+import Animation from '../views/Animation'
 
 import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons';
-import { Snackbar } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons'
+import { Snackbar } from 'react-native-paper'
 
-import {
-    saveArticle,
-    removeSavedArticle,
-    fetchMoreSearchArticlesIfNeeded,
-} from '../redux/actionCreators';
+import { actions as savedArticleActions } from '../redux/savedArticles'
+import { actions as articleActions } from '../redux/articles'
+import { actions as searchActions } from '../redux/search'
+import { getActiveDomain } from '../redux/domains'
 
-import ArticleListContent from '../views/ArticleListContent';
+import ArticleListContent from '../views/ArticleListContent'
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 
 // header icon native look component
 const IoniconsHeaderButton = passMeFurther => (
-    <HeaderButton {...passMeFurther} IconComponent={Ionicons} iconSize={30} color={Colors.tintColor} />
-);
+    <HeaderButton
+        {...passMeFurther}
+        IconComponent={Ionicons}
+        iconSize={30}
+        color={Colors.tintColor}
+    />
+)
 
 class SearchScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps;
+        const { theme } = screenProps
         const logo = navigation.getParam('headerLogo', null)
-        let primaryColor = Color(theme.colors.primary);
-        let isDark = primaryColor.isDark();
+        let primaryColor = Color(theme.colors.primary)
+        let isDark = primaryColor.isDark()
         return {
             title: 'Search Results',
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
-                        title="menu"
-                        iconName="ios-menu"
+                        title='menu'
+                        iconName='ios-menu'
                         buttonStyle={{ color: isDark ? 'white' : 'black' }}
-                        onPress={() => { navigation.openDrawer() }} />
+                        onPress={() => {
+                            navigation.openDrawer()
+                        }}
+                    />
                 </HeaderButtons>
             ),
-            headerLeft: (
-                logo &&
+            headerLeft: logo && (
                 <Image
                     source={{ uri: logo }}
                     style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
@@ -55,8 +56,8 @@ class SearchScreen extends React.Component {
                 />
             ),
             headerBackTitle: null
-        };
-    };
+        }
+    }
 
     state = {
         snackbarSavedVisible: false,
@@ -64,9 +65,9 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { menus, navigation } = this.props;
+        const { menus, navigation } = this.props
         if (this.animation) {
-            this._playAnimation();
+            this._playAnimation()
         }
         navigation.setParams({
             headerLogo: menus.headerSmall
@@ -74,8 +75,8 @@ class SearchScreen extends React.Component {
     }
 
     render() {
-        const { navigation, searchArticles, search, theme, activeDomain } = this.props;
-        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state;
+        const { navigation, searchArticles, search, theme, activeDomain } = this.props
+        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state
 
         if (search.didInvalidate === true && search.isFetching) {
             return (
@@ -104,11 +105,11 @@ class SearchScreen extends React.Component {
                         saveRef={this._saveAnimationRef}
                         speed={1}
                     />
-                    <Text 
-                        style={{ 
-                            textAlign: 'center', 
-                            fontSize: 17, 
-                            padding: 30 
+                    <Text
+                        style={{
+                            textAlign: 'center',
+                            fontSize: 17,
+                            padding: 30
                         }}
                     >
                         Sorry, something went wrong.
@@ -119,15 +120,15 @@ class SearchScreen extends React.Component {
         if (search.items.length == 0) {
             return (
                 <View style={{ flex: 1 }}>
-                    <Text 
-                        style={{ 
-                            textAlign: 'center', 
-                            fontSize: 17, 
-                            padding: 20, 
-                            fontWeight: 'bold' 
+                    <Text
+                        style={{
+                            textAlign: 'center',
+                            fontSize: 17,
+                            padding: 20,
+                            fontWeight: 'bold'
                         }}
                     >
-                        No results.  Try searching again.
+                        No results. Try searching again.
                     </Text>
                 </View>
             )
@@ -173,41 +174,40 @@ class SearchScreen extends React.Component {
                     Article Removed From Saved List
                 </Snackbar>
             </View>
-
-        );
+        )
     }
 
-    _saveRef = (ref) => {
-        this.flatListRef = ref;
+    _saveRef = ref => {
+        this.flatListRef = ref
     }
 
-    _saveAnimationRef = (ref) => {
-        this.animation = ref;
+    _saveAnimationRef = ref => {
+        this.animation = ref
     }
 
     _scrollToTop = () => {
-        this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+        this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
     _saveRemoveToggle = article => {
         if (article.saved) {
-            this._handleArticleRemove(article.id);
+            this._handleArticleRemove(article.id)
         } else {
-            this._handleArticleSave(article);
+            this._handleArticleSave(article)
         }
     }
 
     _handleArticleSave = article => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(saveArticle(article, activeDomain.id))
+        const { activeDomain, saveArticle } = this.props
+        saveArticle(article, activeDomain.id)
         this.setState({
             snackbarSavedVisible: true
         })
     }
 
     _handleArticleRemove = articleId => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
+        const { activeDomain, removeSavedArticle } = this.props
+        removeSavedArticle(articleId, activeDomain.id)
         this.setState({
             snackbarRemovedVisible: true
         })
@@ -215,55 +215,67 @@ class SearchScreen extends React.Component {
 
     _loadMore = () => {
         if (!this.onEndReachedCalledDuringMomentum) {
-            const { activeDomain, navigation } = this.props;
-            const searchTerm = navigation.getParam('searchTerm', '');
-            this.props.dispatch(fetchMoreSearchArticlesIfNeeded(activeDomain.url, searchTerm))
-            this.onEndReachedCalledDuringMomentum = true;
+            const { activeDomain, navigation, fetchMoreSearchArticlesIfNeeded } = this.props
+            const searchTerm = navigation.getParam('searchTerm', '')
+            fetchMoreSearchArticlesIfNeeded(activeDomain.url, searchTerm)
+            this.onEndReachedCalledDuringMomentum = true
         }
     }
 
     _playAnimation = () => {
-        this.animation.reset();
-        this.animation.play();
-    };
-
+        this.animation.reset()
+        this.animation.play()
+    }
 }
 
 const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
-        height: 400,
+        height: 400
     },
     animationContainerError: {
         width: 200,
-        height: 200,
+        height: 200
     },
     snackbar: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0
-    },
-});
+    }
+})
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
+    const activeDomain = getActiveDomain(state)
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
+        activeDomain,
         search: state.searchArticles,
-        menus: state.menus,
+        menus: state.global.menuItems,
         searchArticles: state.searchArticles.items.map(articleId => {
-            const found = state.savedArticlesBySchool[state.activeDomain.id].find(savedArticle => {
-                return savedArticle.id === articleId;
+            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+                return savedArticle.id === articleId
             })
             if (found) {
-                state.entities.articles[articleId].saved = true;
+                state.entities.articles[articleId].saved = true
             } else {
-                state.entities.articles[articleId].saved = false;
+                state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
         })
     }
 }
 
-export default connect(mapStateToProps)(SearchScreen);
+const mapDispatchToProps = dispatch => ({
+    saveArticle: (article, domainId) =>
+        dispatch(savedArticleActions.saveArticle(article, domainId)),
+    removeSavedArticle: (articleId, domainId) =>
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
+    fetchMoreSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
+        dispatch(searchActions.fetchMoreSearchArticlesIfNeeded(domainUrl, searchTerm))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SearchScreen)

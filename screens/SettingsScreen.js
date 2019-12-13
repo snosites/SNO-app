@@ -1,12 +1,21 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View, TextInput, Text, Platform, Image, Alert } from 'react-native'
+import {
+    ScrollView,
+    StyleSheet,
+    View,
+    TextInput,
+    Text,
+    Image,
+    Alert,
+    ActivityIndicator
+} from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
+import Constants from 'expo-constants'
+
 import { connect } from 'react-redux'
-import { persistor } from '../redux/configureStore'
-import NavigationService from '../utils/NavigationService'
-import { saveUserInfo, deleteDomain, clearingSettings } from '../redux/actionCreators'
+
 import {
     List,
     Divider,
@@ -15,17 +24,18 @@ import {
     Colors,
     Snackbar,
     Button,
-    Portal,
-    ActivityIndicator
+    Portal
 } from 'react-native-paper'
 
-import {
-    changeActiveDomain,
-    addNotification,
-    removeNotification,
-    deleteUser,
-    clearError
-} from '../redux/actionCreators'
+import { actions as domainActions, getActiveDomain } from '../redux/domains'
+import { types as userTypes, actions as userActions } from '../redux/user'
+import { createLoadingSelector } from '../redux/loading'
+import { createErrorMessageSelector } from '../redux/errors'
+
+const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
+const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])
+
+const unsubscribeLoadingSelector = createLoadingSelector([userTypes.UNSUBSCRIBE])
 
 const ActiveDomainIcon = ({ color }) => <List.Icon icon={`star`} color={color} />
 
@@ -52,17 +62,18 @@ class SettingsScreen extends React.Component {
         email: '',
         notifications: {},
         dialog: false,
-        clearedAllSettings: false
+        clearedAllSettings: false,
+        showDeviceId: false
     }
 
     componentDidMount() {
-        const { userInfo, domains, menus, navigation } = this.props
+        const { userInfo, domains, global, navigation } = this.props
         this.setState({
             username: userInfo.username,
             email: userInfo.email
         })
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
 
         this.setState({
@@ -76,16 +87,6 @@ class SettingsScreen extends React.Component {
         })
     }
 
-    componentDidUpdate() {
-        if (this.props.userInfo.resetSettings) {
-            persistor.purge()
-            this.props.dispatch({
-                type: 'PURGE_USER_STATE'
-            })
-            this.props.navigation.navigate('AuthLoading')
-        }
-    }
-
     render() {
         const {
             snackbarVisible,
@@ -95,9 +96,19 @@ class SettingsScreen extends React.Component {
             email,
             notifications
         } = this.state
-        const { domains, userInfo, dispatch, theme, errors } = this.props
+        const {
+            domains,
+            userInfo,
+            theme,
+            errors,
+            deleteUser,
+            saveUserInfo,
+            isLoading,
+            unsubscribe,
+            unsubscribeLoading
+        } = this.props
 
-        if (userInfo.clearingSettings) {
+        if (isLoading) {
             return (
                 <View
                     style={{
@@ -120,12 +131,10 @@ class SettingsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
                                 onBlur={text => {
-                                    dispatch(
-                                        saveUserInfo({
-                                            username: username,
-                                            email: email
-                                        })
-                                    )
+                                    saveUserInfo({
+                                        username: username,
+                                        email: email
+                                    })
                                     this.setState({
                                         editingUsername: false
                                     })
@@ -156,12 +165,10 @@ class SettingsScreen extends React.Component {
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
                                 onBlur={() => {
-                                    dispatch(
-                                        saveUserInfo({
-                                            username: username,
-                                            email: email
-                                        })
-                                    )
+                                    saveUserInfo({
+                                        username: username,
+                                        email: email
+                                    })
                                     this.setState({
                                         editingEmail: false
                                     })
@@ -233,29 +240,65 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {userInfo.tokenId ? (
+                        {!userInfo.user.pushToken ? (
                             domains.map(domain => {
+                                const writerSubs = userInfo.writerSubscriptions.filter(
+                                    writer => writer.organization_id === domain.id
+                                )
                                 return (
                                     <List.Accordion
                                         key={domain.id}
                                         title={domain.name}
                                         left={props => <List.Icon {...props} icon='folder-open' />}
                                     >
-                                        {/* <List.Item
-                                        style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                        titleStyle={{ fontWeight: 'bold' }}
-                                        title={'All Notifications'}
-                                        right={() => {
-                                            return (
-                                                <Switch
-                                                    style={{ margin: 10 }}
-                                                    value={false}
-                                                // onValueChange={() => { this._toggleNotifications(item.id) }
-                                                // }
-                                                />
-                                            )
-                                        }}
-                                    /> */}
+                                        <List.Subheader>Writer Notifications</List.Subheader>
+                                        {writerSubs.length > 0 ? (
+                                            writerSubs.map(writerObj => {
+                                                return (
+                                                    <List.Item
+                                                        key={writerObj.id}
+                                                        style={{
+                                                            paddingVertical: 0,
+                                                            paddingLeft: 60
+                                                        }}
+                                                        title={writerObj.writer_name}
+                                                        right={() => {
+                                                            return unsubscribeLoading ? (
+                                                                <ActivityIndicator
+                                                                    style={{ paddingRight: 10 }}
+                                                                />
+                                                            ) : (
+                                                                <IconButton
+                                                                    icon='delete'
+                                                                    color={Colors.red700}
+                                                                    size={20}
+                                                                    onPress={() =>
+                                                                        unsubscribe({
+                                                                            subscriptionType:
+                                                                                'writers',
+                                                                            ids: [writerObj.id],
+                                                                            domainId: domain.id
+                                                                        })
+                                                                    }
+                                                                />
+                                                            )
+                                                        }}
+                                                    />
+                                                )
+                                            })
+                                        ) : (
+                                            <Text
+                                                style={{
+                                                    fontSize: 18,
+                                                    fontWeight: 'bold',
+                                                    paddingBottom: 10
+                                                }}
+                                            >
+                                                You aren't following any writers yet
+                                            </Text>
+                                        )}
+
+                                        <List.Subheader>Category Notifications</List.Subheader>
                                         {domain.notificationCategories.map((item, i) => {
                                             if (item.category_name == 'custom_push') {
                                                 return (
@@ -321,7 +364,14 @@ class SettingsScreen extends React.Component {
                                 )
                             })
                         ) : (
-                            <Text style={{ textAlign: 'center' }}>
+                            <Text
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: 18,
+                                    fontWeight: 'bold',
+                                    paddingBottom: 10
+                                }}
+                            >
                                 You have disabled push notifications for this app
                             </Text>
                         )}
@@ -339,7 +389,12 @@ class SettingsScreen extends React.Component {
                             mode='outlined'
                             color={Colors.red700}
                             style={{ padding: 10 }}
-                            onPress={this._showDialog}
+                            onPress={() => {
+                                this.setState({
+                                    dialog: true,
+                                    showDeviceId: !this.state.showDeviceId
+                                })
+                            }}
                         >
                             Clear All Settings
                         </Button>
@@ -365,7 +420,7 @@ class SettingsScreen extends React.Component {
                     Organization Removed
                 </Snackbar>
                 <Snackbar
-                    visible={errors.error === 'delete user-saga error'}
+                    visible={errors}
                     duration={3000}
                     style={{
                         position: 'absolute',
@@ -373,12 +428,10 @@ class SettingsScreen extends React.Component {
                         left: 0,
                         right: 0
                     }}
-                    onDismiss={() => dispatch(clearError())}
+                    onDismiss={() => {}}
                     action={{
                         label: 'Dismiss',
-                        onPress: () => {
-                            dispatch(clearError())
-                        }
+                        onPress: () => {}
                     }}
                 >
                     Sorry there was an error clearing your settings. Please try again later.
@@ -397,10 +450,7 @@ class SettingsScreen extends React.Component {
                                   {
                                       text: 'Clear',
                                       onPress: () => {
-                                          this.props.dispatch(clearingSettings(true))
-                                          this.props.dispatch(
-                                              deleteUser(userInfo.tokenId, userInfo.apiKey)
-                                          )
+                                          deleteUser()
                                           this._hideDialog()
                                       }
                                   }
@@ -409,11 +459,21 @@ class SettingsScreen extends React.Component {
                           )
                         : null}
                 </Portal>
+                {this.state.showDeviceId && (
+                    <Text
+                        style={{
+                            alignSelf: 'flex-end',
+                            marginTop: 'auto',
+                            fontSize: 9,
+                            color: Colors.grey400
+                        }}
+                    >
+                        {Constants.installationId}
+                    </Text>
+                )}
             </ScrollView>
         )
     }
-
-    _showDialog = () => this.setState({ dialog: true })
 
     _hideDialog = () => this.setState({ dialog: false })
 
@@ -428,7 +488,7 @@ class SettingsScreen extends React.Component {
 
     _handleDeleteOrg = domain => {
         Haptics.selectionAsync()
-        const { domains, navigation, userInfo } = this.props
+        const { domains, navigation, deleteDomain, unsubscribe } = this.props
         if (domain.active) {
             let found = domains.find(domain => {
                 return !domain.active
@@ -443,14 +503,14 @@ class SettingsScreen extends React.Component {
         const categoryIds = domain.notificationCategories.map(category => {
             return category.id
         })
-        this.props.dispatch(
-            removeNotification({
-                tokenId: userInfo.tokenId,
-                categoryId: categoryIds,
-                domain: domain.id
+        if (categoryIds) {
+            unsubscribe({
+                subscriptionType: 'categories',
+                ids: categoryIds,
+                domainId: domain.id
             })
-        )
-        this.props.dispatch(deleteDomain(domain.id))
+        }
+        deleteDomain(domain.id)
         this.setState({
             snackbarVisible: true
         })
@@ -484,32 +544,28 @@ class SettingsScreen extends React.Component {
                 }
             }
         })
-        // notificationId is category ID in DB
-        const { dispatch, userInfo } = this.props
+
+        const { subscribe, unsubscribe } = this.props
         if (value) {
-            dispatch(
-                addNotification({
-                    tokenId: userInfo.tokenId,
-                    categoryId: notificationId,
-                    domain: domain.id
-                })
-            )
+            subscribe({
+                subscriptionType: 'categories',
+                ids: [notificationId],
+                domainId: domain.id
+            })
         } else {
-            dispatch(
-                removeNotification({
-                    tokenId: userInfo.tokenId,
-                    categoryId: notificationId,
-                    domain: domain.id
-                })
-            )
+            unsubscribe({
+                subscriptionType: 'categories',
+                ids: [notificationId],
+                domainId: domain.id
+            })
         }
     }
 
     _switchDomain = id => {
         Haptics.selectionAsync()
-        const { dispatch, navigation } = this.props
+        const { changeActiveDomain, navigation } = this.props
 
-        dispatch(changeActiveDomain(id))
+        changeActiveDomain(id)
         navigation.navigate('AuthLoading')
     }
 }
@@ -525,13 +581,31 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapStateToProps = store => ({
-    theme: store.theme,
-    domains: store.domains,
-    userInfo: store.userInfo,
-    menus: store.menus,
-    activeDomain: store.activeDomain,
-    errors: store.errors
-})
+const mapStateToProps = state => {
+    return {
+        theme: state.theme,
+        domains: state.domains,
+        userInfo: state.user,
+        global: state.global,
+        activeDomain: getActiveDomain(state),
+        errors: deleteUserErrorSelector(state),
+        isLoading: deleteUserLoadingSelector(state),
+        unsubscribeLoading: unsubscribeLoadingSelector(state)
+    }
+}
 
-export default connect(mapStateToProps)(SettingsScreen)
+const mapDispatchToProps = dispatch => {
+    return {
+        changeActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId)),
+        deleteUser: () => dispatch(userActions.deleteUser()),
+        saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload)),
+        deleteDomain: domainId => dispatch(domainActions.deleteDomain(domainId)),
+        subscribe: payload => dispatch(userActions.subscribe(payload)),
+        unsubscribe: payload => dispatch(userActions.unsubscribe(payload))
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SettingsScreen)

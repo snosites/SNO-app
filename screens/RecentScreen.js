@@ -11,13 +11,10 @@ import LottieView from 'lottie-react-native'
 
 import { Snackbar } from 'react-native-paper';
 
-import {
-    saveArticle,
-    removeSavedArticle,
-    fetchRecentArticlesIfNeeded,
-    fetchMoreRecentArticlesIfNeeded,
-    invalidateRecentArticles
-} from '../redux/actionCreators';
+import { getActiveDomain } from '../redux/domains'
+import { actions as recentActions } from '../redux/recent'
+import { actions as savedArticleActions } from '../redux/savedArticles'
+
 import { SafeAreaView } from 'react-navigation';
 import ArticleListContent from '../views/ArticleListContent';
 import Animation from '../views/Animation';
@@ -48,18 +45,23 @@ class RecentScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, activeDomain, navigation, menus } = this.props;
+        const {
+            activeDomain,
+            navigation,
+            global,
+            fetchRecentArticlesIfNeeded
+        } = this.props
         if (this.animation) {
             this._playAnimation();
         }
         this.willFocusSubscription = navigation.addListener(
             'willFocus',
             () => {
-                dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
+                fetchRecentArticlesIfNeeded(activeDomain.url)
             }
         );
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: global.headerSmall
         })
     }
 
@@ -204,30 +206,34 @@ class RecentScreen extends React.Component {
     }
 
     _handleArticleSave = article => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(saveArticle(article, activeDomain.id))
+        const { activeDomain, saveArticle } = this.props
+        saveArticle(article, activeDomain.id)
         this.setState({
             snackbarSavedVisible: true
         })
     }
 
     _handleArticleRemove = articleId => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(removeSavedArticle(articleId, activeDomain.id))
+        const { activeDomain, removeSavedArticle } = this.props
+        removeSavedArticle(articleId, activeDomain.id)
         this.setState({
             snackbarRemovedVisible: true
         })
     }
 
     _loadMore = () => {
-        const { activeDomain } = this.props;
-        this.props.dispatch(fetchMoreRecentArticlesIfNeeded(activeDomain.url))
+        const { activeDomain, fetchMoreRecentArticlesIfNeeded } = this.props
+        fetchMoreRecentArticlesIfNeeded(activeDomain.url)
     }
 
     _handleRefresh = () => {
-        const { dispatch, activeDomain } = this.props;
-        dispatch(invalidateRecentArticles());
-        dispatch(fetchRecentArticlesIfNeeded(activeDomain.url))
+        const {
+            activeDomain,
+            fetchRecentArticlesIfNeeded,
+            invalidateRecentArticles
+        } = this.props
+        invalidateRecentArticles()
+        fetchRecentArticlesIfNeeded(activeDomain.url)
     }
 
     _playAnimation = () => {
@@ -255,23 +261,40 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
+    const activeDomain = getActiveDomain(state)
     return {
         theme: state.theme,
-        activeDomain: state.activeDomain,
-        menus: state.menus,
+        activeDomain,
+        global: state.global,
         recent: state.recentArticles,
         recentArticles: state.recentArticles.items.map(articleId => {
-            const found = state.savedArticlesBySchool[state.activeDomain.id].find(savedArticle => {
-                return savedArticle.id === articleId;
+            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+                return savedArticle.id === articleId
             })
             if (found) {
-                state.entities.articles[articleId].saved = true;
+                state.entities.articles[articleId].saved = true
             } else {
-                state.entities.articles[articleId].saved = false;
+                state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
         })
     }
 }
 
-export default connect(mapStateToProps)(RecentScreen);
+const mapdispatchToProps = dispatch => ({
+    saveArticle: (article, domainId) =>
+        dispatch(savedArticleActions.saveArticle(article, domainId)),
+    removeSavedArticle: (articleId, domainId) =>
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
+    invalidateRecentArticles: categoryId =>
+        dispatch(recentActions.invalidateRecentArticles(categoryId)),
+    fetchRecentArticlesIfNeeded: domainUrl =>
+        dispatch(recentActions.fetchRecentArticlesIfNeeded(domainUrl)),
+    fetchMoreRecentArticlesIfNeeded: payload =>
+        dispatch(recentActions.fetchMoreRecentArticlesIfNeeded(payload))
+})
+
+export default connect(
+    mapStateToProps,
+    mapdispatchToProps
+)(RecentScreen)
