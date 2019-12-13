@@ -275,7 +275,6 @@ class ProfileScreen extends React.Component {
                     }
                 )
                 const profile = await response.json()
-                console.log('this is profile', profile)
                 if (profile) {
                     // if featured image is avail then get it
                     if (profile._links['wp:featuredmedia']) {
@@ -308,7 +307,6 @@ class ProfileScreen extends React.Component {
                     }
                 )
                 const profileIdResponse = await profileIdRes.json()
-                console.log('had writer term id', profileIdResponse)
                 if(profileIdResponse[0] && profileIdResponse[0].ID) {
                     const response = await fetch(
                         `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileIdResponse[0].ID}`,
@@ -319,7 +317,6 @@ class ProfileScreen extends React.Component {
                         }
                     )
                     const profile = await response.json()
-                    console.log('this is profile', profile)
                     if (profile) {
                         // if featured image is avail then get it
                         if (profile._links['wp:featuredmedia']) {
@@ -340,11 +337,11 @@ class ProfileScreen extends React.Component {
                         // get list of articles written by writer
                         fetchProfileArticles(activeDomain.url, autherTermId.term_id)
                     } else {
-                        navigation.setParams({ profile: 'none' })
+                        navigation.setParams({ profile: 'error' })
                     }
                 } else {
                     navigation.setParams({
-                        profile: 'error'
+                        profile: 'none'
                     })
                 }
             } else {
