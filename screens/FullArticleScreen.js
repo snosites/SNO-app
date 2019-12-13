@@ -62,7 +62,8 @@ class FullArticleScreen extends React.Component {
         return filteredWriters
     }
 
-    _renderFabActions = terms => {
+    _renderFabActions = article => {
+        const { custom_fields: { terms } } = article
         const { pushToken, activeDomain, writerSubscriptions } = this.props
         const filteredWriters = this._getFilteredWriters(activeDomain.id, terms, writerSubscriptions)
         const fabActions = [
@@ -119,8 +120,6 @@ class FullArticleScreen extends React.Component {
 
         let article = navigation.getParam('article', 'loading')
         let articleChapters = navigation.getParam('articleChapters', [])
-
-        console.log('this is the article', article)
 
         if (!article || article === 'loading') {
             return (
@@ -211,7 +210,7 @@ class FullArticleScreen extends React.Component {
                                     }}
                                     open={this.state.fabOpen}
                                     icon={this.state.fabOpen ? 'clear' : 'add'}
-                                    actions={this._renderFabActions(article.custom_fields.terms)}
+                                    actions={this._renderFabActions(article)}
                                     onStateChange={({ open }) =>
                                         this.setState({
                                             fabOpen: open

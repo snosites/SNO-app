@@ -38,7 +38,13 @@ export default class ArticleBodyContent extends React.Component {
                 <View style={styles.featuredMediaContainer}>
                     {this._renderFeaturedMedia(article)}
                 </View>
-                <View style={{ paddingHorizontal: 20, paddingTop: 10, alignItems: 'center' }}>
+                <View
+                    style={{
+                        paddingHorizontal: 20,
+                        paddingTop: 10,
+                        alignItems: 'center'
+                    }}
+                >
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
@@ -85,7 +91,13 @@ export default class ArticleBodyContent extends React.Component {
                 >
                     {this._renderArticleAuthor(article)}
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 10 }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        paddingTop: 10
+                    }}
+                >
                     {this._renderDate(article.date)}
                 </View>
                 {article.content.rendered ? (
@@ -308,11 +320,13 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _handleProfilePress = writerName => {
+
+    _handleProfilePress = writerId => {
         const { navigation } = this.props
+        console.log('pressed view prof', writerId)
         Haptics.selectionAsync()
         navigation.navigate('Profile', {
-            writerName
+            writerTermId: writerId
         })
     }
 
@@ -325,7 +339,10 @@ export default class ArticleBodyContent extends React.Component {
                 return writers.map((writer, i) => {
                     if (i === writers.length - 2) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -340,7 +357,10 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else if (i === writers.length - 1) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -355,7 +375,10 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer.name)}>
+                            <TouchableItem
+                                key={i}
+                                onPress={() => this._handleProfilePress(writer.term_id)}
+                            >
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -375,7 +398,9 @@ export default class ArticleBodyContent extends React.Component {
             if (article.custom_fields.jobtitle) {
                 return (
                     <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.terms[0].name)}
+                        onPress={() =>
+                            this._handleProfilePress(article.custom_fields.terms[0].term_id)
+                        }
                     >
                         <Text
                             style={{
@@ -385,9 +410,7 @@ export default class ArticleBodyContent extends React.Component {
                                 color: theme.colors.accent
                             }}
                         >
-                            {`${article.custom_fields.terms[0].name} | ${
-                                article.custom_fields.jobtitle[0]
-                            }`}
+                            {`${article.custom_fields.terms[0].name} | ${article.custom_fields.jobtitle[0]}`}
                         </Text>
                     </TouchableItem>
                 )
@@ -396,7 +419,9 @@ export default class ArticleBodyContent extends React.Component {
             else {
                 return (
                     <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.terms[0].name)}
+                        onPress={() =>
+                            this._handleProfilePress(article.custom_fields.terms[0].term_id)
+                        }
                     >
                         <Text
                             style={{
@@ -418,7 +443,7 @@ export default class ArticleBodyContent extends React.Component {
                 return writers.map((writer, i) => {
                     if (i === writers.length - 2) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -433,7 +458,7 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else if (i === writers.length - 1) {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -448,7 +473,7 @@ export default class ArticleBodyContent extends React.Component {
                         )
                     } else {
                         return (
-                            <TouchableItem key={i} onPress={() => this._handleProfilePress(writer)}>
+                            <TouchableItem key={i} onPress={() => this._handleProfilePress(null)}>
                                 <Text
                                     style={{
                                         fontSize: 17,
@@ -467,9 +492,7 @@ export default class ArticleBodyContent extends React.Component {
             // if writer has a jobtitle include it
             if (article.custom_fields.jobtitle) {
                 return (
-                    <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
-                    >
+                    <TouchableItem onPress={() => this._handleProfilePress(null)}>
                         <Text
                             style={{
                                 fontSize: 17,
@@ -478,9 +501,7 @@ export default class ArticleBodyContent extends React.Component {
                                 color: theme.colors.accent
                             }}
                         >
-                            {`${article.custom_fields.writer[0]} | ${
-                                article.custom_fields.jobtitle[0]
-                            }`}
+                            {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
                         </Text>
                     </TouchableItem>
                 )
@@ -488,9 +509,7 @@ export default class ArticleBodyContent extends React.Component {
             // otherwise just display writer
             else {
                 return (
-                    <TouchableItem
-                        onPress={() => this._handleProfilePress(article.custom_fields.writer[0])}
-                    >
+                    <TouchableItem onPress={() => this._handleProfilePress()}>
                         <Text
                             style={{
                                 fontSize: 17,

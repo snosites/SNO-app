@@ -264,6 +264,7 @@ class ProfileScreen extends React.Component {
         const { navigation, activeDomain, fetchProfileArticles } = this.props
         try {
             const writerId = navigation.getParam('writerId', null)
+            const writerTermId = navigation.getParam('writerTermId', null)
             if (writerId) {
                 const response = await fetch(
                     `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${writerId}`,
@@ -288,7 +289,7 @@ class ProfileScreen extends React.Component {
                     })
 
                     const autherTermId = profile.custom_fields.terms.find(termObj => {
-                        if(termObj.taxonomy === 'staff_name') {
+                        if (termObj.taxonomy === 'staff_name') {
                             return termObj
                         }
                     })
@@ -297,6 +298,59 @@ class ProfileScreen extends React.Component {
                 } else {
                     navigation.setParams({ profile: 'none' })
                 }
+            } else if (writerTermId) {
+                const profileIdRes = await fetch(
+                    `https://${activeDomain.url}/wp-json/sns-v2/get_profile?autherTermId=${writerTermId}`,
+                    {
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    }
+                )
+                const profileIdResponse = await profileIdRes.json()
+                console.log('had writer term id', profileIdResponse)
+                if(profileIdResponse[0] && profileIdResponse[0].ID) {
+                    const response = await fetch(
+                        `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileIdResponse[0].ID}`,
+                        {
+                            headers: {
+                                'Cache-Control': 'no-cache'
+                            }
+                        }
+                    )
+                    const profile = await response.json()
+                    console.log('this is profile', profile)
+                    if (profile) {
+                        // if featured image is avail then get it
+                        if (profile._links['wp:featuredmedia']) {
+                            const response = await fetch(profile._links['wp:featuredmedia'][0].href)
+                            const profileImage = await response.json()
+                            profile.profileImage = profileImage.source_url
+                        }
+                        //set profile
+                        navigation.setParams({
+                            profile: profile
+                        })
+
+                        const autherTermId = profile.custom_fields.terms.find(termObj => {
+                            if (termObj.taxonomy === 'staff_name') {
+                                return termObj
+                            }
+                        })
+                        // get list of articles written by writer
+                        fetchProfileArticles(activeDomain.url, autherTermId.term_id)
+                    } else {
+                        navigation.setParams({ profile: 'none' })
+                    }
+                } else {
+                    navigation.setParams({
+                        profile: 'error'
+                    })
+                }
+            } else {
+                navigation.setParams({
+                    profile: 'error'
+                })
             }
         } catch (err) {
             console.log('error fetching profile page', err)
@@ -398,7 +452,4 @@ const mapDispatchToProps = dispatch => ({
     clearProfileError: () => dispatch(profileActions.clearProfileError())
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ProfileScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen)
