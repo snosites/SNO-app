@@ -62,8 +62,8 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 100 }} />}
                     persistor={persistor}
                 >
-                    <UpdateApp />
-                    {/* <AppContainer /> */}
+                    {/* <UpdateApp /> */}
+                    <AppContainer />
                 </PersistGate>
             </ReduxProvider>
         )
