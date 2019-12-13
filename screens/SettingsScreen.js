@@ -468,7 +468,7 @@ class SettingsScreen extends React.Component {
                             color: Colors.grey400
                         }}
                     >
-                        {Constants.installationId}
+                        {`${Constants.manifest.version} - ${Constants.installationId}`}
                     </Text>
                 )}
             </ScrollView>
