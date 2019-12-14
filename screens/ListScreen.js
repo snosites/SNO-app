@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Platform } from 'react-native'
 import Color from 'color'
 import { connect } from 'react-redux'
 
+import HTML from 'react-native-render-html'
 import LottieView from 'lottie-react-native'
 
 import Colors from '../constants/Colors'
@@ -31,30 +32,22 @@ const IoniconsHeaderButton = passMeFurther => (
 )
 
 //header title -- work on later
-// const HeaderTitle = ({name}) => {
-//     return (
-//         <Animated.Text
-//             numberOfLines={1}
-//             {...rest}
-//             style={[styles.title, style]}
-//             accessibilityTraits="header"
-//         />
-//         <HTML
-//             html={name}
-//             customWrapper={(text) => {
-//                 return (
-//                     <Text
-//                         ellipsizeMode='tail'
-//                         numberOfLines={1}
-//                         style={styles.title}
-//                     >
-//                         {text}
-//                     </Text>
-//                 )
-//             }}
-//         />
-//     )
-// }
+const CustomHeaderTitle = ({children, style}) => {
+    console.log('header title props', children, style, styles.title)
+    return (
+        <HTML
+            html={children}
+            customWrapper={text => {
+                return (
+                    <Text ellipsizeMode='tail' numberOfLines={1} style={[...style, styles.title]}>
+                        {text}
+                    </Text>
+                )
+            }}
+            baseFontStyle={styles.title}
+        />
+    )
+}
 
 class ListScreen extends React.Component {
     static navigationOptions = ({ navigation, screenProps }) => {
@@ -65,6 +58,7 @@ class ListScreen extends React.Component {
         let isDark = primaryColor.isDark()
         return {
             title: headerName,
+            headerTitle: CustomHeaderTitle,
             headerRight: (
                 <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                     <Item
@@ -315,19 +309,14 @@ const styles = StyleSheet.create({
             ios: {
                 fontSize: 17,
                 fontWeight: '600',
-                color: 'rgba(0, 0, 0, .9)',
-                marginHorizontal: 16
             },
             android: {
                 fontSize: 20,
                 fontWeight: '500',
-                color: 'rgba(0, 0, 0, .9)',
-                marginHorizontal: 16
             },
             default: {
                 fontSize: 18,
                 fontWeight: '400',
-                color: '#3c4043'
             }
         })
     }
