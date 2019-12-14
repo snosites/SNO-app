@@ -64,7 +64,7 @@ class FullArticleScreen extends React.Component {
 
     _renderFabActions = article => {
         const { custom_fields: { terms } } = article
-        const { pushToken, activeDomain, writerSubscriptions } = this.props
+        const { pushToken, activeDomain, writerSubscriptions, navigation } = this.props
         const filteredWriters = this._getFilteredWriters(activeDomain.id, terms, writerSubscriptions)
         const fabActions = [
             {

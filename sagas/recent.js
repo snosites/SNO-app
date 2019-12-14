@@ -12,6 +12,9 @@ const articleListSchema = new schema.Array(articleSchema)
 
 function* fetchRecentArticles(action) {
     const { domain, categories, page } = action
+    if(!page) {
+        page = 1
+    }
     try {
         yield put(recentActions.requestRecentArticles())
 

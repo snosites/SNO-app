@@ -87,7 +87,15 @@ class ProfileScreen extends React.Component {
                             <View style={styles.profileImageContainer}>
                                 {this._renderProfileImage(profile)}
                             </View>
-                            <Text style={styles.title}>{profile.title.rendered}</Text>
+                            {profile.title.rendered ? (
+                                <HTML
+                                    html={profile.title.rendered}
+                                    textSelectable={true}
+                                    baseFontStyle={styles.title}
+                                />
+                            ) : (
+                                <Text style={styles.title}>No Name</Text>
+                            )}
                             <Text style={styles.position}>{profile.excerpt}</Text>
                             {profile.content.rendered ? (
                                 <HTML
@@ -123,7 +131,7 @@ class ProfileScreen extends React.Component {
                                             textAlign: 'center'
                                         }}
                                     >
-                                        {`Recent Work By ${profile.title.rendered}`}
+                                        {`Recent Work By This Staff Member`}
                                     </Text>
                                 </LinearGradient>
                             </View>
@@ -307,7 +315,7 @@ class ProfileScreen extends React.Component {
                     }
                 )
                 const profileIdResponse = await profileIdRes.json()
-                if(profileIdResponse[0] && profileIdResponse[0].ID) {
+                if (profileIdResponse[0] && profileIdResponse[0].ID) {
                     const response = await fetch(
                         `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileIdResponse[0].ID}`,
                         {
@@ -317,6 +325,7 @@ class ProfileScreen extends React.Component {
                         }
                     )
                     const profile = await response.json()
+                    console.log('this is profile', profile)
                     if (profile) {
                         // if featured image is avail then get it
                         if (profile._links['wp:featuredmedia']) {
@@ -362,7 +371,10 @@ class ProfileScreen extends React.Component {
             return <Image style={styles.profileImage} source={{ uri: profile.profileImage }} />
         } else {
             return (
-                <Image style={styles.profileImage} source={require('../assets/images/anon.png')} />
+                <Image
+                    style={styles.noProfileImage}
+                    source={require('../assets/images/anon.png')}
+                />
             )
         }
     }
@@ -384,11 +396,13 @@ const styles = StyleSheet.create({
     noProfileImage: {
         width: 150,
         height: 150,
+        margin: 10,
         borderRadius: 75
     },
     profileImage: {
         width: 200,
         height: 200,
+        margin: 10,
         borderRadius: 100
     },
     title: {

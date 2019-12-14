@@ -117,12 +117,6 @@ export default class ArticleBodyContent extends React.Component {
                                     delete node.attribs.width
                                     delete node.attribs.height
                                 }
-                                // if (node.attribs['data-photo-ids']){
-                                //     console.log('node', node);
-                                //     console.log('node attribs', node.attribs);
-                                //     console.log('node children', node.children)
-
-                                // }
                                 return node.children
                             }}
                             tagsStyles={{
@@ -323,7 +317,6 @@ export default class ArticleBodyContent extends React.Component {
 
     _handleProfilePress = writerId => {
         const { navigation } = this.props
-        console.log('pressed view prof', writerId)
         Haptics.selectionAsync()
         navigation.navigate('Profile', {
             writerTermId: writerId
