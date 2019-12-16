@@ -33,7 +33,6 @@ const IoniconsHeaderButton = passMeFurther => (
 
 //header title -- work on later
 const CustomHeaderTitle = ({children, style}) => {
-    console.log('header title props', children, style, styles.title)
     return (
         <HTML
             html={children}

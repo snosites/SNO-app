@@ -166,6 +166,16 @@ class CustomDrawerComponent extends React.Component {
                     activeMenuIndex: index
                 })
             }
+            else if(!item.template) {
+                // default template
+                this.props.navigation.navigate('DefaultPage', {
+                    menuTitle: item.title,
+                    pageId: item.object_id
+                })
+                this.setState({
+                    activeMenuIndex: index
+                })
+            }
             else {
                 // redirect to page not found screen later
                 console.log('page not found');

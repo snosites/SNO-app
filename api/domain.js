@@ -38,7 +38,12 @@ const domainApiService = {
     getMobileMenu: async domainUrl => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/menus/mobile-app-menu`
+                `https://${domainUrl}/wp-json/custom/menus/mobile-app-menu`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {
@@ -242,6 +247,17 @@ const domainApiService = {
             return response.data
         } catch (err) {
             console.log('error in fetch recent articles api', err, err.response)
+            throw err
+        }
+    },
+    getSportCenterOption: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/sportcenter_check`, 
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get sportcenter option api', err, err.response)
             throw err
         }
     }

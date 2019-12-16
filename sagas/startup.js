@@ -52,13 +52,15 @@ function* startup(action) {
 
         // // check if user selected all notifications
         if (token && userSubscribeAll) {
-            yield call(subscribe, {payload: {
-                subscriptionType: 'categories',
-                domainId: domain.id,
-                ids: dbCategories.map(category => {
-                    return category.id
-                })
-            }})
+            yield call(subscribe, {
+                payload: {
+                    subscriptionType: 'categories',
+                    domainId: domain.id,
+                    ids: dbCategories.map(category => {
+                        return category.id
+                    })
+                }
+            })
         }
         // // reset all notifications toggle key
         yield put(userActions.setSubscribeAll(false))
@@ -109,12 +111,13 @@ function* startup(action) {
 function* getCustomOptions(domain) {
     try {
         // // get user options
-        const [headerImage, headerLogo, theme, primary, accent] = yield all([
+        const [headerImage, headerLogo, theme, primary, accent, sportCenter] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
             call(domainApiService.getCustomPrimaryColor, domain.url),
-            call(domainApiService.getCustomAccentColor, domain.url)
+            call(domainApiService.getCustomAccentColor, domain.url),
+            call(domainApiService.getSportCenterOption, domain.url)
         ])
 
         if (!theme.result) {
@@ -145,6 +148,8 @@ function* getCustomOptions(domain) {
                 headerLogo[0] && headerLogo[0].source_url ? headerLogo[0].source_url : ''
             )
         )
+        // save sportcenter option
+        yield put(globalActions.receiveSportCenterOption(sportCenter))
     } catch (err) {
         console.log('error in get custom domain options saga', err)
         // default options for theme
@@ -157,6 +162,7 @@ function* getCustomOptions(domain) {
         )
         yield put(globalActions.receiveHeader(''))
         yield put(globalActions.receiveHeaderLogo(''))
+        yield put(globalActions.receiveSportCenterOption(false))
     }
 }
 
