@@ -156,15 +156,16 @@ class ListScreen extends React.Component {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View
                         style={{
-                            width: 200,
-                            height: 200
+                            width: 150,
+                            height: 150,
+                            alignItems: 'center',
                         }}
                     >
                         <LottieView
                             ref={animation => this._saveAnimationRef(animation)}
                             style={{
-                                width: 200,
-                                height: 200
+                                width: 150,
+                                height: 150
                             }}
                             loop={true}
                             autoPlay={true}

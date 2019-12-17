@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View, Image, Platform } from 'react-nativ
 import Color from 'color'
 import { connect } from 'react-redux'
 import HTML from 'react-native-render-html'
+import * as WebBrowser from 'expo-web-browser'
 
 import { getActiveDomain } from '../redux/domains'
 
@@ -170,16 +171,40 @@ class DefaultPageScreen extends React.Component {
                             ''
                         </Text>
                     )}
+                    <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+                        {page.content.rendered && (
+                            <HTML
+                                html={page.content.rendered}
+                                baseFontStyle={{ fontSize: 19 }}
+                                allowedStyles={['color']}
+                                onLinkPress={(e, href) => this._viewLink(href)}
+                                tagsStyles={{
+                                    rawtext: {
+                                        fontSize: 19,
+                                        color: theme.dark ? 'white' : 'black'
+                                    }
+                                }}
+                            />
+                        )}
+                    </View>
                 </ScrollView>
             </View>
         )
+    }
+
+    _viewLink = async href => {
+        let result = await WebBrowser.openBrowserAsync(href)
     }
 
     _getPage = async pageId => {
         const { activeDomain } = this.props
         const url = activeDomain.url
         try {
-            const response = await fetch(`https://${url}/wp-json/wp/v2/pages/${pageId}`)
+            const response = await fetch(`https://${url}/wp-json/wp/v2/pages/${pageId}`, {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            })
             if (response.status !== 200) {
                 throw new Error('invalid response')
             }

@@ -111,13 +111,12 @@ function* startup(action) {
 function* getCustomOptions(domain) {
     try {
         // // get user options
-        const [headerImage, headerLogo, theme, primary, accent, sportCenter] = yield all([
+        const [headerImage, headerLogo, theme, primary, accent] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
             call(domainApiService.getCustomPrimaryColor, domain.url),
             call(domainApiService.getCustomAccentColor, domain.url),
-            call(domainApiService.getSportCenterOption, domain.url)
         ])
 
         if (!theme.result) {
@@ -148,8 +147,14 @@ function* getCustomOptions(domain) {
                 headerLogo[0] && headerLogo[0].source_url ? headerLogo[0].source_url : ''
             )
         )
-        // save sportcenter option
-        yield put(globalActions.receiveSportCenterOption(sportCenter))
+
+        try{
+             // save sportcenter option
+            const sportCenter = yield call(domainApiService.getSportCenterOption, domain.url)
+            yield put(globalActions.receiveSportCenterOption(sportCenter))
+        } catch(err) {
+            yield put(globalActions.receiveSportCenterOption(false))
+        }
     } catch (err) {
         console.log('error in get custom domain options saga', err)
         // default options for theme
