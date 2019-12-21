@@ -185,7 +185,7 @@ export default class ArticleBodyContent extends React.Component {
 
     _renderFeaturedMedia = article => {
         const { theme, handleCaptionClick } = this.props
-        if (article.slideshow.length) {
+        if (article.slideshow && article.slideshow.length) {
             return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
         } else if (article.custom_fields.video && article.custom_fields.video[0]) {
             const source = article.custom_fields.video[0]
