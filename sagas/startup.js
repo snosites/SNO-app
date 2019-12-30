@@ -36,6 +36,8 @@ function* startup(action) {
             activeDomain: domain.id
         })
 
+        console.log('in startup')
+
         yield put(globalActions.startupRequest())
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
@@ -116,7 +118,7 @@ function* getCustomOptions(domain) {
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
             call(domainApiService.getCustomPrimaryColor, domain.url),
-            call(domainApiService.getCustomAccentColor, domain.url),
+            call(domainApiService.getCustomAccentColor, domain.url)
         ])
 
         if (!theme.result) {
@@ -148,11 +150,11 @@ function* getCustomOptions(domain) {
             )
         )
 
-        try{
-             // save sportcenter option
+        try {
+            // save sportcenter option
             const sportCenter = yield call(domainApiService.getSportCenterOption, domain.url)
             yield put(globalActions.receiveSportCenterOption(sportCenter))
-        } catch(err) {
+        } catch (err) {
             yield put(globalActions.receiveSportCenterOption(false))
         }
     } catch (err) {
