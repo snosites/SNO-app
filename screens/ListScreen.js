@@ -33,7 +33,6 @@ const IoniconsHeaderButton = passMeFurther => (
 
 //header title -- work on later
 const CustomHeaderTitle = ({children, style}) => {
-    console.log('header title props', children, style, styles.title)
     return (
         <HTML
             html={children}
@@ -157,15 +156,16 @@ class ListScreen extends React.Component {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View
                         style={{
-                            width: 200,
-                            height: 200
+                            width: 150,
+                            height: 150,
+                            alignItems: 'center',
                         }}
                     >
                         <LottieView
                             ref={animation => this._saveAnimationRef(animation)}
                             style={{
-                                width: 200,
-                                height: 200
+                                width: 150,
+                                height: 150
                             }}
                             loop={true}
                             autoPlay={true}

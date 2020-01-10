@@ -19,6 +19,7 @@ export const types = {
     RECEIVE_SPLASH: 'RECEIVE_SPLASH',
     RECEIVE_HEADER: 'RECEIVE_HEADER',
     RECEIVE_HEADER_LOGO: 'RECEIVE_HEADER_LOGO',
+    RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -30,7 +31,8 @@ const initialState = {
     splashScreen: '',
     header: '',
     headerSmall: '',
-    menuItems: []
+    menuItems: [],
+    sportCenterEnabled: false
 }
 
 export default function global(state = initialState, action) {
@@ -61,6 +63,11 @@ export default function global(state = initialState, action) {
                 ...state,
                 headerSmall: action.headerLogo
             }
+        case types.RECEIVE_SPORTCENTER_OPTION:
+            return {
+                ...state,
+                sportCenterEnabled: action.sportCenter
+            }
         case types.FETCH_MENUS_SUCCESS:
             return {
                 ...state,
@@ -87,13 +94,19 @@ export const actions = {
         type: types.FETCH_AVAILABLE_DOMAINS_ERROR,
         error
     }),
-    searchAvailableDomains: searchTerm => ({ type: types.SEARCH_AVAILABLE_DOMAINS, searchTerm }),
+    searchAvailableDomains: searchTerm => ({
+        type: types.SEARCH_AVAILABLE_DOMAINS,
+        searchTerm
+    }),
     searchAvailableDomainsRequest: () => ({ type: types.SEARCH_AVAILABLE_DOMAINS_REQUEST }),
     searchAvailableDomainsSuccess: payload => ({
         type: types.SEARCH_AVAILABLE_DOMAINS_SUCCESS,
         payload
     }),
-    searchAvailableDomainsError: error => ({ type: types.SEARCH_AVAILABLE_DOMAINS_ERROR, error }),
+    searchAvailableDomainsError: error => ({
+        type: types.SEARCH_AVAILABLE_DOMAINS_ERROR,
+        error
+    }),
     clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS }),
     startup: domain => ({ type: types.STARTUP, domain }),
     startupRequest: () => ({ type: types.STARTUP_REQUEST }),
@@ -106,6 +119,10 @@ export const actions = {
     receiveSplash: splash => ({ type: types.RECEIVE_SPLASH, splash }),
     receiveHeader: header => ({ type: types.RECEIVE_HEADER, header }),
     receiveHeaderLogo: headerLogo => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
+    receiveSportCenterOption: sportCenter => ({
+        type: types.RECEIVE_SPORTCENTER_OPTION,
+        sportCenter
+    }),
     fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
     fetchMenusSuccess: payload => ({ type: types.FETCH_MENUS_SUCCESS, payload }),

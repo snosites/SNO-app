@@ -240,7 +240,7 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
-                        {!userInfo.user.pushToken ? (
+                        {userInfo.user.push_token ? (
                             domains.map(domain => {
                                 const writerSubs = userInfo.writerSubscriptions.filter(
                                     writer => writer.organization_id === domain.id
@@ -605,7 +605,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SettingsScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen)

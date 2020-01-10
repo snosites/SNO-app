@@ -1,28 +1,17 @@
-import React from 'react';
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-    Image
-} from 'react-native';
-import {
-    Drawer,
-    Colors,
-    Searchbar
-} from 'react-native-paper';
-import HTML from 'react-native-render-html';
+import React from 'react'
+import { ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { Drawer, Colors, Searchbar } from 'react-native-paper'
+import HTML from 'react-native-render-html'
 
 import { actions as articlesActions } from '../redux/articles'
 import { actions as searchActions } from '../redux/search'
 import { getActiveDomain } from '../redux/domains'
 
-import { SafeAreaView } from 'react-navigation';
-import DrawerNavIcon from '../components/DrawerNavIcon';
-import { connect } from 'react-redux';
+import { SafeAreaView } from 'react-navigation'
+import DrawerNavIcon from '../components/DrawerNavIcon'
+import { connect } from 'react-redux'
 
-import * as Amplitude from 'expo-analytics-amplitude';
-
+import * as Amplitude from 'expo-analytics-amplitude'
 
 class CustomDrawerComponent extends React.Component {
     state = {
@@ -31,11 +20,11 @@ class CustomDrawerComponent extends React.Component {
     }
 
     componentDidMount() {
-        const { menus } = this.props;
-        if(menus.length > 0) {
+        const { menus } = this.props
+        if (menus.length > 0) {
             this.props.navigation.navigate('List', {
                 menuTitle: menus[0].title,
-                categoryId: menus[0].object_id,
+                categoryId: menus[0].object_id
             })
         }
     }
@@ -119,7 +108,7 @@ class CustomDrawerComponent extends React.Component {
             invalidateSearchArticles,
             fetchSearchArticlesIfNeeded
         } = this.props
-        const { searchTerm } = this.state;
+        const { searchTerm } = this.state
         invalidateSearchArticles()
         fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
         navigation.navigate('Search', {
@@ -132,14 +121,14 @@ class CustomDrawerComponent extends React.Component {
     }
 
     _handleMenuPress = (item, index) => {
-        this.props.navigation.closeDrawer();
+        this.props.navigation.closeDrawer()
         if (item.object === 'category') {
             // log category press to analytics
             Amplitude.logEventWithProperties('click category', {
                 categoryId: item.object_id
             })
 
-            this._getArticles(item.object_id);
+            this._getArticles(item.object_id)
             this.props.navigation.navigate('List', {
                 menuTitle: item.title,
                 categoryId: item.object_id
@@ -147,8 +136,7 @@ class CustomDrawerComponent extends React.Component {
             this.setState({
                 activeMenuIndex: index
             })
-        }
-        else if (item.object === 'page') {
+        } else if (item.object === 'page') {
             if (item.template === 'snostaff.php') {
                 console.log('staff page', item)
                 // log to analytics
@@ -165,18 +153,24 @@ class CustomDrawerComponent extends React.Component {
                 this.setState({
                     activeMenuIndex: index
                 })
-            }
-            else {
+            } else if (!item.template) {
+                // default template
+                this.props.navigation.navigate('DefaultPage', {
+                    menuTitle: item.title,
+                    pageId: item.object_id
+                })
+                this.setState({
+                    activeMenuIndex: index
+                })
+            } else {
                 // redirect to page not found screen later
-                console.log('page not found');
-                return;
+                console.log('page not found')
+                return
             }
         }
-
     }
 
-
-    _getArticles = (category) => {
+    _getArticles = category => {
         const { fetchArticlesIfNeeded, activeDomain } = this.props
         fetchArticlesIfNeeded(activeDomain.url, category)
     }
@@ -184,8 +178,7 @@ class CustomDrawerComponent extends React.Component {
 
 const styles = StyleSheet.create({
     rootContainer: {
-        flex: 1,
-
+        flex: 1
     },
     container: {
         flex: 1,
@@ -193,26 +186,26 @@ const styles = StyleSheet.create({
     },
     item: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     icon: {
         marginHorizontal: 16,
         width: 40,
-        alignItems: 'center',
+        alignItems: 'center'
     },
     inactiveIcon: {
         /*
          * Icons have 0.54 opacity according to guidelines
          * 100/87 * 54 ~= 62
          */
-        opacity: 0.62,
+        opacity: 0.62
     },
     label: {
         margin: 16,
         fontWeight: 'bold',
         fontSize: 21
-    },
-});
+    }
+})
 
 const mapStateToProps = state => ({
     activeDomain: getActiveDomain(state),
@@ -234,8 +227,4 @@ const mapDispatchToProps = dispatch => ({
     invalidateSearchArticles: () => dispatch(searchActions.invalidateSearchArticles())
 })
 
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(CustomDrawerComponent)
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawerComponent)

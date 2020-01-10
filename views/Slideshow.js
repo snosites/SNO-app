@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     Platform,
     Dimensions,
@@ -8,36 +8,34 @@ import {
     Image,
     TouchableOpacity,
     ActivityIndicator
-} from 'react-native';
-import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel';
-import HTML from 'react-native-render-html';
-import Colors from '../constants/Colors';
-import TouchableItem from '../constants/TouchableItem';
+} from 'react-native'
+import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel'
+import HTML from 'react-native-render-html'
+import Colors from '../constants/Colors'
+import TouchableItem from '../constants/TouchableItem'
 
-import { connect } from 'react-redux';
+import { getActiveDomain } from '../redux/domains'
 
+import { connect } from 'react-redux'
 
-const IS_IOS = Platform.OS === 'ios';
-const SLIDER_FIRST_ITEM = 0;
+const IS_IOS = Platform.OS === 'ios'
+const SLIDER_FIRST_ITEM = 0
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
 function wp(percentage) {
-    const value = (percentage * viewportWidth) / 100;
-    return Math.round(value);
+    const value = (percentage * viewportWidth) / 100
+    return Math.round(value)
 }
 
-const slideHeight = viewportHeight * 0.39;
-const slideWidth = wp(80);
-const itemHorizontalMargin = wp(0.5);
+const slideHeight = viewportHeight * 0.39
+const slideWidth = wp(80)
+const itemHorizontalMargin = wp(0.5)
 
-const sliderWidth = viewportWidth;
-const itemWidth = slideWidth + itemHorizontalMargin * 2;
-
-
+const sliderWidth = viewportWidth
+const itemWidth = slideWidth + itemHorizontalMargin * 2
 
 class Slideshow extends React.Component {
-
     state = {
         activeSlide: SLIDER_FIRST_ITEM,
         photos: [],
@@ -52,7 +50,7 @@ class Slideshow extends React.Component {
     }
 
     render() {
-        const { activeSlide, photos, error } = this.state;
+        const { activeSlide, photos, error } = this.state
         if (error) {
             return (
                 <View
@@ -62,7 +60,7 @@ class Slideshow extends React.Component {
                         alignItems: 'center'
                     }}
                 >
-                    <Text style={{ textAlign: 'center' }}>Error loading slideshow</Text>
+                    <Text style={{ textAlign: 'center', margin: 20 }}>Error loading slideshow</Text>
                 </View>
             )
         }
@@ -84,7 +82,9 @@ class Slideshow extends React.Component {
                 <Carousel
                     // layout={'stack'}
                     // layoutCardOffset={18}
-                    ref={(c) => { this._carousel = c; }}
+                    ref={c => {
+                        this._carousel = c
+                    }}
                     data={this.props.imageIds ? photos : this.props.images}
                     renderItem={this._renderItem}
                     sliderWidth={sliderWidth}
@@ -99,9 +99,11 @@ class Slideshow extends React.Component {
                     inactiveSlideScale={0.94}
                     inactiveSlideOpacity={0.7}
                     containerCustomStyle={styles.slider}
-                    onSnapToItem={(index) => this.setState({
-                        activeSlide: index
-                    })}
+                    onSnapToItem={index =>
+                        this.setState({
+                            activeSlide: index
+                        })
+                    }
                 />
                 <Pagination
                     dotsLength={this.props.imageIds ? photos.length : this.props.images.length}
@@ -116,22 +118,24 @@ class Slideshow extends React.Component {
                     tappableDots={!!this._carousel}
                 />
             </View>
-
         )
     }
 
     _getImage = async imageId => {
-        const { activeDomain } = this.props;
+        const { activeDomain } = this.props
         const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
-        return await result.json();
+        return await result.json()
     }
 
     _getImageData = async imageIds => {
         try {
             console.log('img ids', imageIds)
-            const images = await Promise.all(imageIds.map(async id => {
-                return await this._getImage(id);
-            }))
+            const images = await Promise.all(
+                imageIds.map(async id => {
+                    return await this._getImage(id)
+                })
+            )
+            console.log('images', images)
             this.setState({
                 photos: images
             })
@@ -141,16 +145,15 @@ class Slideshow extends React.Component {
                 error: true
             })
         }
-
     }
 
     _renderItem({ item, index }, parallaxProps) {
-        const photographer = item.meta_fields && item.meta_fields.photographer ? item.meta_fields.photographer[0] : '';
+        const photographer =
+            item.meta_fields && item.meta_fields.photographer
+                ? item.meta_fields.photographer[0]
+                : ''
         return (
-            <TouchableOpacity
-                activeOpacity={1}
-                style={styles.slideInnerContainer}
-            >
+            <TouchableOpacity activeOpacity={1} style={styles.slideInnerContainer}>
                 <View style={styles.shadow} />
                 <View style={styles.imageContainer}>
                     <Image
@@ -160,13 +163,15 @@ class Slideshow extends React.Component {
                     <View style={styles.radiusMask} />
                 </View>
                 <View style={styles.textContainer}>
-                    {item.caption && item.caption.rendered ?
+                    {item.caption && item.caption.rendered ? (
                         <HTML
                             html={item.caption.rendered}
                             baseFontStyle={{ fontSize: 12 }}
-                            customWrapper={(text) => {
+                            customWrapper={text => {
                                 return (
-                                    <Text ellipsizeMode='tail' numberOfLines={2}>{text}</Text>
+                                    <Text ellipsizeMode='tail' numberOfLines={2}>
+                                        {text}
+                                    </Text>
                                 )
                             }}
                             tagsStyles={{
@@ -174,28 +179,23 @@ class Slideshow extends React.Component {
                                     color: 'white',
                                     fontSize: 12,
                                     fontWeight: 'bold',
-                                    letterSpacing: 0.5,
+                                    letterSpacing: 0.5
                                 }
                             }}
                         />
-                        :
-                        null}
-                    {photographer ?
-                        <Text
-                            style={styles.subtitle}
-                            numberOfLines={2}
-                        >
+                    ) : null}
+                    {photographer ? (
+                        <Text style={styles.subtitle} numberOfLines={2}>
                             {photographer}
                         </Text>
-                        :
-                        null}
+                    ) : null}
                 </View>
             </TouchableOpacity>
-        );
+        )
     }
 }
 
-const entryBorderRadius = 8;
+const entryBorderRadius = 8
 
 const styles = StyleSheet.create({
     slideInnerContainer: {
@@ -215,12 +215,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.45,
         shadowOffset: { width: 10, height: 10 },
         shadowRadius: 10,
-        borderRadius: entryBorderRadius,
+        borderRadius: entryBorderRadius
     },
     imageContainer: {
         flex: 1,
         marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
-        backgroundColor: 'white',
+        backgroundColor: Colors.black,
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius
     },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         fontWeight: 'bold',
-        letterSpacing: 0.5,
+        letterSpacing: 0.5
     },
     subtitle: {
         // marginTop: 6,
@@ -274,11 +274,10 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginHorizontal: 8
     }
-});
-
-
-const mapStateToProps = state => ({
-    activeDomain: state.activeDomain
 })
 
-export default connect(mapStateToProps)(Slideshow);
+const mapStateToProps = state => ({
+    activeDomain: getActiveDomain(state)
+})
+
+export default connect(mapStateToProps)(Slideshow)

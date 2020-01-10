@@ -13,7 +13,6 @@ import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
 import * as Sentry from 'sentry-expo'
 
-
 export function* findOrCreateUser() {
     try {
         yield put(userActions.findOrCreateUserRequest())
@@ -25,7 +24,6 @@ export function* findOrCreateUser() {
         Sentry.captureException(err)
     }
 }
-
 
 export function* fetchNotificationSubscriptions(domainId) {
     const apiToken = yield select(getApiToken)
