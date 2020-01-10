@@ -73,10 +73,12 @@ function* startup(action) {
         //get domains custom options
         yield call(getCustomOptions, domain)
 
+        let mainCategory = menu[0].object_id
+
         yield put(
             articleActions.fetchArticlesIfNeeded({
                 domain: domain.url,
-                category: menu[0].object_id
+                category: mainCategory
             })
         )
         yield put(savedArticleActions.initializeSaved(domain.id))

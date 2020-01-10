@@ -33,9 +33,18 @@ function* fetchArticles(action) {
     const { domain, category, page } = action
     try {
         yield put(articleActions.requestArticles(category))
+
+        const childCategories = yield call(domainApiService.fetchChildCategories, {
+            domainUrl: domain,
+            parentCategoryId: category
+        })
+
+        const childCategoryIds = childCategories.map(obj => obj.id).toString()
+
         const stories = yield call(domainApiService.fetchArticles, {
             domainUrl: domain,
             category,
+            childCategoryIds,
             page
         })
         yield all(

@@ -152,11 +152,30 @@ const domainApiService = {
             throw err
         }
     },
-    fetchArticles: async options => {
-        const { domainUrl, category, page } = options
+    fetchChildCategories: async options => {
+        const { domainUrl, parentCategoryId } = options
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/posts?categories=${category}&page=${page}`,
+                `https://${domainUrl}/wp-json/wp/v2/categories?parent=${parentCategoryId}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch parent categories api', err, err.response)
+            throw err
+        }
+    },
+    fetchArticles: async options => {
+        const { domainUrl, category, childCategoryIds, page } = options
+        let childCatIds = childCategoryIds
+        if (!childCategoryIds) childCatIds = ''
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/posts?categories=${category},${childCatIds}&page=${page}`,
                 {
                     headers: {
                         'Cache-Control': 'no-cache'
@@ -250,10 +269,15 @@ const domainApiService = {
             throw err
         }
     },
-    getSportCenterOption: async (domainUrl) => {
+    getSportCenterOption: async domainUrl => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/sns-v2/sportcenter_check`, 
+                `https://${domainUrl}/wp-json/sns-v2/sportcenter_check`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {
