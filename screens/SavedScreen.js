@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import LottieView from 'lottie-react-native'
+import * as Device from 'expo-device'
 
 import { Snackbar } from 'react-native-paper'
 
@@ -9,6 +10,7 @@ import { actions as savedArticleActions } from '../redux/savedArticles'
 import { getActiveDomain } from '../redux/domains'
 
 import ArticleListContent from '../views/ArticleListContent'
+import TabletArticleListContent from '../views/TabletArticleListContent'
 
 class SavedArticlesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -27,7 +29,8 @@ class SavedArticlesScreen extends React.Component {
     }
 
     state = {
-        snackbarVisible: false
+        snackbarVisible: false,
+        isTablet: false
     }
 
     componentDidMount() {
@@ -38,6 +41,17 @@ class SavedArticlesScreen extends React.Component {
         navigation.setParams({
             headerLogo: global.headerSmall
         })
+        this.getDeviceTypeComponent()
+    }
+
+    async getDeviceTypeComponent() {
+        const deviceType = await Device.getDeviceTypeAsync()
+
+        if (Device.DeviceType[deviceType] === 'TABLET') {
+            this.setState({ isTablet: true })
+        } else {
+            this.setState({ isTablet: false })
+        }
     }
 
     componentDidUpdate() {
@@ -56,7 +70,7 @@ class SavedArticlesScreen extends React.Component {
 
     render() {
         const { savedArticles, activeDomain, theme, navigation } = this.props
-        const { snackbarVisible } = this.state
+        const { snackbarVisible, isTablet } = this.state
         if (savedArticles === 'loading') {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -96,15 +110,27 @@ class SavedArticlesScreen extends React.Component {
         }
         return (
             <View style={{ flex: 1 }}>
-                <ArticleListContent
-                    articleList={savedArticles}
-                    saveRef={this._saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    onIconPress={this._handleArticleRemove}
-                    deleteIcon={true}
-                />
+                {isTablet ? (
+                    <TabletArticleListContent
+                        articleList={savedArticles}
+                        saveRef={this._saveRef}
+                        activeDomain={activeDomain}
+                        theme={theme}
+                        navigation={navigation}
+                        onIconPress={this._handleArticleRemove}
+                        deleteIcon={true}
+                    />
+                ) : (
+                    <ArticleListContent
+                        articleList={savedArticles}
+                        saveRef={this._saveRef}
+                        activeDomain={activeDomain}
+                        theme={theme}
+                        navigation={navigation}
+                        onIconPress={this._handleArticleRemove}
+                        deleteIcon={true}
+                    />
+                )}
                 <Snackbar
                     visible={snackbarVisible}
                     style={styles.snackbar}
@@ -175,7 +201,4 @@ const mapDispatchToProps = dispatch => ({
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SavedArticlesScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SavedArticlesScreen)

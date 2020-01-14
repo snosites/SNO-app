@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
 import Color from 'color'
 import { connect } from 'react-redux'
+import * as Device from 'expo-device'
 
 import HTML from 'react-native-render-html'
 import LottieView from 'lottie-react-native'
@@ -18,6 +19,7 @@ import { getActiveDomain } from '../redux/domains'
 import { SafeAreaView } from 'react-navigation'
 
 import ArticleListContent from '../views/ArticleListContent'
+import TabletArticleListContent from '../views/TabletArticleListContent'
 
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 
@@ -32,7 +34,7 @@ const IoniconsHeaderButton = passMeFurther => (
 )
 
 //header title -- work on later
-const CustomHeaderTitle = ({children, style}) => {
+const CustomHeaderTitle = ({ children, style }) => {
     return (
         <HTML
             html={children}
@@ -81,7 +83,8 @@ class ListScreen extends React.Component {
 
     state = {
         snackbarSavedVisible: false,
-        snackbarRemovedVisible: false
+        snackbarRemovedVisible: false,
+        isTablet: false
     }
 
     componentDidMount() {
@@ -92,6 +95,7 @@ class ListScreen extends React.Component {
         navigation.setParams({
             headerLogo: global.headerSmall
         })
+        this.getDeviceTypeComponent()
     }
 
     componentDidUpdate() {
@@ -108,9 +112,19 @@ class ListScreen extends React.Component {
         }
     }
 
+    async getDeviceTypeComponent() {
+        const deviceType = await Device.getDeviceTypeAsync()
+
+        if (Device.DeviceType[deviceType] === 'TABLET') {
+            this.setState({ isTablet: true })
+        } else {
+            this.setState({ isTablet: false })
+        }
+    }
+
     render() {
         const { navigation, articlesByCategory, category, theme, activeDomain } = this.props
-        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state
+        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
 
         if (!categoryId) {
@@ -158,7 +172,7 @@ class ListScreen extends React.Component {
                         style={{
                             width: 150,
                             height: 150,
-                            alignItems: 'center',
+                            alignItems: 'center'
                         }}
                     >
                         <LottieView
@@ -194,18 +208,33 @@ class ListScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <ArticleListContent
-                    articleList={articlesByCategory}
-                    isFetching={category.isFetching}
-                    isRefreshing={category.didInvalidate || false}
-                    loadMore={this._loadMore}
-                    handleRefresh={this._handleRefresh}
-                    saveRef={this._saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    onIconPress={this._saveRemoveToggle}
-                />
+                {isTablet ? (
+                    <TabletArticleListContent
+                        articleList={articlesByCategory}
+                        isFetching={category.isFetching}
+                        isRefreshing={category.didInvalidate || false}
+                        loadMore={this._loadMore}
+                        handleRefresh={this._handleRefresh}
+                        saveRef={this._saveRef}
+                        activeDomain={activeDomain}
+                        theme={theme}
+                        navigation={navigation}
+                        onIconPress={this._saveRemoveToggle}
+                    />
+                ) : (
+                    <ArticleListContent
+                        articleList={articlesByCategory}
+                        isFetching={category.isFetching}
+                        isRefreshing={category.didInvalidate || false}
+                        loadMore={this._loadMore}
+                        handleRefresh={this._handleRefresh}
+                        saveRef={this._saveRef}
+                        activeDomain={activeDomain}
+                        theme={theme}
+                        navigation={navigation}
+                        onIconPress={this._saveRemoveToggle}
+                    />
+                )}
                 <Snackbar
                     visible={snackbarSavedVisible}
                     style={styles.snackbar}
@@ -308,15 +337,15 @@ const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 fontSize: 17,
-                fontWeight: '600',
+                fontWeight: '600'
             },
             android: {
                 fontSize: 20,
-                fontWeight: '500',
+                fontWeight: '500'
             },
             default: {
                 fontSize: 18,
-                fontWeight: '400',
+                fontWeight: '400'
             }
         })
     }
@@ -369,7 +398,4 @@ const mapDispatchToProps = dispatch => ({
         dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ListScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ListScreen)
