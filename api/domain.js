@@ -130,6 +130,22 @@ const domainApiService = {
             throw err
         }
     },
+    getCommentsToggle: async domainUrl => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=comments&theme_mod=true`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get comments toggle api', err, err.response)
+            throw err
+        }
+    },
     getCustomPrimaryColor: async domainUrl => {
         try {
             const response = await axios.get(

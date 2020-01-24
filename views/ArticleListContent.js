@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     View,
     FlatList,
@@ -8,57 +8,57 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform
-} from 'react-native';
-import Moment from 'moment';
-import Color from 'color';
-import HTML from 'react-native-render-html';
+} from 'react-native'
+import Moment from 'moment'
+import Color from 'color'
+import HTML from 'react-native-render-html'
 
-import { handleArticlePress } from '../utils/articlePress';
+import { handleArticlePress } from '../utils/articlePress'
 
-import { FontAwesome } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Badge } from 'react-native-paper';
+import { FontAwesome } from '@expo/vector-icons'
+import { MaterialIcons } from '@expo/vector-icons'
+import { Badge } from 'react-native-paper'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: "1 day",
+        d: '1 day'
     }
-});
-
+})
 
 export default class ArticleListContent extends React.Component {
-
     render() {
-        const { 
-            articleList, 
-            isRefreshing, 
-            isFetching, 
-            saveRef, 
-            loadMore, 
+        const {
+            articleList,
+            isRefreshing,
+            isFetching,
+            saveRef,
+            loadMore,
             handleRefresh
-        } = this.props;
+        } = this.props
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
                     keyExtractor={item => item.id.toString()}
-                    ref={(ref) => { 
-                        if(saveRef){
-                            saveRef(ref) 
+                    ref={ref => {
+                        if (saveRef) {
+                            saveRef(ref)
                         }
-                        return;
+                        return
                     }}
                     onEndReachedThreshold={0.25}
                     onEndReached={() => {
                         if (!this.onEndReachedCalledDuringMomentum && loadMore) {
-                            loadMore();
-                            this.onEndReachedCalledDuringMomentum = true;
+                            loadMore()
+                            this.onEndReachedCalledDuringMomentum = true
                         }
                     }}
                     onRefresh={handleRefresh ? handleRefresh : null}
                     refreshing={isRefreshing}
-                    onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+                    onMomentumScrollBegin={() => {
+                        this.onEndReachedCalledDuringMomentum = false
+                    }}
                     ListFooterComponent={() => {
                         if (!isFetching) {
                             return null
@@ -76,32 +76,27 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderItem = ({ item }) => {
-        const { theme, onIconPress, deleteIcon, activeDomain } = this.props;
-        const article = item;
+        const { theme, onIconPress, deleteIcon, activeDomain, enableComments } = this.props
+        const article = item
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
                 onPress={() => handleArticlePress(article, activeDomain)}
             >
                 <View style={styles.storyContainer}>
-                    {article.featuredImage ?
+                    {article.featuredImage ? (
                         <Image
                             source={{ uri: article.featuredImage.uri }}
                             style={styles.featuredImage}
                         />
-                        :
-                        null
-                    }
+                    ) : null}
                     <View style={styles.storyInfo}>
                         <HTML
                             html={article.title.rendered}
                             baseFontStyle={{ fontSize: 17 }}
-                            customWrapper={(text) => {
+                            customWrapper={text => {
                                 return (
-                                    <Text 
-                                        ellipsizeMode='tail' 
-                                        numberOfLines={2}
-                                    >
+                                    <Text ellipsizeMode='tail' numberOfLines={2}>
                                         {text}
                                     </Text>
                                 )
@@ -122,7 +117,9 @@ export default class ArticleListContent extends React.Component {
                                 fontSize: 15
                             }}
                         >
-                            {article.custom_fields.writer ? this._renderWriters(article.custom_fields.writer) : ''}
+                            {article.custom_fields.writer
+                                ? this._renderWriters(article.custom_fields.writer)
+                                : ''}
                         </Text>
                         <View
                             style={{
@@ -142,75 +139,71 @@ export default class ArticleListContent extends React.Component {
                             justifyContent: 'space-between'
                         }}
                     >
-                        <View>
-                            <FontAwesome
-                                name="comment"
-                                size={21}
-                                color='#e0e0e0'
-                            />
-                            <Badge
-                                size={16}
-                                style={{
-                                    position: 'absolute',
-                                    bottom: 2,
-                                    right: 4,
-                                    backgroundColor: theme.colors.accent,
-                                }}
-                            >
-                                {article.comments.length > 99 ? '99' : article.comments.length}
-                            </Badge>
-                        </View>
+                        {enableComments && (
+                            <View>
+                                <FontAwesome name='comment' size={21} color='#e0e0e0' />
+                                <Badge
+                                    size={16}
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: 2,
+                                        right: 4,
+                                        backgroundColor: theme.colors.accent
+                                    }}
+                                >
+                                    {article.comments.length > 99 ? '99' : article.comments.length}
+                                </Badge>
+                            </View>
+                        )}
                         <MaterialIcons
                             name={
-                                deleteIcon ? 'delete' :
-                                (article.saved ? 'bookmark'
-                                    :
-                                    'bookmark-border')
+                                deleteIcon
+                                    ? 'delete'
+                                    : article.saved
+                                    ? 'bookmark'
+                                    : 'bookmark-border'
                             }
                             color={deleteIcon ? '#c62828' : theme.colors.accent}
                             style={{ paddingHorizontal: 5 }}
                             size={24}
-                            onPress={() => {onIconPress(article)}}
+                            onPress={() => {
+                                onIconPress(article)
+                            }}
                         />
                     </View>
                 </View>
             </TouchableOpacity>
-
         )
     }
 
     _renderDate = date => {
         return (
-            <Text style={{
-                fontSize: 15,
-                color: '#9e9e9e'
-            }}
+            <Text
+                style={{
+                    fontSize: 15,
+                    color: '#9e9e9e'
+                }}
             >
-                {Moment().isAfter(Moment(date).add(7, 'days')) 
-                ?
-                    String(Moment(date).format('MMM D, YYYY'))
-                :
-                    String(Moment(date).fromNow())
-                }
+                {Moment().isAfter(Moment(date).add(7, 'days'))
+                    ? String(Moment(date).format('MMM D, YYYY'))
+                    : String(Moment(date).fromNow())}
             </Text>
         )
     }
 
     _renderWriters = writers => {
-        let newArr = '';
-        for(let i = 0; i < writers.length; i++) {
-            if(i === writers.length - 2){
+        let newArr = ''
+        for (let i = 0; i < writers.length; i++) {
+            if (i === writers.length - 2) {
                 newArr += `${writers[i]} & `
-            } 
-            else if(i === writers.length - 1) {
+            } else if (i === writers.length - 1) {
                 newArr += `${writers[i]}`
             } else {
                 newArr += `${writers[i]}, `
             }
         }
-        return newArr;
+        return newArr
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -224,7 +217,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 10,
-        marginVertical: 10,
+        marginVertical: 10
     },
     featuredImage: {
         width: 125,
@@ -235,6 +228,5 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
         justifyContent: 'space-between'
-    },
-
+    }
 })

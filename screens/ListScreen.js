@@ -123,7 +123,7 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation, articlesByCategory, category, theme, activeDomain } = this.props
+        const { navigation, articlesByCategory, category, theme, activeDomain, global } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
 
@@ -218,6 +218,7 @@ class ListScreen extends React.Component {
                         saveRef={this._saveRef}
                         activeDomain={activeDomain}
                         theme={theme}
+                        enableComments={global.enableComments}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
                     />
@@ -231,6 +232,7 @@ class ListScreen extends React.Component {
                         saveRef={this._saveRef}
                         activeDomain={activeDomain}
                         theme={theme}
+                        enableComments={global.enableComments}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
                     />

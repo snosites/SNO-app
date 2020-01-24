@@ -115,13 +115,16 @@ function* startup(action) {
 function* getCustomOptions(domain) {
     try {
         // // get user options
-        const [headerImage, headerLogo, theme, primary, accent] = yield all([
+        const [headerImage, headerLogo, theme, primary, accent, comments] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
             call(domainApiService.getCustomPrimaryColor, domain.url),
-            call(domainApiService.getCustomAccentColor, domain.url)
+            call(domainApiService.getCustomAccentColor, domain.url),
+            call(domainApiService.getCommentsToggle, domain.url)
         ])
+
+        console.log('comments toggle', comments)
 
         if (!theme.result) {
             theme.result = 'light'
@@ -151,6 +154,7 @@ function* getCustomOptions(domain) {
                 headerLogo[0] && headerLogo[0].source_url ? headerLogo[0].source_url : ''
             )
         )
+        yield put(globalActions.receiveCommentsOption(comments.result === 'Enable' ? true : false))
 
         try {
             // save sportcenter option

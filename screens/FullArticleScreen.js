@@ -63,19 +63,16 @@ class FullArticleScreen extends React.Component {
     }
 
     _renderFabActions = article => {
-        const { custom_fields: { terms } } = article
-        const { pushToken, activeDomain, writerSubscriptions, navigation } = this.props
-        const filteredWriters = this._getFilteredWriters(activeDomain.id, terms, writerSubscriptions)
+        const {
+            custom_fields: { terms }
+        } = article
+        const { activeDomain, writerSubscriptions, navigation, enableComments } = this.props
+        const filteredWriters = this._getFilteredWriters(
+            activeDomain.id,
+            terms,
+            writerSubscriptions
+        )
         const fabActions = [
-            {
-                icon: 'comment',
-                label: 'Comment',
-                onPress: () =>
-                    navigation.navigate('Comments', {
-                        comments: article.comments,
-                        articleId: article.id
-                    })
-            },
             {
                 icon: 'send',
                 label: 'Share',
@@ -89,6 +86,18 @@ class FullArticleScreen extends React.Component {
                 onPress: () => this._handleArticleSave(article)
             }
         ]
+
+        if (enableComments) {
+            fabActions.unshift({
+                icon: 'comment',
+                label: 'Comment',
+                onPress: () =>
+                    navigation.navigate('Comments', {
+                        comments: article.comments,
+                        articleId: article.id
+                    })
+            })
+        }
 
         if (filteredWriters.length > 0) {
             fabActions.unshift({
@@ -239,7 +248,11 @@ class FullArticleScreen extends React.Component {
                                             writerObj => writerObj.id === term.term_id
                                         )
                                         const status = found.length > 0 ? 'checked' : 'unchecked'
-                                        if (unsubscribedWriters.some(writerObj => writerObj.term_id === term.term_id)){
+                                        if (
+                                            unsubscribedWriters.some(
+                                                writerObj => writerObj.term_id === term.term_id
+                                            )
+                                        ) {
                                             return (
                                                 <TouchableOpacity
                                                     key={term.term_id}
@@ -288,9 +301,7 @@ class FullArticleScreen extends React.Component {
                                             )
                                         } else {
                                             return (
-                                                <TouchableOpacity
-                                                    key={term.term_id}
-                                                >
+                                                <TouchableOpacity key={term.term_id}>
                                                     <View
                                                         style={{
                                                             flexDirection: 'row',
@@ -301,7 +312,7 @@ class FullArticleScreen extends React.Component {
                                                         <Text
                                                             style={{
                                                                 marginRight: 5,
-                                                                marginLeft: 40,
+                                                                marginLeft: 40
                                                             }}
                                                         >
                                                             {term.name}
@@ -318,7 +329,6 @@ class FullArticleScreen extends React.Component {
                                                 </TouchableOpacity>
                                             )
                                         }
-                                            
                                     })}
                                 </ScrollView>
                             </Dialog.ScrollArea>
@@ -400,7 +410,8 @@ const mapStateToProps = state => ({
     theme: state.theme,
     activeDomain: getActiveDomain(state),
     pushToken: getPushToken(state),
-    writerSubscriptions: getWriterSubscriptions(state)
+    writerSubscriptions: getWriterSubscriptions(state),
+    enableComments: state.global.enableComments
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -409,7 +420,4 @@ const mapDispatchToProps = dispatch => ({
     subscribe: payload => dispatch(userActions.subscribe(payload))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(FullArticleScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(FullArticleScreen)

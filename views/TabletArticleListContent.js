@@ -97,7 +97,7 @@ export default class TabletArticleListContent extends React.Component {
     }
 
     _renderItem = ({ item, index }) => {
-        const { theme, onIconPress, deleteIcon, activeDomain } = this.props
+        const { theme, onIconPress, deleteIcon, activeDomain, enableComments } = this.props
         const { width, height } = this.state
         const article = item
         const hasFeaturedImage = article.featuredImage
@@ -208,24 +208,26 @@ export default class TabletArticleListContent extends React.Component {
                                     marginLeft: 'auto'
                                 }}
                             >
-                                <View>
+                                {enableComments && (
                                     <View>
-                                        <FontAwesome name='comment' size={28} color='#e0e0e0' />
-                                        <Badge
-                                            size={20}
-                                            style={{
-                                                position: 'absolute',
-                                                top: -4,
-                                                right: -6,
-                                                backgroundColor: theme.colors.accent
-                                            }}
-                                        >
-                                            {article.comments.length > 99
-                                                ? '99'
-                                                : article.comments.length}
-                                        </Badge>
+                                        <View>
+                                            <FontAwesome name='comment' size={28} color='#e0e0e0' />
+                                            <Badge
+                                                size={20}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: -4,
+                                                    right: -6,
+                                                    backgroundColor: theme.colors.accent
+                                                }}
+                                            >
+                                                {article.comments.length > 99
+                                                    ? '99'
+                                                    : article.comments.length}
+                                            </Badge>
+                                        </View>
                                     </View>
-                                </View>
+                                )}
                                 <MaterialIcons
                                     name={
                                         deleteIcon
