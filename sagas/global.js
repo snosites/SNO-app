@@ -47,7 +47,12 @@ function* searchAvailableDomains(action) {
         yield put(globalActions.searchAvailableDomainsRequest())
         const apiToken = yield select(getApiToken)
 
-        const response = yield call(api.searchAvailableDomains, apiToken, version, action.searchTerm)
+        const response = yield call(
+            api.searchAvailableDomains,
+            apiToken,
+            version,
+            action.searchTerm
+        )
 
         // sort domains
         if (response.length > 0) {

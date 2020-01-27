@@ -5,6 +5,7 @@ import {
     View,
     ImageBackground,
     Dimensions,
+    ScrollView,
     Platform,
     ActivityIndicator
 } from 'react-native'
@@ -102,81 +103,84 @@ export default class ArticleBodyContent extends React.Component {
                 </View>
                 {article.content.rendered ? (
                     <View style={styles.articleContents}>
-                        <HTML
-                            html={article.content.rendered}
-                            imagesMaxWidth={viewportWidth}
-                            ignoredStyles={['height', 'width', 'display', 'font-family']}
-                            allowedStyles={[]}
-                            imagesInitialDimensions={{
-                                width: viewportWidth
-                            }}
-                            textSelectable={true}
-                            onLinkPress={(e, href) => this._viewLink(href)}
-                            alterChildren={node => {
-                                if (node.name === 'iframe') {
-                                    delete node.attribs.width
-                                    delete node.attribs.height
-                                }
-                                return node.children
-                            }}
-                            tagsStyles={{
-                                p: {
-                                    fontSize: 18,
-                                    marginBottom: 15
-                                },
-                                img: {
-                                    marginLeft: -20,
-                                    // height: MEDIASIZE,
-                                    width: viewportWidth,
-                                    resizeMode: 'cover'
-                                },
-                                iframe: {
-                                    marginLeft: -20,
-                                    height: MEDIASIZE,
+                        <ScrollView>
+                            <HTML
+                                html={article.content.rendered}
+                                imagesMaxWidth={viewportWidth}
+                                ignoredStyles={['height', 'width', 'display', 'font-family']}
+                                allowedStyles={[]}
+                                imagesInitialDimensions={{
                                     width: viewportWidth
-                                }
-                            }}
-                            classesStyles={{
-                                pullquote: {
-                                    backgroundColor: '#eeeeee',
-                                    borderRadius: 8,
-                                    padding: 10,
-                                    marginBottom: 15
-                                },
-                                largequote: { fontSize: 21 },
-                                pullquotetext: { textAlign: 'left', fontSize: 21 },
-                                quotespeaker: { textAlign: 'left', fontSize: 14 },
-                                photowrap: {
-                                    display: 'none'
-                                },
-                                'wp-caption-text': {
-                                    fontSize: 14,
-                                    color: '#757575'
-                                }
-                            }}
-                            // alterNode={(node) => {
-                            //     if (node.attribs && node.attribs['data-photo-ids']) {
-                            //         return {
-                            //             attribs: {
-                            //                 class: "photowrap",
-                            //                 ['data-photo-ids']: "602,410,403,453,197"
-                            //             },
-                            //             children: [],
-                            //             name: "snsgallery",
-                            //             next: {},
-                            //             parent: null,
-                            //             prev: {},
-                            //             type: "tag"
-                            //         }
+                                }}
+                                textSelectable={true}
+                                onLinkPress={(e, href) => this._viewLink(href)}
+                                alterChildren={node => {
+                                    if (node.name === 'iframe') {
+                                        console.log('node', node)
+                                        delete node.attribs.width
+                                        delete node.attribs.height
+                                    }
+                                    return node.children
+                                }}
+                                tagsStyles={{
+                                    p: {
+                                        fontSize: 18,
+                                        marginBottom: 15
+                                    },
+                                    img: {
+                                        marginLeft: -20,
+                                        // height: MEDIASIZE,
+                                        width: viewportWidth,
+                                        resizeMode: 'cover'
+                                    },
+                                    iframe: {
+                                        marginLeft: -20,
+                                        height: MEDIASIZE,
+                                        width: viewportWidth
+                                    }
+                                }}
+                                classesStyles={{
+                                    pullquote: {
+                                        backgroundColor: '#eeeeee',
+                                        borderRadius: 8,
+                                        padding: 10,
+                                        marginBottom: 15
+                                    },
+                                    largequote: { fontSize: 21 },
+                                    pullquotetext: { textAlign: 'left', fontSize: 21 },
+                                    quotespeaker: { textAlign: 'left', fontSize: 14 },
+                                    photowrap: {
+                                        display: 'none'
+                                    },
+                                    'wp-caption-text': {
+                                        fontSize: 14,
+                                        color: '#757575'
+                                    }
+                                }}
+                                // alterNode={(node) => {
+                                //     if (node.attribs && node.attribs['data-photo-ids']) {
+                                //         return {
+                                //             attribs: {
+                                //                 class: "photowrap",
+                                //                 ['data-photo-ids']: "602,410,403,453,197"
+                                //             },
+                                //             children: [],
+                                //             name: "snsgallery",
+                                //             next: {},
+                                //             parent: null,
+                                //             prev: {},
+                                //             type: "tag"
+                                //         }
 
-                            //     }
-                            //     return node
-                            // }}
-                            renderers={{
-                                snsgallery: slideshowRenderer,
-                                snsrelated: relatedRenderer
-                            }}
-                        />
+                                //     }
+                                //     return node
+                                // }}
+                                renderers={{
+                                    snsgallery: slideshowRenderer,
+                                    snsrelated: relatedRenderer
+                                }}
+                            />
+                        </ScrollView>
                     </View>
                 ) : null}
             </View>
