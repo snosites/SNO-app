@@ -39,7 +39,14 @@ class RelatedStoriesList extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', paddingVertical: 10 }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    padding: 10,
+                    borderRadius: 8
+                }}
+            >
                 <Text
                     style={{
                         textAlign: 'center',
@@ -171,7 +178,7 @@ class RelatedStoriesList extends React.Component {
 
     _getStory = async id => {
         const { activeDomain } = this.props
-        const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/posts/${id}`)
+        const result = await fetch(`https://${activeDomain.url}/wp-json/wp/v2/posts/${id}`)
         const post = await result.json()
         if (post._links['wp:featuredmedia']) {
             await asyncFetchFeaturedImage(`${post._links['wp:featuredmedia'][0].href}`, post)
@@ -184,7 +191,7 @@ class RelatedStoriesList extends React.Component {
         try {
             const stories = await Promise.all(
                 storyIds.map(async id => {
-                    return await this._getStory(id)
+                    return await this._getStory(Number(id))
                 })
             )
             this.setState({
@@ -204,7 +211,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 10,
-        marginVertical: 10
+        marginVertical: 10,
+        padding: 10
     },
     featuredImage: {
         width: 95,
