@@ -91,7 +91,7 @@ const domainApiService = {
                 `https://${domainUrl}/wp-json/custom/option?type=sns_nav_header`
             )
             if (!headerId.data.result) {
-                throw new Error('cannot get custom header ID')
+                return false
             }
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/wp/v2/media?include=${headerId.data.result}`
@@ -108,7 +108,7 @@ const domainApiService = {
                 `https://${domainUrl}/wp-json/custom/option?type=sns_header_logo`
             )
             if (!headerLogoId.data.result) {
-                throw new Error('cannot get custom header logo ID')
+                return false
             }
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/wp/v2/media?include=${headerLogoId.data.result}`

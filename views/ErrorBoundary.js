@@ -10,15 +10,14 @@ import {
     FlatList,
     TouchableOpacity,
     StatusBar
-} from 'react-native';
+} from 'react-native'
 import { Button, TextInput } from 'react-native-paper'
 
-import NavigationService from '../utils/NavigationService';
+import NavigationService from '../utils/NavigationService'
 
 import * as Sentry from 'sentry-expo'
 
 export default class ErrorBoundary extends React.Component {
-
     state = {
         error: null,
         feedback: '',
@@ -29,30 +28,28 @@ export default class ErrorBoundary extends React.Component {
 
     componentDidCatch(error, errorInfo) {
         console.log('error boundary')
-        this.setState({ error });
-        Sentry.captureException(error, { extra: errorInfo });
+        this.setState({ error })
+        Sentry.captureException(error, { extra: errorInfo })
         // Sentry.setEventSentSuccessfully((event) => {
         //     console.log(Sentry.lastEventId())
         // });
     }
 
     render() {
-        const { error, submitting, successful } = this.state;
+        const { error, submitting, successful } = this.state
         if (error) {
             return (
                 <SafeAreaView
                     style={{
-                        flex: 1,
+                        flex: 1
                     }}
                 >
-                    <ScrollView
-                        keyboardShouldPersistTaps={'handled'}
-                    >
+                    <ScrollView keyboardShouldPersistTaps={'handled'}>
                         <KeyboardAvoidingView
                             style={{
-                                flex: 1,
+                                flex: 1
                             }}
-                            behavior="position"
+                            behavior='position'
                             enabled
                         >
                             <StatusBar barStyle={'dark-content'} />
@@ -68,8 +65,13 @@ export default class ErrorBoundary extends React.Component {
                                         paddingTop: 20
                                     }}
                                 >
-                                    <Text style={{ textAlign: 'center', fontSize: 16 }}>We're sorry — something went wrong.</Text>
-                                    <Text style={{ textAlign: 'center', fontSize: 16 }}>Our team has been notified, and will work on the issue as fast as possible.</Text>
+                                    <Text style={{ textAlign: 'center', fontSize: 16 }}>
+                                        We're sorry — something went wrong.
+                                    </Text>
+                                    <Text style={{ textAlign: 'center', fontSize: 16 }}>
+                                        If you are the account owner, please submit a support
+                                        request.
+                                    </Text>
                                 </View>
                                 <Button
                                     mode='contained'
@@ -87,22 +89,22 @@ export default class ErrorBoundary extends React.Component {
                                             error: null,
                                             feedback: '',
                                             eventId: null,
-                                            submitting: false,
+                                            submitting: false
                                         })
                                         NavigationService.navigate('AuthLoading')
-                                    }
-                                    }
+                                    }}
                                 >
                                     Go To Home Screen
-                            </Button>
+                                </Button>
                                 <View
                                     style={{
                                         paddingTop: 20
                                     }}
                                 >
                                     <Text style={{ textAlign: 'center', fontSize: 16 }}>
-                                        Or if you would like to submit feedback about your app experience please do so below.
-                        </Text>
+                                        Or if you would like to submit feedback about your app
+                                        experience please do so below.
+                                    </Text>
                                 </View>
                                 <View
                                     style={{
@@ -126,9 +128,8 @@ export default class ErrorBoundary extends React.Component {
                                         onSubmitEditing={this._handleSubmit}
                                         value={this.state.feedback}
                                         onChangeText={feedback => this.setState({ feedback })}
-
                                     />
-                                    {successful ?
+                                    {successful ? (
                                         <Text
                                             style={{
                                                 textAlign: 'center',
@@ -137,10 +138,10 @@ export default class ErrorBoundary extends React.Component {
                                             }}
                                         >
                                             Thank you for your feedback
-                                    </Text>
-                                        :
+                                        </Text>
+                                    ) : (
                                         <Button
-                                            mode="contained"
+                                            mode='contained'
                                             loading={submitting}
                                             theme={{
                                                 roundness: 7,
@@ -152,8 +153,8 @@ export default class ErrorBoundary extends React.Component {
                                             onPress={this._handleSubmit}
                                         >
                                             Submit Feedback
-                                    </Button>
-                                    }
+                                        </Button>
+                                    )}
                                 </View>
                             </View>
                         </KeyboardAvoidingView>
@@ -162,12 +163,12 @@ export default class ErrorBoundary extends React.Component {
             )
         } else {
             //when there's not an error, render children untouched
-            return this.props.children;
+            return this.props.children
         }
     }
 
     _handleSubmit = async () => {
-        const { feedback, eventId } = this.state;
+        const { feedback, eventId } = this.state
         this.setState({
             submitting: true
         })
@@ -176,18 +177,16 @@ export default class ErrorBoundary extends React.Component {
                 successful: true
             })
         }, 1000)
-        Sentry.captureMessage(`FEEDBACK: ${feedback}`);
+        Sentry.captureMessage(`FEEDBACK: ${feedback}`)
         setTimeout(() => {
             this.setState({
                 successful: false,
                 error: null,
                 feedback: '',
                 eventId: null,
-                submitting: false,
+                submitting: false
             })
             NavigationService.navigate('AuthLoading')
         }, 2000)
-       
     }
-
 }
