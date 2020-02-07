@@ -187,7 +187,8 @@ class ListScreen extends React.Component {
                         />
                     </View>
                     <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
-                        Sorry, something went wrong.
+                        Sorry, something went wrong. If you are the site owner, please submit a
+                        support request.
                     </Text>
                     <Button
                         mode='contained'
