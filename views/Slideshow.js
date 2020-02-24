@@ -136,8 +136,9 @@ class Slideshow extends React.Component {
                 })
             )
             console.log('images', images)
+            const filteredImages = images.filter(img => img.id)
             this.setState({
-                photos: images
+                photos: filteredImages
             })
         } catch (err) {
             console.log('error getting slideshow images', err)
