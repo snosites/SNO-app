@@ -29,6 +29,7 @@ import {
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { types as userTypes, actions as userActions } from '../redux/user'
+import { actions as globalActions } from '../redux/global'
 import { createLoadingSelector } from '../redux/loading'
 import { createErrorMessageSelector } from '../redux/errors'
 
@@ -488,17 +489,8 @@ class SettingsScreen extends React.Component {
 
     _handleDeleteOrg = domain => {
         Haptics.selectionAsync()
-        const { domains, navigation, deleteDomain, unsubscribe } = this.props
-        if (domain.active) {
-            let found = domains.find(domain => {
-                return !domain.active
-            })
-            if (found) {
-                this._switchDomain(found.id)
-            } else {
-                navigation.navigate('AuthLoading')
-            }
-        }
+        const { domains, navigation, deleteDomain, unsubscribe, removeSchoolSub } = this.props
+
         // get all the category IDs to remove them from DB
         const categoryIds = domain.notificationCategories.map(category => {
             return category.id
@@ -510,7 +502,7 @@ class SettingsScreen extends React.Component {
                 domainId: domain.id
             })
         }
-        deleteDomain(domain.id)
+
         this.setState({
             snackbarVisible: true
         })
@@ -518,6 +510,22 @@ class SettingsScreen extends React.Component {
         Amplitude.logEventWithProperties('remove school', {
             domainId: domain.id
         })
+
+        //new analytics
+        removeSchoolSub(domain.url)
+
+        if (domain.active) {
+            let found = domains.find(domain => {
+                return !domain.active
+            })
+            if (found) {
+                this._switchDomain(found.id)
+            } else {
+                navigation.navigate('AuthLoading')
+            }
+        }
+
+        deleteDomain(domain.id)
     }
 
     _handleUserInfoEdit = userPref => {
@@ -601,7 +609,8 @@ const mapDispatchToProps = dispatch => {
         saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload)),
         deleteDomain: domainId => dispatch(domainActions.deleteDomain(domainId)),
         subscribe: payload => dispatch(userActions.subscribe(payload)),
-        unsubscribe: payload => dispatch(userActions.unsubscribe(payload))
+        unsubscribe: payload => dispatch(userActions.unsubscribe(payload)),
+        removeSchoolSub: url => dispatch(globalActions.removeSchoolSub(url))
     }
 }
 

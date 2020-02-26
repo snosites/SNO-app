@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-    Text,
-    TouchableOpacity,
-    Alert
-} from 'react-native'
+import { Text, TouchableOpacity, Alert } from 'react-native'
 import { Notifications } from 'expo'
 import * as Amplitude from 'expo-analytics-amplitude'
 
@@ -114,22 +110,22 @@ const NotificationAlert = props => {
 
     const _notificationSwitchDomain = async domainUrl => {
         try {
-                NavigationService.navigate('AuthLoading', {
-                    switchingDomain: true
-                })
-                // get article
-                const article = await asyncFetchArticle(domainUrl, notification.data.post_id)
+            NavigationService.navigate('AuthLoading', {
+                switchingDomain: true
+            })
+            // get article
+            const article = await asyncFetchArticle(domainUrl, notification.data.post_id)
 
-                // sets key for app to look for on new domain load
-                setFromPush(article)
-                // change active domain
-                setActiveDomain(Number(notification.data.domain_id))
-                //navigate to auth loading to load initial domain data
-                let nav = NavigationService
-                nav.navigate('AuthLoading', {
-                    switchingDomain: false
-                })
-            } catch (err) {
+            // sets key for app to look for on new domain load
+            setFromPush(article)
+            // change active domain
+            setActiveDomain(Number(notification.data.domain_id))
+            //navigate to auth loading to load initial domain data
+            let nav = NavigationService
+            nav.navigate('AuthLoading', {
+                switchingDomain: false
+            })
+        } catch (err) {
             console.log('error in notification switch domain', err)
             NavigationService.navigate('AuthLoading', {
                 switchingDomain: false
@@ -198,7 +194,6 @@ const NotificationAlert = props => {
     )
 }
 
-
 const mapStateToProps = state => ({
     user: state.user.user,
     activeDomain: getActiveDomain(state),
@@ -210,7 +205,4 @@ const mapDispatchToProps = dispatch => ({
     setFromPush: payload => dispatch(userActions.setFromPush(payload))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(NotificationAlert)
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationAlert)

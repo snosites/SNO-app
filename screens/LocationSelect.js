@@ -33,7 +33,6 @@ import { getReleaseChannel } from '../constants/config'
 
 const version = getReleaseChannel()
 
-
 const LocationSelectScreen = props => {
     const {
         navigation,
@@ -45,15 +44,16 @@ const LocationSelectScreen = props => {
         setActiveDomain,
         addDomain,
         clearAvailableDomains,
-        setSubscribeAll
+        setSubscribeAll,
+        addSchoolSub
     } = props
-    
+
     const cityLocation = navigation.getParam('location', null)
 
-    const [ modalVisible, setModalVisible ] = useState(false)
-    const [ schoolsInRadius, setSchoolsInRadius ] = useState([])
-    const [ radius, setRadius ] = useState(20)
-    const [ reloading, setReloading ] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [schoolsInRadius, setSchoolsInRadius] = useState([])
+    const [radius, setRadius] = useState(20)
+    const [reloading, setReloading] = useState(false)
 
     useEffect(() => {
         fetchAvailableDomains()
@@ -113,7 +113,7 @@ const LocationSelectScreen = props => {
         setSchoolsInRadius(filteredSchoolsWithDistance)
     }
 
-    _handleSelect = async (selectedDomain) => {
+    _handleSelect = async selectedDomain => {
         Haptics.selectionAsync()
         try {
             const found = domains.find(domain => {
@@ -130,6 +130,9 @@ const LocationSelectScreen = props => {
                 domainId: selectedDomain.id
             })
 
+            //new analytics
+            addSchoolSub(selectedDomain.url)
+
             addDomain({
                 id: selectedDomain.id,
                 name: selectedDomain.school,
@@ -143,7 +146,6 @@ const LocationSelectScreen = props => {
             setActiveDomain(selectedDomain.id)
 
             setModalVisible(true)
-            
         } catch (error) {
             console.log('error saving users domain selection', error)
         }
@@ -295,7 +297,6 @@ LocationSelectScreen.navigationOptions = {
     title: 'Select Your School'
 }
 
-
 const availableDomainsLoadingSelector = createLoadingSelector([globalTypes.FETCH_AVAILABLE_DOMAINS])
 const availableDomainsErrorSelector = createErrorMessageSelector([
     globalTypes.FETCH_AVAILABLE_DOMAINS
@@ -313,10 +314,8 @@ const mapDispatchToProps = dispatch => ({
     setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
     addDomain: domain => dispatch(domainsActions.addDomain(domain)),
     clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload))
+    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload)),
+    addSchoolSub: url => dispatch(globalActions.addSchoolSub(url))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(LocationSelectScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(LocationSelectScreen)

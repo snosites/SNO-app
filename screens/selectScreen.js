@@ -50,7 +50,8 @@ const SelectScreen = props => {
         setSubscribeAll,
         addDomain,
         isLoading,
-        error
+        error,
+        addSchoolSub
     } = props
 
     useEffect(() => {
@@ -82,6 +83,9 @@ const SelectScreen = props => {
                 domainId: selectedDomain.id
             })
 
+            //new analytics
+            addSchoolSub(selectedDomain.url)
+
             addDomain({
                 id: selectedDomain.id,
                 name: selectedDomain.school,
@@ -105,7 +109,7 @@ const SelectScreen = props => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
         navigation.navigate('AuthLoading')
-        
+
         setModalVisible(false)
         clearAvailableDomains()
     }
@@ -244,10 +248,8 @@ const mapDispatchToProps = dispatch => ({
     setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
     addDomain: domain => dispatch(domainsActions.addDomain(domain)),
     clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload))
+    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload)),
+    addSchoolSub: url => dispatch(globalActions.addSchoolSub(url))
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SelectScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SelectScreen)

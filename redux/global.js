@@ -24,7 +24,19 @@ export const types = {
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
-    FETCH_MENUS_ERROR: 'FETCH_MENUS_ERROR'
+    FETCH_MENUS_ERROR: 'FETCH_MENUS_ERROR',
+    ADD_SCHOOL_SUB: 'ADD_SCHOOL_SUB',
+    ADD_SCHOOL_SUB_REQUEST: 'ADD_SCHOOL_SUB_REQUEST',
+    ADD_SCHOOL_SUB_SUCCESS: 'ADD_SCHOOL_SUB_SUCCESS',
+    ADD_SCHOOL_SUB_ERROR: 'ADD_SCHOOL_SUB_ERROR',
+    REMOVE_SCHOOL_SUB: 'REMOVE_SCHOOL_SUB',
+    REMOVE_SCHOOL_SUB_REQUEST: 'REMOVE_SCHOOL_SUB_REQUEST',
+    REMOVE_SCHOOL_SUB_SUCCESS: 'REMOVE_SCHOOL_SUB_SUCCESS',
+    REMOVE_SCHOOL_SUB_ERROR: 'REMOVE_SCHOOL_SUB_ERROR',
+    ADD_STORY_VIEW: 'ADD_STORY_VIEW',
+    ADD_STORY_VIEW_REQUEST: 'ADD_STORY_VIEW_REQUEST',
+    ADD_STORY_VIEW_SUCCESS: 'ADD_STORY_VIEW_SUCCESS',
+    ADD_STORY_VIEW_ERROR: 'ADD_STORY_VIEW_ERROR'
 }
 
 const initialState = {
@@ -137,5 +149,17 @@ export const actions = {
     fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
     fetchMenusSuccess: payload => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
-    fetchMenusError: error => ({ type: types.FETCH_MENUS_ERROR, error })
+    fetchMenusError: error => ({ type: types.FETCH_MENUS_ERROR, error }),
+    addSchoolSub: url => ({ type: types.ADD_SCHOOL_SUB, url }),
+    addSchoolSubRequest: () => ({ type: types.ADD_SCHOOL_SUB_REQUEST }),
+    addSchoolSubSuccess: () => ({ type: types.ADD_SCHOOL_SUB_SUCCESS }),
+    addSchoolSubError: error => ({ type: types.ADD_SCHOOL_SUB_ERROR, error }),
+    removeSchoolSub: url => ({ type: types.REMOVE_SCHOOL_SUB, url }),
+    removeSchoolSubRequest: () => ({ type: types.REMOVE_SCHOOL_SUB_REQUEST }),
+    removeSchoolSubSuccess: () => ({ type: types.REMOVE_SCHOOL_SUB_SUCCESS }),
+    removeSchoolSubError: error => ({ type: types.REMOVE_SCHOOL_SUB_ERROR, error }),
+    addStoryView: (url, postId) => ({ type: types.ADD_STORY_VIEW, url, postId }),
+    addStoryViewRequest: () => ({ type: types.ADD_STORY_VIEW_REQUEST }),
+    addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
+    addStoryViewError: error => ({ type: types.ADD_STORY_VIEW_ERROR, error })
 }

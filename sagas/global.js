@@ -5,6 +5,7 @@ import { actions as userActions, getApiToken } from '../redux/user'
 
 import NavigationService from '../utils/NavigationService'
 import api from '../api/api'
+import domainApiService from '../api/domain'
 
 import Constants from 'expo-constants'
 import { SplashScreen } from 'expo'
@@ -106,10 +107,55 @@ export function* loadActiveDomain() {
     }
 }
 
+function* addSchoolSub(action) {
+    try {
+        const { url } = action
+        yield put(globalActions.addSchoolSubRequest())
+
+        yield call(domainApiService.addSchoolSub, url)
+
+        yield put(globalActions.addSchoolSubSuccess())
+    } catch (err) {
+        console.log('error in add school sub saga', err)
+        yield put(globalActions.addSchoolSubError('error adding school sub'))
+    }
+}
+
+function* removeSchoolSub(action) {
+    try {
+        const { url } = action
+        yield put(globalActions.removeSchoolSubRequest())
+
+        yield call(domainApiService.removeSchoolSub, url)
+
+        yield put(globalActions.removeSchoolSubSuccess())
+    } catch (err) {
+        console.log('error in remove school sub saga', err)
+        yield put(globalActions.removeSchoolSubError('error removing school sub'))
+    }
+}
+
+function* addStoryView(action) {
+    try {
+        const { url, postId } = action
+        yield put(globalActions.addStoryViewRequest())
+
+        yield call(domainApiService.addStoryView, url, postId)
+
+        yield put(globalActions.addStoryViewSuccess())
+    } catch (err) {
+        console.log('error in add story view saga', err)
+        yield put(globalActions.addStoryViewError('error adding story view'))
+    }
+}
+
 function* globalSaga() {
     yield all([
         takeLatest(globalTypes.FETCH_AVAILABLE_DOMAINS, fetchAvailableDomains),
-        takeLatest(globalTypes.SEARCH_AVAILABLE_DOMAINS, searchAvailableDomains)
+        takeLatest(globalTypes.SEARCH_AVAILABLE_DOMAINS, searchAvailableDomains),
+        takeLatest(globalTypes.ADD_SCHOOL_SUB, addSchoolSub),
+        takeLatest(globalTypes.REMOVE_SCHOOL_SUB, removeSchoolSub),
+        takeLatest(globalTypes.ADD_STORY_VIEW_ERROR, addStoryView)
     ])
 }
 

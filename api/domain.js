@@ -201,6 +201,14 @@ const domainApiService = {
             return response.data
         } catch (err) {
             console.log('error in fetch articles api', err, err.response)
+            if (
+                err.response &&
+                err.response.data &&
+                err.response.data.code &&
+                err.response.data.code === 'rest_post_invalid_page_number'
+            ) {
+                return []
+            }
             throw err
         }
     },
@@ -298,6 +306,39 @@ const domainApiService = {
             return response.data
         } catch (err) {
             console.log('error in get sportcenter option api', err, err.response)
+            throw err
+        }
+    },
+    addSchoolSub: async domainUrl => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&add_school_sub=true`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in add school sub api', err, err.response)
+            throw err
+        }
+    },
+    removeSchoolSub: async domainUrl => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&remove_school_sub=true`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in remove school sub api', err, err.response)
+            throw err
+        }
+    },
+    addStoryView: async (domainUrl, postId) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/analytics?analytics_key=yi0htg0e6fq650jp&post_id=${postId}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in add story view api', err, err.response)
             throw err
         }
     }
