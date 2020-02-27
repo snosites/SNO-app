@@ -312,7 +312,12 @@ const domainApiService = {
     addSchoolSub: async domainUrl => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&add_school_sub=true`
+                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&add_school_sub=true`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {
@@ -323,7 +328,12 @@ const domainApiService = {
     removeSchoolSub: async domainUrl => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&remove_school_sub=true`
+                `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&remove_school_sub=true`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {
@@ -334,7 +344,12 @@ const domainApiService = {
     addStoryView: async (domainUrl, postId) => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/sns-v2/analytics?analytics_key=yi0htg0e6fq650jp&post_id=${postId}`
+                `https://${domainUrl}/wp-json/sns-v2/analytics?analytics_key=yi0htg0e6fq650jp&post_id=${postId}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
             )
             return response.data
         } catch (err) {

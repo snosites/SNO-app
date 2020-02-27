@@ -155,7 +155,7 @@ function* globalSaga() {
         takeLatest(globalTypes.SEARCH_AVAILABLE_DOMAINS, searchAvailableDomains),
         takeLatest(globalTypes.ADD_SCHOOL_SUB, addSchoolSub),
         takeLatest(globalTypes.REMOVE_SCHOOL_SUB, removeSchoolSub),
-        takeLatest(globalTypes.ADD_STORY_VIEW_ERROR, addStoryView)
+        takeLatest(globalTypes.ADD_STORY_VIEW, addStoryView)
     ])
 }
 
