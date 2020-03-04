@@ -116,16 +116,15 @@ function* getCustomOptions(domain) {
     try {
         // // get user options
         //add the type of list display
-        const [headerImage, headerLogo, theme, primary, accent, comments] = yield all([
+        const [headerImage, headerLogo, theme, primary, accent, comments, listStyle] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
             call(domainApiService.getCustomPrimaryColor, domain.url),
             call(domainApiService.getCustomAccentColor, domain.url),
-            call(domainApiService.getCommentsToggle, domain.url)
+            call(domainApiService.getCommentsToggle, domain.url),
+            call(domainApiService.getStoryListStyle, domain.url)
         ])
-
-        console.log('comments toggle', comments)
 
         if (!theme.result) {
             theme.result = 'light'
@@ -157,6 +156,16 @@ function* getCustomOptions(domain) {
         )
         yield put(globalActions.receiveCommentsOption(comments.result === 'Enable' ? true : false))
 
+        yield put(
+            globalActions.receiveStoryListStyle(
+                listStyle.result === 'small' || listStyle.result === 'large'
+                    ? listStyle.result
+                    : 'small'
+            )
+        )
+
+        console.log('res', listStyle)
+
         try {
             // save sportcenter option
             const sportCenter = yield call(domainApiService.getSportCenterOption, domain.url)
@@ -177,6 +186,7 @@ function* getCustomOptions(domain) {
         yield put(globalActions.receiveHeader(''))
         yield put(globalActions.receiveHeaderLogo(''))
         yield put(globalActions.receiveSportCenterOption(false))
+        yield put(globalActions.receiveStoryListStyle('small'))
     }
 }
 

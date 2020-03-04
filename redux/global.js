@@ -21,6 +21,7 @@ export const types = {
     RECEIVE_HEADER_LOGO: 'RECEIVE_HEADER_LOGO',
     RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
+    RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -46,7 +47,8 @@ const initialState = {
     headerSmall: '',
     menuItems: [],
     sportCenterEnabled: false,
-    enableComments: false
+    enableComments: false,
+    storyListStyle: 'small'
 }
 
 export default function global(state = initialState, action) {
@@ -86,6 +88,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 enableComments: action.comments
+            }
+        case types.RECEIVE_STORY_LIST_STYLE:
+            return {
+                ...state,
+                storyListStyle: action.listStyle
             }
         case types.FETCH_MENUS_SUCCESS:
             return {
@@ -145,6 +152,10 @@ export const actions = {
     receiveCommentsOption: comments => ({
         type: types.RECEIVE_COMMENTS_OPTION,
         comments
+    }),
+    receiveStoryListStyle: listStyle => ({
+        type: types.RECEIVE_STORY_LIST_STYLE,
+        listStyle
     }),
     fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
