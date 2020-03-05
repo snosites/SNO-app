@@ -76,7 +76,15 @@ export default class ArticleListContent extends React.Component {
     }
 
     _renderItem = ({ item }) => {
-        const { theme, onIconPress, deleteIcon, activeDomain, enableComments } = this.props
+        const {
+            theme,
+            onIconPress,
+            deleteIcon,
+            activeDomain,
+            enableComments,
+            storyListStyle
+        } = this.props
+        console.log('list style', storyListStyle)
         const article = item
         return (
             <TouchableOpacity

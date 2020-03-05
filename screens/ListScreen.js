@@ -236,6 +236,7 @@ class ListScreen extends React.Component {
                         enableComments={global.enableComments}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
+                        storyListStyle={global.storyListStyle}
                     />
                 )}
                 <Snackbar
