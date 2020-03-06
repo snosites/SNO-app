@@ -91,7 +91,14 @@ export default class ArticleListContent extends React.Component {
         const article = item
 
         if (storyListStyle === 'large') {
-            return <LargeThumbnailListItem article={article} activeDomain={activeDomain} />
+            return (
+                <LargeThumbnailListItem
+                    article={article}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    handleArticlePress={handleArticlePress}
+                />
+            )
         } else {
             return <SmallThumbnailListItem />
         }
@@ -191,35 +198,6 @@ export default class ArticleListContent extends React.Component {
                 </View>
             </TouchableOpacity>
         )
-    }
-
-    _renderDate = date => {
-        return (
-            <Text
-                style={{
-                    fontSize: 15,
-                    color: '#9e9e9e'
-                }}
-            >
-                {Moment().isAfter(Moment(date).add(7, 'days'))
-                    ? String(Moment(date).format('MMM D, YYYY'))
-                    : String(Moment(date).fromNow())}
-            </Text>
-        )
-    }
-
-    _renderWriters = writers => {
-        let newArr = ''
-        for (let i = 0; i < writers.length; i++) {
-            if (i === writers.length - 2) {
-                newArr += `${writers[i]} & `
-            } else if (i === writers.length - 1) {
-                newArr += `${writers[i]}`
-            } else {
-                newArr += `${writers[i]}, `
-            }
-        }
-        return newArr
     }
 }
 
