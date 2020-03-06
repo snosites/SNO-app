@@ -36,7 +36,7 @@ const renderWriters = writers => {
 }
 
 export default props => {
-    const { navigation, state, theme, enableComments, handleArticlePress, onIconPress } = props
+    const { theme, enableComments, onIconPress } = props
 
     return (
         <TouchableOpacity
@@ -78,7 +78,7 @@ export default props => {
                         }}
                     >
                         {article.custom_fields.writer
-                            ? this._renderWriters(article.custom_fields.writer)
+                            ? renderWriters(article.custom_fields.writer)
                             : ''}
                     </Text>
                     <View
@@ -88,9 +88,7 @@ export default props => {
                             justifyContent: 'space-between'
                         }}
                     >
-                        <View style={{ flexDirection: 'row' }}>
-                            {this._renderDate(article.date)}
-                        </View>
+                        <View style={{ flexDirection: 'row' }}>{renderDate(article.date)}</View>
                     </View>
                 </View>
                 <View

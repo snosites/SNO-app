@@ -96,108 +96,23 @@ export default class ArticleListContent extends React.Component {
                     article={article}
                     activeDomain={activeDomain}
                     theme={theme}
-                    handleArticlePress={handleArticlePress}
+                    deleteIcon={deleteIcon}
+                    onIconPress={onIconPress}
+                    enableComments={enableComments}
                 />
             )
         } else {
-            return <SmallThumbnailListItem />
+            return (
+                <SmallThumbnailListItem
+                    article={article}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    deleteIcon={deleteIcon}
+                    onIconPress={onIconPress}
+                    enableComments={enableComments}
+                />
+            )
         }
-        return (
-            <TouchableOpacity
-                style={{ flex: 1 }}
-                onPress={() => handleArticlePress(article, activeDomain)}
-            >
-                <View style={styles.storyContainer}>
-                    {article.featuredImage ? (
-                        <Image
-                            source={{ uri: article.featuredImage.uri }}
-                            style={styles.featuredImage}
-                        />
-                    ) : null}
-                    <View style={styles.storyInfo}>
-                        <HTML
-                            html={article.title.rendered}
-                            baseFontStyle={{ fontSize: 17 }}
-                            customWrapper={text => {
-                                return (
-                                    <Text ellipsizeMode='tail' numberOfLines={2}>
-                                        {text}
-                                    </Text>
-                                )
-                            }}
-                            tagsStyles={{
-                                rawtext: {
-                                    fontSize: 17,
-                                    fontWeight: 'bold',
-                                    color: theme.dark ? 'white' : 'black'
-                                }
-                            }}
-                        />
-                        <Text
-                            ellipsizeMode='tail'
-                            numberOfLines={1}
-                            style={{
-                                color: theme.colors.accent,
-                                fontSize: 15
-                            }}
-                        >
-                            {article.custom_fields.writer
-                                ? this._renderWriters(article.custom_fields.writer)
-                                : ''}
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <View style={{ flexDirection: 'row' }}>
-                                {this._renderDate(article.date)}
-                            </View>
-                        </View>
-                    </View>
-                    <View
-                        style={{
-                            justifySelf: 'end',
-                            justifyContent: 'space-between'
-                        }}
-                    >
-                        {enableComments && (
-                            <View>
-                                <FontAwesome name='comment' size={21} color='#e0e0e0' />
-                                <Badge
-                                    size={16}
-                                    style={{
-                                        position: 'absolute',
-                                        bottom: 2,
-                                        right: 4,
-                                        backgroundColor: theme.colors.accent
-                                    }}
-                                >
-                                    {article.comments.length > 99 ? '99' : article.comments.length}
-                                </Badge>
-                            </View>
-                        )}
-                        <MaterialIcons
-                            name={
-                                deleteIcon
-                                    ? 'delete'
-                                    : article.saved
-                                    ? 'bookmark'
-                                    : 'bookmark-border'
-                            }
-                            color={deleteIcon ? '#c62828' : theme.colors.accent}
-                            style={{ paddingHorizontal: 5 }}
-                            size={24}
-                            onPress={() => {
-                                onIconPress(article)
-                            }}
-                        />
-                    </View>
-                </View>
-            </TouchableOpacity>
-        )
     }
 }
 
