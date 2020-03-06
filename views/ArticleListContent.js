@@ -19,6 +19,9 @@ import { FontAwesome } from '@expo/vector-icons'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Badge } from 'react-native-paper'
 
+import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
+import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
+
 Moment.updateLocale('en', {
     relativeTime: {
         d: '1 day'
@@ -84,8 +87,14 @@ export default class ArticleListContent extends React.Component {
             enableComments,
             storyListStyle
         } = this.props
-        console.log('list style', storyListStyle)
+
         const article = item
+
+        if (storyListStyle === 'large') {
+            return <LargeThumbnailListItem article={article} activeDomain={activeDomain} />
+        } else {
+            return <SmallThumbnailListItem />
+        }
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
