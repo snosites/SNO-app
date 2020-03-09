@@ -1,10 +1,13 @@
 import React from 'react'
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { withTheme, Badge, Colors } from 'react-native-paper'
 import Color from 'color'
 import Moment from 'moment'
+import HTML from 'react-native-render-html'
 
 import { handleArticlePress } from '../utils/articlePress'
+
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 
 const renderDate = date => {
     return (
@@ -36,7 +39,7 @@ const renderWriters = writers => {
 }
 
 export default props => {
-    const { navigation, state, theme, enableComments, handleArticlePress, onIconPress } = props
+    const { article, theme, enableComments, onIconPress, deleteIcon } = props
 
     return (
         <TouchableOpacity
@@ -78,7 +81,7 @@ export default props => {
                         }}
                     >
                         {article.custom_fields.writer
-                            ? this._renderWriters(article.custom_fields.writer)
+                            ? renderWriters(article.custom_fields.writer)
                             : ''}
                     </Text>
                     <View
@@ -88,9 +91,7 @@ export default props => {
                             justifyContent: 'space-between'
                         }}
                     >
-                        <View style={{ flexDirection: 'row' }}>
-                            {this._renderDate(article.date)}
-                        </View>
+                        <View style={{ flexDirection: 'row' }}>{renderDate(article.date)}</View>
                     </View>
                 </View>
                 <View

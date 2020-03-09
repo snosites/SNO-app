@@ -1,23 +1,9 @@
 import React from 'react'
-import {
-    View,
-    FlatList,
-    Text,
-    Image,
-    ActivityIndicator,
-    StyleSheet,
-    TouchableOpacity,
-    Platform
-} from 'react-native'
+import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
 import Moment from 'moment'
 import Color from 'color'
-import HTML from 'react-native-render-html'
 
 import { handleArticlePress } from '../utils/articlePress'
-
-import { FontAwesome } from '@expo/vector-icons'
-import { MaterialIcons } from '@expo/vector-icons'
-import { Badge } from 'react-native-paper'
 
 import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
