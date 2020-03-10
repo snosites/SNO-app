@@ -1,9 +1,6 @@
 import React from 'react'
 import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
 import Moment from 'moment'
-import Color from 'color'
-
-import { handleArticlePress } from '../utils/articlePress'
 
 import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
