@@ -3,6 +3,7 @@ import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
 import Moment from 'moment'
 
 import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
+import AlternatingThumbnailListItem from '../components/AlternatingThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
 
 Moment.updateLocale('en', {
@@ -61,7 +62,7 @@ export default class ArticleListContent extends React.Component {
         )
     }
 
-    _renderItem = ({ item }) => {
+    _renderItem = ({ item, index }) => {
         const {
             theme,
             onIconPress,
@@ -82,6 +83,19 @@ export default class ArticleListContent extends React.Component {
                     deleteIcon={deleteIcon}
                     onIconPress={onIconPress}
                     enableComments={enableComments}
+                />
+            )
+        } else if (storyListStyle === 'alternating') {
+            console.log('alternating')
+            return (
+                <AlternatingThumbnailListItem
+                    article={article}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    deleteIcon={deleteIcon}
+                    onIconPress={onIconPress}
+                    enableComments={enableComments}
+                    alternate={index % 2 === 0}
                 />
             )
         } else {

@@ -158,7 +158,9 @@ function* getCustomOptions(domain) {
 
         yield put(
             globalActions.receiveStoryListStyle(
-                listStyle.result === 'small' || listStyle.result === 'large'
+                listStyle.result === 'small' ||
+                    listStyle.result === 'large' ||
+                    listStyle.result === 'alternating'
                     ? listStyle.result
                     : 'small'
             )
