@@ -102,14 +102,14 @@ export default class ArticleListContent extends React.Component {
         } else if (storyListStyle === 'mix') {
             console.log('alternating')
             return (
-                <AlternatingThumbnailListItem
+                <SmallLargeListItem
                     article={article}
                     activeDomain={activeDomain}
                     theme={theme}
                     deleteIcon={deleteIcon}
                     onIconPress={onIconPress}
                     enableComments={enableComments}
-                    alternate={index % 2 === 0}
+                    large={index % 3 === 0}
                 />
             )
         } else {

@@ -1,7 +1,7 @@
 {
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 2207,
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
   "expoServerNgrokUrl": "https://pg-hr7.tjuser23.the-source.exp.direct",
   "packagerNgrokUrl": "https://packager.pg-hr7.tjuser23.the-source.exp.direct",
   "ngrokPid": 2229,
