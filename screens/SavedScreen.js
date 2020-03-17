@@ -69,7 +69,7 @@ class SavedArticlesScreen extends React.Component {
     }
 
     render() {
-        const { savedArticles, activeDomain, theme, navigation } = this.props
+        const { savedArticles, activeDomain, theme, navigation, global } = this.props
         const { snackbarVisible, isTablet } = this.state
         if (savedArticles === 'loading') {
             return (
@@ -117,6 +117,7 @@ class SavedArticlesScreen extends React.Component {
                         activeDomain={activeDomain}
                         theme={theme}
                         navigation={navigation}
+                        enableComments={global.enableComments}
                         onIconPress={this._handleArticleRemove}
                         deleteIcon={true}
                     />
@@ -127,8 +128,10 @@ class SavedArticlesScreen extends React.Component {
                         activeDomain={activeDomain}
                         theme={theme}
                         navigation={navigation}
+                        enableComments={global.enableComments}
                         onIconPress={this._handleArticleRemove}
                         deleteIcon={true}
+                        storyListStyle={global.storyListStyle}
                     />
                 )}
                 <Snackbar

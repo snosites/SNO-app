@@ -82,7 +82,7 @@ class RecentScreen extends React.Component {
     }
 
     render() {
-        const { navigation, recentArticles, recent, theme, activeDomain } = this.props
+        const { navigation, recentArticles, recent, theme, activeDomain, global } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
         if (recent.items.length === 0 && recent.isFetching) {
             return (
@@ -141,6 +141,7 @@ class RecentScreen extends React.Component {
                         handleRefresh={this._handleRefresh}
                         saveRef={this._saveRef}
                         activeDomain={activeDomain}
+                        enableComments={global.enableComments}
                         theme={theme}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
@@ -152,11 +153,13 @@ class RecentScreen extends React.Component {
                         isRefreshing={recent.didInvalidate}
                         loadMore={this._loadMore}
                         handleRefresh={this._handleRefresh}
+                        enableComments={global.enableComments}
                         saveRef={this._saveRef}
                         activeDomain={activeDomain}
                         theme={theme}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
+                        storyListStyle={global.storyListStyle}
                     />
                 )}
                 <Snackbar

@@ -5,7 +5,7 @@ import Moment from 'moment'
 import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
 import AlternatingThumbnailListItem from '../components/AlternatingThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
-import SmallLargeListItem from '../components/SmallLargeThumbnailListItem'
+import SmallLargeListItem from '../components/SmallLargeListItem'
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -87,7 +87,6 @@ export default class ArticleListContent extends React.Component {
                 />
             )
         } else if (storyListStyle === 'alternating') {
-            console.log('alternating')
             return (
                 <AlternatingThumbnailListItem
                     article={article}
@@ -100,7 +99,6 @@ export default class ArticleListContent extends React.Component {
                 />
             )
         } else if (storyListStyle === 'mix') {
-            console.log('alternating')
             return (
                 <SmallLargeListItem
                     article={article}
@@ -109,7 +107,7 @@ export default class ArticleListContent extends React.Component {
                     deleteIcon={deleteIcon}
                     onIconPress={onIconPress}
                     enableComments={enableComments}
-                    large={index % 3 === 0}
+                    large={index % 4 === 0}
                 />
             )
         } else {

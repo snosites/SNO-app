@@ -160,6 +160,7 @@ function* getCustomOptions(domain) {
             globalActions.receiveStoryListStyle(
                 listStyle.result === 'small' ||
                     listStyle.result === 'large' ||
+                    listStyle.result === 'mix' ||
                     listStyle.result === 'alternating'
                     ? listStyle.result
                     : 'small'

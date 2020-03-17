@@ -51,10 +51,8 @@ export default props => {
         return (
             <TouchableOpacity
                 style={{
-                    flex: 1,
+                    flex: 1
                     // height: imageHeight + 100,
-                    borderBottomWidth: 0.5,
-                    borderBottomColor: '#9e9e9e'
                 }}
                 onPress={() => handleArticlePress(article, activeDomain)}
             >
