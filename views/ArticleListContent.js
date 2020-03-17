@@ -73,6 +73,8 @@ export default class ArticleListContent extends React.Component {
             storyListStyle
         } = this.props
 
+        console.log('ctive domin', activeDomain)
+
         const article = item
 
         if (storyListStyle === 'large') {

@@ -39,7 +39,15 @@ const renderWriters = writers => {
 }
 
 export default props => {
-    const { article, theme, enableComments, onIconPress, deleteIcon, alternate } = props
+    const {
+        article,
+        theme,
+        enableComments,
+        onIconPress,
+        deleteIcon,
+        alternate,
+        activeDomain
+    } = props
 
     if (alternate) {
         return (

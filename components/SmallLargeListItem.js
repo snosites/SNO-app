@@ -41,7 +41,7 @@ const renderWriters = writers => {
 }
 
 export default props => {
-    const { article, theme, enableComments, onIconPress, deleteIcon, large } = props
+    const { article, theme, enableComments, onIconPress, deleteIcon, large, activeDomain } = props
 
     if (large) {
         const hasFeaturedImage = article.featuredImage

@@ -41,7 +41,7 @@ const renderWriters = writers => {
 }
 
 export default props => {
-    const { article, theme, enableComments, onIconPress, deleteIcon } = props
+    const { article, theme, enableComments, onIconPress, deleteIcon, activeDomain } = props
 
     const hasFeaturedImage = article.featuredImage
     const imageWidth = screenWidth - 40
