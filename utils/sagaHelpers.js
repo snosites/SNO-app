@@ -4,29 +4,65 @@ export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
+        console.log('featured image', featuredImage)
         if (!featuredImage.meta_fields) {
-            story.featuredImage = {
-                uri: featuredImage.source_url,
-                photographer: '',
-                caption:
-                    featuredImage.caption && featuredImage.caption.rendered
-                        ? featuredImage.caption.rendered
-                        : ''
+            if (
+                featuredImage.media_details &&
+                featuredImage.media_details.size &&
+                featuredImage.media_details.sizes.large &&
+                featuredImage.media_details.sizes.large.source_url
+            ) {
+                story.featuredImage = {
+                    uri: featuredImage.media_details.sizes.large.source_url,
+                    photographer: '',
+                    caption:
+                        featuredImage.caption && featuredImage.caption.rendered
+                            ? featuredImage.caption.rendered
+                            : ''
+                }
+            } else {
+                story.featuredImage = {
+                    uri: featuredImage.source_url,
+                    photographer: '',
+                    caption:
+                        featuredImage.caption && featuredImage.caption.rendered
+                            ? featuredImage.caption.rendered
+                            : ''
+                }
+            }
+            return
+        } else {
+            if (
+                featuredImage.media_details &&
+                featuredImage.media_details.size &&
+                featuredImage.media_details.sizes.large &&
+                featuredImage.media_details.sizes.large.source_url
+            ) {
+                story.featuredImage = {
+                    uri: featuredImage.media_details.sizes.large.source_url,
+                    photographer: featuredImage.meta_fields.photographer
+                        ? featuredImage.meta_fields.photographer
+                        : '',
+                    caption:
+                        featuredImage.caption && featuredImage.caption.rendered
+                            ? featuredImage.caption.rendered
+                            : ''
+                }
+            } else {
+                story.featuredImage = {
+                    uri: featuredImage.media_details.sizes.large.source_url,
+                    photographer: featuredImage.meta_fields.photographer
+                        ? featuredImage.meta_fields.photographer
+                        : '',
+                    caption:
+                        featuredImage.caption && featuredImage.caption.rendered
+                            ? featuredImage.caption.rendered
+                            : ''
+                }
             }
             return
         }
-        story.featuredImage = {
-            uri: featuredImage.source_url,
-            photographer: featuredImage.meta_fields.photographer
-                ? featuredImage.meta_fields.photographer
-                : '',
-            caption:
-                featuredImage.caption && featuredImage.caption.rendered
-                    ? featuredImage.caption.rendered
-                    : ''
-        }
-        return
-    } catch(err){
+    } catch (err) {
         console.log('error trying to fetch article featured image', err)
         return
     }
