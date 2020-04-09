@@ -18,7 +18,7 @@ export async function asyncFetchFeaturedImage(url, story) {
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
-                            : ''
+                            : '',
                 }
             } else {
                 story.featuredImage = {
@@ -27,7 +27,7 @@ export async function asyncFetchFeaturedImage(url, story) {
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
-                            : ''
+                            : '',
                 }
             }
             return
@@ -46,18 +46,18 @@ export async function asyncFetchFeaturedImage(url, story) {
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
-                            : ''
+                            : '',
                 }
             } else {
                 story.featuredImage = {
-                    uri: featuredImage.media_details.sizes.large.source_url,
+                    uri: featuredImage.media_details.sizes.full.source_url,
                     photographer: featuredImage.meta_fields.photographer
                         ? featuredImage.meta_fields.photographer
                         : '',
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
-                            : ''
+                            : '',
                 }
             }
             return

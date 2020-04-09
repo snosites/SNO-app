@@ -9,8 +9,8 @@ import SmallLargeListItem from '../components/SmallLargeListItem'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: '1 day'
-    }
+        d: '1 day',
+    },
 })
 
 export default class ArticleListContent extends React.Component {
@@ -21,15 +21,15 @@ export default class ArticleListContent extends React.Component {
             isFetching,
             saveRef,
             loadMore,
-            handleRefresh
+            handleRefresh,
         } = this.props
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
-                    keyExtractor={item => item.id.toString()}
-                    ref={ref => {
+                    keyExtractor={(item) => item.id.toString()}
+                    ref={(ref) => {
                         if (saveRef) {
                             saveRef(ref)
                         }
@@ -70,10 +70,8 @@ export default class ArticleListContent extends React.Component {
             deleteIcon,
             activeDomain,
             enableComments,
-            storyListStyle
+            storyListStyle,
         } = this.props
-
-        console.log('ctive domin', activeDomain)
 
         const article = item
 
@@ -132,22 +130,22 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         paddingBottom: 30,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     storyContainer: {
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 10,
-        marginVertical: 10
+        marginVertical: 10,
     },
     featuredImage: {
         width: 125,
         height: 80,
-        borderRadius: 8
+        borderRadius: 8,
     },
     storyInfo: {
         flex: 1,
         marginLeft: 10,
-        justifyContent: 'space-between'
-    }
+        justifyContent: 'space-between',
+    },
 })
