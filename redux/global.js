@@ -22,6 +22,7 @@ export const types = {
     RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
     RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
+    //receive new options
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -37,7 +38,7 @@ export const types = {
     ADD_STORY_VIEW: 'ADD_STORY_VIEW',
     ADD_STORY_VIEW_REQUEST: 'ADD_STORY_VIEW_REQUEST',
     ADD_STORY_VIEW_SUCCESS: 'ADD_STORY_VIEW_SUCCESS',
-    ADD_STORY_VIEW_ERROR: 'ADD_STORY_VIEW_ERROR'
+    ADD_STORY_VIEW_ERROR: 'ADD_STORY_VIEW_ERROR',
 }
 
 const initialState = {
@@ -48,7 +49,7 @@ const initialState = {
     menuItems: [],
     sportCenterEnabled: false,
     enableComments: false,
-    storyListStyle: 'small'
+    storyListStyle: 'small',
 }
 
 export default function global(state = initialState, action) {
@@ -57,52 +58,52 @@ export default function global(state = initialState, action) {
         case types.SEARCH_AVAILABLE_DOMAINS_SUCCESS:
             return {
                 ...state,
-                availableDomains: action.payload
+                availableDomains: action.payload,
             }
         case types.CLEAR_AVAILABLE_DOMAINS:
             return {
                 ...state,
-                availableDomains: []
+                availableDomains: [],
             }
         case types.RECEIVE_SPLASH:
             return {
                 ...state,
-                splashScreen: action.splash
+                splashScreen: action.splash,
             }
         case types.RECEIVE_HEADER:
             return {
                 ...state,
-                header: action.header
+                header: action.header,
             }
         case types.RECEIVE_HEADER_LOGO:
             return {
                 ...state,
-                headerSmall: action.headerLogo
+                headerSmall: action.headerLogo,
             }
         case types.RECEIVE_SPORTCENTER_OPTION:
             return {
                 ...state,
-                sportCenterEnabled: action.sportCenter
+                sportCenterEnabled: action.sportCenter,
             }
         case types.RECEIVE_COMMENTS_OPTION:
             return {
                 ...state,
-                enableComments: action.comments
+                enableComments: action.comments,
             }
         case types.RECEIVE_STORY_LIST_STYLE:
             return {
                 ...state,
-                storyListStyle: action.listStyle
+                storyListStyle: action.listStyle,
             }
         case types.FETCH_MENUS_SUCCESS:
             return {
                 ...state,
-                menuItems: action.payload
+                menuItems: action.payload,
             }
         case types.FETCH_MENUS_ERROR:
             return {
                 ...state,
-                menuItems: []
+                menuItems: [],
             }
         default:
             return state
@@ -112,65 +113,65 @@ export default function global(state = initialState, action) {
 export const actions = {
     fetchAvailableDomains: () => ({ type: types.FETCH_AVAILABLE_DOMAINS }),
     fetchAvailableDomainsRequest: () => ({ type: types.FETCH_AVAILABLE_DOMAINS_REQUEST }),
-    fetchAvailableDomainsSuccess: payload => ({
+    fetchAvailableDomainsSuccess: (payload) => ({
         type: types.FETCH_AVAILABLE_DOMAINS_SUCCESS,
-        payload
+        payload,
     }),
-    fetchAvailableDomainsError: error => ({
+    fetchAvailableDomainsError: (error) => ({
         type: types.FETCH_AVAILABLE_DOMAINS_ERROR,
-        error
+        error,
     }),
-    searchAvailableDomains: searchTerm => ({
+    searchAvailableDomains: (searchTerm) => ({
         type: types.SEARCH_AVAILABLE_DOMAINS,
-        searchTerm
+        searchTerm,
     }),
     searchAvailableDomainsRequest: () => ({ type: types.SEARCH_AVAILABLE_DOMAINS_REQUEST }),
-    searchAvailableDomainsSuccess: payload => ({
+    searchAvailableDomainsSuccess: (payload) => ({
         type: types.SEARCH_AVAILABLE_DOMAINS_SUCCESS,
-        payload
+        payload,
     }),
-    searchAvailableDomainsError: error => ({
+    searchAvailableDomainsError: (error) => ({
         type: types.SEARCH_AVAILABLE_DOMAINS_ERROR,
-        error
+        error,
     }),
     clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS }),
-    startup: domain => ({ type: types.STARTUP, domain }),
+    startup: (domain) => ({ type: types.STARTUP, domain }),
     startupRequest: () => ({ type: types.STARTUP_REQUEST }),
     startupSuccess: () => ({ type: types.STARTUP_SUCCESS }),
-    startupError: error => ({ type: types.STARTUP_ERROR, error }),
+    startupError: (error) => ({ type: types.STARTUP_ERROR, error }),
     initializeUser: () => ({ type: types.INITIALIZE_USER }),
     initializeUserRequest: () => ({ type: types.INITIALIZE_USER_REQUEST }),
     initializeUserSuccess: () => ({ type: types.INITIALIZE_USER_SUCCESS }),
-    initializeUserError: error => ({ type: types.INITIALIZE_USER_ERROR, error }),
-    receiveSplash: splash => ({ type: types.RECEIVE_SPLASH, splash }),
-    receiveHeader: header => ({ type: types.RECEIVE_HEADER, header }),
-    receiveHeaderLogo: headerLogo => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
-    receiveSportCenterOption: sportCenter => ({
+    initializeUserError: (error) => ({ type: types.INITIALIZE_USER_ERROR, error }),
+    receiveSplash: (splash) => ({ type: types.RECEIVE_SPLASH, splash }),
+    receiveHeader: (header) => ({ type: types.RECEIVE_HEADER, header }),
+    receiveHeaderLogo: (headerLogo) => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
+    receiveSportCenterOption: (sportCenter) => ({
         type: types.RECEIVE_SPORTCENTER_OPTION,
-        sportCenter
+        sportCenter,
     }),
-    receiveCommentsOption: comments => ({
+    receiveCommentsOption: (comments) => ({
         type: types.RECEIVE_COMMENTS_OPTION,
-        comments
+        comments,
     }),
-    receiveStoryListStyle: listStyle => ({
+    receiveStoryListStyle: (listStyle) => ({
         type: types.RECEIVE_STORY_LIST_STYLE,
-        listStyle
+        listStyle,
     }),
-    fetchMenus: domain => ({ type: types.FETCH_MENUS, domain }),
+    fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
-    fetchMenusSuccess: payload => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
-    fetchMenusError: error => ({ type: types.FETCH_MENUS_ERROR, error }),
-    addSchoolSub: url => ({ type: types.ADD_SCHOOL_SUB, url }),
+    fetchMenusSuccess: (payload) => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
+    fetchMenusError: (error) => ({ type: types.FETCH_MENUS_ERROR, error }),
+    addSchoolSub: (url) => ({ type: types.ADD_SCHOOL_SUB, url }),
     addSchoolSubRequest: () => ({ type: types.ADD_SCHOOL_SUB_REQUEST }),
     addSchoolSubSuccess: () => ({ type: types.ADD_SCHOOL_SUB_SUCCESS }),
-    addSchoolSubError: error => ({ type: types.ADD_SCHOOL_SUB_ERROR, error }),
-    removeSchoolSub: url => ({ type: types.REMOVE_SCHOOL_SUB, url }),
+    addSchoolSubError: (error) => ({ type: types.ADD_SCHOOL_SUB_ERROR, error }),
+    removeSchoolSub: (url) => ({ type: types.REMOVE_SCHOOL_SUB, url }),
     removeSchoolSubRequest: () => ({ type: types.REMOVE_SCHOOL_SUB_REQUEST }),
     removeSchoolSubSuccess: () => ({ type: types.REMOVE_SCHOOL_SUB_SUCCESS }),
-    removeSchoolSubError: error => ({ type: types.REMOVE_SCHOOL_SUB_ERROR, error }),
+    removeSchoolSubError: (error) => ({ type: types.REMOVE_SCHOOL_SUB_ERROR, error }),
     addStoryView: (url, postId) => ({ type: types.ADD_STORY_VIEW, url, postId }),
     addStoryViewRequest: () => ({ type: types.ADD_STORY_VIEW_REQUEST }),
     addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
-    addStoryViewError: error => ({ type: types.ADD_STORY_VIEW_ERROR, error })
+    addStoryViewError: (error) => ({ type: types.ADD_STORY_VIEW_ERROR, error }),
 }
