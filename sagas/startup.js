@@ -11,7 +11,7 @@ import {
     checkNotificationSettings,
     subscribe,
     fetchNotificationSubscriptions,
-    findOrCreateUser
+    findOrCreateUser,
 } from '../sagas/user'
 import { loadActiveDomain } from '../sagas/global'
 
@@ -26,6 +26,8 @@ import * as Amplitude from 'expo-analytics-amplitude'
 import * as Sentry from 'sentry-expo'
 import Constants from 'expo-constants'
 
+// get new home screen options
+
 function* startup(action) {
     const { domain } = action
     const userSubscribeAll = yield select(getSubscribeAll)
@@ -33,7 +35,7 @@ function* startup(action) {
     try {
         // set user domain for analytics
         Amplitude.setUserProperties({
-            activeDomain: domain.id
+            activeDomain: domain.id,
         })
 
         console.log('in startup')
@@ -46,7 +48,7 @@ function* startup(action) {
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menu and DB categories
         const { menu, dbCategories } = yield call(fetchMenu, {
-            domain
+            domain,
         })
 
         // // make sure push token has been stored
@@ -58,10 +60,10 @@ function* startup(action) {
                 payload: {
                     subscriptionType: 'categories',
                     domainId: domain.id,
-                    ids: dbCategories.map(category => {
+                    ids: dbCategories.map((category) => {
                         return category.id
-                    })
-                }
+                    }),
+                },
             })
         }
         // // reset all notifications toggle key
@@ -78,7 +80,7 @@ function* startup(action) {
         yield put(
             articleActions.fetchArticlesIfNeeded({
                 domain: domain.url,
-                category: mainCategory
+                category: mainCategory,
             })
         )
         yield put(savedArticleActions.initializeSaved(domain.id))
@@ -123,7 +125,7 @@ function* getCustomOptions(domain) {
             call(domainApiService.getCustomPrimaryColor, domain.url),
             call(domainApiService.getCustomAccentColor, domain.url),
             call(domainApiService.getCommentsToggle, domain.url),
-            call(domainApiService.getStoryListStyle, domain.url)
+            call(domainApiService.getStoryListStyle, domain.url),
         ])
 
         if (!theme.result) {
@@ -140,7 +142,7 @@ function* getCustomOptions(domain) {
             themeActions.saveTheme({
                 theme: theme.result,
                 primary: primary.result,
-                accent: accent.result
+                accent: accent.result,
             })
         )
         // // save if images are set otherwise empty string
@@ -183,7 +185,7 @@ function* getCustomOptions(domain) {
             themeActions.saveTheme({
                 theme: 'light',
                 primary: '#2099CE',
-                accent: '#83B33B'
+                accent: '#83B33B',
             })
         )
         yield put(globalActions.receiveHeader(''))
@@ -248,7 +250,7 @@ function* initializeUser() {
 function* startupSaga() {
     yield all([
         takeLatest(globalTypes.STARTUP, startup),
-        takeLatest(globalTypes.INITIALIZE_USER, initializeUser)
+        takeLatest(globalTypes.INITIALIZE_USER, initializeUser),
     ])
 }
 
