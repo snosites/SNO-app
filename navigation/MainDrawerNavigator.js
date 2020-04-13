@@ -14,6 +14,10 @@ import CommentsScreen from '../screens/CommentsScreen'
 import StaffScreen from '../screens/StaffScreen'
 import DefaultPageScreen from '../screens/DefaultPageScreen'
 
+// add custom home screen
+
+// with design options
+
 const ArticleStack = createStackNavigator(
     {
         List: { screen: ListScreen, params: { categoryId: null } },
@@ -22,7 +26,7 @@ const ArticleStack = createStackNavigator(
         Profile: ProfileScreen,
         Comments: CommentsScreen,
         Staff: StaffScreen,
-        DefaultPage: DefaultPageScreen
+        DefaultPage: DefaultPageScreen,
     },
     {
         defaultNavigationOptions: ({ screenProps }) => {
@@ -30,20 +34,20 @@ const ArticleStack = createStackNavigator(
             let isDark = primaryColor.isDark()
             return {
                 headerStyle: {
-                    backgroundColor: screenProps.theme.colors.primary
+                    backgroundColor: screenProps.theme.colors.primary,
                 },
-                headerTintColor: isDark ? '#fff' : '#000'
+                headerTintColor: isDark ? '#fff' : '#000',
             }
-        }
+        },
     }
 )
 
 const MyDrawerNavigator = createDrawerNavigator(
     {
-        Home: ArticleStack
+        Home: ArticleStack,
     },
     {
-        contentComponent: CustomDrawer
+        contentComponent: CustomDrawer,
     }
 )
 
@@ -60,9 +64,9 @@ MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
         ),
         tabBarOnPress: ({ navigation }) => {
             navigation.navigate('List', {
-                scrollToTop: true
+                scrollToTop: true,
             })
-        }
+        },
     }
 }
 
