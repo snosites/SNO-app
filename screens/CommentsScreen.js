@@ -12,7 +12,7 @@ import {
     Modal,
     SafeAreaView,
     Keyboard,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native'
 import { connect } from 'react-redux'
 
@@ -42,7 +42,7 @@ class CommentsScreen extends React.Component {
                         navigation.popToTop()
                     }}
                 />
-            )
+            ),
         }
     }
 
@@ -51,13 +51,13 @@ class CommentsScreen extends React.Component {
         modalVisible: false,
         username: '',
         email: '',
-        commentSent: false
+        commentSent: false,
     }
 
     componentDidMount() {
         this.setState({
             username: this.props.userInfo.username,
-            email: this.props.userInfo.email
+            email: this.props.userInfo.email,
         })
     }
 
@@ -75,14 +75,14 @@ class CommentsScreen extends React.Component {
                     contentContainerStyle={{ flex: 1 }}
                     style={{ flex: 1 }}
                     behavior='position'
-                    keyboardVerticalOffset={60}
+                    keyboardVerticalOffset={80}
                     enabled
                 >
                     <View style={{ flex: 1, paddingBottom: 60 }}>
                         <FlatList
                             Style={{ flex: 1, marginVertical: 5 }}
                             data={comments}
-                            keyExtractor={item => item.id.toString()}
+                            keyExtractor={(item) => item.id.toString()}
                             renderItem={this._renderItem}
                         />
                         <View style={styles.commentContainer}>
@@ -104,13 +104,13 @@ class CommentsScreen extends React.Component {
                                 }}
                                 returnKeyType='send'
                                 value={commentInput}
-                                onChangeText={text => this.setState({ commentInput: text })}
+                                onChangeText={(text) => this.setState({ commentInput: text })}
                             />
                             <View style={styles.sendContainer}>
                                 <TouchableOpacity
                                     style={[
                                         styles.sendContainer,
-                                        { backgroundColor: primaryColor }
+                                        { backgroundColor: primaryColor },
                                     ]}
                                     onPress={() => {
                                         Keyboard.dismiss()
@@ -146,7 +146,7 @@ class CommentsScreen extends React.Component {
                             flex: 1,
                             alignItems: 'center',
                             padding: 20,
-                            backgroundColor: '#f6f6f6'
+                            backgroundColor: '#f6f6f6',
                         }}
                     >
                         <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
@@ -161,7 +161,7 @@ class CommentsScreen extends React.Component {
                                 placeholder='This is what will display publicly'
                                 mode='outlined'
                                 value={username}
-                                onChangeText={text => this.setState({ username: text })}
+                                onChangeText={(text) => this.setState({ username: text })}
                             />
                             <PaperTextInput
                                 label='Email'
@@ -171,7 +171,7 @@ class CommentsScreen extends React.Component {
                                 theme={{ roundness: 10 }}
                                 mode='outlined'
                                 value={email}
-                                onChangeText={text => this.setState({ email: text })}
+                                onChangeText={(text) => this.setState({ email: text })}
                             />
                             <View style={{ flexDirection: 'row' }}>
                                 <Button
@@ -181,7 +181,7 @@ class CommentsScreen extends React.Component {
                                         paddingHorizontal: 20,
                                         margin: 20,
                                         backgroundColor: '#f44336',
-                                        fontSize: 20
+                                        fontSize: 20,
                                     }}
                                     onPress={this._hideModal}
                                 >
@@ -194,7 +194,7 @@ class CommentsScreen extends React.Component {
                                     onPress={() => {
                                         saveUserInfo({
                                             username,
-                                            email
+                                            email,
                                         })
                                         this._hideModal()
                                     }}
@@ -210,7 +210,7 @@ class CommentsScreen extends React.Component {
                     onDismiss={() => {
                         setCommentPosted(false)
                         this.setState({
-                            commentSent: false
+                            commentSent: false,
                         })
                     }}
                     duration={3000}
@@ -219,9 +219,9 @@ class CommentsScreen extends React.Component {
                         onPress: () => {
                             setCommentPosted(false)
                             this.setState({
-                                commentSent: false
+                                commentSent: false,
                             })
-                        }
+                        },
                     }}
                 >
                     {userInfo.commentPosted && userInfo.commentPosted === 'posted'
@@ -243,12 +243,12 @@ class CommentsScreen extends React.Component {
             articleId,
             username: userInfo.username,
             email: userInfo.email,
-            comment: this.state.commentInput
+            comment: this.state.commentInput,
         })
 
         this.setState({
             commentInput: '',
-            commentSent: true
+            commentSent: true,
         })
     }
 
@@ -263,7 +263,7 @@ class CommentsScreen extends React.Component {
                                 width: 50,
                                 height: 50,
                                 resizeMode: 'cover',
-                                borderRadius: 25
+                                borderRadius: 25,
                             }}
                         />
                     ) : null}
@@ -303,38 +303,35 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderColor: '#e0e0e0',
         backgroundColor: 'white',
-        zIndex: 5
+        zIndex: 5,
     },
     sendContainer: {
         height: 60,
         width: 60,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     commentInfoContainer: {
-        padding: 15
+        padding: 15,
     },
     authorContainer: {
         flexDirection: 'row',
-        paddingBottom: 8
-    }
+        paddingBottom: 8,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         theme: state.theme,
         activeDomain: getActiveDomain(state),
-        userInfo: state.user
+        userInfo: state.user,
     }
 }
 
-const mapDispatchToProps = dispatch => ({
-    addComment: payload => dispatch(articleActions.addComment(payload)),
-    setCommentPosted: payload => dispatch(userActions.setCommentPosted(payload)),
-    saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload))
+const mapDispatchToProps = (dispatch) => ({
+    addComment: (payload) => dispatch(articleActions.addComment(payload)),
+    setCommentPosted: (payload) => dispatch(userActions.setCommentPosted(payload)),
+    saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(CommentsScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(CommentsScreen)
