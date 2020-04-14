@@ -20,6 +20,7 @@ import DefaultPageScreen from '../screens/DefaultPageScreen'
 
 const ArticleStack = createStackNavigator(
     {
+        //customHome
         List: { screen: ListScreen, params: { categoryId: null } },
         FullArticle: FullArticleScreen,
         Search: SearchScreen,
