@@ -14,13 +14,13 @@ import CommentsScreen from '../screens/CommentsScreen'
 import StaffScreen from '../screens/StaffScreen'
 import DefaultPageScreen from '../screens/DefaultPageScreen'
 
-// add custom home screen
+import HomeScreen from '../screens/HomeScreen'
 
-// with design options
+// add custom home screen
 
 const ArticleStack = createStackNavigator(
     {
-        //customHome
+        HomeScreen: HomeScreen,
         List: { screen: ListScreen, params: { categoryId: null } },
         FullArticle: FullArticleScreen,
         Search: SearchScreen,
@@ -64,7 +64,7 @@ MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
             />
         ),
         tabBarOnPress: ({ navigation }) => {
-            navigation.navigate('List', {
+            navigation.navigate('HomeScreen', {
                 scrollToTop: true,
             })
         },
