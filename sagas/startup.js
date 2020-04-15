@@ -116,8 +116,7 @@ function* startup(action) {
 
 function* getCustomOptions(domain) {
     try {
-        // // get user options
-        //add the type of list display
+        //get home page options
         const [headerImage, headerLogo, theme, primary, accent, comments, listStyle] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
