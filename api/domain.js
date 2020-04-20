@@ -3,7 +3,7 @@ import axios from 'axios'
 const BASE_URL = 'https://mobileapi.snosites.com/api'
 // const BASE_URL = 'http://localhost:8888/api'
 
-axios.interceptors.response.use(function(response) {
+axios.interceptors.response.use(function (response) {
     const contentType = response.headers['content-type']
     if (contentType && contentType.indexOf('application/json') !== -1) {
         return response
@@ -13,7 +13,7 @@ axios.interceptors.response.use(function(response) {
 })
 
 const domainApiService = {
-    getSplashScreenId: async domainUrl => {
+    getSplashScreenId: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_splash_screen`
@@ -35,14 +35,14 @@ const domainApiService = {
             throw err
         }
     },
-    getMobileMenu: async domainUrl => {
+    getMobileMenu: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/menus/mobile-app-menu`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -54,7 +54,7 @@ const domainApiService = {
     getDbCategories: async (apiToken, domainId) => {
         try {
             const response = await axios.get(`/category/${domainId}?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -65,7 +65,7 @@ const domainApiService = {
     addDbCategory: async (apiToken, postObj) => {
         try {
             const response = await axios.post(`/category/create?api_token=${apiToken}`, postObj, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -77,7 +77,7 @@ const domainApiService = {
         try {
             const response = await axios.delete(`/category?api_token=${apiToken}`, {
                 baseURL: BASE_URL,
-                data: postObj
+                data: postObj,
             })
             return response.data
         } catch (err) {
@@ -85,7 +85,7 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomHeader: async domainUrl => {
+    getCustomHeader: async (domainUrl) => {
         try {
             const headerId = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_nav_header`
@@ -102,7 +102,7 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomHeaderLogo: async domainUrl => {
+    getCustomHeaderLogo: async (domainUrl) => {
         try {
             const headerLogoId = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_header_logo`
@@ -119,7 +119,7 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomTheme: async domainUrl => {
+    getCustomTheme: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_theme`
@@ -130,14 +130,14 @@ const domainApiService = {
             throw err
         }
     },
-    getCommentsToggle: async domainUrl => {
+    getCommentsToggle: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=comments&theme_mod=true`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -146,7 +146,7 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomPrimaryColor: async domainUrl => {
+    getCustomPrimaryColor: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_primary_color`
@@ -157,7 +157,7 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomAccentColor: async domainUrl => {
+    getCustomAccentColor: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_accent_color`
@@ -168,14 +168,14 @@ const domainApiService = {
             throw err
         }
     },
-    getStoryListStyle: async domainUrl => {
+    getStoryListStyle: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_list_type`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -184,15 +184,31 @@ const domainApiService = {
             throw err
         }
     },
-    fetchChildCategories: async options => {
+    getHomeScreenCategory: async (domainUrl, categoryNumber) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get home screen category api', err, err.response)
+            throw err
+        }
+    },
+    fetchChildCategories: async (options) => {
         const { domainUrl, parentCategoryId } = options
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/wp/v2/categories?parent=${parentCategoryId}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -201,7 +217,7 @@ const domainApiService = {
             throw err
         }
     },
-    fetchArticles: async options => {
+    fetchArticles: async (options) => {
         const { domainUrl, category, childCategoryIds, page } = options
         let childCatIds = childCategoryIds
         if (!childCategoryIds) childCatIds = ''
@@ -210,8 +226,8 @@ const domainApiService = {
                 `https://${domainUrl}/wp-json/wp/v2/posts?categories=${category},${childCatIds}&page=${page}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -239,7 +255,7 @@ const domainApiService = {
             throw err
         }
     },
-    searchArticles: async options => {
+    searchArticles: async (options) => {
         const { domainUrl, searchTerm, page } = options
         try {
             const response = await axios.get(
@@ -257,8 +273,8 @@ const domainApiService = {
                 `https://${domainUrl}/wp-json/sns-v2/author_content?authorTermId=${writerTermId}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -290,7 +306,7 @@ const domainApiService = {
             throw err
         }
     },
-    fetchRecentArticles: async options => {
+    fetchRecentArticles: async (options) => {
         const { domainUrl, categories, page } = options
         try {
             const response = await axios.get(
@@ -299,8 +315,8 @@ const domainApiService = {
                 )}&page=${page}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -309,14 +325,14 @@ const domainApiService = {
             throw err
         }
     },
-    getSportCenterOption: async domainUrl => {
+    getSportCenterOption: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/sns-v2/sportcenter_check`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -325,14 +341,14 @@ const domainApiService = {
             throw err
         }
     },
-    addSchoolSub: async domainUrl => {
+    addSchoolSub: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&add_school_sub=true`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -341,14 +357,14 @@ const domainApiService = {
             throw err
         }
     },
-    removeSchoolSub: async domainUrl => {
+    removeSchoolSub: async (domainUrl) => {
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/sns-v2/school-subs?analytics_key=yi0htg0e6fq650jp&remove_school_sub=true`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -363,8 +379,8 @@ const domainApiService = {
                 `https://${domainUrl}/wp-json/sns-v2/analytics?analytics_key=yi0htg0e6fq650jp&post_id=${postId}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
-                    }
+                        'Cache-Control': 'no-cache',
+                    },
                 }
             )
             return response.data
@@ -372,7 +388,7 @@ const domainApiService = {
             console.log('error in add story view api', err, err.response)
             throw err
         }
-    }
+    },
 }
 
 export default domainApiService

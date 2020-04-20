@@ -127,6 +127,15 @@ function* getCustomOptions(domain) {
             call(domainApiService.getStoryListStyle, domain.url),
         ])
 
+        //home screen categories
+        const [category1, category2, category3] = yield all([
+            call(domainApiService.getHomeScreenCategory, domain.url, 1),
+            call(domainApiService.getHomeScreenCategory, domain.url, 2),
+            call(domainApiService.getHomeScreenCategory, domain.url, 3),
+        ])
+
+        console.log('home screen categories', category1, category2, category3)
+
         if (!theme.result) {
             theme.result = 'light'
         }
