@@ -128,10 +128,11 @@ function* getCustomOptions(domain) {
         ])
 
         //home screen categories
-        const [category1, category2, category3] = yield all([
+        const [category1, category2, category3, homeScreenListStyle] = yield all([
             call(domainApiService.getHomeScreenCategory, domain.url, 1),
             call(domainApiService.getHomeScreenCategory, domain.url, 2),
             call(domainApiService.getHomeScreenCategory, domain.url, 3),
+            call(domainApiService.getHomeScreenListStyle, domain.url),
         ])
 
         const homeScreenCategories = []
@@ -153,6 +154,17 @@ function* getCustomOptions(domain) {
         }
 
         yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
+
+        yield put(
+            globalActions.receiveHomeScreenListStyle(
+                homeScreenListStyle.result === 'small' ||
+                    homeScreenListStyle.result === 'large' ||
+                    homeScreenListStyle.result === 'mix' ||
+                    homeScreenListStyle.result === 'alternating'
+                    ? homeScreenListStyle.result
+                    : 'small'
+            )
+        )
 
         if (!theme.result) {
             theme.result = 'light'
@@ -194,8 +206,6 @@ function* getCustomOptions(domain) {
                     : 'small'
             )
         )
-
-        console.log('res', listStyle)
 
         try {
             // save sportcenter option

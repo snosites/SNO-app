@@ -23,6 +23,7 @@ export const types = {
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
     RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
     RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
+    RECEIVE_HOME_SCREEN_LIST_STYLE: 'RECEIVE_HOME_SCREEN_LIST_STYLE',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -51,6 +52,7 @@ const initialState = {
     enableComments: false,
     storyListStyle: 'small',
     homeScreenCategories: [],
+    homeScreenListStyle: 'small',
 }
 
 export default function global(state = initialState, action) {
@@ -100,6 +102,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 homeScreenCategories: action.categories,
+            }
+        case types.RECEIVE_HOME_SCREEN_LIST_STYLE:
+            return {
+                ...state,
+                homeScreenListStyle: action.listStyle,
             }
         case types.FETCH_MENUS_SUCCESS:
             return {
@@ -167,6 +174,10 @@ export const actions = {
     receiveHomeScreenCategories: (categories) => ({
         type: types.RECEIVE_HOME_SCREEN_CATEGORIES,
         categories,
+    }),
+    receiveHomeScreenListStyle: (listStyle) => ({
+        type: types.RECEIVE_HOME_SCREEN_LIST_STYLE,
+        listStyle,
     }),
     fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),

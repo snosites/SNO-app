@@ -200,6 +200,22 @@ const domainApiService = {
             throw err
         }
     },
+    getHomeScreenListStyle: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=sns_home_list_type`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get home list style api', err, err.response)
+            throw err
+        }
+    },
     fetchChildCategories: async (options) => {
         const { domainUrl, parentCategoryId } = options
         try {
