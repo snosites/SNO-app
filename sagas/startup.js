@@ -134,7 +134,25 @@ function* getCustomOptions(domain) {
             call(domainApiService.getHomeScreenCategory, domain.url, 3),
         ])
 
-        console.log('home screen categories', category1, category2, category3)
+        const homeScreenCategories = []
+
+        if (!category1.result) {
+            homeScreenCategories.push(0)
+        } else {
+            homeScreenCategories.push(Number(category1.result))
+        }
+        if (!category2.result) {
+            homeScreenCategories.push(0)
+        } else {
+            homeScreenCategories.push(Number(category2.result))
+        }
+        if (!category3.result) {
+            homeScreenCategories.push(0)
+        } else {
+            homeScreenCategories.push(Number(category3.result))
+        }
+
+        yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
 
         if (!theme.result) {
             theme.result = 'light'

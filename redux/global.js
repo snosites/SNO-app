@@ -22,7 +22,7 @@ export const types = {
     RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
     RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
-    //receive new options
+    RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -50,6 +50,7 @@ const initialState = {
     sportCenterEnabled: false,
     enableComments: false,
     storyListStyle: 'small',
+    homeScreenCategories: [],
 }
 
 export default function global(state = initialState, action) {
@@ -94,6 +95,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 storyListStyle: action.listStyle,
+            }
+        case types.RECEIVE_HOME_SCREEN_CATEGORIES:
+            return {
+                ...state,
+                homeScreenCategories: action.categories,
             }
         case types.FETCH_MENUS_SUCCESS:
             return {
@@ -157,6 +163,10 @@ export const actions = {
     receiveStoryListStyle: (listStyle) => ({
         type: types.RECEIVE_STORY_LIST_STYLE,
         listStyle,
+    }),
+    receiveHomeScreenCategories: (categories) => ({
+        type: types.RECEIVE_HOME_SCREEN_CATEGORIES,
+        categories,
     }),
     fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
