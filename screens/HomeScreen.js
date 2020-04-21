@@ -123,28 +123,39 @@ class HomeScreen extends React.Component {
     }
 
     render() {
-        const { navigation, theme, activeDomain, global } = this.props
+        const {
+            navigation,
+            theme,
+            activeDomain,
+            global,
+            articlesByCategory,
+            categoryTitles,
+        } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
-        // if (!categoryId) {
-        //     return (
-        //         <SafeAreaView
-        //             style={{
-        //                 flex: 1,
-        //                 marginTop: 20,
-        //             }}
-        //         >
-        //             <LottieView
-        //                 ref={(animation) => this._saveAnimationRef(animation)}
-        //                 style={StyleSheet.absoluteFill}
-        //                 speed={0.8}
-        //                 loop={true}
-        //                 autoPlay={true}
-        //                 source={require('../assets/lottiefiles/multi-article-loading')}
-        //             />
-        //         </SafeAreaView>
-        //     )
-        // }
+        const { homeScreenCategories, homeScreenListStyle } = global
+
+        console.log('home screen', homeScreenCategories, categoryTitles, articlesByCategory)
+
+        if (!homeScreenCategories.length) {
+            return (
+                <SafeAreaView
+                    style={{
+                        flex: 1,
+                        marginTop: 20,
+                    }}
+                >
+                    <LottieView
+                        ref={(animation) => this._saveAnimationRef(animation)}
+                        style={StyleSheet.absoluteFill}
+                        speed={0.8}
+                        loop={true}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/multi-article-loading')}
+                    />
+                </SafeAreaView>
+            )
+        }
         // if (articlesByCategory.length === 0 && category.isFetching) {
         //     return (
         //         <SafeAreaView
@@ -213,7 +224,7 @@ class HomeScreen extends React.Component {
                         articleList={articlesByCategory}
                         isFetching={category.isFetching}
                         isRefreshing={category.didInvalidate || false}
-                        loadMore={this._loadMore}
+                        // loadMore={this._loadMore}
                         handleRefresh={this._handleRefresh}
                         saveRef={this._saveRef}
                         activeDomain={activeDomain}
@@ -293,13 +304,13 @@ class HomeScreen extends React.Component {
         })
     }
 
-    _loadMore = () => {
-        const { activeDomain, category, fetchMoreArticlesIfNeeded } = this.props
-        fetchMoreArticlesIfNeeded({
-            domain: activeDomain.url,
-            category: category.categoryId,
-        })
-    }
+    // _loadMore = () => {
+    //     const { activeDomain, category, fetchMoreArticlesIfNeeded } = this.props
+    //     fetchMoreArticlesIfNeeded({
+    //         domain: activeDomain.url,
+    //         category: category.categoryId,
+    //     })
+    // }
 
     _handleRefresh = () => {
         const { activeDomain, category, invalidateArticles, fetchArticlesIfNeeded } = this.props
@@ -343,11 +354,37 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
+    const homeScreenCategories = state.global.homeScreenCategories
+    if (!homeScreenCategories.length) {
+        return {
+            theme: state.theme,
+            activeDomain,
+            menus: state.global.menuItems,
+            global: state.global,
+            articlesByCategory: [],
+        }
+    }
     return {
         theme: state.theme,
         activeDomain,
         menus: state.global.menuItems,
         global: state.global,
+        categoryTitles: homeScreenCategories.map((category) => {
+            return state.global.menuItems.find((menuItem) => menuItem.object_id == category).title
+        }),
+        articlesByCategory: homeScreenCategories.map((categoryId) => {
+            return state.articlesByCategory[categoryId].items.map((articleId) => {
+                const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
+                    return savedArticle.id == articleId
+                })
+                if (found) {
+                    state.entities.articles[articleId].saved = true
+                } else {
+                    state.entities.articles[articleId].saved = false
+                }
+                return state.entities.articles[articleId]
+            })
+        }),
     }
 }
 

@@ -38,8 +38,6 @@ function* startup(action) {
             activeDomain: domain.id,
         })
 
-        console.log('in startup')
-
         yield put(globalActions.startupRequest())
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
@@ -75,14 +73,29 @@ function* startup(action) {
         //get domains custom options
         yield call(getCustomOptions, domain)
 
-        let mainCategory = menu[0].object_id
+        const homeScreenCategories = yield select((state) => state.global.homeScreenCategories)
 
-        yield put(
-            articleActions.fetchArticlesIfNeeded({
-                domain: domain.url,
-                category: mainCategory,
-            })
+        yield all(
+            homeScreenCategories
+                .filter((cat) => cat)
+                .map((category) => {
+                    return put(
+                        articleActions.fetchArticlesIfNeeded({
+                            domain: domain.url,
+                            category: category,
+                        })
+                    )
+                })
         )
+
+        // let mainCategory = menu[0].object_id
+
+        // yield put(
+        //     articleActions.fetchArticlesIfNeeded({
+        //         domain: domain.url,
+        //         category: mainCategory,
+        //     })
+        // )
         yield put(savedArticleActions.initializeSaved(domain.id))
 
         if (fromPush) {

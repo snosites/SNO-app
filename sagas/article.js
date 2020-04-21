@@ -1,4 +1,4 @@
-import { all, put, call, takeLatest, select } from 'redux-saga/effects'
+import { all, put, call, takeLatest, takeEvery, select } from 'redux-saga/effects'
 import { normalize, schema } from 'normalizr'
 
 import { types as articleTypes, actions as articleActions } from '../redux/articles'
@@ -18,7 +18,7 @@ function* addComment(action) {
         author_email: email,
         author_name: username,
         content: comment,
-        post: articleId
+        post: articleId,
     }
     try {
         yield call(domainApiService.addComment, domain, objToSend)
@@ -36,19 +36,21 @@ function* fetchArticles(action) {
 
         const childCategories = yield call(domainApiService.fetchChildCategories, {
             domainUrl: domain,
-            parentCategoryId: category
+            parentCategoryId: category,
         })
 
-        const childCategoryIds = childCategories.map(obj => obj.id).toString()
+        const childCategoryIds = childCategories.map((obj) => obj.id).toString()
+
+        console.log('in fetch articles', childCategoryIds)
 
         const stories = yield call(domainApiService.fetchArticles, {
             domainUrl: domain,
             category,
             childCategoryIds,
-            page
+            page,
         })
         yield all(
-            stories.map(story => {
+            stories.map((story) => {
                 if (story._links['wp:featuredmedia']) {
                     return call(
                         asyncFetchFeaturedImage,
@@ -61,11 +63,12 @@ function* fetchArticles(action) {
             })
         )
         yield all(
-            stories.map(story => {
+            stories.map((story) => {
                 return call(asyncFetchComments, domain, story)
             })
         )
         const normalizedData = normalize(stories, articleListSchema)
+        console.log('normalized', normalizedData)
         yield put(articleActions.receiveArticles(category, normalizedData))
     } catch (err) {
         console.log('error fetching articles in saga', err, category)
@@ -98,7 +101,7 @@ function shouldFetchMoreArticles(articles) {
     }
 }
 
-const getArticlesByCategory = state => state.articlesByCategory
+const getArticlesByCategory = (state) => state.articlesByCategory
 
 function* fetchArticlesIfNeeded(action) {
     const { domain, category } = action.payload
@@ -108,9 +111,10 @@ function* fetchArticlesIfNeeded(action) {
         yield call(fetchArticles, {
             domain,
             category,
-            page: 1
+            page: 1,
         })
     }
+    return
 }
 
 function* fetchMoreArticlesIfNeeded(action) {
@@ -121,16 +125,16 @@ function* fetchMoreArticlesIfNeeded(action) {
         yield call(fetchArticles, {
             domain,
             category,
-            page: articles.page
+            page: articles.page,
         })
     }
 }
 
 function* articleSaga() {
     yield all([
-        takeLatest(articleTypes.FETCH_ARTICLES_IF_NEEDED, fetchArticlesIfNeeded),
+        takeEvery(articleTypes.FETCH_ARTICLES_IF_NEEDED, fetchArticlesIfNeeded),
         takeLatest(articleTypes.FETCH_MORE_ARTICLES_IF_NEEDED, fetchMoreArticlesIfNeeded),
-        takeLatest(articleTypes.ADD_COMMENT, addComment)
+        takeLatest(articleTypes.ADD_COMMENT, addComment),
     ])
 }
 
