@@ -204,8 +204,9 @@ class HomeScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 {categoryTitles.map((title, i) => {
+                    console.log('i', i, articlesByCategory[i])
                     return (
-                        <View>
+                        <View style={{ flex: 1 }} key={i}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>
                                 {title}
                             </Text>

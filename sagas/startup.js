@@ -5,6 +5,7 @@ import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } fro
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
 import { actions as savedArticleActions } from '../redux/savedArticles'
+import { getActiveDomain } from '../redux/domains'
 
 import { fetchMenu } from '../sagas/menu'
 import {
@@ -116,6 +117,7 @@ function* startup(action) {
 
 function* getHomeScreenArticles() {
     try {
+        const domain = yield select(getActiveDomain)
         const homeScreenCategories = yield select((state) => state.global.homeScreenCategories)
 
         yield put(globalActions.fetchHomeScreenArticlesRequest())
