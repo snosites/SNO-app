@@ -40,6 +40,10 @@ export const types = {
     ADD_STORY_VIEW_REQUEST: 'ADD_STORY_VIEW_REQUEST',
     ADD_STORY_VIEW_SUCCESS: 'ADD_STORY_VIEW_SUCCESS',
     ADD_STORY_VIEW_ERROR: 'ADD_STORY_VIEW_ERROR',
+    FETCH_HOME_SCREEN_ARTICLES: 'FETCH_HOME_SCREEN_ARTICLES',
+    FETCH_HOME_SCREEN_ARTICLES_REQUEST: 'FETCH_HOME_SCREEN_ARTICLES_REQUEST',
+    FETCH_HOME_SCREEN_ARTICLES_SUCCESS: 'FETCH_HOME_SCREEN_ARTICLES_SUCCESS',
+    FETCH_HOME_SCREEN_ARTICLES_ERROR: 'FETCH_HOME_SCREEN_ARTICLES_ERROR',
 }
 
 const initialState = {
@@ -195,4 +199,11 @@ export const actions = {
     addStoryViewRequest: () => ({ type: types.ADD_STORY_VIEW_REQUEST }),
     addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
     addStoryViewError: (error) => ({ type: types.ADD_STORY_VIEW_ERROR, error }),
+    fetchHomeScreenArticles: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES }),
+    fetchHomeScreenArticlesRequest: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES_REQUEST }),
+    fetchHomeScreenArticlesSuccess: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES_SUCCESS }),
+    fetchHomeScreenArticlesError: (error) => ({
+        type: types.FETCH_HOME_SCREEN_ARTICLES_ERROR,
+        error,
+    }),
 }

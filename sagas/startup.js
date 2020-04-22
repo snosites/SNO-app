@@ -73,20 +73,7 @@ function* startup(action) {
         //get domains custom options
         yield call(getCustomOptions, domain)
 
-        const homeScreenCategories = yield select((state) => state.global.homeScreenCategories)
-
-        yield all(
-            homeScreenCategories
-                .filter((cat) => cat)
-                .map((category) => {
-                    return put(
-                        articleActions.fetchArticlesIfNeeded({
-                            domain: domain.url,
-                            category: category,
-                        })
-                    )
-                })
-        )
+        yield call(getHomeScreenArticles)
 
         // let mainCategory = menu[0].object_id
 
@@ -124,6 +111,32 @@ function* startup(action) {
         } else {
             yield put(globalActions.startupError('school not in DB'))
         }
+    }
+}
+
+function* getHomeScreenArticles() {
+    try {
+        const homeScreenCategories = yield select((state) => state.global.homeScreenCategories)
+
+        yield put(globalActions.fetchHomeScreenArticlesRequest())
+
+        yield all(
+            homeScreenCategories
+                .filter((cat) => cat)
+                .map((category) => {
+                    return put(
+                        articleActions.fetchArticlesIfNeeded({
+                            domain: domain.url,
+                            category: category,
+                        })
+                    )
+                })
+        )
+
+        yield put(globalActions.fetchHomeScreenArticlesSuccess())
+    } catch (err) {
+        console.log('error fetching home screen categories', err)
+        yield put(globalActions.fetchHomeScreenArticlesError('network error'))
     }
 }
 
@@ -300,6 +313,7 @@ function* startupSaga() {
     yield all([
         takeLatest(globalTypes.STARTUP, startup),
         takeLatest(globalTypes.INITIALIZE_USER, initializeUser),
+        takeLatest(globalTypes.FETCH_HOME_SCREEN_ARTICLES, getHomeScreenArticles),
     ])
 }
 

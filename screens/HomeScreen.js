@@ -13,6 +13,8 @@ import { Snackbar, Button } from 'react-native-paper'
 
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
+import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { createLoadingSelector } from '../redux/loading'
 
 import { getActiveDomain } from '../redux/domains'
 
@@ -130,6 +132,7 @@ class HomeScreen extends React.Component {
             global,
             articlesByCategory,
             categoryTitles,
+            isLoading,
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
@@ -137,7 +140,7 @@ class HomeScreen extends React.Component {
 
         console.log('home screen', homeScreenCategories, categoryTitles, articlesByCategory)
 
-        if (!homeScreenCategories.length) {
+        if (isLoading && !homeScreenCategories.length) {
             return (
                 <SafeAreaView
                     style={{
@@ -156,86 +159,89 @@ class HomeScreen extends React.Component {
                 </SafeAreaView>
             )
         }
-        // if (articlesByCategory.length === 0 && category.isFetching) {
-        //     return (
-        //         <SafeAreaView
-        //             style={{
-        //                 flex: 1,
-        //                 marginTop: 20,
-        //             }}
-        //         >
-        //             <LottieView
-        //                 ref={(animation) => this._saveAnimationRef(animation)}
-        //                 style={StyleSheet.absoluteFill}
-        //                 speed={0.8}
-        //                 loop={true}
-        //                 autoPlay={true}
-        //                 source={require('../assets/lottiefiles/multi-article-loading')}
-        //             />
-        //         </SafeAreaView>
-        //     )
-        // }
-        // if (category.error) {
-        //     return (
-        //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        //             <View
-        //                 style={{
-        //                     width: 150,
-        //                     height: 150,
-        //                     alignItems: 'center',
-        //                 }}
-        //             >
-        //                 <LottieView
-        //                     ref={(animation) => this._saveAnimationRef(animation)}
-        //                     style={{
-        //                         width: 150,
-        //                         height: 150,
-        //                     }}
-        //                     loop={true}
-        //                     autoPlay={true}
-        //                     source={require('../assets/lottiefiles/broken-stick-error')}
-        //                 />
-        //             </View>
-        //             <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
-        //                 Sorry, something went wrong. If you are the site owner, please submit a
-        //                 support request.
-        //             </Text>
-        //             <Button
-        //                 mode='contained'
-        //                 theme={{
-        //                     roundness: 7,
-        //                     colors: {
-        //                         primary: theme ? theme.colors.primary : '#2099CE',
-        //                     },
-        //                 }}
-        //                 style={{ padding: 5 }}
-        //                 onPress={this._handleRefresh}
-        //             >
-        //                 Reload
-        //             </Button>
-        //         </View>
-        //     )
-        // }
+        if (!homeScreenCategories.length) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View
+                        style={{
+                            width: 150,
+                            height: 150,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <LottieView
+                            ref={(animation) => this._saveAnimationRef(animation)}
+                            style={{
+                                width: 150,
+                                height: 150,
+                            }}
+                            loop={true}
+                            autoPlay={true}
+                            source={require('../assets/lottiefiles/broken-stick-error')}
+                        />
+                    </View>
+                    <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
+                        Sorry, something went wrong. If you are the site owner, please submit a
+                        support request.
+                    </Text>
+                    <Button
+                        mode='contained'
+                        theme={{
+                            roundness: 7,
+                            colors: {
+                                primary: theme ? theme.colors.primary : '#2099CE',
+                            },
+                        }}
+                        style={{ padding: 5 }}
+                        onPress={this._handleRefresh}
+                    >
+                        Reload
+                    </Button>
+                </View>
+            )
+        }
 
         return (
             <View style={{ flex: 1 }}>
-                {isTablet ? (
-                    <TabletArticleListContent
-                        articleList={articlesByCategory}
-                        isFetching={category.isFetching}
-                        isRefreshing={category.didInvalidate || false}
-                        // loadMore={this._loadMore}
-                        handleRefresh={this._handleRefresh}
-                        saveRef={this._saveRef}
-                        activeDomain={activeDomain}
-                        theme={theme}
-                        enableComments={global.enableComments}
-                        navigation={navigation}
-                        onIconPress={this._saveRemoveToggle}
-                    />
-                ) : (
-                    <Text>Home Screen!</Text>
-                )}
+                {categoryTitles.map((title, i) => {
+                    return (
+                        <View>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>
+                                {title}
+                            </Text>
+                            {isTablet ? (
+                                <TabletArticleListContent
+                                    articleList={articlesByCategory[i]}
+                                    isFetching={isLoading}
+                                    isRefreshing={isLoading}
+                                    // loadMore={this._loadMore}
+                                    handleRefresh={this._handleRefresh}
+                                    saveRef={this._saveRef}
+                                    activeDomain={activeDomain}
+                                    theme={theme}
+                                    enableComments={global.enableComments}
+                                    navigation={navigation}
+                                    onIconPress={this._saveRemoveToggle}
+                                />
+                            ) : (
+                                <ArticleListContent
+                                    articleList={articlesByCategory[i]}
+                                    isFetching={isLoading}
+                                    isRefreshing={isLoading}
+                                    // loadMore={this._loadMore}
+                                    handleRefresh={this._handleRefresh}
+                                    saveRef={this._saveRef}
+                                    activeDomain={activeDomain}
+                                    theme={theme}
+                                    enableComments={global.enableComments}
+                                    navigation={navigation}
+                                    onIconPress={this._saveRemoveToggle}
+                                    storyListStyle={homeScreenListStyle}
+                                />
+                            )}
+                        </View>
+                    )
+                })}
                 <Snackbar
                     visible={snackbarSavedVisible}
                     style={styles.snackbar}
@@ -313,12 +319,12 @@ class HomeScreen extends React.Component {
     // }
 
     _handleRefresh = () => {
-        const { activeDomain, category, invalidateArticles, fetchArticlesIfNeeded } = this.props
-        invalidateArticles(category.categoryId)
-        fetchArticlesIfNeeded({
-            domain: activeDomain.url,
-            category: category.categoryId,
-        })
+        const { refreshHomeScreen, invalidateArticles, homeScreenCategories } = this.props
+
+        for (let category of homeScreenCategories) {
+            invalidateArticles(category)
+        }
+        refreshHomeScreen()
     }
 
     _playAnimation = () => {
@@ -352,6 +358,8 @@ const styles = StyleSheet.create({
     },
 })
 
+const homeScreenLoadingSelector = createLoadingSelector([globalTypes.FETCH_HOME_SCREEN_ARTICLES])
+
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     const homeScreenCategories = state.global.homeScreenCategories
@@ -362,6 +370,7 @@ const mapStateToProps = (state) => {
             menus: state.global.menuItems,
             global: state.global,
             articlesByCategory: [],
+            isLoading: homeScreenLoadingSelector(state),
         }
     }
     return {
@@ -369,6 +378,7 @@ const mapStateToProps = (state) => {
         activeDomain,
         menus: state.global.menuItems,
         global: state.global,
+        isLoading: homeScreenLoadingSelector(state),
         categoryTitles: homeScreenCategories.map((category) => {
             return state.global.menuItems.find((menuItem) => menuItem.object_id == category).title
         }),
@@ -393,6 +403,8 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(savedArticleActions.saveArticle(article, domainId)),
     removeSavedArticle: (articleId, domainId) =>
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
+    refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
+    invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
