@@ -7,12 +7,14 @@ import {
     Text,
     Image,
     Alert,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
 import Constants from 'expo-constants'
+
+import HTML from 'react-native-render-html'
 
 import { connect } from 'react-redux'
 
@@ -24,7 +26,7 @@ import {
     Colors,
     Snackbar,
     Button,
-    Portal
+    Portal,
 } from 'react-native-paper'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
@@ -51,7 +53,7 @@ class SettingsScreen extends React.Component {
                     style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
                     resizeMode='contain'
                 />
-            )
+            ),
         }
     }
 
@@ -64,27 +66,27 @@ class SettingsScreen extends React.Component {
         notifications: {},
         dialog: false,
         clearedAllSettings: false,
-        showDeviceId: false
+        showDeviceId: false,
     }
 
     componentDidMount() {
         const { userInfo, domains, global, navigation } = this.props
         this.setState({
             username: userInfo.username,
-            email: userInfo.email
+            email: userInfo.email,
         })
         navigation.setParams({
-            headerLogo: global.headerSmall
+            headerLogo: global.headerSmall,
         })
 
         this.setState({
-            notifications: domains.reduce(function(map, domain) {
-                map[domain.id] = domain.notificationCategories.reduce(function(map, notification) {
+            notifications: domains.reduce(function (map, domain) {
+                map[domain.id] = domain.notificationCategories.reduce(function (map, notification) {
                     map[notification.id] = notification.active
                     return map
                 }, {})
                 return map
-            }, {})
+            }, {}),
         })
     }
 
@@ -95,7 +97,7 @@ class SettingsScreen extends React.Component {
             editingEmail,
             username,
             email,
-            notifications
+            notifications,
         } = this.state
         const {
             domains,
@@ -106,7 +108,7 @@ class SettingsScreen extends React.Component {
             saveUserInfo,
             isLoading,
             unsubscribe,
-            unsubscribeLoading
+            unsubscribeLoading,
         } = this.props
 
         if (isLoading) {
@@ -115,7 +117,7 @@ class SettingsScreen extends React.Component {
                     style={{
                         flex: 1,
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <ActivityIndicator />
@@ -131,19 +133,19 @@ class SettingsScreen extends React.Component {
                         {editingUsername ? (
                             <TextInput
                                 style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
-                                onBlur={text => {
+                                onBlur={(text) => {
                                     saveUserInfo({
                                         username: username,
-                                        email: email
+                                        email: email,
                                     })
                                     this.setState({
-                                        editingUsername: false
+                                        editingUsername: false,
                                     })
                                 }}
                                 autoFocus={true}
                                 returnKeyType='done'
                                 value={username}
-                                onChangeText={text => this.setState({ username: text })}
+                                onChangeText={(text) => this.setState({ username: text })}
                             />
                         ) : (
                             <List.Item
@@ -168,16 +170,16 @@ class SettingsScreen extends React.Component {
                                 onBlur={() => {
                                     saveUserInfo({
                                         username: username,
-                                        email: email
+                                        email: email,
                                     })
                                     this.setState({
-                                        editingEmail: false
+                                        editingEmail: false,
                                     })
                                 }}
                                 autoFocus={true}
                                 returnKeyType='done'
                                 value={email}
-                                onChangeText={text => this.setState({ email: text })}
+                                onChangeText={(text) => this.setState({ email: text })}
                             />
                         ) : (
                             <List.Item
@@ -200,7 +202,7 @@ class SettingsScreen extends React.Component {
                     <Divider />
                     <List.Section>
                         <List.Subheader>Saved Organizations</List.Subheader>
-                        {domains.map(item => {
+                        {domains.map((item) => {
                             return (
                                 <List.Item
                                     key={item.id}
@@ -242,25 +244,27 @@ class SettingsScreen extends React.Component {
                     <List.Section>
                         <List.Subheader>Push Notifications</List.Subheader>
                         {userInfo.user.push_token ? (
-                            domains.map(domain => {
+                            domains.map((domain) => {
                                 const writerSubs = userInfo.writerSubscriptions.filter(
-                                    writer => writer.organization_id === domain.id
+                                    (writer) => writer.organization_id === domain.id
                                 )
                                 return (
                                     <List.Accordion
                                         key={domain.id}
                                         title={domain.name}
-                                        left={props => <List.Icon {...props} icon='folder-open' />}
+                                        left={(props) => (
+                                            <List.Icon {...props} icon='folder-open' />
+                                        )}
                                     >
                                         <List.Subheader>Writer Notifications</List.Subheader>
                                         {writerSubs.length > 0 ? (
-                                            writerSubs.map(writerObj => {
+                                            writerSubs.map((writerObj) => {
                                                 return (
                                                     <List.Item
                                                         key={writerObj.id}
                                                         style={{
                                                             paddingVertical: 0,
-                                                            paddingLeft: 60
+                                                            paddingLeft: 60,
                                                         }}
                                                         title={writerObj.writer_name}
                                                         right={() => {
@@ -278,7 +282,7 @@ class SettingsScreen extends React.Component {
                                                                             subscriptionType:
                                                                                 'writers',
                                                                             ids: [writerObj.id],
-                                                                            domainId: domain.id
+                                                                            domainId: domain.id,
                                                                         })
                                                                     }
                                                                 />
@@ -292,7 +296,7 @@ class SettingsScreen extends React.Component {
                                                 style={{
                                                     fontSize: 18,
                                                     fontWeight: 'bold',
-                                                    paddingBottom: 10
+                                                    paddingBottom: 10,
                                                 }}
                                             >
                                                 You aren't following any writers yet
@@ -307,7 +311,7 @@ class SettingsScreen extends React.Component {
                                                         key={item.id}
                                                         style={{
                                                             paddingVertical: 0,
-                                                            paddingLeft: 60
+                                                            paddingLeft: 60,
                                                         }}
                                                         title='Alerts'
                                                         right={() => {
@@ -319,7 +323,7 @@ class SettingsScreen extends React.Component {
                                                                             item.id
                                                                         ]
                                                                     }
-                                                                    onValueChange={value => {
+                                                                    onValueChange={(value) => {
                                                                         this._toggleNotifications(
                                                                             item.id,
                                                                             value,
@@ -337,7 +341,23 @@ class SettingsScreen extends React.Component {
                                                 <List.Item
                                                     key={item.id}
                                                     style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                                    title={item.category_name}
+                                                    title={
+                                                        <HTML
+                                                            html={item.category_name}
+                                                            customWrapper={(text) => {
+                                                                return (
+                                                                    <Text
+                                                                        ellipsizeMode='tail'
+                                                                        numberOfLines={1}
+                                                                        style={{ fontSize: 16 }}
+                                                                    >
+                                                                        {text}
+                                                                    </Text>
+                                                                )
+                                                            }}
+                                                            baseFontStyle={{ fontSize: 16 }}
+                                                        />
+                                                    }
                                                     right={() => {
                                                         return (
                                                             <Switch
@@ -347,7 +367,7 @@ class SettingsScreen extends React.Component {
                                                                         item.id
                                                                     ]
                                                                 }
-                                                                onValueChange={value => {
+                                                                onValueChange={(value) => {
                                                                     this._toggleNotifications(
                                                                         item.id,
                                                                         value,
@@ -370,7 +390,7 @@ class SettingsScreen extends React.Component {
                                     textAlign: 'center',
                                     fontSize: 18,
                                     fontWeight: 'bold',
-                                    paddingBottom: 10
+                                    paddingBottom: 10,
                                 }}
                             >
                                 You have disabled push notifications for this app
@@ -381,7 +401,7 @@ class SettingsScreen extends React.Component {
                     <List.Item
                         title='Privacy Policy'
                         style={{ paddingVertical: 0 }}
-                        left={props => <List.Icon {...props} icon='supervisor-account' />}
+                        left={(props) => <List.Icon {...props} icon='supervisor-account' />}
                         onPress={this._viewLink}
                     />
                     <View>
@@ -393,7 +413,7 @@ class SettingsScreen extends React.Component {
                             onPress={() => {
                                 this.setState({
                                     dialog: true,
-                                    showDeviceId: !this.state.showDeviceId
+                                    showDeviceId: !this.state.showDeviceId,
                                 })
                             }}
                         >
@@ -408,14 +428,14 @@ class SettingsScreen extends React.Component {
                         position: 'absolute',
                         bottom: 0,
                         left: 0,
-                        right: 0
+                        right: 0,
                     }}
                     onDismiss={() => this.setState({ snackbarVisible: false })}
                     action={{
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarVisible: false })
-                        }
+                        },
                     }}
                 >
                     Organization Removed
@@ -427,12 +447,12 @@ class SettingsScreen extends React.Component {
                         position: 'absolute',
                         bottom: 100,
                         left: 0,
-                        right: 0
+                        right: 0,
                     }}
                     onDismiss={() => {}}
                     action={{
                         label: 'Dismiss',
-                        onPress: () => {}
+                        onPress: () => {},
                     }}
                 >
                     Sorry there was an error clearing your settings. Please try again later.
@@ -446,15 +466,15 @@ class SettingsScreen extends React.Component {
                                   {
                                       text: 'Cancel',
                                       onPress: this._hideDialog,
-                                      style: 'cancel'
+                                      style: 'cancel',
                                   },
                                   {
                                       text: 'Clear',
                                       onPress: () => {
                                           deleteUser()
                                           this._hideDialog()
-                                      }
-                                  }
+                                      },
+                                  },
                               ],
                               { cancelable: false }
                           )
@@ -466,7 +486,7 @@ class SettingsScreen extends React.Component {
                             alignSelf: 'flex-end',
                             marginTop: 'auto',
                             fontSize: 9,
-                            color: Colors.grey400
+                            color: Colors.grey400,
                         }}
                     >
                         {`${Constants.manifest.version} - ${Constants.installationId}`}
@@ -487,35 +507,35 @@ class SettingsScreen extends React.Component {
         this.props.navigation.navigate('Auth')
     }
 
-    _handleDeleteOrg = domain => {
+    _handleDeleteOrg = (domain) => {
         Haptics.selectionAsync()
         const { domains, navigation, deleteDomain, unsubscribe, removeSchoolSub } = this.props
 
         // get all the category IDs to remove them from DB
-        const categoryIds = domain.notificationCategories.map(category => {
+        const categoryIds = domain.notificationCategories.map((category) => {
             return category.id
         })
         if (categoryIds) {
             unsubscribe({
                 subscriptionType: 'categories',
                 ids: categoryIds,
-                domainId: domain.id
+                domainId: domain.id,
             })
         }
 
         this.setState({
-            snackbarVisible: true
+            snackbarVisible: true,
         })
         // send analytics data
         Amplitude.logEventWithProperties('remove school', {
-            domainId: domain.id
+            domainId: domain.id,
         })
 
         //new analytics
         removeSchoolSub(domain.url)
 
         if (domain.active) {
-            let found = domains.find(domain => {
+            let found = domains.find((domain) => {
                 return !domain.active
             })
             if (found) {
@@ -528,14 +548,14 @@ class SettingsScreen extends React.Component {
         deleteDomain(domain.id)
     }
 
-    _handleUserInfoEdit = userPref => {
+    _handleUserInfoEdit = (userPref) => {
         if (userPref === 'username') {
             this.setState({
-                editingUsername: true
+                editingUsername: true,
             })
         } else if (userPref === 'email') {
             this.setState({
-                editingEmail: true
+                editingEmail: true,
             })
         }
     }
@@ -548,9 +568,9 @@ class SettingsScreen extends React.Component {
                 ...this.state.notifications,
                 [domain.id]: {
                     ...this.state.notifications[domain.id],
-                    [notificationId]: value
-                }
-            }
+                    [notificationId]: value,
+                },
+            },
         })
 
         const { subscribe, unsubscribe } = this.props
@@ -558,18 +578,18 @@ class SettingsScreen extends React.Component {
             subscribe({
                 subscriptionType: 'categories',
                 ids: [notificationId],
-                domainId: domain.id
+                domainId: domain.id,
             })
         } else {
             unsubscribe({
                 subscriptionType: 'categories',
                 ids: [notificationId],
-                domainId: domain.id
+                domainId: domain.id,
             })
         }
     }
 
-    _switchDomain = id => {
+    _switchDomain = (id) => {
         Haptics.selectionAsync()
         const { changeActiveDomain, navigation } = this.props
 
@@ -581,15 +601,15 @@ class SettingsScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
         // justifyContent: 'space-between',
     },
     inactiveItem: {
-        paddingLeft: 60
-    }
+        paddingLeft: 60,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         theme: state.theme,
         domains: state.domains,
@@ -598,19 +618,19 @@ const mapStateToProps = state => {
         activeDomain: getActiveDomain(state),
         errors: deleteUserErrorSelector(state),
         isLoading: deleteUserLoadingSelector(state),
-        unsubscribeLoading: unsubscribeLoadingSelector(state)
+        unsubscribeLoading: unsubscribeLoadingSelector(state),
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
-        changeActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId)),
+        changeActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
         deleteUser: () => dispatch(userActions.deleteUser()),
-        saveUserInfo: payload => dispatch(userActions.saveUserInfo(payload)),
-        deleteDomain: domainId => dispatch(domainActions.deleteDomain(domainId)),
-        subscribe: payload => dispatch(userActions.subscribe(payload)),
-        unsubscribe: payload => dispatch(userActions.unsubscribe(payload)),
-        removeSchoolSub: url => dispatch(globalActions.removeSchoolSub(url))
+        saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
+        deleteDomain: (domainId) => dispatch(domainActions.deleteDomain(domainId)),
+        subscribe: (payload) => dispatch(userActions.subscribe(payload)),
+        unsubscribe: (payload) => dispatch(userActions.unsubscribe(payload)),
+        removeSchoolSub: (url) => dispatch(globalActions.removeSchoolSub(url)),
     }
 }
 
