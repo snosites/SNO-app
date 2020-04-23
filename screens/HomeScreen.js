@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet, Platform } from 'react-native'
+import { ScrollView, View, Text, Image, StyleSheet, Platform } from 'react-native'
 import Color from 'color'
 import { connect } from 'react-redux'
 import * as Device from 'expo-device'
@@ -133,14 +133,22 @@ class HomeScreen extends React.Component {
             articlesByCategory,
             categoryTitles,
             isLoading,
+            articlesLoading,
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
         const { homeScreenCategories, homeScreenListStyle } = global
 
-        console.log('home screen', homeScreenCategories, categoryTitles, articlesByCategory)
+        console.log(
+            'home screen',
+            homeScreenCategories,
+            categoryTitles,
+            articlesByCategory,
+            isLoading,
+            articlesLoading
+        )
 
-        if (isLoading && !homeScreenCategories.length) {
+        if (articlesLoading) {
             return (
                 <SafeAreaView
                     style={{
@@ -202,19 +210,27 @@ class HomeScreen extends React.Component {
         }
 
         return (
-            <View style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1 }}>
                 {categoryTitles.map((title, i) => {
-                    console.log('i', i, articlesByCategory[i])
                     return (
                         <View style={{ flex: 1 }} key={i}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>
+                            <Text
+                                style={{
+                                    fontSize: 28,
+                                    fontWeight: 'bold',
+                                    paddingLeft: 20,
+                                    paddingTop: 20,
+                                    color: theme.colors.accent,
+                                    textAlign: 'center',
+                                }}
+                            >
                                 {title}
                             </Text>
                             {isTablet ? (
                                 <TabletArticleListContent
-                                    articleList={articlesByCategory[i]}
-                                    isFetching={isLoading}
-                                    isRefreshing={isLoading}
+                                    articleList={articlesByCategory[i].slice(0, 5)}
+                                    isFetching={articlesLoading}
+                                    isRefreshing={articlesLoading}
                                     // loadMore={this._loadMore}
                                     handleRefresh={this._handleRefresh}
                                     saveRef={this._saveRef}
@@ -226,9 +242,9 @@ class HomeScreen extends React.Component {
                                 />
                             ) : (
                                 <ArticleListContent
-                                    articleList={articlesByCategory[i]}
-                                    isFetching={isLoading}
-                                    isRefreshing={isLoading}
+                                    articleList={articlesByCategory[i].slice(0, 5)}
+                                    isFetching={articlesLoading}
+                                    isRefreshing={articlesLoading}
                                     // loadMore={this._loadMore}
                                     handleRefresh={this._handleRefresh}
                                     saveRef={this._saveRef}
@@ -271,7 +287,7 @@ class HomeScreen extends React.Component {
                 >
                     Article Removed From Saved List
                 </Snackbar>
-            </View>
+            </ScrollView>
         )
     }
 
@@ -359,11 +375,13 @@ const styles = StyleSheet.create({
     },
 })
 
-const homeScreenLoadingSelector = createLoadingSelector([globalTypes.FETCH_HOME_SCREEN_ARTICLES])
-
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     const homeScreenCategories = state.global.homeScreenCategories
+    const homeScreenLoadingSelector = createLoadingSelector([
+        globalTypes.FETCH_HOME_SCREEN_ARTICLES,
+    ])
+
     if (!homeScreenCategories.length) {
         return {
             theme: state.theme,
@@ -372,6 +390,7 @@ const mapStateToProps = (state) => {
             global: state.global,
             articlesByCategory: [],
             isLoading: homeScreenLoadingSelector(state),
+            articlesLoading: true,
         }
     }
     return {
@@ -396,6 +415,9 @@ const mapStateToProps = (state) => {
                 return state.entities.articles[articleId]
             })
         }),
+        articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
+            return state.articlesByCategory[categoryId].isFetching
+        }, false),
     }
 }
 

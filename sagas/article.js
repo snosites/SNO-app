@@ -41,8 +41,6 @@ function* fetchArticles(action) {
 
         const childCategoryIds = childCategories.map((obj) => obj.id).toString()
 
-        console.log('in fetch articles', childCategoryIds)
-
         const stories = yield call(domainApiService.fetchArticles, {
             domainUrl: domain,
             category,
@@ -68,7 +66,7 @@ function* fetchArticles(action) {
             })
         )
         const normalizedData = normalize(stories, articleListSchema)
-        console.log('normalized', normalizedData)
+
         yield put(articleActions.receiveArticles(category, normalizedData))
     } catch (err) {
         console.log('error fetching articles in saga', err, category)
