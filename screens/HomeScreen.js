@@ -107,7 +107,13 @@ class HomeScreen extends React.Component {
         const { navigation, articlesLoading, global } = this.props
 
         if (!articlesLoading && !global.homeScreenCategories.length) {
-            navigation.navigate('List')
+            const menus = global.menuItems
+            if (menus.length > 0) {
+                this.props.navigation.navigate('List', {
+                    menuTitle: menus[0].title,
+                    categoryId: menus[0].object_id,
+                })
+            }
         }
 
         if (navigation.state.params && navigation.state.params.scrollToTop) {
