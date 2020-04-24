@@ -108,6 +108,7 @@ class HomeScreen extends React.Component {
 
         if (!articlesLoading && !global.homeScreenCategories.length) {
             const menus = global.menuItems
+            console.log('in it', global, menus[0])
             if (menus.length > 0) {
                 this.props.navigation.navigate('List', {
                     menuTitle: menus[0].title,
@@ -393,6 +394,8 @@ const mapStateToProps = (state) => {
         globalTypes.FETCH_HOME_SCREEN_ARTICLES,
     ])
 
+    console.log('test', homeScreenCategories)
+
     if (!homeScreenCategories.length) {
         return {
             theme: state.theme,
@@ -401,7 +404,7 @@ const mapStateToProps = (state) => {
             global: state.global,
             articlesByCategory: [],
             isLoading: homeScreenLoadingSelector(state),
-            articlesLoading: true,
+            articlesLoading: false,
         }
     }
     return {

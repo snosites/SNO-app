@@ -167,17 +167,14 @@ function* getCustomOptions(domain) {
         const homeScreenCategories = []
 
         if (!category1.result) {
-            homeScreenCategories.push(0)
         } else {
             homeScreenCategories.push(Number(category1.result))
         }
         if (!category2.result) {
-            homeScreenCategories.push(0)
         } else {
             homeScreenCategories.push(Number(category2.result))
         }
         if (!category3.result) {
-            homeScreenCategories.push(0)
         } else {
             homeScreenCategories.push(Number(category3.result))
         }
