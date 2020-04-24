@@ -4,6 +4,7 @@ export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
+        console.log('featuredImage', featuredImage)
         if (!featuredImage.meta_fields) {
             if (
                 featuredImage.media_details &&
@@ -31,6 +32,11 @@ export async function asyncFetchFeaturedImage(url, story) {
             }
             return
         } else {
+            let termId = null
+            if (featuredImage.meta_fields.terms && featuredImage.meta_fields.terms[0]) {
+                termId = featuredImage.meta_fields.terms[0].term_id
+            }
+
             if (
                 featuredImage.media_details &&
                 featuredImage.media_details.size &&
@@ -46,6 +52,7 @@ export async function asyncFetchFeaturedImage(url, story) {
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
                             : '',
+                    photographerTermId: termId,
                 }
             } else {
                 story.featuredImage = {
@@ -57,6 +64,7 @@ export async function asyncFetchFeaturedImage(url, story) {
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
                             : '',
+                    photographerTermId: termId,
                 }
             }
             return

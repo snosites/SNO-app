@@ -7,7 +7,7 @@ import {
     Dimensions,
     ScrollView,
     Platform,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native'
 
 import Moment from 'moment'
@@ -22,8 +22,8 @@ import { slideshowRenderer, relatedRenderer } from '../utils/Renderers'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: '1 day'
-    }
+        d: '1 day',
+    },
 })
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
@@ -43,14 +43,14 @@ export default class ArticleBodyContent extends React.Component {
                     style={{
                         paddingHorizontal: 20,
                         paddingTop: 10,
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 30 }}
                         allowedStyles={[]}
-                        customWrapper={text => {
+                        customWrapper={(text) => {
                             return <Text>{text}</Text>
                         }}
                         tagsStyles={{
@@ -59,8 +59,8 @@ export default class ArticleBodyContent extends React.Component {
                                 fontWeight: 'bold',
                                 textAlign: 'center',
                                 paddingVertical: 10,
-                                color: theme.dark ? 'white' : 'black'
-                            }
+                                color: theme.dark ? 'white' : 'black',
+                            },
                         }}
                     />
                     {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ? (
@@ -68,7 +68,7 @@ export default class ArticleBodyContent extends React.Component {
                             html={article.custom_fields.sno_deck[0]}
                             baseFontStyle={{ fontSize: 22 }}
                             allowedStyles={[]}
-                            customWrapper={text => {
+                            customWrapper={(text) => {
                                 return <Text>{text}</Text>
                             }}
                             tagsStyles={{
@@ -76,8 +76,8 @@ export default class ArticleBodyContent extends React.Component {
                                     fontSize: 22,
                                     textAlign: 'center',
                                     paddingVertical: 10,
-                                    color: theme.dark ? 'white' : 'black'
-                                }
+                                    color: theme.dark ? 'white' : 'black',
+                                },
                             }}
                         />
                     ) : null}
@@ -87,7 +87,7 @@ export default class ArticleBodyContent extends React.Component {
                         flexDirection: 'row',
                         justifyContent: 'center',
                         alignItems: 'flex-start',
-                        flexWrap: 'wrap'
+                        flexWrap: 'wrap',
                     }}
                 >
                     {this._renderArticleAuthor(article)}
@@ -96,7 +96,7 @@ export default class ArticleBodyContent extends React.Component {
                     style={{
                         flexDirection: 'row',
                         justifyContent: 'center',
-                        paddingTop: 10
+                        paddingTop: 10,
                     }}
                 >
                     {this._renderDate(article.date)}
@@ -110,11 +110,11 @@ export default class ArticleBodyContent extends React.Component {
                                 ignoredStyles={['height', 'width', 'display', 'font-family']}
                                 allowedStyles={[]}
                                 imagesInitialDimensions={{
-                                    width: viewportWidth
+                                    width: viewportWidth,
                                 }}
                                 textSelectable={true}
                                 onLinkPress={(e, href) => this._viewLink(href)}
-                                alterChildren={node => {
+                                alterChildren={(node) => {
                                     if (node.name === 'iframe') {
                                         console.log('node', node)
                                         delete node.attribs.width
@@ -125,37 +125,37 @@ export default class ArticleBodyContent extends React.Component {
                                 tagsStyles={{
                                     p: {
                                         fontSize: 18,
-                                        marginBottom: 15
+                                        marginBottom: 15,
                                     },
                                     img: {
                                         marginLeft: -20,
                                         // height: MEDIASIZE,
                                         width: viewportWidth,
-                                        resizeMode: 'cover'
+                                        resizeMode: 'cover',
                                     },
                                     iframe: {
                                         marginLeft: -20,
                                         height: MEDIASIZE,
-                                        width: viewportWidth
-                                    }
+                                        width: viewportWidth,
+                                    },
                                 }}
                                 classesStyles={{
                                     pullquote: {
                                         backgroundColor: '#eeeeee',
                                         borderRadius: 8,
                                         padding: 10,
-                                        marginBottom: 15
+                                        marginBottom: 15,
                                     },
                                     largequote: { fontSize: 21 },
                                     pullquotetext: { textAlign: 'left', fontSize: 21 },
                                     quotespeaker: { textAlign: 'left', fontSize: 14 },
                                     photowrap: {
-                                        display: 'none'
+                                        display: 'none',
                                     },
                                     'wp-caption-text': {
                                         fontSize: 14,
-                                        color: '#757575'
-                                    }
+                                        color: '#757575',
+                                    },
                                 }}
                                 // alterNode={(node) => {
                                 //     if (node.attribs && node.attribs['data-photo-ids']) {
@@ -177,7 +177,7 @@ export default class ArticleBodyContent extends React.Component {
                                 // }}
                                 renderers={{
                                     snsgallery: slideshowRenderer,
-                                    snsrelated: relatedRenderer
+                                    snsrelated: relatedRenderer,
                                 }}
                             />
                         </ScrollView>
@@ -187,7 +187,7 @@ export default class ArticleBodyContent extends React.Component {
         )
     }
 
-    _renderFeaturedMedia = article => {
+    _renderFeaturedMedia = (article) => {
         const { theme, handleCaptionClick } = this.props
         if (article.slideshow && article.slideshow.length) {
             return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
@@ -214,7 +214,7 @@ export default class ArticleBodyContent extends React.Component {
                                     alignItems: 'center',
                                     height: '100%',
                                     width: '100%',
-                                    backgroundColor: 'white'
+                                    backgroundColor: 'white',
                                 }}
                             >
                                 <Text style={{ textAlign: 'center' }}>
@@ -222,7 +222,7 @@ export default class ArticleBodyContent extends React.Component {
                                 </Text>
                             </View>
                         )}
-                        onError={syntheticEvent => {
+                        onError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent
                             console.warn('WebView error: ', nativeEvent)
                         }}
@@ -248,7 +248,7 @@ export default class ArticleBodyContent extends React.Component {
                                 alignItems: 'center',
                                 height: '100%',
                                 width: '100%',
-                                backgroundColor: 'white'
+                                backgroundColor: 'white',
                             }}
                         >
                             <Text style={{ textAlign: 'center' }}>
@@ -256,7 +256,7 @@ export default class ArticleBodyContent extends React.Component {
                             </Text>
                         </View>
                     )}
-                    onError={syntheticEvent => {
+                    onError={(syntheticEvent) => {
                         const { nativeEvent } = syntheticEvent
                         console.warn('WebView error: ', nativeEvent)
                     }}
@@ -277,7 +277,7 @@ export default class ArticleBodyContent extends React.Component {
                                     html={article.featuredImage.caption}
                                     baseFontStyle={{ fontSize: 12 }}
                                     allowedStyles={[]}
-                                    customWrapper={text => {
+                                    customWrapper={(text) => {
                                         return (
                                             <Text
                                                 ellipsizeMode='tail'
@@ -291,8 +291,8 @@ export default class ArticleBodyContent extends React.Component {
                                     tagsStyles={{
                                         rawtext: {
                                             fontSize: 12,
-                                            color: 'white'
-                                        }
+                                            color: 'white',
+                                        },
                                     }}
                                 />
                             ) : null}
@@ -300,7 +300,7 @@ export default class ArticleBodyContent extends React.Component {
                                 <TouchableItem
                                     onPress={() => {
                                         this._handleProfilePress(
-                                            article.featuredImage.photographer[0]
+                                            article.featuredImage.photographerTermId
                                         )
                                     }}
                                 >
@@ -318,15 +318,15 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _handleProfilePress = writerId => {
+    _handleProfilePress = (writerId) => {
         const { navigation } = this.props
         Haptics.selectionAsync()
         navigation.navigate('Profile', {
-            writerTermId: writerId
+            writerTermId: writerId,
         })
     }
 
-    _renderArticleAuthor = article => {
+    _renderArticleAuthor = (article) => {
         const { theme } = this.props
         if (article.custom_fields.terms && article.custom_fields.terms[0]) {
             let writers = article.custom_fields.terms
@@ -344,7 +344,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {`${writer.name} & `}
@@ -362,7 +362,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {writer.name}
@@ -380,7 +380,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {`${writer.name}, `}
@@ -403,7 +403,7 @@ export default class ArticleBodyContent extends React.Component {
                                 fontSize: 17,
                                 textAlign: 'center',
                                 paddingTop: 20,
-                                color: theme.colors.accent
+                                color: theme.colors.accent,
                             }}
                         >
                             {`${article.custom_fields.terms[0].name} | ${article.custom_fields.jobtitle[0]}`}
@@ -424,7 +424,7 @@ export default class ArticleBodyContent extends React.Component {
                                 fontSize: 17,
                                 textAlign: 'center',
                                 paddingTop: 20,
-                                color: theme.colors.accent
+                                color: theme.colors.accent,
                             }}
                         >
                             {`${article.custom_fields.terms[0].name}`}
@@ -445,7 +445,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {`${writer} & `}
@@ -460,7 +460,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {writer}
@@ -475,7 +475,7 @@ export default class ArticleBodyContent extends React.Component {
                                         fontSize: 17,
                                         textAlign: 'center',
                                         paddingTop: 20,
-                                        color: theme.colors.accent
+                                        color: theme.colors.accent,
                                     }}
                                 >
                                     {`${writer}, `}
@@ -494,7 +494,7 @@ export default class ArticleBodyContent extends React.Component {
                                 fontSize: 17,
                                 textAlign: 'center',
                                 paddingTop: 20,
-                                color: theme.colors.accent
+                                color: theme.colors.accent,
                             }}
                         >
                             {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
@@ -511,7 +511,7 @@ export default class ArticleBodyContent extends React.Component {
                                 fontSize: 17,
                                 textAlign: 'center',
                                 paddingTop: 20,
-                                color: theme.colors.accent
+                                color: theme.colors.accent,
                             }}
                         >
                             {`${article.custom_fields.writer[0]}`}
@@ -524,13 +524,13 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _renderDate = date => {
+    _renderDate = (date) => {
         if (Moment().isAfter(Moment(date).add(7, 'days'))) {
             return (
                 <Text
                     style={{
                         fontSize: 15,
-                        color: '#9e9e9e'
+                        color: '#9e9e9e',
                     }}
                 >
                     {Moment(date).format('MMM D, YYYY')}
@@ -541,7 +541,7 @@ export default class ArticleBodyContent extends React.Component {
                 <Text
                     style={{
                         fontSize: 15,
-                        color: '#9e9e9e'
+                        color: '#9e9e9e',
                     }}
                 >
                     {String(Moment(date).fromNow())}
@@ -550,7 +550,7 @@ export default class ArticleBodyContent extends React.Component {
         }
     }
 
-    _viewLink = async href => {
+    _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href)
     }
 }
@@ -559,22 +559,22 @@ const styles = StyleSheet.create({
     featuredMediaContainer: {
         flex: 0,
         height: MEDIASIZE,
-        backgroundColor: 'black'
+        backgroundColor: 'black',
     },
     articleContents: {
-        padding: 20
+        padding: 20,
     },
     featuredImage: {
         width: viewportWidth,
         height: MEDIASIZE,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
     },
     imageInfoContainer: {
         flex: 1,
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
     },
     imageInfo: {
         backgroundColor: 'rgba(0,0,0,0.55)',
-        padding: 10
-    }
+        padding: 10,
+    },
 })

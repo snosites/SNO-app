@@ -7,7 +7,7 @@ import {
     Image,
     ActivityIndicator,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native'
 
 import { actions as profileActions } from '../redux/profiles'
@@ -30,7 +30,7 @@ import { Divider, Colors, Chip } from 'react-native-paper'
 class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Profile'
+            title: 'Profile',
         }
     }
 
@@ -41,7 +41,7 @@ class ProfileScreen extends React.Component {
             profiles,
             activeDomain,
             clearProfileArticles,
-            clearProfileError
+            clearProfileError,
         } = this.props
         const profile = navigation.getParam('profile', 'loading')
         let primaryColor = Color(theme.colors.primary)
@@ -51,7 +51,7 @@ class ProfileScreen extends React.Component {
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <NavigationEvents
-                    onWillFocus={payload => this._loadProfile(payload)}
+                    onWillFocus={(payload) => this._loadProfile(payload)}
                     onWillBlur={() => {
                         clearProfileArticles()
                         clearProfileError()
@@ -105,8 +105,8 @@ class ProfileScreen extends React.Component {
                                     onLinkPress={(e, href) => this._viewLink(href)}
                                     tagsStyles={{
                                         p: {
-                                            fontSize: 17
-                                        }
+                                            fontSize: 17,
+                                        },
                                     }}
                                 />
                             ) : (
@@ -128,7 +128,7 @@ class ProfileScreen extends React.Component {
                                             backgroundColor: 'transparent',
                                             fontSize: 19,
                                             color: primaryIsDark ? 'white' : 'black',
-                                            textAlign: 'center'
+                                            textAlign: 'center',
                                         }}
                                     >
                                         {`Recent Work By This Staff Member`}
@@ -141,7 +141,7 @@ class ProfileScreen extends React.Component {
                                         style={{
                                             textAlign: 'center',
                                             fontSize: 17,
-                                            paddingTop: 60
+                                            paddingTop: 60,
                                         }}
                                     >
                                         Error loading articles by author
@@ -151,9 +151,9 @@ class ProfileScreen extends React.Component {
                                 <FlatList
                                     contentContainerStyle={{ flex: 1, marginTop: 40 }}
                                     data={profiles.articles}
-                                    keyExtractor={item => (item.id ? item.id.toString() : null)}
+                                    keyExtractor={(item) => (item.id ? item.id.toString() : null)}
                                     ItemSeparatorComponent={() => <Divider />}
-                                    renderItem={props => {
+                                    renderItem={(props) => {
                                         const story = props.item
                                         return (
                                             <TouchableOpacity
@@ -172,7 +172,7 @@ class ProfileScreen extends React.Component {
                                                     <HTML
                                                         html={story.title.rendered}
                                                         baseFontStyle={{ fontSize: 19 }}
-                                                        customWrapper={text => {
+                                                        customWrapper={(text) => {
                                                             return (
                                                                 <Text
                                                                     ellipsizeMode='tail'
@@ -189,8 +189,8 @@ class ProfileScreen extends React.Component {
                                                                 textAlign: 'left',
                                                                 color: accentIsDark
                                                                     ? 'white'
-                                                                    : 'black'
-                                                            }
+                                                                    : 'black',
+                                                            },
                                                         }}
                                                     />
                                                     <Text
@@ -198,7 +198,7 @@ class ProfileScreen extends React.Component {
                                                             flex: 1,
                                                             fontSize: 12,
                                                             textAlign: 'left',
-                                                            color: accentIsDark ? 'white' : 'black'
+                                                            color: accentIsDark ? 'white' : 'black',
                                                         }}
                                                     >
                                                         {String(
@@ -209,7 +209,7 @@ class ProfileScreen extends React.Component {
                                                         style={{
                                                             flexDirection: 'row',
                                                             alignItems: 'center',
-                                                            paddingTop: 5
+                                                            paddingTop: 5,
                                                         }}
                                                     >
                                                         <MaterialIcons
@@ -228,7 +228,7 @@ class ProfileScreen extends React.Component {
                                                                 color: accentIsDark
                                                                     ? 'white'
                                                                     : 'black',
-                                                                paddingLeft: 3
+                                                                paddingLeft: 3,
                                                             }}
                                                         >
                                                             {story.custom_fields.writer &&
@@ -255,7 +255,7 @@ class ProfileScreen extends React.Component {
                                         flex: 1,
                                         alignItems: 'center',
                                         marginTop: 80,
-                                        marginBottom: 40
+                                        marginBottom: 40,
                                     }}
                                 >
                                     <ActivityIndicator />
@@ -268,18 +268,19 @@ class ProfileScreen extends React.Component {
         )
     }
 
-    _loadProfile = async payload => {
+    _loadProfile = async (payload) => {
         const { navigation, activeDomain, fetchProfileArticles } = this.props
         try {
             const writerId = navigation.getParam('writerId', null)
             const writerTermId = navigation.getParam('writerTermId', null)
+            console.log('test', writerId, writerTermId)
             if (writerId) {
                 const response = await fetch(
                     `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${writerId}`,
                     {
                         headers: {
-                            'Cache-Control': 'no-cache'
-                        }
+                            'Cache-Control': 'no-cache',
+                        },
                     }
                 )
                 const profile = await response.json()
@@ -292,10 +293,10 @@ class ProfileScreen extends React.Component {
                     }
                     //set profile
                     navigation.setParams({
-                        profile: profile
+                        profile: profile,
                     })
 
-                    const autherTermId = profile.custom_fields.terms.find(termObj => {
+                    const autherTermId = profile.custom_fields.terms.find((termObj) => {
                         if (termObj.taxonomy === 'staff_name') {
                             return termObj
                         }
@@ -310,8 +311,8 @@ class ProfileScreen extends React.Component {
                     `https://${activeDomain.url}/wp-json/sns-v2/get_profile?autherTermId=${writerTermId}`,
                     {
                         headers: {
-                            'Cache-Control': 'no-cache'
-                        }
+                            'Cache-Control': 'no-cache',
+                        },
                     }
                 )
                 const profileIdResponse = await profileIdRes.json()
@@ -320,8 +321,8 @@ class ProfileScreen extends React.Component {
                         `https://${activeDomain.url}/wp-json/wp/v2/staff_profile/${profileIdResponse[0].ID}`,
                         {
                             headers: {
-                                'Cache-Control': 'no-cache'
-                            }
+                                'Cache-Control': 'no-cache',
+                            },
                         }
                     )
                     const profile = await response.json()
@@ -335,10 +336,10 @@ class ProfileScreen extends React.Component {
                         }
                         //set profile
                         navigation.setParams({
-                            profile: profile
+                            profile: profile,
                         })
 
-                        const autherTermId = profile.custom_fields.terms.find(termObj => {
+                        const autherTermId = profile.custom_fields.terms.find((termObj) => {
                             if (termObj.taxonomy === 'staff_name') {
                                 return termObj
                             }
@@ -350,23 +351,23 @@ class ProfileScreen extends React.Component {
                     }
                 } else {
                     navigation.setParams({
-                        profile: 'none'
+                        profile: 'none',
                     })
                 }
             } else {
                 navigation.setParams({
-                    profile: 'error'
+                    profile: 'error',
                 })
             }
         } catch (err) {
             console.log('error fetching profile page', err)
             navigation.setParams({
-                profile: 'error'
+                profile: 'error',
             })
         }
     }
 
-    _renderProfileImage = profile => {
+    _renderProfileImage = (profile) => {
         if (profile.profileImage) {
             return <Image style={styles.profileImage} source={{ uri: profile.profileImage }} />
         } else {
@@ -379,7 +380,7 @@ class ProfileScreen extends React.Component {
         }
     }
 
-    _viewLink = async href => {
+    _viewLink = async (href) => {
         let result = await WebBrowser.openBrowserAsync(href)
     }
 }
@@ -391,34 +392,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 15,
-        marginBottom: 5
+        marginBottom: 5,
     },
     noProfileImage: {
         width: 150,
         height: 150,
         margin: 10,
-        borderRadius: 75
+        borderRadius: 75,
     },
     profileImage: {
         width: 200,
         height: 200,
         margin: 10,
-        borderRadius: 100
+        borderRadius: 100,
     },
     title: {
         fontSize: 25,
         textAlign: 'center',
-        letterSpacing: 1
+        letterSpacing: 1,
     },
     position: {
         fontSize: 19,
         textAlign: 'center',
-        color: Colors.grey400
+        color: Colors.grey400,
     },
     textContainer: {
         paddingTop: 20,
         paddingBottom: 70,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
     },
     storyContainer: {
         // height: 70,
@@ -428,7 +429,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginHorizontal: 20,
-        marginVertical: 15
+        marginVertical: 15,
     },
     listHeader: {
         padding: 15,
@@ -439,28 +440,28 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         position: 'absolute',
         marginHorizontal: 30,
-        top: -40
+        top: -40,
     },
     featuredImage: {
         width: 60,
         height: 60,
-        borderRadius: 30
-    }
+        borderRadius: 30,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         activeDomain: getActiveDomain(state),
         theme: state.theme,
-        profiles: state.profiles
+        profiles: state.profiles,
     }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     fetchProfileArticles: (domainUrl, name) =>
         dispatch(profileActions.fetchProfileArticles(domainUrl, name)),
     clearProfileArticles: () => dispatch(profileActions.clearProfileArticles()),
-    clearProfileError: () => dispatch(profileActions.clearProfileError())
+    clearProfileError: () => dispatch(profileActions.clearProfileError()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen)
