@@ -76,14 +76,15 @@ function* startup(action) {
 
         yield call(getHomeScreenArticles)
 
-        // let mainCategory = menu[0].object_id
+        let mainCategory = menu[0].object_id
 
-        // yield put(
-        //     articleActions.fetchArticlesIfNeeded({
-        //         domain: domain.url,
-        //         category: mainCategory,
-        //     })
-        // )
+        yield put(
+            articleActions.fetchArticlesIfNeeded({
+                domain: domain.url,
+                category: mainCategory,
+            })
+        )
+
         yield put(savedArticleActions.initializeSaved(domain.id))
 
         if (fromPush) {

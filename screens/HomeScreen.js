@@ -104,7 +104,12 @@ class HomeScreen extends React.Component {
         if (this.animation) {
             this._playAnimation()
         }
-        const { navigation } = this.props
+        const { navigation, articlesLoading, global } = this.props
+
+        if (!articlesLoading && !global.homeScreenCategories.length) {
+            navigation.navigate('List')
+        }
+
         if (navigation.state.params && navigation.state.params.scrollToTop) {
             if (this.flatListRef) {
                 // scroll list to top
