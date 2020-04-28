@@ -165,7 +165,7 @@ function* getCustomOptions(domain) {
             call(domainApiService.getHomeScreenMode, domain.url),
         ])
 
-        if (homeScreenMode.result === 'legacy') {
+        if (homeScreenMode.result) {
             yield put(globalActions.receiveHomeScreenMode('legacy'))
         } else {
             yield put(globalActions.receiveHomeScreenMode('categories'))
