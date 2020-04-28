@@ -216,6 +216,22 @@ const domainApiService = {
             throw err
         }
     },
+    getHomeScreenMode: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=sns_legacy_home`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get home mode api', err, err.response)
+            throw err
+        }
+    },
     fetchChildCategories: async (options) => {
         const { domainUrl, parentCategoryId } = options
         try {

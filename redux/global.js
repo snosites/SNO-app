@@ -22,6 +22,7 @@ export const types = {
     RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
     RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
+    RECEIVE_HOME_SCREEN_MODE: 'RECEIVE_HOME_SCREEN_MODE',
     RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
     RECEIVE_HOME_SCREEN_LIST_STYLE: 'RECEIVE_HOME_SCREEN_LIST_STYLE',
     FETCH_MENUS: 'FETCH_MENUS',
@@ -57,6 +58,7 @@ const initialState = {
     storyListStyle: 'small',
     homeScreenCategories: [],
     homeScreenListStyle: 'small',
+    homeScreenMode: 'categories',
 }
 
 export default function global(state = initialState, action) {
@@ -106,6 +108,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 homeScreenCategories: action.categories,
+            }
+        case types.RECEIVE_HOME_SCREEN_MODE:
+            return {
+                ...state,
+                homeScreenMode: action.mode,
             }
         case types.RECEIVE_HOME_SCREEN_LIST_STYLE:
             return {
@@ -182,6 +189,10 @@ export const actions = {
     receiveHomeScreenListStyle: (listStyle) => ({
         type: types.RECEIVE_HOME_SCREEN_LIST_STYLE,
         listStyle,
+    }),
+    receiveHomeScreenMode: (mode) => ({
+        type: types.RECEIVE_HOME_SCREEN_MODE,
+        mode,
     }),
     fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),

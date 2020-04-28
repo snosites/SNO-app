@@ -106,9 +106,18 @@ class HomeScreen extends React.Component {
         }
         const { navigation, articlesLoading, global } = this.props
 
+        if (global.homeScreenMode === 'legacy') {
+            const menus = global.menuItems
+            if (menus.length > 0) {
+                this.props.navigation.navigate('List', {
+                    menuTitle: menus[0].title,
+                    categoryId: menus[0].object_id,
+                })
+            }
+        }
+
         if (!articlesLoading && !global.homeScreenCategories.length) {
             const menus = global.menuItems
-            console.log('in it', global, menus[0])
             if (menus.length > 0) {
                 this.props.navigation.navigate('List', {
                     menuTitle: menus[0].title,
@@ -150,15 +159,6 @@ class HomeScreen extends React.Component {
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
         const { homeScreenCategories, homeScreenListStyle } = global
-
-        console.log(
-            'home screen',
-            homeScreenCategories,
-            categoryTitles,
-            articlesByCategory,
-            isLoading,
-            articlesLoading
-        )
 
         if (articlesLoading) {
             return (
@@ -393,8 +393,6 @@ const mapStateToProps = (state) => {
     const homeScreenLoadingSelector = createLoadingSelector([
         globalTypes.FETCH_HOME_SCREEN_ARTICLES,
     ])
-
-    console.log('test', homeScreenCategories)
 
     if (!homeScreenCategories.length) {
         return {

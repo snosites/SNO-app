@@ -157,12 +157,19 @@ function* getCustomOptions(domain) {
         ])
 
         //home screen categories
-        const [category1, category2, category3, homeScreenListStyle] = yield all([
+        const [category1, category2, category3, homeScreenListStyle, homeScreenMode] = yield all([
             call(domainApiService.getHomeScreenCategory, domain.url, 1),
             call(domainApiService.getHomeScreenCategory, domain.url, 2),
             call(domainApiService.getHomeScreenCategory, domain.url, 3),
             call(domainApiService.getHomeScreenListStyle, domain.url),
+            call(domainApiService.getHomeScreenMode, domain.url),
         ])
+
+        if (homeScreenMode.result === 'legacy') {
+            yield put(globalActions.receiveHomeScreenMode('legacy'))
+        } else {
+            yield put(globalActions.receiveHomeScreenMode('categories'))
+        }
 
         const homeScreenCategories = []
 
