@@ -173,23 +173,25 @@ class InitScreen extends React.Component {
                                         Search
                                     </Button>
                                 </View>
-                                <Button
-                                    mode='text'
-                                    color='black'
-                                    theme={{
-                                        roundness: 7,
-                                        // colors: {
-                                        //     primary:
-                                        //         version === 'sns'
-                                        //             ? Constants.manifest.extra.highSchool.secondary
-                                        //             : Constants.manifest.extra.college.secondary,
-                                        // },
-                                    }}
-                                    style={{ padding: 10, width: 300, marginTop: 20 }}
-                                    onPress={() => navigation.navigate('AuthLoading')}
-                                >
-                                    Go Back
-                                </Button>
+                                {domains.length ? (
+                                    <Button
+                                        mode='text'
+                                        color='black'
+                                        theme={{
+                                            roundness: 7,
+                                            // colors: {
+                                            //     primary:
+                                            //         version === 'sns'
+                                            //             ? Constants.manifest.extra.highSchool.secondary
+                                            //             : Constants.manifest.extra.college.secondary,
+                                            // },
+                                        }}
+                                        style={{ padding: 10, width: 300, marginTop: 20 }}
+                                        onPress={() => navigation.navigate('AuthLoading')}
+                                    >
+                                        Go Back
+                                    </Button>
+                                ) : null}
                             </View>
                         </View>
                     </KeyboardAvoidingView>
