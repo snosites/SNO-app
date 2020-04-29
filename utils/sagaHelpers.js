@@ -4,7 +4,6 @@ export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
-        console.log('featuredImage', featuredImage)
         if (!featuredImage.meta_fields) {
             if (
                 featuredImage.media_details &&

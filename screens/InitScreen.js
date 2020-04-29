@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     Platform,
     StatusBar,
@@ -9,14 +9,14 @@ import {
     ScrollView,
     ActivityIndicator,
     KeyboardAvoidingView,
-    SafeAreaView
-} from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
-import * as Haptics from 'expo-haptics';
-import * as Permissions from 'expo-permissions';
-import * as Location from 'expo-location';
-import Constants from 'expo-constants';
-import { connect } from 'react-redux';
+    SafeAreaView,
+} from 'react-native'
+import { Button, TextInput } from 'react-native-paper'
+import * as Haptics from 'expo-haptics'
+import * as Permissions from 'expo-permissions'
+import * as Location from 'expo-location'
+import Constants from 'expo-constants'
+import { connect } from 'react-redux'
 
 import { actions as globalActions } from '../redux/global'
 
@@ -27,7 +27,7 @@ const version = getReleaseChannel()
 class InitScreen extends React.Component {
     static navigationOptions = {
         header: null,
-    };
+    }
 
     state = {
         isLoading: false,
@@ -36,9 +36,10 @@ class InitScreen extends React.Component {
         errorMessage: null,
     }
 
-
     render() {
-        const { errors, navigation, fetchAvailableDomains } = this.props;
+        const { errors, navigation, fetchAvailableDomains, domains } = this.props
+
+        console.log('init screen domains', domains)
 
         const theme = {
             roundness: 7,
@@ -46,24 +47,38 @@ class InitScreen extends React.Component {
                 primary:
                     version === 'sns'
                         ? Constants.manifest.extra.highSchool.primary
-                        : Constants.manifest.extra.college.primary
-            }
+                        : Constants.manifest.extra.college.primary,
+            },
         }
 
         if (this.state.errorMessage) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
-                    <Text style={{ fontSize: 19, fontWeight: 'bold', textAlign: 'center', color: '#424242' }}>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 20,
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 19,
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            color: '#424242',
+                        }}
+                    >
                         {this.state.errorMessage}
                     </Text>
                     <Button
-                        mode="contained"
+                        mode='contained'
                         theme={theme}
                         style={{ padding: 5, marginTop: 50 }}
                         onPress={() => {
                             this.setState({
                                 errorMessage: null,
-                                isLoading: false
+                                isLoading: false,
                             })
                         }}
                     >
@@ -71,8 +86,7 @@ class InitScreen extends React.Component {
                     </Button>
                 </View>
             )
-        }
-        else if (this.state.isLoading) {
+        } else if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingVertical: 40 }}>
                     <ActivityIndicator />
@@ -130,14 +144,14 @@ class InitScreen extends React.Component {
                                                         ? Constants.manifest.extra.highSchool
                                                               .primary
                                                         : Constants.manifest.extra.college.primary,
-                                                background: 'white'
-                                            }
+                                                background: 'white',
+                                            },
                                         }}
                                         mode='outlined'
                                         selectionColor='black'
                                         returnKeyType='search'
                                         value={this.state.orgName}
-                                        onChangeText={text => this.setState({ orgName: text })}
+                                        onChangeText={(text) => this.setState({ orgName: text })}
                                         onSubmitEditing={this._handleSubmit}
                                     />
                                     <Button
@@ -149,8 +163,9 @@ class InitScreen extends React.Component {
                                                     version === 'sns'
                                                         ? Constants.manifest.extra.highSchool
                                                               .secondary
-                                                        : Constants.manifest.extra.college.secondary
-                                            }
+                                                        : Constants.manifest.extra.college
+                                                              .secondary,
+                                            },
                                         }}
                                         style={{ padding: 10, width: 300 }}
                                         onPress={this._handleSubmit}
@@ -158,6 +173,23 @@ class InitScreen extends React.Component {
                                         Search
                                     </Button>
                                 </View>
+                                <Button
+                                    mode='text'
+                                    color='black'
+                                    theme={{
+                                        roundness: 7,
+                                        // colors: {
+                                        //     primary:
+                                        //         version === 'sns'
+                                        //             ? Constants.manifest.extra.highSchool.secondary
+                                        //             : Constants.manifest.extra.college.secondary,
+                                        // },
+                                    }}
+                                    style={{ padding: 10, width: 300, marginTop: 20 }}
+                                    onPress={() => navigation.navigate('AuthLoading')}
+                                >
+                                    Go Back
+                                </Button>
                             </View>
                         </View>
                     </KeyboardAvoidingView>
@@ -167,7 +199,7 @@ class InitScreen extends React.Component {
     }
 
     _handleSubmit = () => {
-        this.props.navigation.navigate('Select', {searchTerm: this.state.orgName})
+        this.props.navigation.navigate('Select', { searchTerm: this.state.orgName })
     }
 
     _handleBrowse = () => {
@@ -178,33 +210,35 @@ class InitScreen extends React.Component {
         Haptics.selectionAsync()
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
-                errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device',
-            });
+                errorMessage:
+                    'Oops, this will not work on Sketch in an Android emulator. Try it on your device',
+            })
         } else {
-            this._getLocationAsync();
+            this._getLocationAsync()
         }
     }
 
     _getLocationAsync = async () => {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        let { status } = await Permissions.askAsync(Permissions.LOCATION)
         if (status !== 'granted') {
             this.setState({
-                errorMessage: 'Permission to access location was denied, please select a school using a different method',
-            });
-            return;
+                errorMessage:
+                    'Permission to access location was denied, please select a school using a different method',
+            })
+            return
         }
         this.setState({
-            isLoading: true
+            isLoading: true,
         })
 
-        let location = await Location.getCurrentPositionAsync({});
+        let location = await Location.getCurrentPositionAsync({})
 
         let locationObj = {
             latitude: location.coords.latitude,
-            longitude: location.coords.longitude
+            longitude: location.coords.longitude,
         }
 
-        let cityLocation = await Location.reverseGeocodeAsync(locationObj);
+        let cityLocation = await Location.reverseGeocodeAsync(locationObj)
 
         if (cityLocation && cityLocation[0]) {
         } else {
@@ -212,13 +246,12 @@ class InitScreen extends React.Component {
         }
         this.props.navigation.navigate('LocationSelect', {
             location: cityLocation[0],
-            coords: locationObj
+            coords: locationObj,
         })
         this.setState({
-            isLoading: false
+            isLoading: false,
         })
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -226,7 +259,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         margin: 30,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     logoContainer: {
         alignItems: 'center',
@@ -241,33 +274,31 @@ const styles = StyleSheet.create({
     getStartedContainer: {
         flex: 1,
         alignItems: 'center',
-        width: 300
+        width: 300,
     },
     getStartedText: {
         fontSize: 19,
         textAlign: 'center',
-        marginBottom: 20
+        marginBottom: 20,
     },
     locationContainerText: {
         fontSize: 19,
         textAlign: 'center',
-        marginBottom: 20
+        marginBottom: 20,
     },
     formContainer: {
         flex: 1,
         alignItems: 'center',
-    }
-});
-
-const mapStateToProps = state => ({
-    errors: state.errors
+    },
 })
 
-const mapDispatchToProps = dispatch => ({
-    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains())
+const mapStateToProps = (state) => ({
+    errors: state.errors,
+    domains: state.domains,
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(InitScreen)
+const mapDispatchToProps = (dispatch) => ({
+    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(InitScreen)
