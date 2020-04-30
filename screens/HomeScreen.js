@@ -437,7 +437,11 @@ const mapStateToProps = (state) => {
             }
         }),
         articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
-            return state.articlesByCategory[categoryId].isFetching
+            if (state.articlesByCategory[categoryId]) {
+                return state.articlesByCategory[categoryId].isFetching
+            } else {
+                return false
+            }
         }, false),
     }
 }
