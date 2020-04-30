@@ -64,7 +64,7 @@ const NotificationAlert = (props) => {
         //     domainId: 182442528,
         //     storyId: 1321,
         // }
-        const article = await asyncFetchArticle(activeDomain.url, 1321)
+        // const article = await asyncFetchArticle(activeDomain.url, 1321)
 
         handleArticlePress(article, activeDomain)
         return
