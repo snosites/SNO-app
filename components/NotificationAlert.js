@@ -29,7 +29,7 @@ const amplitudeKey = getAmplitudeKey()
 Amplitude.initialize(amplitudeKey)
 
 const NotificationAlert = (props) => {
-    const { user, activeDomain, domains, setActiveDomain, setFromPush, initializing } = props
+    const { user, activeDomain, domains, setActiveDomain, setFromPush, initialized } = props
 
     const [notification, setNotification] = useState({})
     const [visible, setVisible] = useState(false)
@@ -45,7 +45,7 @@ const NotificationAlert = (props) => {
     }, [user])
 
     useEffect(() => {
-        if (initializing) return
+        if (initialized) return
         if (notification.origin === 'received') {
             // if app is open show custom notification
             setVisible(true)
@@ -54,19 +54,16 @@ const NotificationAlert = (props) => {
             }, 7000)
         } else if (notification.origin === 'selected') {
             handleNotificationPress()
-        } else {
-            console.log('testing this')
-            handleNotificationPress()
         }
-    }, [notification, initializing])
+    }, [notification, initialized])
 
     const handleNotificationPress = async () => {
         // await WebBrowser.openBrowserAsync('https://www.google.com')
         // return
-        const testFromPush = {
-            domainId: 182442528,
-            storyId: 1321,
-        }
+        // const testFromPush = {
+        //     domainId: 182442528,
+        //     storyId: 1321,
+        // }
         const article = await asyncFetchArticle(activeDomain.url, 1321)
 
         handleArticlePress(article, activeDomain)
@@ -210,13 +207,14 @@ const NotificationAlert = (props) => {
     )
 }
 
-const initializingSelector = createLoadingSelector([globalTypes.STARTUP])
+// const initializingStartupSelector = createLoadingSelector([globalTypes.STARTUP])
+// const initializingUserSelector = createLoadingSelector([globalTypes.INITIALIZE_USER])
 
 const mapStateToProps = (state) => ({
     user: state.user.user,
     activeDomain: getActiveDomain(state),
     domains: state.domains,
-    initializing: initializingSelector(state),
+    initialized: state.global.initialized,
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -88,7 +88,6 @@ function* startup(action) {
         yield put(savedArticleActions.initializeSaved(domain.id))
 
         if (fromPush) {
-            console.log('domain ID', domain)
             // go to main app
             // NavigationService.navigate('MainApp')
             NavigationService.nestedNavigate('MainApp', 'RecentStack')

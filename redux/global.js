@@ -59,10 +59,16 @@ const initialState = {
     homeScreenCategories: [],
     homeScreenListStyle: 'small',
     homeScreenMode: 'categories',
+    initialized: false,
 }
 
 export default function global(state = initialState, action) {
     switch (action.type) {
+        case types.STARTUP_SUCCESS:
+            return {
+                ...state,
+                initialized: true,
+            }
         case types.FETCH_AVAILABLE_DOMAINS_SUCCESS:
         case types.SEARCH_AVAILABLE_DOMAINS_SUCCESS:
             return {
