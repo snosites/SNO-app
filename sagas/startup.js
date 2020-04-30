@@ -89,7 +89,8 @@ function* startup(action) {
 
         if (fromPush) {
             // go to main app
-            NavigationService.nestedNavigate('MainApp', 'RecentStack')
+            NavigationService.navigate('MainApp')
+            // NavigationService.nestedNavigate('MainApp', 'RecentStack')
 
             yield call(handleArticlePress, fromPush, domain)
             // reset push key
