@@ -415,17 +415,26 @@ const mapStateToProps = (state) => {
             return state.global.menuItems.find((menuItem) => menuItem.object_id == category).title
         }),
         articlesByCategory: homeScreenCategories.map((categoryId) => {
-            return state.articlesByCategory[categoryId].items.map((articleId) => {
-                const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
-                    return savedArticle.id == articleId
+            if (
+                state.articlesByCategory[categoryId] &&
+                state.articlesByCategory[categoryId].items
+            ) {
+                return state.articlesByCategory[categoryId].items.map((articleId) => {
+                    const found = state.savedArticlesBySchool[activeDomain.id].find(
+                        (savedArticle) => {
+                            return savedArticle.id == articleId
+                        }
+                    )
+                    if (found) {
+                        state.entities.articles[articleId].saved = true
+                    } else {
+                        state.entities.articles[articleId].saved = false
+                    }
+                    return state.entities.articles[articleId]
                 })
-                if (found) {
-                    state.entities.articles[articleId].saved = true
-                } else {
-                    state.entities.articles[articleId].saved = false
-                }
-                return state.entities.articles[articleId]
-            })
+            } else {
+                return []
+            }
         }),
         articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
             return state.articlesByCategory[categoryId].isFetching

@@ -1,10 +1,10 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 15158,
+  "packagerPid": 30707,
   "expoServerNgrokUrl": "https://x5-dqb.tjuser23.the-source.exp.direct",
   "packagerNgrokUrl": "https://packager.x5-dqb.tjuser23.the-source.exp.direct",
-  "ngrokPid": 15171,
+  "ngrokPid": 30738,
   "devToolsPort": 19002,
   "webpackServerPort": null
 }
