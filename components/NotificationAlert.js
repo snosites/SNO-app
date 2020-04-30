@@ -45,7 +45,7 @@ const NotificationAlert = (props) => {
     }, [user])
 
     useEffect(() => {
-        if (initialized) return
+        if (!initialized) return
         if (notification.origin === 'received') {
             // if app is open show custom notification
             setVisible(true)
