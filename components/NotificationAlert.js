@@ -8,6 +8,8 @@ import { connect } from 'react-redux'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { actions as userActions } from '../redux/user'
+import { createLoadingSelector } from '../redux/loading'
+import { types as globalTypes } from '../redux/global'
 
 import NavigationService from '../utils/NavigationService'
 
@@ -26,15 +28,15 @@ import { getAmplitudeKey } from '../constants/config'
 const amplitudeKey = getAmplitudeKey()
 Amplitude.initialize(amplitudeKey)
 
-const NotificationAlert = props => {
-    const { user, activeDomain, domains, setActiveDomain, setFromPush } = props
+const NotificationAlert = (props) => {
+    const { user, activeDomain, domains, setActiveDomain, setFromPush, initializing } = props
 
     const [notification, setNotification] = useState({})
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
         if (user.push_token) {
-            const notificationSubscription = Notifications.addListener(notification => {
+            const notificationSubscription = Notifications.addListener((notification) => {
                 setNotification(notification)
                 console.log('notification received...', notification)
             })
@@ -43,23 +45,37 @@ const NotificationAlert = props => {
     }, [user])
 
     useEffect(() => {
-        // if app is open show custom notification
+        if (initializing) return
         if (notification.origin === 'received') {
+            // if app is open show custom notification
             setVisible(true)
             setTimeout(() => {
                 setVisible(false)
             }, 7000)
         } else if (notification.origin === 'selected') {
             handleNotificationPress()
+        } else {
+            console.log('testing this')
+            handleNotificationPress()
         }
-    }, [notification])
+    }, [notification, initializing])
 
     const handleNotificationPress = async () => {
+        // await WebBrowser.openBrowserAsync('https://www.google.com')
+        // return
+        const testFromPush = {
+            domainId: 182442528,
+            storyId: 1321,
+        }
+        const article = await asyncFetchArticle(activeDomain.url, 1321)
+
+        handleArticlePress(article, activeDomain)
+        return
         try {
             // send analytics data
             Amplitude.logEventWithProperties('notification press', {
                 domainId: notification.data.domain_id,
-                storyId: notification.data.post_id
+                storyId: notification.data.post_id,
             })
 
             setVisible(false)
@@ -76,7 +92,7 @@ const NotificationAlert = props => {
                 handleArticlePress(article, activeDomain)
             } else {
                 // make sure domain origin is a saved domain
-                let found = domains.find(domain => {
+                let found = domains.find((domain) => {
                     return domain.id == notification.data.domain_id
                 })
                 if (!found) {
@@ -90,14 +106,14 @@ const NotificationAlert = props => {
                         {
                             text: 'Cancel',
                             onPress: () => {},
-                            style: 'cancel'
+                            style: 'cancel',
                         },
                         {
                             text: 'Proceed',
                             onPress: () => {
                                 _notificationSwitchDomain(found.url)
-                            }
-                        }
+                            },
+                        },
                     ],
                     { cancelable: false }
                 )
@@ -108,10 +124,10 @@ const NotificationAlert = props => {
         }
     }
 
-    const _notificationSwitchDomain = async domainUrl => {
+    const _notificationSwitchDomain = async (domainUrl) => {
         try {
             NavigationService.navigate('AuthLoading', {
-                switchingDomain: true
+                switchingDomain: true,
             })
             // get article
             const article = await asyncFetchArticle(domainUrl, notification.data.post_id)
@@ -123,12 +139,12 @@ const NotificationAlert = props => {
             //navigate to auth loading to load initial domain data
             let nav = NavigationService
             nav.navigate('AuthLoading', {
-                switchingDomain: false
+                switchingDomain: false,
             })
         } catch (err) {
             console.log('error in notification switch domain', err)
             NavigationService.navigate('AuthLoading', {
-                switchingDomain: false
+                switchingDomain: false,
             })
             Sentry.captureException(err)
         }
@@ -151,18 +167,18 @@ const NotificationAlert = props => {
                     shadowColor: '#000',
                     shadowOffset: {
                         width: 0,
-                        height: 6
+                        height: 6,
                     },
                     shadowOpacity: 0.37,
                     shadowRadius: 7.49,
 
-                    elevation: 12
+                    elevation: 12,
                 }}
             >
                 <TouchableOpacity
                     style={{
                         flex: 1,
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
                     }}
                     onPress={handleNotificationPress}
                 >
@@ -174,7 +190,7 @@ const NotificationAlert = props => {
                         numberOfLines={1}
                         style={{
                             fontSize: 14,
-                            paddingHorizontal: 5
+                            paddingHorizontal: 5,
                         }}
                     >
                         {notification.data
@@ -194,15 +210,18 @@ const NotificationAlert = props => {
     )
 }
 
-const mapStateToProps = state => ({
+const initializingSelector = createLoadingSelector([globalTypes.STARTUP])
+
+const mapStateToProps = (state) => ({
     user: state.user.user,
     activeDomain: getActiveDomain(state),
-    domains: state.domains
+    domains: state.domains,
+    initializing: initializingSelector(state),
 })
 
-const mapDispatchToProps = dispatch => ({
-    setActiveDomain: domainId => dispatch(domainActions.setActiveDomain(domainId)),
-    setFromPush: payload => dispatch(userActions.setFromPush(payload))
+const mapDispatchToProps = (dispatch) => ({
+    setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
+    setFromPush: (payload) => dispatch(userActions.setFromPush(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationAlert)

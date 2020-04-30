@@ -88,11 +88,13 @@ function* startup(action) {
         yield put(savedArticleActions.initializeSaved(domain.id))
 
         if (fromPush) {
+            console.log('domain ID', domain)
             // go to main app
-            NavigationService.navigate('MainApp')
-            // NavigationService.nestedNavigate('MainApp', 'RecentStack')
+            // NavigationService.navigate('MainApp')
+            NavigationService.nestedNavigate('MainApp', 'RecentStack')
 
             yield call(handleArticlePress, fromPush, domain)
+            // yield call(handleArticlePress, testFromPush, domain)
             // reset push key
             yield put(userActions.setFromPush(false))
         } else {
