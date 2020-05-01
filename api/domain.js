@@ -216,6 +216,22 @@ const domainApiService = {
             throw err
         }
     },
+    getHomeScreenCategoryAmount: async (domainUrl, categoryNumber) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}_amount`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get home screen category amount api', err, err.response)
+            throw err
+        }
+    },
     getHomeScreenListStyle: async (domainUrl) => {
         try {
             const response = await axios.get(

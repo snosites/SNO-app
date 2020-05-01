@@ -159,7 +159,12 @@ class HomeScreen extends React.Component {
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
-        const { homeScreenCategories, homeScreenListStyle, homeScreenCategoryColor } = global
+        const {
+            homeScreenCategories,
+            homeScreenListStyle,
+            homeScreenCategoryColor,
+            homeScreenCategoryAmounts,
+        } = global
 
         if (articlesLoading) {
             return (
@@ -233,6 +238,8 @@ class HomeScreen extends React.Component {
             <ScrollView style={{ flex: 1 }}>
                 {categoryTitles.map((title, i) => {
                     const margin = i ? 40 : 0
+                    const listLength = homeScreenCategoryAmounts[i] || 5
+                    console.log('listLength', listLength)
                     return (
                         <View style={{ flex: 1 }} key={i}>
                             <TouchableOpacity
@@ -263,7 +270,7 @@ class HomeScreen extends React.Component {
                             </TouchableOpacity>
                             {isTablet ? (
                                 <TabletArticleListContent
-                                    articleList={articlesByCategory[i].slice(0, 5)}
+                                    articleList={articlesByCategory[i].slice(0, Number(listLength))}
                                     isFetching={articlesLoading}
                                     isRefreshing={articlesLoading}
                                     // loadMore={this._loadMore}
@@ -277,7 +284,7 @@ class HomeScreen extends React.Component {
                                 />
                             ) : (
                                 <ArticleListContent
-                                    articleList={articlesByCategory[i].slice(0, 5)}
+                                    articleList={articlesByCategory[i].slice(0, Number(listLength))}
                                     isFetching={articlesLoading}
                                     isRefreshing={articlesLoading}
                                     // loadMore={this._loadMore}

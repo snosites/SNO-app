@@ -165,6 +165,9 @@ function* getCustomOptions(domain) {
             category1,
             category2,
             category3,
+            category1Amount,
+            category2Amount,
+            category3Amount,
             homeScreenListStyle,
             homeScreenMode,
             homeScreenCategoryColor,
@@ -172,6 +175,9 @@ function* getCustomOptions(domain) {
             call(domainApiService.getHomeScreenCategory, domain.url, 1),
             call(domainApiService.getHomeScreenCategory, domain.url, 2),
             call(domainApiService.getHomeScreenCategory, domain.url, 3),
+            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 1),
+            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 2),
+            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 3),
             call(domainApiService.getHomeScreenListStyle, domain.url),
             call(domainApiService.getHomeScreenMode, domain.url),
             call(domainApiService.getCustomHomeCategoryColor, domain.url),
@@ -198,7 +204,23 @@ function* getCustomOptions(domain) {
             homeScreenCategories.push(Number(category3.result))
         }
 
-        console.log('homeScreenCategoryColor', homeScreenCategoryColor)
+        const homeScreenCategoryAmounts = []
+
+        if (!category1Amount.result) {
+            homeScreenCategoryAmounts.push(5)
+        } else {
+            homeScreenCategoryAmounts.push(Number(category1Amount.result))
+        }
+        if (!category2Amount.result) {
+            homeScreenCategoryAmounts.push(5)
+        } else {
+            homeScreenCategoryAmounts.push(Number(category2Amount.result))
+        }
+        if (!category3Amount.result) {
+            homeScreenCategoryAmounts.push(5)
+        } else {
+            homeScreenCategoryAmounts.push(Number(category3Amount.result))
+        }
 
         if (!homeScreenCategoryColor.result) {
             homeScreenCategoryColor.result = null
@@ -207,6 +229,7 @@ function* getCustomOptions(domain) {
         yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
 
         yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
+        yield put(globalActions.receiveHomeScreenCategoryAmounts(homeScreenCategoryAmounts))
 
         yield put(
             globalActions.receiveHomeScreenListStyle(
