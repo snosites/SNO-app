@@ -6,6 +6,7 @@ import HTML from 'react-native-render-html'
 import { actions as articlesActions } from '../redux/articles'
 import { actions as searchActions } from '../redux/search'
 import { getActiveDomain } from '../redux/domains'
+import { actions as globalActions } from '../redux/global'
 
 import { SafeAreaView } from 'react-navigation'
 import DrawerNavIcon from '../components/DrawerNavIcon'
@@ -30,7 +31,7 @@ class CustomDrawerComponent extends React.Component {
     // }
 
     render() {
-        const { menus, activeDomain, globals } = this.props
+        const { menus, activeDomain, globals, setActiveCategory } = this.props
         return (
             <View style={styles.rootContainer}>
                 <SafeAreaView
@@ -82,7 +83,7 @@ class CustomDrawerComponent extends React.Component {
                                                 }}
                                             />
                                         }
-                                        active={this.state.activeMenuIndex === index}
+                                        active={globals.activeCategory == item.object_id}
                                         onPress={() => this._handleMenuPress(item, index)}
                                         icon={(passedProps) => {
                                             return DrawerNavIcon({
@@ -121,6 +122,7 @@ class CustomDrawerComponent extends React.Component {
     }
 
     _handleMenuPress = (item, index) => {
+        const { setActiveCategory } = this.props
         this.props.navigation.closeDrawer()
         if (item.object === 'category') {
             // log category press to analytics
@@ -136,6 +138,7 @@ class CustomDrawerComponent extends React.Component {
             this.setState({
                 activeMenuIndex: index,
             })
+            setActiveCategory(item.object_id)
         } else if (item.object === 'page') {
             if (item.template === 'snostaff.php') {
                 console.log('staff page', item)
@@ -153,6 +156,7 @@ class CustomDrawerComponent extends React.Component {
                 this.setState({
                     activeMenuIndex: index,
                 })
+                setActiveCategory(item.object_id)
             } else if (!item.template) {
                 // default template
                 this.props.navigation.navigate('DefaultPage', {
@@ -162,6 +166,7 @@ class CustomDrawerComponent extends React.Component {
                 this.setState({
                     activeMenuIndex: index,
                 })
+                setActiveCategory(item.object_id)
             } else {
                 // redirect to page not found screen later
                 console.log('page not found')
@@ -225,6 +230,7 @@ const mapDispatchToProps = (dispatch) => ({
     fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
         dispatch(searchActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
     invalidateSearchArticles: () => dispatch(searchActions.invalidateSearchArticles()),
+    setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawerComponent)

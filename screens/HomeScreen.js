@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScrollView, View, Text, Image, StyleSheet, Platform } from 'react-native'
+import { ScrollView, View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
 import Color from 'color'
 import { connect } from 'react-redux'
 import * as Device from 'expo-device'
@@ -155,10 +155,11 @@ class HomeScreen extends React.Component {
             categoryTitles,
             isLoading,
             articlesLoading,
+            setActiveCategory,
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
 
-        const { homeScreenCategories, homeScreenListStyle } = global
+        const { homeScreenCategories, homeScreenListStyle, homeScreenCategoryColor } = global
 
         if (articlesLoading) {
             return (
@@ -221,23 +222,43 @@ class HomeScreen extends React.Component {
             )
         }
 
+        const categoryBackgroundColor = homeScreenCategoryColor
+            ? homeScreenCategoryColor
+            : theme.colors.accent
+
+        let primaryCategoryBackgroundColor = Color(categoryBackgroundColor)
+        let isCategoryColorDark = primaryCategoryBackgroundColor.isDark()
+
         return (
             <ScrollView style={{ flex: 1 }}>
                 {categoryTitles.map((title, i) => {
                     return (
                         <View style={{ flex: 1 }} key={i}>
-                            <Text
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate('List', {
+                                        menuTitle: title,
+                                        categoryId: homeScreenCategories[i],
+                                    })
+                                    setActiveCategory(homeScreenCategories[i])
+                                }}
                                 style={{
-                                    fontSize: 28,
-                                    fontWeight: 'bold',
-                                    paddingLeft: 20,
-                                    paddingTop: 20,
-                                    color: theme.colors.accent,
-                                    textAlign: 'center',
+                                    backgroundColor: categoryBackgroundColor,
+                                    justifyContent: 'center',
+                                    paddingVertical: 10,
                                 }}
                             >
-                                {title}
-                            </Text>
+                                <Text
+                                    style={{
+                                        fontSize: 28,
+                                        fontWeight: 'bold',
+                                        color: isCategoryColorDark ? 'white' : 'black',
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    {title}
+                                </Text>
+                            </TouchableOpacity>
                             {isTablet ? (
                                 <TabletArticleListContent
                                     articleList={articlesByCategory[i].slice(0, 5)}
@@ -453,6 +474,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
     refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
     invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
+    setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)

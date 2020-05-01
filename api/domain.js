@@ -168,6 +168,17 @@ const domainApiService = {
             throw err
         }
     },
+    getCustomHomeCategoryColor: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_color`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in get custom home category color api', err, err.response)
+            throw err
+        }
+    },
     getStoryListStyle: async (domainUrl) => {
         try {
             const response = await axios.get(

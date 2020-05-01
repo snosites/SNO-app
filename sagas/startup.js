@@ -85,6 +85,8 @@ function* startup(action) {
             })
         )
 
+        yield put(globalActions.setActiveCategory(mainCategory))
+
         yield put(savedArticleActions.initializeSaved(domain.id))
 
         if (fromPush) {
@@ -159,12 +161,20 @@ function* getCustomOptions(domain) {
         ])
 
         //home screen categories
-        const [category1, category2, category3, homeScreenListStyle, homeScreenMode] = yield all([
+        const [
+            category1,
+            category2,
+            category3,
+            homeScreenListStyle,
+            homeScreenMode,
+            homeScreenCategoryColor,
+        ] = yield all([
             call(domainApiService.getHomeScreenCategory, domain.url, 1),
             call(domainApiService.getHomeScreenCategory, domain.url, 2),
             call(domainApiService.getHomeScreenCategory, domain.url, 3),
             call(domainApiService.getHomeScreenListStyle, domain.url),
             call(domainApiService.getHomeScreenMode, domain.url),
+            call(domainApiService.getCustomHomeCategoryColor, domain.url),
         ])
 
         if (homeScreenMode.result == 1 || homeScreenMode.result == '1') {
@@ -172,8 +182,6 @@ function* getCustomOptions(domain) {
         } else {
             yield put(globalActions.receiveHomeScreenMode('categories'))
         }
-
-        console.log(homeScreenMode)
 
         const homeScreenCategories = []
 
@@ -189,6 +197,12 @@ function* getCustomOptions(domain) {
         } else {
             homeScreenCategories.push(Number(category3.result))
         }
+
+        if (!homeScreenCategoryColor.result) {
+            homeScreenCategoryColor.result = '#83B33B'
+        }
+
+        yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
 
         yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
 

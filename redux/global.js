@@ -25,6 +25,7 @@ export const types = {
     RECEIVE_HOME_SCREEN_MODE: 'RECEIVE_HOME_SCREEN_MODE',
     RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
     RECEIVE_HOME_SCREEN_LIST_STYLE: 'RECEIVE_HOME_SCREEN_LIST_STYLE',
+    RECEIVE_HOME_SCREEN_CATEGORY_COLOR: 'RECEIVE_HOME_SCREEN_CATEGORY_COLOR',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -45,6 +46,7 @@ export const types = {
     FETCH_HOME_SCREEN_ARTICLES_REQUEST: 'FETCH_HOME_SCREEN_ARTICLES_REQUEST',
     FETCH_HOME_SCREEN_ARTICLES_SUCCESS: 'FETCH_HOME_SCREEN_ARTICLES_SUCCESS',
     FETCH_HOME_SCREEN_ARTICLES_ERROR: 'FETCH_HOME_SCREEN_ARTICLES_ERROR',
+    SET_ACTIVE_CATEGORY: 'SET_ACTIVE_CATEGORY',
 }
 
 const initialState = {
@@ -57,9 +59,11 @@ const initialState = {
     enableComments: false,
     storyListStyle: 'small',
     homeScreenCategories: [],
+    homeScreenCategoryColor: '',
     homeScreenListStyle: 'small',
     homeScreenMode: 'categories',
     initialized: false,
+    activeCategory: null,
 }
 
 export default function global(state = initialState, action) {
@@ -115,6 +119,11 @@ export default function global(state = initialState, action) {
                 ...state,
                 homeScreenCategories: action.categories,
             }
+        case types.RECEIVE_HOME_SCREEN_CATEGORY_COLOR:
+            return {
+                ...state,
+                homeScreenCategoryColor: action.color,
+            }
         case types.RECEIVE_HOME_SCREEN_MODE:
             return {
                 ...state,
@@ -134,6 +143,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 menuItems: [],
+            }
+        case types.SET_ACTIVE_CATEGORY:
+            return {
+                ...state,
+                activeCategory: action.categoryId,
             }
         default:
             return state
@@ -200,6 +214,10 @@ export const actions = {
         type: types.RECEIVE_HOME_SCREEN_MODE,
         mode,
     }),
+    receiveHomeScreenCategoryColor: (color) => ({
+        type: types.RECEIVE_HOME_SCREEN_CATEGORY_COLOR,
+        color,
+    }),
     fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
     fetchMenusSuccess: (payload) => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
@@ -217,10 +235,18 @@ export const actions = {
     addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
     addStoryViewError: (error) => ({ type: types.ADD_STORY_VIEW_ERROR, error }),
     fetchHomeScreenArticles: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES }),
-    fetchHomeScreenArticlesRequest: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES_REQUEST }),
-    fetchHomeScreenArticlesSuccess: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES_SUCCESS }),
+    fetchHomeScreenArticlesRequest: () => ({
+        type: types.FETCH_HOME_SCREEN_ARTICLES_REQUEST,
+    }),
+    fetchHomeScreenArticlesSuccess: () => ({
+        type: types.FETCH_HOME_SCREEN_ARTICLES_SUCCESS,
+    }),
     fetchHomeScreenArticlesError: (error) => ({
         type: types.FETCH_HOME_SCREEN_ARTICLES_ERROR,
         error,
+    }),
+    setActiveCategory: (categoryId) => ({
+        type: types.SET_ACTIVE_CATEGORY,
+        categoryId,
     }),
 }
