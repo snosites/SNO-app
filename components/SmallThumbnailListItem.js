@@ -9,12 +9,12 @@ import { handleArticlePress } from '../utils/articlePress'
 
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 
-const renderDate = date => {
+const renderDate = (date) => {
     return (
         <Text
             style={{
                 fontSize: 15,
-                color: '#9e9e9e'
+                color: '#9e9e9e',
             }}
         >
             {Moment().isAfter(Moment(date).add(7, 'days'))
@@ -24,7 +24,7 @@ const renderDate = date => {
     )
 }
 
-const renderWriters = writers => {
+const renderWriters = (writers) => {
     let newArr = ''
     for (let i = 0; i < writers.length; i++) {
         if (i === writers.length - 2) {
@@ -38,7 +38,7 @@ const renderWriters = writers => {
     return newArr
 }
 
-export default props => {
+export default (props) => {
     const { article, theme, enableComments, onIconPress, deleteIcon, activeDomain } = props
 
     return (
@@ -57,7 +57,7 @@ export default props => {
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 17 }}
-                        customWrapper={text => {
+                        customWrapper={(text) => {
                             return (
                                 <Text ellipsizeMode='tail' numberOfLines={2}>
                                     {text}
@@ -68,8 +68,8 @@ export default props => {
                             rawtext: {
                                 fontSize: 17,
                                 fontWeight: 'bold',
-                                color: theme.dark ? 'white' : 'black'
-                            }
+                                color: theme.dark ? 'white' : 'black',
+                            },
                         }}
                     />
                     <Text
@@ -77,7 +77,7 @@ export default props => {
                         numberOfLines={1}
                         style={{
                             color: theme.colors.accent,
-                            fontSize: 15
+                            fontSize: 15,
                         }}
                     >
                         {article.custom_fields.writer
@@ -88,7 +88,7 @@ export default props => {
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
                         }}
                     >
                         <View style={{ flexDirection: 'row' }}>{renderDate(article.date)}</View>
@@ -97,7 +97,7 @@ export default props => {
                 <View
                     style={{
                         justifySelf: 'end',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
                     }}
                 >
                     {enableComments && (
@@ -109,7 +109,7 @@ export default props => {
                                     position: 'absolute',
                                     bottom: 2,
                                     right: 4,
-                                    backgroundColor: theme.colors.accent
+                                    backgroundColor: theme.colors.accent,
                                 }}
                             >
                                 {article.comments.length > 99 ? '99' : article.comments.length}
@@ -138,16 +138,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         marginHorizontal: 10,
-        marginVertical: 10
+        marginVertical: 10,
     },
     featuredImage: {
         width: 125,
         height: 80,
-        borderRadius: 8
+        borderRadius: 8,
+        marginRight: 10,
     },
     storyInfo: {
         flex: 1,
-        marginLeft: 10,
-        justifyContent: 'space-between'
-    }
+        justifyContent: 'space-between',
+    },
 })

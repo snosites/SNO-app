@@ -11,12 +11,12 @@ import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 
 const screenWidth = Dimensions.get('window').width
 
-const renderDate = date => {
+const renderDate = (date) => {
     return (
         <Text
             style={{
                 fontSize: 15,
-                color: '#9e9e9e'
+                color: '#9e9e9e',
             }}
         >
             {Moment().isAfter(Moment(date).add(7, 'days'))
@@ -26,7 +26,7 @@ const renderDate = date => {
     )
 }
 
-const renderWriters = writers => {
+const renderWriters = (writers) => {
     let newArr = ''
     for (let i = 0; i < writers.length; i++) {
         if (i === writers.length - 2) {
@@ -40,11 +40,11 @@ const renderWriters = writers => {
     return newArr
 }
 
-export default props => {
+export default (props) => {
     const { article, theme, enableComments, onIconPress, deleteIcon, activeDomain } = props
 
     const hasFeaturedImage = article.featuredImage
-    const imageWidth = screenWidth - 40
+    const imageWidth = screenWidth - 20
     const imageHeight = imageWidth * 0.55
 
     return (
@@ -53,18 +53,18 @@ export default props => {
                 flex: 1,
                 // height: imageHeight + 100,
                 borderBottomWidth: 0.5,
-                borderBottomColor: '#9e9e9e'
+                borderBottomColor: '#9e9e9e',
             }}
             onPress={() => handleArticlePress(article, activeDomain)}
         >
-            <View style={{ flex: 1, margin: 20 }}>
+            <View style={{ flex: 1, margin: 10 }}>
                 {hasFeaturedImage ? (
                     <Image
                         source={{ uri: article.featuredImage.uri }}
                         style={{
                             width: imageWidth,
                             height: imageHeight,
-                            borderRadius: 8
+                            borderRadius: 8,
                         }}
                     />
                 ) : null}
@@ -72,13 +72,13 @@ export default props => {
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 28 }}
-                        customWrapper={text => {
+                        customWrapper={(text) => {
                             return (
                                 <Text
                                     style={{
                                         fontSize: 27,
                                         fontWeight: 'bold',
-                                        color: theme.dark ? 'white' : 'black'
+                                        color: theme.dark ? 'white' : 'black',
                                     }}
                                     ellipsizeMode='tail'
                                     numberOfLines={2}
@@ -91,8 +91,8 @@ export default props => {
                             rawtext: {
                                 fontSize: 23,
                                 fontWeight: 'bold',
-                                color: theme.dark ? 'white' : 'black'
-                            }
+                                color: theme.dark ? 'white' : 'black',
+                            },
                         }}
                     />
                     <Text
@@ -100,7 +100,7 @@ export default props => {
                         numberOfLines={1}
                         style={{
                             color: theme.colors.accent,
-                            fontSize: 20
+                            fontSize: 20,
                         }}
                     >
                         {article.custom_fields.writer
@@ -111,7 +111,7 @@ export default props => {
                         <HTML
                             html={article.excerpt.rendered}
                             baseFontStyle={{ fontSize: 18 }}
-                            customWrapper={text => {
+                            customWrapper={(text) => {
                                 return (
                                     <Text
                                         ellipsizeMode='tail'
@@ -125,8 +125,8 @@ export default props => {
                             tagsStyles={{
                                 rawtext: {
                                     fontSize: 21,
-                                    color: theme.dark ? 'white' : 'black'
-                                }
+                                    color: theme.dark ? 'white' : 'black',
+                                },
                             }}
                         />
                     ) : null}
@@ -135,14 +135,14 @@ export default props => {
                     style={{
                         marginTop: 'auto',
                         flexDirection: 'row',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <View style={{ flexDirection: 'row' }}>{renderDate(article.date)}</View>
                     <View
                         style={{
                             flexDirection: 'row',
-                            marginLeft: 'auto'
+                            marginLeft: 'auto',
                         }}
                     >
                         {enableComments && (
@@ -155,7 +155,7 @@ export default props => {
                                             position: 'absolute',
                                             top: -4,
                                             right: -6,
-                                            backgroundColor: theme.colors.accent
+                                            backgroundColor: theme.colors.accent,
                                         }}
                                     >
                                         {article.comments.length > 99
@@ -192,17 +192,17 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         paddingBottom: 30,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     storyContainer: {
-        flex: 1
+        flex: 1,
     },
     featuredImage: {
         width: 125,
         height: 80,
-        borderRadius: 8
+        borderRadius: 8,
     },
     storyInfo: {
-        flex: 1
-    }
+        flex: 1,
+    },
 })
