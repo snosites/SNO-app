@@ -171,7 +171,12 @@ const domainApiService = {
     getCustomHomeCategoryColor: async (domainUrl) => {
         try {
             const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_color`
+                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_color`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
             )
             return response.data
         } catch (err) {

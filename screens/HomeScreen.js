@@ -224,7 +224,7 @@ class HomeScreen extends React.Component {
 
         const categoryBackgroundColor = homeScreenCategoryColor
             ? homeScreenCategoryColor
-            : theme.colors.accent
+            : theme.colors.primary
 
         let primaryCategoryBackgroundColor = Color(categoryBackgroundColor)
         let isCategoryColorDark = primaryCategoryBackgroundColor.isDark()
@@ -232,6 +232,7 @@ class HomeScreen extends React.Component {
         return (
             <ScrollView style={{ flex: 1 }}>
                 {categoryTitles.map((title, i) => {
+                    const margin = i ? 40 : 0
                     return (
                         <View style={{ flex: 1 }} key={i}>
                             <TouchableOpacity
@@ -246,6 +247,7 @@ class HomeScreen extends React.Component {
                                     backgroundColor: categoryBackgroundColor,
                                     justifyContent: 'center',
                                     paddingVertical: 10,
+                                    marginTop: margin,
                                 }}
                             >
                                 <Text

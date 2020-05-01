@@ -198,8 +198,10 @@ function* getCustomOptions(domain) {
             homeScreenCategories.push(Number(category3.result))
         }
 
+        console.log('homeScreenCategoryColor', homeScreenCategoryColor)
+
         if (!homeScreenCategoryColor.result) {
-            homeScreenCategoryColor.result = '#83B33B'
+            homeScreenCategoryColor.result = null
         }
 
         yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
