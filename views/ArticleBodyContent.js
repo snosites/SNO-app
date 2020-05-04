@@ -117,6 +117,7 @@ export default class ArticleBodyContent extends React.Component {
                                 //TODO: keep stories links in app if in app menu
                                 alterChildren={(node) => {
                                     if (node.name === 'iframe') {
+                                        //check node
                                         console.log('node', node)
                                         delete node.attribs.width
                                         delete node.attribs.height
