@@ -7,7 +7,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     TouchableOpacity,
-    Platform
+    Platform,
 } from 'react-native'
 import Moment from 'moment'
 import Color from 'color'
@@ -21,14 +21,15 @@ import { connect } from 'react-redux'
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: '1 day'
-    }
+        d: '1 day',
+    },
 })
 
+// open articles in app
 class RelatedStoriesList extends React.Component {
     state = {
         stories: [],
-        error: ''
+        error: '',
     }
 
     componentDidMount() {
@@ -44,7 +45,7 @@ class RelatedStoriesList extends React.Component {
                     flex: 1,
                     justifyContent: 'center',
                     padding: 10,
-                    borderRadius: 8
+                    borderRadius: 8,
                 }}
             >
                 <Text
@@ -53,7 +54,7 @@ class RelatedStoriesList extends React.Component {
                         color: '#757575',
                         fontSize: 19,
                         fontWeight: 'bold',
-                        paddingVertical: 10
+                        paddingVertical: 10,
                     }}
                 >
                     Related Stories
@@ -76,7 +77,7 @@ class RelatedStoriesList extends React.Component {
                     <FlatList
                         // style={{ flex: 1, marginVertical: 5 }}
                         data={stories}
-                        keyExtractor={item => item.id.toString()}
+                        keyExtractor={(item) => item.id.toString()}
                         renderItem={this._renderItem}
                     />
                 </View>
@@ -103,7 +104,7 @@ class RelatedStoriesList extends React.Component {
                         <HTML
                             html={article.title.rendered}
                             baseFontStyle={{ fontSize: 16 }}
-                            customWrapper={text => {
+                            customWrapper={(text) => {
                                 return (
                                     <Text ellipsizeMode='tail' numberOfLines={2}>
                                         {text}
@@ -114,8 +115,8 @@ class RelatedStoriesList extends React.Component {
                                 rawtext: {
                                     fontSize: 16,
                                     fontWeight: 'bold',
-                                    color: theme.dark ? 'white' : 'black'
-                                }
+                                    color: theme.dark ? 'white' : 'black',
+                                },
                             }}
                         />
                         <Text
@@ -123,7 +124,7 @@ class RelatedStoriesList extends React.Component {
                             numberOfLines={1}
                             style={{
                                 color: theme.colors.accent,
-                                fontSize: 14
+                                fontSize: 14,
                             }}
                         >
                             {article.custom_fields.writer
@@ -134,7 +135,7 @@ class RelatedStoriesList extends React.Component {
                             style={{
                                 flexDirection: 'row',
                                 alignItems: 'center',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -147,12 +148,12 @@ class RelatedStoriesList extends React.Component {
         )
     }
 
-    _renderDate = date => {
+    _renderDate = (date) => {
         return (
             <Text
                 style={{
                     fontSize: 14,
-                    color: '#9e9e9e'
+                    color: '#9e9e9e',
                 }}
             >
                 {Moment().isAfter(Moment(date).add(7, 'days'))
@@ -162,7 +163,7 @@ class RelatedStoriesList extends React.Component {
         )
     }
 
-    _renderWriters = writers => {
+    _renderWriters = (writers) => {
         let newArr = ''
         for (let i = 0; i < writers.length; i++) {
             if (i === writers.length - 2) {
@@ -176,7 +177,7 @@ class RelatedStoriesList extends React.Component {
         return newArr
     }
 
-    _getStory = async id => {
+    _getStory = async (id) => {
         const { activeDomain } = this.props
         const result = await fetch(`https://${activeDomain.url}/wp-json/wp/v2/posts/${id}`)
         const post = await result.json()
@@ -187,20 +188,20 @@ class RelatedStoriesList extends React.Component {
         return post
     }
 
-    _fetchRelatedStories = async storyIds => {
+    _fetchRelatedStories = async (storyIds) => {
         try {
             const stories = await Promise.all(
-                storyIds.map(async id => {
+                storyIds.map(async (id) => {
                     return await this._getStory(Number(id))
                 })
             )
             this.setState({
-                stories
+                stories,
             })
         } catch (err) {
             console.log('error fetching related stories', err)
             this.setState({
-                error: true
+                error: true,
             })
         }
     }
@@ -212,23 +213,23 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 10,
         marginVertical: 10,
-        padding: 10
+        padding: 10,
     },
     featuredImage: {
         width: 95,
         height: 60,
-        borderRadius: 8
+        borderRadius: 8,
     },
     storyInfo: {
         flex: 1,
         marginLeft: 10,
-        justifyContent: 'space-between'
-    }
+        justifyContent: 'space-between',
+    },
 })
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     activeDomain: getActiveDomain(state),
-    theme: state.theme
+    theme: state.theme,
 })
 
 export default connect(mapStateToProps)(RelatedStoriesList)
