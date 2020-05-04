@@ -114,6 +114,7 @@ export default class ArticleBodyContent extends React.Component {
                                 }}
                                 textSelectable={true}
                                 onLinkPress={(e, href) => this._viewLink(href)}
+                                //TODO: keep stories links in app if in app menu
                                 alterChildren={(node) => {
                                     if (node.name === 'iframe') {
                                         console.log('node', node)
