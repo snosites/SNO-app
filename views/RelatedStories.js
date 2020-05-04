@@ -25,7 +25,6 @@ Moment.updateLocale('en', {
     },
 })
 
-// open articles in app
 class RelatedStoriesList extends React.Component {
     state = {
         stories: [],
