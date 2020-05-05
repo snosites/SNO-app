@@ -24,7 +24,7 @@ import TabletArticleListContent from '../views/TabletArticleListContent'
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 
 // header icon native look component
-const IoniconsHeaderButton = passMeFurther => (
+const IoniconsHeaderButton = (passMeFurther) => (
     <HeaderButton
         {...passMeFurther}
         IconComponent={Ionicons}
@@ -38,7 +38,7 @@ const CustomHeaderTitle = ({ children, style }) => {
     return (
         <HTML
             html={children}
-            customWrapper={text => {
+            customWrapper={(text) => {
                 return (
                     <Text ellipsizeMode='tail' numberOfLines={1} style={[...style, styles.title]}>
                         {text}
@@ -77,14 +77,14 @@ class ListScreen extends React.Component {
                     resizeMode='contain'
                 />
             ),
-            headerBackTitle: null
+            headerBackTitle: null,
         }
     }
 
     state = {
         snackbarSavedVisible: false,
         snackbarRemovedVisible: false,
-        isTablet: false
+        isTablet: false,
     }
 
     componentDidMount() {
@@ -93,7 +93,7 @@ class ListScreen extends React.Component {
             this._playAnimation()
         }
         navigation.setParams({
-            headerLogo: global.headerSmall
+            headerLogo: global.headerSmall,
         })
         this.getDeviceTypeComponent()
     }
@@ -132,11 +132,11 @@ class ListScreen extends React.Component {
                 <SafeAreaView
                     style={{
                         flex: 1,
-                        marginTop: 20
+                        marginTop: 20,
                     }}
                 >
                     <LottieView
-                        ref={animation => this._saveAnimationRef(animation)}
+                        ref={(animation) => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
                         loop={true}
@@ -151,11 +151,11 @@ class ListScreen extends React.Component {
                 <SafeAreaView
                     style={{
                         flex: 1,
-                        marginTop: 20
+                        marginTop: 20,
                     }}
                 >
                     <LottieView
-                        ref={animation => this._saveAnimationRef(animation)}
+                        ref={(animation) => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
                         loop={true}
@@ -172,14 +172,14 @@ class ListScreen extends React.Component {
                         style={{
                             width: 150,
                             height: 150,
-                            alignItems: 'center'
+                            alignItems: 'center',
                         }}
                     >
                         <LottieView
-                            ref={animation => this._saveAnimationRef(animation)}
+                            ref={(animation) => this._saveAnimationRef(animation)}
                             style={{
                                 width: 150,
-                                height: 150
+                                height: 150,
                             }}
                             loop={true}
                             autoPlay={true}
@@ -195,8 +195,8 @@ class ListScreen extends React.Component {
                         theme={{
                             roundness: 7,
                             colors: {
-                                primary: theme ? theme.colors.primary : '#2099CE'
-                            }
+                                primary: theme ? theme.colors.primary : '#2099CE',
+                            },
                         }}
                         style={{ padding: 5 }}
                         onPress={this._handleRefresh}
@@ -248,7 +248,7 @@ class ListScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarSavedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Added To Saved List
@@ -262,7 +262,7 @@ class ListScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarRemovedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Removed From Saved List
@@ -275,15 +275,15 @@ class ListScreen extends React.Component {
         this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _saveRef = ref => {
+    _saveRef = (ref) => {
         this.flatListRef = ref
     }
 
-    _saveAnimationRef = ref => {
+    _saveAnimationRef = (ref) => {
         this.animation = ref
     }
 
-    _saveRemoveToggle = article => {
+    _saveRemoveToggle = (article) => {
         if (article.saved) {
             this._handleArticleRemove(article.id)
         } else {
@@ -291,19 +291,19 @@ class ListScreen extends React.Component {
         }
     }
 
-    _handleArticleSave = article => {
+    _handleArticleSave = (article) => {
         const { activeDomain, saveArticle } = this.props
         saveArticle(article, activeDomain.id)
         this.setState({
-            snackbarSavedVisible: true
+            snackbarSavedVisible: true,
         })
     }
 
-    _handleArticleRemove = articleId => {
+    _handleArticleRemove = (articleId) => {
         const { activeDomain } = this.props
         this.props.removeSavedArticle(articleId, activeDomain.id)
         this.setState({
-            snackbarRemovedVisible: true
+            snackbarRemovedVisible: true,
         })
     }
 
@@ -311,7 +311,7 @@ class ListScreen extends React.Component {
         const { activeDomain, category, fetchMoreArticlesIfNeeded } = this.props
         fetchMoreArticlesIfNeeded({
             domain: activeDomain.url,
-            category: category.categoryId
+            category: category.categoryId,
         })
     }
 
@@ -320,7 +320,7 @@ class ListScreen extends React.Component {
         invalidateArticles(category.categoryId)
         fetchArticlesIfNeeded({
             domain: activeDomain.url,
-            category: category.categoryId
+            category: category.categoryId,
         })
     }
 
@@ -335,24 +335,24 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0
+        right: 0,
     },
     title: {
         ...Platform.select({
             ios: {
                 fontSize: 17,
-                fontWeight: '600'
+                fontWeight: '600',
             },
             android: {
                 fontSize: 20,
-                fontWeight: '500'
+                fontWeight: '500',
             },
             default: {
                 fontSize: 18,
-                fontWeight: '400'
-            }
-        })
-    }
+                fontWeight: '400',
+            },
+        }),
+    },
 })
 
 const mapStateToProps = (state, ownProps) => {
@@ -365,10 +365,10 @@ const mapStateToProps = (state, ownProps) => {
             activeDomain,
             menus: state.global.menuItems,
             category: {
-                isFetching: false
+                isFetching: false,
             },
             articlesByCategory: [],
-            global: state.global
+            global: state.global,
         }
     }
     return {
@@ -377,8 +377,8 @@ const mapStateToProps = (state, ownProps) => {
         menus: state.global.menuItems,
         global: state.global,
         category: state.articlesByCategory[categoryId],
-        articlesByCategory: state.articlesByCategory[categoryId].items.map(articleId => {
-            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+        articlesByCategory: state.articlesByCategory[categoryId].items.map((articleId) => {
+            const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
                 return savedArticle.id == articleId
             })
             if (found) {
@@ -387,19 +387,19 @@ const mapStateToProps = (state, ownProps) => {
                 state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
-        })
+        }),
     }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     saveArticle: (article, domainId) =>
         dispatch(savedArticleActions.saveArticle(article, domainId)),
     removeSavedArticle: (articleId, domainId) =>
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
-    invalidateArticles: categoryId => dispatch(articlesActions.invalidateArticles(categoryId)),
-    fetchArticlesIfNeeded: payload => dispatch(articlesActions.fetchArticlesIfNeeded(payload)),
-    fetchMoreArticlesIfNeeded: payload =>
-        dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload))
+    invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
+    fetchArticlesIfNeeded: (payload) => dispatch(articlesActions.fetchArticlesIfNeeded(payload)),
+    fetchMoreArticlesIfNeeded: (payload) =>
+        dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListScreen)

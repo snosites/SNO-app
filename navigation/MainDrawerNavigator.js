@@ -53,7 +53,7 @@ const MyDrawerNavigator = createDrawerNavigator(
 )
 
 MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
-    const { theme } = screenProps
+    const { theme, homeScreenMode } = screenProps
     return {
         tabBarLabel: 'Home',
         tabBarIcon: ({ focused }) => (
@@ -64,6 +64,10 @@ MyDrawerNavigator.navigationOptions = ({ screenProps }) => {
             />
         ),
         tabBarOnPress: ({ navigation }) => {
+            if (homeScreenMode === 'legacy') {
+                navigation.navigate('List', { scrollToTop: true })
+                return
+            }
             navigation.navigate('HomeScreen', {
                 scrollToTop: true,
             })

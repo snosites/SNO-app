@@ -98,13 +98,6 @@ class HomeScreen extends React.Component {
             headerLogo: global.headerSmall,
         })
         this.getDeviceTypeComponent()
-    }
-
-    componentDidUpdate() {
-        if (this.animation) {
-            this._playAnimation()
-        }
-        const { navigation, articlesLoading, global } = this.props
 
         if (global.homeScreenMode === 'legacy') {
             const menus = global.menuItems
@@ -115,6 +108,14 @@ class HomeScreen extends React.Component {
                 })
             }
         }
+    }
+
+    componentDidUpdate() {
+        if (this.animation) {
+            this._playAnimation()
+        }
+
+        const { navigation, articlesLoading, global } = this.props
 
         if (!articlesLoading && !global.homeScreenCategories.length) {
             const menus = global.menuItems
@@ -239,7 +240,6 @@ class HomeScreen extends React.Component {
                 {categoryTitles.map((title, i) => {
                     const margin = i ? 40 : 0
                     const listLength = homeScreenCategoryAmounts[i] || 5
-                    console.log('listLength', listLength)
                     return (
                         <View style={{ flex: 1 }} key={i}>
                             <TouchableOpacity

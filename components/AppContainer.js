@@ -9,7 +9,7 @@ import NavigationService from '../utils/NavigationService'
 import { Provider as PaperProvider } from 'react-native-paper'
 import Color from 'color'
 
-const AppContainer = ({ theme }) => {
+const AppContainer = ({ theme, homeScreenMode }) => {
     let primaryColor = Color(theme.colors.primary)
     let isDark = primaryColor.isDark()
 
@@ -18,8 +18,8 @@ const AppContainer = ({ theme }) => {
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
                 <AppNavigator
-                    screenProps={{ theme: theme }}
-                    ref={navigatorRef => {
+                    screenProps={{ theme: theme, homeScreenMode: homeScreenMode }}
+                    ref={(navigatorRef) => {
                         NavigationService.setTopLevelNavigator(navigatorRef)
                     }}
                 />
@@ -29,8 +29,9 @@ const AppContainer = ({ theme }) => {
     )
 }
 
-const mapStateToProps = state => ({
-    theme: state.theme
+const mapStateToProps = (state) => ({
+    theme: state.theme,
+    homeScreenMode: state.global.homeScreenMode,
 })
 
 export default connect(mapStateToProps)(AppContainer)
