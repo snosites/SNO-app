@@ -198,8 +198,6 @@ export default class ArticleBodyContent extends React.Component {
             if (source.includes('iframe')) {
                 let regex = /<iframe.*?src="(.*?)"/
                 var src = regex.exec(source)[1]
-
-                // console.log('reg ex', src)
                 return (
                     <WebView
                         scrollEnabled={false}

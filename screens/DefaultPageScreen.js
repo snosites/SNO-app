@@ -79,7 +79,6 @@ class DefaultPageScreen extends React.Component {
     componentDidMount() {
         const { navigation, global } = this.props
         const pageId = navigation.getParam('pageId', null)
-        console.log('pageId', pageId)
         navigation.setParams({
             headerLogo: global.headerSmall
         })
@@ -210,7 +209,6 @@ class DefaultPageScreen extends React.Component {
             }
 
             const page = await response.json()
-            console.log('this is page', page)
 
             this.setState({
                 doneLoading: true,

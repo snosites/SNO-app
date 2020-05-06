@@ -7,7 +7,7 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native'
 import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel'
 import HTML from 'react-native-render-html'
@@ -39,12 +39,11 @@ class Slideshow extends React.Component {
     state = {
         activeSlide: SLIDER_FIRST_ITEM,
         photos: [],
-        error: false
+        error: false,
     }
 
     componentDidMount() {
         if (this.props.imageIds) {
-            console.log('getting ids')
             this._getImageData(this.props.imageIds)
         }
     }
@@ -57,7 +56,7 @@ class Slideshow extends React.Component {
                     style={{
                         flex: 1,
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <Text style={{ textAlign: 'center', margin: 20 }}>Error loading slideshow</Text>
@@ -70,7 +69,7 @@ class Slideshow extends React.Component {
                     style={{
                         flex: 1,
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <ActivityIndicator />
@@ -82,7 +81,7 @@ class Slideshow extends React.Component {
                 <Carousel
                     // layout={'stack'}
                     // layoutCardOffset={18}
-                    ref={c => {
+                    ref={(c) => {
                         this._carousel = c
                     }}
                     data={this.props.imageIds ? photos : this.props.images}
@@ -99,9 +98,9 @@ class Slideshow extends React.Component {
                     inactiveSlideScale={0.94}
                     inactiveSlideOpacity={0.7}
                     containerCustomStyle={styles.slider}
-                    onSnapToItem={index =>
+                    onSnapToItem={(index) =>
                         this.setState({
-                            activeSlide: index
+                            activeSlide: index,
                         })
                     }
                 />
@@ -121,29 +120,27 @@ class Slideshow extends React.Component {
         )
     }
 
-    _getImage = async imageId => {
+    _getImage = async (imageId) => {
         const { activeDomain } = this.props
         const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
         return await result.json()
     }
 
-    _getImageData = async imageIds => {
+    _getImageData = async (imageIds) => {
         try {
-            console.log('img ids', imageIds)
             const images = await Promise.all(
-                imageIds.map(async id => {
+                imageIds.map(async (id) => {
                     return await this._getImage(id)
                 })
             )
-            console.log('images', images)
-            const filteredImages = images.filter(img => img.id)
+            const filteredImages = images.filter((img) => img.id)
             this.setState({
-                photos: filteredImages
+                photos: filteredImages,
             })
         } catch (err) {
             console.log('error getting slideshow images', err)
             this.setState({
-                error: true
+                error: true,
             })
         }
     }
@@ -168,7 +165,7 @@ class Slideshow extends React.Component {
                         <HTML
                             html={item.caption.rendered}
                             baseFontStyle={{ fontSize: 12 }}
-                            customWrapper={text => {
+                            customWrapper={(text) => {
                                 return (
                                     <Text ellipsizeMode='tail' numberOfLines={2}>
                                         {text}
@@ -180,8 +177,8 @@ class Slideshow extends React.Component {
                                     color: 'white',
                                     fontSize: 12,
                                     fontWeight: 'bold',
-                                    letterSpacing: 0.5
-                                }
+                                    letterSpacing: 0.5,
+                                },
                             }}
                         />
                     ) : null}
@@ -203,7 +200,7 @@ const styles = StyleSheet.create({
         width: itemWidth,
         height: slideHeight,
         paddingHorizontal: itemHorizontalMargin,
-        paddingBottom: 18 // needed for shadow
+        paddingBottom: 18, // needed for shadow
     },
     shadow: {
         position: 'absolute',
@@ -216,21 +213,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.45,
         shadowOffset: { width: 10, height: 10 },
         shadowRadius: 10,
-        borderRadius: entryBorderRadius
+        borderRadius: entryBorderRadius,
     },
     imageContainer: {
         flex: 1,
         marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
         backgroundColor: Colors.black,
         borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        borderTopRightRadius: entryBorderRadius,
     },
     image: {
         ...StyleSheet.absoluteFillObject,
         resizeMode: 'contain',
         borderRadius: IS_IOS ? entryBorderRadius : 0,
         borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        borderTopRightRadius: entryBorderRadius,
     },
     // image's border radius is buggy on iOS; let's hack it!
     radiusMask: {
@@ -239,7 +236,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: entryBorderRadius,
-        backgroundColor: Colors.black
+        backgroundColor: Colors.black,
     },
     textContainer: {
         justifyContent: 'center',
@@ -248,37 +245,37 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         backgroundColor: Colors.black,
         borderBottomLeftRadius: entryBorderRadius,
-        borderBottomRightRadius: entryBorderRadius
+        borderBottomRightRadius: entryBorderRadius,
     },
     title: {
         color: 'white',
         fontSize: 14,
         fontWeight: 'bold',
-        letterSpacing: 0.5
+        letterSpacing: 0.5,
     },
     subtitle: {
         // marginTop: 6,
         color: Colors.gray,
         fontSize: 12,
-        fontStyle: 'italic'
+        fontStyle: 'italic',
     },
     slider: {
         marginTop: 15,
-        overflow: 'visible' // for custom animations
+        overflow: 'visible', // for custom animations
     },
     paginationContainer: {
-        paddingVertical: 8
+        paddingVertical: 8,
     },
     paginationDot: {
         width: 8,
         height: 8,
         borderRadius: 4,
-        marginHorizontal: 8
-    }
+        marginHorizontal: 8,
+    },
 })
 
-const mapStateToProps = state => ({
-    activeDomain: getActiveDomain(state)
+const mapStateToProps = (state) => ({
+    activeDomain: getActiveDomain(state),
 })
 
 export default connect(mapStateToProps)(Slideshow)

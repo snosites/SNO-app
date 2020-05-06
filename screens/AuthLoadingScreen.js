@@ -13,18 +13,17 @@ import { getReleaseChannel } from '../constants/config'
 
 const version = getReleaseChannel()
 
-console.log('this is version', version, Constants.manifest)
 const primaryColor =
     version === 'sns'
         ? Constants.manifest.extra.highSchool.primary
         : Constants.manifest.extra.college.primary
-        
+
 const createUserErrorSelector = createErrorMessageSelector([
     userTypes.FIND_OR_CREATE_USER,
-    globalTypes.INITIALIZE_USER
+    globalTypes.INITIALIZE_USER,
 ])
 
-const AuthLoadingScreen = props => {
+const AuthLoadingScreen = (props) => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
     const { initializeUser, error } = props
 
@@ -35,7 +34,6 @@ const AuthLoadingScreen = props => {
         initializeUser()
     }, [switchingDomain])
 
-
     if (error) {
         return (
             <View
@@ -43,7 +41,7 @@ const AuthLoadingScreen = props => {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundColor: 'white'
+                    backgroundColor: 'white',
                 }}
             >
                 <StatusBar barStyle='light-content' />
@@ -57,7 +55,7 @@ const AuthLoadingScreen = props => {
                         width: 250,
                         height: 100,
                         resizeMode: 'contain',
-                        marginBottom: 50
+                        marginBottom: 50,
                     }}
                 />
                 <Text
@@ -67,7 +65,7 @@ const AuthLoadingScreen = props => {
                         paddingBottom: 50,
                         fontSize: 20,
                         fontWeight: 'bold',
-                        color: 'black'
+                        color: 'black',
                     }}
                 >
                     Sorry, there was a problem authenticating your device.
@@ -77,8 +75,8 @@ const AuthLoadingScreen = props => {
                     theme={{
                         roundness: 7,
                         colors: {
-                            primary: primaryColor
-                        }
+                            primary: primaryColor,
+                        },
                     }}
                     style={{ padding: 5, marginBottom: 20, marginHorizontal: 30 }}
                     onPress={() => initializeUser()}
@@ -97,17 +95,14 @@ const AuthLoadingScreen = props => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        error: createUserErrorSelector(state)
+        error: createUserErrorSelector(state),
     }
 }
 
-const mapDispatchToProps = dispatch => ({
-    initializeUser: () => dispatch(globalActions.initializeUser())
+const mapDispatchToProps = (dispatch) => ({
+    initializeUser: () => dispatch(globalActions.initializeUser()),
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AuthLoadingScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(AuthLoadingScreen)

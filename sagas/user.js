@@ -32,8 +32,6 @@ export function* fetchNotificationSubscriptions(domainId) {
         call(apiService.getSubscriptions, apiToken),
         call(apiService.getWriterSubscriptions, apiToken)
     ])
-
-    console.log('notifications', notifications, writerNotifications)
     yield put(domainsActions.setNotifications(domainId, notifications))
     yield put(userActions.setWriterSubscriptions(writerNotifications))
 }

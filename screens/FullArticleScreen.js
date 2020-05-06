@@ -350,7 +350,6 @@ class FullArticleScreen extends React.Component {
                                             })
                                         }
                                         this.setState({ showDialog: false, subscribeTo: [] })
-                                        console.log('sub to list', this.state.subscribeTo)
                                     }}
                                 >
                                     Okay
