@@ -159,6 +159,8 @@ export default class ArticleBodyContent extends React.Component {
                                         color: '#757575',
                                     },
                                 }}
+                                // possibly alter node here for links in app
+
                                 // alterNode={(node) => {
                                 //     if (node.attribs && node.attribs['data-photo-ids']) {
                                 //         return {
