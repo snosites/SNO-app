@@ -113,9 +113,12 @@ export default class ArticleBodyContent extends React.Component {
                                     width: viewportWidth,
                                 }}
                                 textSelectable={true}
-                                onLinkPress={(e, href) => this._viewLink(href)}
+                                onLinkPress={(e, href) => {
+                                    this._viewLink(href)
+                                }}
                                 //TODO: keep stories links in app if in app menu
                                 alterChildren={(node) => {
+                                    console.log('node', node)
                                     if (node.name === 'iframe') {
                                         //check node
                                         console.log('node', node)
@@ -553,6 +556,11 @@ export default class ArticleBodyContent extends React.Component {
     }
 
     _viewLink = async (href) => {
+        const { activeDomain, navigation } = this.props
+        console.log('active domain', activeDomain, href)
+        if (href.includes(activeDomain)) {
+            console.log('included')
+        }
         let result = await WebBrowser.openBrowserAsync(href)
     }
 }
