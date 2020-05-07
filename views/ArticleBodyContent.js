@@ -20,6 +20,9 @@ import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'
 import { slideshowRenderer, relatedRenderer } from '../utils/Renderers'
 
+import { handleArticlePress } from '../utils/articlePress'
+import { asyncFetchArticle } from '../utils/sagaHelpers'
+
 Moment.updateLocale('en', {
     relativeTime: {
         d: '1 day',
@@ -558,10 +561,21 @@ export default class ArticleBodyContent extends React.Component {
     _viewLink = async (href) => {
         const { activeDomain, navigation } = this.props
         console.log('active domain', activeDomain, href)
-        if (href.includes(activeDomain)) {
-            console.log('included')
+        if (href.includes(activeDomain.url)) {
+            const matchPattern = `${activeDomain.url}\/([0-9]+)`
+
+            const matches = new RegExp(matchPattern).exec(href)
+
+            if (matches && matches[1]) {
+                const article = await asyncFetchArticle(activeDomain.url, Number(matches[1]))
+
+                handleArticlePress(article, activeDomain)
+            } else {
+                let result = await WebBrowser.openBrowserAsync(href)
+            }
+        } else {
+            let result = await WebBrowser.openBrowserAsync(href)
         }
-        let result = await WebBrowser.openBrowserAsync(href)
     }
 }
 
