@@ -35,6 +35,8 @@ const MEDIASIZE = viewportHeight * 0.35
 const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
+    state = { loadingLink: false }
+
     render() {
         const { theme, article } = this.props
         return (
@@ -119,12 +121,8 @@ export default class ArticleBodyContent extends React.Component {
                                 onLinkPress={(e, href) => {
                                     this._viewLink(href)
                                 }}
-                                //TODO: keep stories links in app if in app menu
                                 alterChildren={(node) => {
-                                    console.log('node', node)
                                     if (node.name === 'iframe') {
-                                        //check node
-                                        console.log('node', node)
                                         delete node.attribs.width
                                         delete node.attribs.height
                                     }
@@ -560,7 +558,7 @@ export default class ArticleBodyContent extends React.Component {
 
     _viewLink = async (href) => {
         const { activeDomain, navigation } = this.props
-        console.log('active domain', activeDomain, href)
+
         if (href.includes(activeDomain.url)) {
             const matchPattern = `${activeDomain.url}\/([0-9]+)`
 
