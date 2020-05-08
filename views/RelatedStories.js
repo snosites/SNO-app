@@ -90,7 +90,7 @@ class RelatedStoriesList extends React.Component {
         return (
             <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={() => handleArticlePress(article, activeDomain)}
+                onPress={() => handleArticlePress(article, activeDomain, true)}
             >
                 <View style={styles.storyContainer}>
                     {article.featuredImage ? (

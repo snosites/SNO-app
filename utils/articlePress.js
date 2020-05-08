@@ -5,16 +5,16 @@ import NavigationService from '../utils/NavigationService'
 import { actions as globalActions } from '../redux/global'
 import { store } from '../redux/configureStore'
 
-getAttachmentsAsync = async article => {
+getAttachmentsAsync = async (article) => {
     const response = await fetch(article._links['wp:attachment'][0].href)
     const imageAttachments = await response.json()
     return imageAttachments
 }
 
-export const handleArticlePress = (article, activeDomain) => {
+export const handleArticlePress = (article, activeDomain, scrollToTop = false) => {
     // log the article to analytics
     Amplitude.logEventWithProperties('view story', {
-        storyId: article.id
+        storyId: article.id,
     })
 
     store.dispatch(globalActions.addStoryView(activeDomain.url, article.id))
@@ -26,15 +26,15 @@ export const handleArticlePress = (article, activeDomain) => {
             article.custom_fields.sno_format == 'Full-Width' ||
             article.custom_fields.sno_format == 'Side-Rails')
     ) {
-        handleRegularArticle(article)
+        handleRegularArticle(article, scrollToTop)
     } else {
-        handleLongFormArticle(article, activeDomain)
+        handleLongFormArticle(article, activeDomain, scrollToTop)
     }
 }
 
-handleRegularArticle = async article => {
+handleRegularArticle = async (article, scrollToTop) => {
     Haptics.selectionAsync()
-    NavigationService.navigate('FullArticle')
+    NavigationService.navigate('FullArticle', { scrollToTop })
     // check if there is a slideshow
     if (
         article.custom_fields.featureimage &&
@@ -46,15 +46,16 @@ handleRegularArticle = async article => {
         articleId: article.id,
         article,
         commentNumber: article.comments.length,
-        comments: article.comments
+        comments: article.comments,
+        scrollToTop,
     })
 }
 
-handleLongFormArticle = async (article, activeDomain) => {
+handleLongFormArticle = async (article, activeDomain, scrollToTop) => {
     console.log('long form article press', article)
     Haptics.selectionAsync()
     let storyChapters = []
-    NavigationService.navigate('FullArticle')
+    NavigationService.navigate('FullArticle', { scrollToTop })
     if (article.custom_fields.sno_format == 'Long-Form') {
         let results = await fetch(
             `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`
@@ -73,7 +74,7 @@ handleLongFormArticle = async (article, activeDomain) => {
         storyChapters = await results.json()
     }
     let updatedStoryChapters = await Promise.all(
-        storyChapters.map(async article => {
+        storyChapters.map(async (article) => {
             const response = await fetch(
                 `https://${activeDomain.url}/wp-json/wp/v2/posts/${article.ID}`
             )
@@ -81,7 +82,7 @@ handleLongFormArticle = async (article, activeDomain) => {
         })
     )
     updatedStoryChapters = await Promise.all(
-        updatedStoryChapters.map(async article => {
+        updatedStoryChapters.map(async (article) => {
             if (
                 article.custom_fields.featureimage &&
                 article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'
@@ -98,7 +99,7 @@ handleLongFormArticle = async (article, activeDomain) => {
                         caption:
                             featuredImage.caption && featuredImage.caption.rendered
                                 ? featuredImage.caption.rendered
-                                : 'Unknown'
+                                : 'Unknown',
                     }
                     return article
                 }
@@ -110,7 +111,7 @@ handleLongFormArticle = async (article, activeDomain) => {
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
                             ? featuredImage.caption.rendered
-                            : ''
+                            : '',
                 }
             }
             return article
@@ -118,7 +119,7 @@ handleLongFormArticle = async (article, activeDomain) => {
     )
     if (article.custom_fields.sno_format == 'Long-Form') {
         // sort long form chapters
-        updatedStoryChapters.sort(function(a, b) {
+        updatedStoryChapters.sort(function (a, b) {
             if (
                 a.custom_fields.sno_longform_order &&
                 a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order &&
@@ -139,6 +140,7 @@ handleLongFormArticle = async (article, activeDomain) => {
         article,
         articleChapters: updatedStoryChapters,
         commentNumber: article.comments.length,
-        comments: article.comments
+        comments: article.comments,
+        scrollToTop,
     })
 }

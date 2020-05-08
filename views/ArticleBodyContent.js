@@ -567,7 +567,7 @@ export default class ArticleBodyContent extends React.Component {
             if (matches && matches[1]) {
                 const article = await asyncFetchArticle(activeDomain.url, Number(matches[1]))
 
-                handleArticlePress(article, activeDomain)
+                handleArticlePress(article, activeDomain, true)
             } else {
                 let result = await WebBrowser.openBrowserAsync(href)
             }

@@ -46,6 +46,23 @@ class FullArticleScreen extends React.Component {
         }
     }
 
+    componentDidUpdate() {
+        console.log('component did update')
+        const scrollToTop = this.props.navigation.getParam('scrollToTop', false)
+        console.log('scroll to top', scrollToTop)
+        if (scrollToTop) {
+            this._scrollToTop()
+        }
+    }
+
+    _saveRef = (ref) => {
+        this.flatListRef = ref
+    }
+
+    _scrollToTop = () => {
+        this.flatListRef.scrollTo({ x: 0, y: 0, animated: true })
+    }
+
     _getFilteredWriters = (domainId, terms, writerSubscriptions) => {
         const filteredWriters = terms.filter((termObj) => {
             const foundSub = writerSubscriptions.find(
@@ -161,7 +178,11 @@ class FullArticleScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <ScrollView>
+                <ScrollView
+                    ref={(ref) => {
+                        this.flatListRef = ref
+                    }}
+                >
                     <NavigationEvents
                         onDidFocus={() =>
                             this.setState({

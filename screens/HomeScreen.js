@@ -257,16 +257,18 @@ class HomeScreen extends React.Component {
                                     marginTop: margin,
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: 28,
-                                        fontWeight: 'bold',
-                                        color: isCategoryColorDark ? 'white' : 'black',
-                                        textAlign: 'center',
+                                <HTML
+                                    html={title}
+                                    baseFontStyle={{ fontSize: 28 }}
+                                    tagsStyles={{
+                                        rawtext: {
+                                            fontSize: 28,
+                                            fontWeight: 'bold',
+                                            color: isCategoryColorDark ? 'white' : 'black',
+                                            textAlign: 'center',
+                                        },
                                     }}
-                                >
-                                    {title}
-                                </Text>
+                                />
                             </TouchableOpacity>
                             {isTablet ? (
                                 <TabletArticleListContent
