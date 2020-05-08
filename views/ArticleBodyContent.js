@@ -35,8 +35,6 @@ const MEDIASIZE = viewportHeight * 0.35
 const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
-    state = { loadingLink: false }
-
     render() {
         const { theme, article } = this.props
         return (
@@ -557,7 +555,8 @@ export default class ArticleBodyContent extends React.Component {
     }
 
     _viewLink = async (href) => {
-        const { activeDomain, navigation } = this.props
+        const { activeDomain, setLoadingLink } = this.props
+        setLoadingLink(true)
 
         if (href.includes(activeDomain.url)) {
             const matchPattern = `${activeDomain.url}\/([0-9]+)`
@@ -574,6 +573,8 @@ export default class ArticleBodyContent extends React.Component {
         } else {
             let result = await WebBrowser.openBrowserAsync(href)
         }
+
+        setLoadingLink(false)
     }
 }
 

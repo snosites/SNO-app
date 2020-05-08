@@ -38,6 +38,7 @@ class FullArticleScreen extends React.Component {
         expandCaption: false,
         showDialog: false,
         subscribeTo: [],
+        loadingLink: false,
     }
 
     componentDidMount() {
@@ -50,7 +51,7 @@ class FullArticleScreen extends React.Component {
         console.log('component did update')
         const scrollToTop = this.props.navigation.getParam('scrollToTop', false)
         console.log('scroll to top', scrollToTop)
-        if (scrollToTop) {
+        if (scrollToTop && this.flatListRef) {
             this._scrollToTop()
         }
     }
@@ -142,12 +143,12 @@ class FullArticleScreen extends React.Component {
             activeDomain,
             writerSubscriptions,
         } = this.props
-        const { snackbarSavedVisible } = this.state
+        const { snackbarSavedVisible, loadingLink } = this.state
 
         let article = navigation.getParam('article', 'loading')
         let articleChapters = navigation.getParam('articleChapters', [])
 
-        if (!article || article === 'loading') {
+        if (!article || article === 'loading' || loadingLink) {
             return (
                 <View
                     style={{
@@ -204,6 +205,7 @@ class FullArticleScreen extends React.Component {
                         handleCaptionClick={this._handleCaptionClick}
                         expandCaption={this.state.expandCaption}
                         activeDomain={activeDomain}
+                        setLoadingLink={(state) => this.setState({ loadingLink: state })}
                     />
                     {articleChapters.map((article) => (
                         <ArticleBodyContent
@@ -214,6 +216,7 @@ class FullArticleScreen extends React.Component {
                             handleCaptionClick={this._handleCaptionClick}
                             expandCaption={this.state.expandCaption}
                             activeDomain={activeDomain}
+                            setLoadingLink={(state) => this.setState({ loadingLink: state })}
                         />
                     ))}
 
