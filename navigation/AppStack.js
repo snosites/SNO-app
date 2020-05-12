@@ -174,7 +174,10 @@ SettingsStack.navigationOptions = ({ screenProps }) => {
 
 const AppNav = createBottomTabNavigator(
     {
-        HomeStack: MainDrawerNavigator,
+        HomeStack: {
+            screen: MainDrawerNavigator,
+            path: 'main-drawer',
+        },
         RecentStack,
         BookmarkStack,
         SportcenterStack,

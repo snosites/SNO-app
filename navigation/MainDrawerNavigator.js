@@ -22,7 +22,10 @@ const ArticleStack = createStackNavigator(
     {
         HomeScreen: HomeScreen,
         List: { screen: ListScreen, params: { categoryId: null } },
-        FullArticle: FullArticleScreen,
+        FullArticle: {
+            screen: FullArticleScreen,
+            path: 'article/:articleId',
+        },
         Search: SearchScreen,
         Profile: ProfileScreen,
         Comments: CommentsScreen,
@@ -45,7 +48,10 @@ const ArticleStack = createStackNavigator(
 
 const MyDrawerNavigator = createDrawerNavigator(
     {
-        Home: ArticleStack,
+        Home: {
+            screen: ArticleStack,
+            path: 'home',
+        },
     },
     {
         contentComponent: CustomDrawer,
