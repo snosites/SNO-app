@@ -3,7 +3,7 @@ import { Platform } from 'react-native'
 import {
     createStackNavigator,
     createBottomTabNavigator,
-    createSwitchNavigator
+    createSwitchNavigator,
 } from 'react-navigation'
 
 import Color from 'color'
@@ -30,7 +30,7 @@ const RecentStack = createStackNavigator(
         FullArticle: FullArticleScreen,
         Profile: ProfileScreen,
         Comments: CommentsScreen,
-        Staff: StaffScreen
+        Staff: StaffScreen,
     },
     {
         defaultNavigationOptions: ({ screenProps }) => {
@@ -38,11 +38,11 @@ const RecentStack = createStackNavigator(
             let isDark = primaryColor.isDark()
             return {
                 headerStyle: {
-                    backgroundColor: screenProps.theme.colors.primary
+                    backgroundColor: screenProps.theme.colors.primary,
                 },
-                headerTintColor: isDark ? '#fff' : '#000'
+                headerTintColor: isDark ? '#fff' : '#000',
             }
-        }
+        },
     }
 )
 
@@ -55,9 +55,9 @@ RecentStack.navigationOptions = ({ screenProps }) => {
         ),
         tabBarOnPress: ({ navigation }) => {
             navigation.navigate('Recent', {
-                scrollToTop: true
+                scrollToTop: true,
             })
-        }
+        },
     }
 }
 
@@ -67,7 +67,7 @@ const BookmarkStack = createStackNavigator(
         FullArticle: FullArticleScreen,
         Profile: ProfileScreen,
         Comments: CommentsScreen,
-        Staff: StaffScreen
+        Staff: StaffScreen,
     },
     {
         defaultNavigationOptions: ({ screenProps }) => {
@@ -75,11 +75,11 @@ const BookmarkStack = createStackNavigator(
             let isDark = primaryColor.isDark()
             return {
                 headerStyle: {
-                    backgroundColor: screenProps.theme.colors.primary
+                    backgroundColor: screenProps.theme.colors.primary,
                 },
-                headerTintColor: isDark ? '#fff' : '#000'
+                headerTintColor: isDark ? '#fff' : '#000',
             }
-        }
+        },
     }
 )
 
@@ -96,15 +96,15 @@ BookmarkStack.navigationOptions = ({ screenProps }) => {
         ),
         tabBarOnPress: ({ navigation }) => {
             navigation.navigate('Saved', {
-                scrollToTop: true
+                scrollToTop: true,
             })
-        }
+        },
     }
 }
 
 const SportcenterStack = createStackNavigator(
     {
-        Sportcenter: SportcenterScreen
+        Sportcenter: SportcenterScreen,
     },
     {
         defaultNavigationOptions: ({ screenProps }) => {
@@ -112,11 +112,11 @@ const SportcenterStack = createStackNavigator(
             let isDark = primaryColor.isDark()
             return {
                 headerStyle: {
-                    backgroundColor: screenProps.theme.colors.primary
+                    backgroundColor: screenProps.theme.colors.primary,
                 },
-                headerTintColor: isDark ? '#fff' : '#000'
+                headerTintColor: isDark ? '#fff' : '#000',
             }
-        }
+        },
     }
 )
 
@@ -133,15 +133,15 @@ SportcenterStack.navigationOptions = ({ screenProps }) => {
         ),
         tabBarOnPress: ({ navigation }) => {
             navigation.navigate('SportcenterStack', {
-                scrollToTop: true
+                scrollToTop: true,
             })
-        }
+        },
     }
 }
 
 const SettingsStack = createStackNavigator(
     {
-        Settings: SettingsScreen
+        Settings: SettingsScreen,
     },
     {
         defaultNavigationOptions: ({ screenProps }) => {
@@ -149,11 +149,11 @@ const SettingsStack = createStackNavigator(
             let isDark = primaryColor.isDark()
             return {
                 headerStyle: {
-                    backgroundColor: screenProps.theme.colors.primary
+                    backgroundColor: screenProps.theme.colors.primary,
                 },
-                headerTintColor: isDark ? '#fff' : '#000'
+                headerTintColor: isDark ? '#fff' : '#000',
             }
-        }
+        },
     }
 )
 
@@ -168,7 +168,7 @@ SettingsStack.navigationOptions = ({ screenProps }) => {
                 color={theme.colors.primary}
                 name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
             />
-        )
+        ),
     }
 }
 
@@ -178,20 +178,26 @@ const AppNav = createBottomTabNavigator(
         RecentStack,
         BookmarkStack,
         SportcenterStack,
-        SettingsStack
+        SettingsStack,
     },
     {
-        tabBarComponent: props => <ConnectedBottomTabBar {...props} />
+        tabBarComponent: (props) => <ConnectedBottomTabBar {...props} />,
     }
 )
 
 export default createSwitchNavigator(
     {
-        AppSetup: AppSetupScreen,
-        MainApp: AppNav,
-        Error: ErrorScreen
+        AppSetup: {
+            screen: AppSetupScreen,
+            path: 'app-setup',
+        },
+        MainApp: {
+            screen: AppNav,
+            path: 'main-app',
+        },
+        Error: ErrorScreen,
     },
     {
-        initialRouteName: 'AppSetup'
+        initialRouteName: 'AppSetup',
     }
 )

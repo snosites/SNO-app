@@ -39,8 +39,6 @@ class InitScreen extends React.Component {
     render() {
         const { errors, navigation, fetchAvailableDomains, domains } = this.props
 
-        console.log('init screen domains', domains)
-
         const theme = {
             roundness: 7,
             colors: {
