@@ -18,6 +18,8 @@ const AuthStack = createStackNavigator({
     LocationSelect: LocationSelect,
 })
 
+//add custom screen with params for deep linking
+
 class AppStackWithErrorBoundary extends React.Component {
     static router = AppStack.router
     render() {
