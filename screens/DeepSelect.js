@@ -38,7 +38,7 @@ const theme = {
     },
 }
 
-const SelectScreen = (props) => {
+const DeepSelectScreen = (props) => {
     const {
         navigation,
         availableDomains,
@@ -252,4 +252,4 @@ const mapDispatchToProps = (dispatch) => ({
     addSchoolSub: (url) => dispatch(globalActions.addSchoolSub(url)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(DeepSelectScreen)
