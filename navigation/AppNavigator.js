@@ -13,7 +13,7 @@ const AuthStack = createStackNavigator({
     Init: InitScreen,
     Select: {
         screen: SelectScreen,
-        path: 'select',
+        path: 'select/:schoolId',
     },
     LocationSelect: LocationSelect,
 })
