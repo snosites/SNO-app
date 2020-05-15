@@ -18,7 +18,7 @@ import HomeScreen from '../screens/HomeScreen'
 
 // add custom home screen
 
-//TODO and deep link args
+// limk to article with all needed params
 
 const ArticleStack = createStackNavigator(
     {
