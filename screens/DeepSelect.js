@@ -26,6 +26,8 @@ import InitModal from './InitModal'
 
 import { getReleaseChannel } from '../constants/config'
 
+// todo add deep link params
+
 const version = getReleaseChannel()
 
 const theme = {
