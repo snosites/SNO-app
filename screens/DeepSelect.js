@@ -28,6 +28,8 @@ import { getReleaseChannel } from '../constants/config'
 
 // todo add deep link params
 
+// custom screen for users coming from deep link to select school
+
 const version = getReleaseChannel()
 
 const theme = {
