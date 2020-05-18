@@ -16,10 +16,6 @@ import DefaultPageScreen from '../screens/DefaultPageScreen'
 
 import HomeScreen from '../screens/HomeScreen'
 
-// add custom home screen
-
-// limk to article with all needed params
-
 const ArticleStack = createStackNavigator(
     {
         HomeScreen: HomeScreen,
