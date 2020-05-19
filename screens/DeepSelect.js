@@ -65,6 +65,7 @@ const DeepSelectScreen = (props) => {
         console.log('school ID', schoolId)
         if (schoolId) {
             const foundSchool = availableDomains.find((domain) => domain.id === schoolId)
+            console.log('found school', foundSchool, availableDomains)
             if (foundSchool) {
                 setSelectedSchool(foundSchool)
             }
@@ -82,31 +83,32 @@ const DeepSelectScreen = (props) => {
             const found = domains.find((domain) => {
                 return domain.id == selectedDomain.id
             })
+            console.log('this is found domain', found)
             // if already added then set as active -- dont save
-            if (found) {
-                setActiveDomain(selectedDomain.id)
-                navigation.navigate('AuthLoading')
-                return
-            }
+            // if (found) {
+            //     setActiveDomain(selectedDomain.id)
+            //     navigation.navigate('AuthLoading')
+            //     return
+            // }
             // save new domain and send analytics
-            Amplitude.logEventWithProperties('add school', {
-                domainId: selectedDomain.id,
-            })
+            // Amplitude.logEventWithProperties('add school', {
+            //     domainId: selectedDomain.id,
+            // })
 
             //new analytics
-            addSchoolSub(selectedDomain.url)
+            // addSchoolSub(selectedDomain.url)
 
-            addDomain({
-                id: selectedDomain.id,
-                name: selectedDomain.school,
-                publication: selectedDomain.publication,
-                active: false,
-                notificationCategories: [],
-                url: selectedDomain.url,
-            })
+            // addDomain({
+            //     id: selectedDomain.id,
+            //     name: selectedDomain.school,
+            //     publication: selectedDomain.publication,
+            //     active: false,
+            //     notificationCategories: [],
+            //     url: selectedDomain.url,
+            // })
 
             // set new domain as active
-            setActiveDomain(selectedDomain.id)
+            // setActiveDomain(selectedDomain.id)
 
             setModalVisible(true)
         } catch (error) {
