@@ -58,12 +58,18 @@ const DeepSelectScreen = (props) => {
         addSchoolSub,
     } = props
 
+    const [selectedSchool, setSelectedSchool] = useState({})
+
     useEffect(() => {
-        const searchTerm = navigation.getParam('searchTerm', null)
-        if (searchTerm) {
-            searchAvailableDomains(searchTerm)
+        const schoolId = navigation.getParam('schoolId', null)
+        console.log('school ID', schoolId)
+        if (schoolId) {
+            const foundSchool = availableDomains.find((domain) => domain.id === schoolId)
+            if (foundSchool) {
+                setSelectedSchool(foundSchool)
+            }
         } else {
-            fetchAvailableDomains()
+            console.log('no school ID passed')
         }
     }, [])
 
@@ -149,7 +155,7 @@ const DeepSelectScreen = (props) => {
             </View>
         )
     }
-    if (availableDomains.length == 0) {
+    if (!selectedSchool || !selectedSchool.id) {
         return (
             <View style={{ padding: 20 }}>
                 <Text
@@ -159,7 +165,8 @@ const DeepSelectScreen = (props) => {
                         textAlign: 'center',
                     }}
                 >
-                    Sorry no schools match that search term, please try searching again.
+                    Sorry no school is available with that ID. Please contact your school or search
+                    for it manually.
                 </Text>
             </View>
         )
@@ -167,48 +174,30 @@ const DeepSelectScreen = (props) => {
 
     return (
         <ScrollView style={styles.container}>
-            {availableDomains.map((item) => {
-                return (
-                    item.school && (
-                        <View key={item.id}>
-                            <List.Item
-                                title={item.school}
-                                titleEllipsizeMode='tail'
-                                description={`${item.publication}  •  ${item.city}, ${item.state}`}
-                                descriptionEllipsizeMode='tail'
-                                style={{ paddingVertical: 0 }}
-                                left={(props) => {
-                                    if (item.icon) {
-                                        return (
-                                            <List.Icon
-                                                {...props}
-                                                icon={({ size, color }) => (
-                                                    <Image
-                                                        source={{
-                                                            uri: item.icon,
-                                                        }}
-                                                        style={{
-                                                            width: size + 5,
-                                                            height: size + 5,
-                                                            borderRadius: 4,
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        )
-                                    } else {
-                                        return <List.Icon {...props} icon='chevron-right' />
-                                    }
-                                }}
-                                onPress={() => {
-                                    _handleSelect(item)
-                                }}
-                            />
-                            <Divider />
-                        </View>
-                    )
-                )
-            })}
+            <View style={{ margin: 10 }}>
+                <Text style={{ fontSize: 16, marginBottom: 10 }}>
+                    You have selected {`${item.school}  •  ${item.city}, ${item.state}`}
+                </Text>
+                <Button
+                    mode='contained'
+                    theme={{
+                        roundness: 7,
+                        colors: {
+                            primary:
+                                version === 'sns'
+                                    ? Constants.manifest.extra.highSchool.primary
+                                    : Constants.manifest.extra.college.primary,
+                        },
+                    }}
+                    style={{ padding: 10 }}
+                    onPress={() => {
+                        Haptics.selectionAsync()
+                        _handleSelect(item)
+                    }}
+                >
+                    Get Started
+                </Button>
+            </View>
             <InitModal
                 modalVisible={modalVisible}
                 handleDismiss={_handleModalDismiss}
@@ -218,7 +207,7 @@ const DeepSelectScreen = (props) => {
     )
 }
 
-SelectScreen.navigationOptions = {
+DeepSelectScreen.navigationOptions = {
     title: 'Select Your School',
 }
 

@@ -9,11 +9,17 @@ import SelectScreen from '../screens/SelectScreen'
 import LocationSelect from '../screens/LocationSelect'
 import ErrorBoundary from '../views/ErrorBoundary'
 
+import DeepSelectScreen from '../screens/DeepSelect'
+
 const AuthStack = createStackNavigator({
     Init: InitScreen,
     Select: {
         screen: SelectScreen,
         path: 'select/:schoolId',
+    },
+    DeepSelect: {
+        screen: DeepSelectScreen,
+        path: 'deepSelect/:schoolId',
     },
     LocationSelect: LocationSelect,
 })
