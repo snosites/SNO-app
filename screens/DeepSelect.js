@@ -76,6 +76,8 @@ const DeepSelectScreen = (props) => {
         }
     }, [])
 
+    // use linking to wait until startup is loaded and then direct to page?
+
     const [modalVisible, setModalVisible] = useState(false)
 
     _handleSelect = async (selectedDomain) => {
