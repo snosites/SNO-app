@@ -60,6 +60,8 @@ const DeepSelectScreen = (props) => {
 
     const [selectedSchool, setSelectedSchool] = useState({})
 
+    // TODO set async startup code to run first
+
     useEffect(() => {
         const schoolId = navigation.getParam('schoolId', null)
         console.log('school ID', schoolId)
