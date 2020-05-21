@@ -30,6 +30,9 @@ import Constants from 'expo-constants'
 // get new home screen options
 
 function* startup(action) {
+    // if coming from deep link need to handle that
+    // make sure app doesn't redirect to home screen
+
     const { domain } = action
     const userSubscribeAll = yield select(getSubscribeAll)
     const fromPush = yield select(getFromPush)
