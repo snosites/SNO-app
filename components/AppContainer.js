@@ -20,6 +20,8 @@ const getUrl = async () => {
 
 getUrl()
 
+// Need to check if coming from a deep link to handle startup logic
+
 const AppContainer = ({ theme, homeScreenMode }) => {
     let primaryColor = Color(theme.colors.primary)
     let isDark = primaryColor.isDark()
