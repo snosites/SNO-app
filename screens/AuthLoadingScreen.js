@@ -31,6 +31,12 @@ const AuthLoadingScreen = (props) => {
         if (switchingDomain) {
             return
         }
+        const getUrl = async () => {
+            const url = await Linking.getInitialURL()
+            console.log('prefix', prefix, url)
+        }
+
+        getUrl()
         initializeUser()
     }, [switchingDomain])
 

@@ -63,6 +63,11 @@ const DeepSelectScreen = (props) => {
     // TODO set async startup code to run first
 
     useEffect(() => {
+        fetchAvailableDomains()
+    }, [])
+
+    useEffect(() => {
+        if (!availableDomains.length) return
         const schoolId = navigation.getParam('schoolId', null)
         console.log('school ID', schoolId)
         if (schoolId) {
@@ -74,7 +79,7 @@ const DeepSelectScreen = (props) => {
         } else {
             console.log('no school ID passed')
         }
-    }, [])
+    }, [availableDomains])
 
     // use linking to wait until startup is loaded and then direct to page?
 

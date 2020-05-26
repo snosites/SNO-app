@@ -13,13 +13,6 @@ import * as Linking from 'expo-linking'
 
 const prefix = Linking.makeUrl('/')
 
-const getUrl = async () => {
-    const url = await Linking.getInitialURL()
-    console.log('prefix', prefix, url)
-}
-
-getUrl()
-
 // Need to check if coming from a deep link to handle startup logic
 
 const AppContainer = ({ theme, homeScreenMode }) => {
