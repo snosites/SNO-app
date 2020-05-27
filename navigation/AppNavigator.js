@@ -44,7 +44,7 @@ export default AppContainer = createAppContainer(
             AuthLoading: AuthLoadingScreen,
             App: {
                 screen: AppStackWithErrorBoundary,
-                path: '',
+                path: 'app',
             },
             Auth: {
                 screen: AuthStack,

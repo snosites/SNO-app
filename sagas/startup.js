@@ -362,10 +362,26 @@ function* initializeUser() {
     }
 }
 
+function* initializeDeepLinkUser() {
+    try {
+        yield put(globalActions.initializeDeepLinkUserRequest())
+
+        console.log('in deep link init')
+        yield call(findOrCreateUser)
+        // yield call(loadActiveDomain)
+
+        yield put(globalActions.initializeDeepLinkUserSuccess())
+    } catch (err) {
+        console.log('error initializing deep link user in saga', err)
+        yield put(globalActions.initializeDeepLinkUserError('error initializing deep link user'))
+    }
+}
+
 function* startupSaga() {
     yield all([
         takeLatest(globalTypes.STARTUP, startup),
         takeLatest(globalTypes.INITIALIZE_USER, initializeUser),
+        takeLatest(globalTypes.INITIALIZE_DEEP_LINK_USER, initializeDeepLinkUser),
         takeLatest(globalTypes.FETCH_HOME_SCREEN_ARTICLES, getHomeScreenArticles),
     ])
 }

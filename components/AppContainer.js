@@ -12,6 +12,7 @@ import Color from 'color'
 import * as Linking from 'expo-linking'
 
 const prefix = Linking.makeUrl('/')
+console.log('prefix', prefix)
 
 // Need to check if coming from a deep link to handle startup logic
 

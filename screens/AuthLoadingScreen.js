@@ -11,6 +11,8 @@ import { Button } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { getReleaseChannel } from '../constants/config'
 
+import * as Linking from 'expo-linking'
+
 const version = getReleaseChannel()
 
 const primaryColor =
@@ -25,20 +27,29 @@ const createUserErrorSelector = createErrorMessageSelector([
 
 const AuthLoadingScreen = (props) => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
-    const { initializeUser, error } = props
+    const { initializeUser, initializeDeepLinkUser, error } = props
 
     useEffect(() => {
         if (switchingDomain) {
             return
         }
-        const getUrl = async () => {
-            const url = await Linking.getInitialURL()
-            console.log('prefix', prefix, url)
-        }
 
-        getUrl()
-        initializeUser()
+        checkIfDeepLinkUser()
     }, [switchingDomain])
+
+    const checkIfDeepLinkUser = async () => {
+        const url = await Linking.getInitialURL()
+        console.log('url', url)
+
+        Linking.addEventListener('url', (x) => console.log('x', x))
+
+        if (url) {
+            initializeDeepLinkUser()
+        } else {
+            console.log('in else')
+            // initializeUser()
+        }
+    }
 
     if (error) {
         return (
@@ -109,6 +120,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
+    initializeDeepLinkUser: () => dispatch(globalActions.initializeDeepLinkUser()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthLoadingScreen)
