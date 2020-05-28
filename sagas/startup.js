@@ -364,6 +364,7 @@ function* initializeUser() {
 
 function* initializeDeepLinkUser() {
     try {
+        // if deep link this will run
         yield put(globalActions.initializeDeepLinkUserRequest())
 
         console.log('in deep link init')

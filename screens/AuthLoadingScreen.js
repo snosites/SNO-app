@@ -35,6 +35,7 @@ const AuthLoadingScreen = (props) => {
         }
 
         checkIfDeepLinkUser()
+        // determine if coming from deep link
     }, [switchingDomain])
 
     const checkIfDeepLinkUser = async () => {
