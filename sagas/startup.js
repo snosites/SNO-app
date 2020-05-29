@@ -369,7 +369,12 @@ function* initializeDeepLinkUser() {
 
         console.log('in deep link init')
         yield call(findOrCreateUser)
+
+        // yield put(domainsActions.setActiveDomain(activeDomain[0].id))
+        NavigationService.navigate('App')
         // yield call(loadActiveDomain)
+
+        // direct to deep link select here
 
         yield put(globalActions.initializeDeepLinkUserSuccess())
     } catch (err) {

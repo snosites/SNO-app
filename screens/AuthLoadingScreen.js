@@ -49,6 +49,7 @@ const AuthLoadingScreen = (props) => {
         } else {
             console.log('in else')
             // initializeUser()
+            // this will be regular users here
         }
     }
 
