@@ -27,6 +27,7 @@ const createUserErrorSelector = createErrorMessageSelector([
 
 const AuthLoadingScreen = (props) => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
+    const loadedDeepLink = props.navigation.getParam('loadedDeepLink', false)
     const { initializeUser, initializeDeepLinkUser, error } = props
 
     useEffect(() => {
@@ -43,15 +44,13 @@ const AuthLoadingScreen = (props) => {
     }, [switchingDomain])
 
     const checkIfDeepLinkUser = async () => {
-        const url = await Linking.getInitialURL()
-
-        let { path } = Linking.parse(url)
+        const { path } = await Linking.parseInitialURLAsync()
 
         const isDeepSelect = path.includes('deepSelect')
 
-        console.log('url', url, path, isDeepSelect)
+        console.log('url', path, isDeepSelect)
 
-        if (url && isDeepSelect) {
+        if (path && isDeepSelect && !loadedDeepLink) {
             initializeDeepLinkUser()
         } else {
             console.log('in else')

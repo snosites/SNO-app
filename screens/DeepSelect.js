@@ -98,7 +98,7 @@ const DeepSelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                navigation.navigate('AuthLoading')
+                navigation.navigate('AuthLoading', { loadedDeepLink: true })
                 return
             }
             // save new domain and send analytics
@@ -131,7 +131,7 @@ const DeepSelectScreen = (props) => {
     _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
-        navigation.navigate('AuthLoading')
+        navigation.navigate('AuthLoading', { loadedDeepLink: true })
 
         setModalVisible(false)
         clearAvailableDomains()
