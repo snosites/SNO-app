@@ -35,21 +35,27 @@ const AuthLoadingScreen = (props) => {
         }
 
         checkIfDeepLinkUser()
-        // determine if coming from deep link
+        // Linking.addEventListener('url', (x) => console.log('x', x))
+
+        // return () => {
+        //     Linking.removeEventListener('url', (x) => console.log('x remove', x))
+        // }
     }, [switchingDomain])
 
     const checkIfDeepLinkUser = async () => {
         const url = await Linking.getInitialURL()
-        console.log('url', url)
 
-        Linking.addEventListener('url', (x) => console.log('x', x))
+        let { path } = Linking.parse(url)
 
-        if (url) {
+        const isDeepSelect = path.includes('deepSelect')
+
+        console.log('url', url, path, isDeepSelect)
+
+        if (url && isDeepSelect) {
             initializeDeepLinkUser()
         } else {
             console.log('in else')
-            // initializeUser()
-            // this will be regular users here
+            initializeUser()
         }
     }
 

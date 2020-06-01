@@ -16,7 +16,7 @@ import { types as userTypes, actions as userActions } from '../redux/user'
 import { createLoadingSelector } from '../redux/loading'
 import { createErrorMessageSelector } from '../redux/errors'
 
-import { List, Divider } from 'react-native-paper'
+import { List, Button } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude'
 import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
@@ -69,15 +69,18 @@ const DeepSelectScreen = (props) => {
     useEffect(() => {
         if (!availableDomains.length) return
         const schoolId = navigation.getParam('schoolId', null)
-        console.log('school ID', schoolId)
+
         if (schoolId) {
-            const foundSchool = availableDomains.find((domain) => domain.id === schoolId)
-            console.log('found school', foundSchool, availableDomains)
+            const foundSchool = availableDomains.find((domain) => domain.id === Number(schoolId))
+
             if (foundSchool) {
+                console.log('found school')
+
                 setSelectedSchool(foundSchool)
             }
         } else {
             console.log('no school ID passed')
+            navigation.navigate('AuthLoading')
         }
     }, [availableDomains])
 
@@ -92,32 +95,31 @@ const DeepSelectScreen = (props) => {
             const found = domains.find((domain) => {
                 return domain.id == selectedDomain.id
             })
-            console.log('this is found domain', found)
             // if already added then set as active -- dont save
-            // if (found) {
-            //     setActiveDomain(selectedDomain.id)
-            //     navigation.navigate('AuthLoading')
-            //     return
-            // }
+            if (found) {
+                setActiveDomain(selectedDomain.id)
+                navigation.navigate('AuthLoading')
+                return
+            }
             // save new domain and send analytics
-            // Amplitude.logEventWithProperties('add school', {
-            //     domainId: selectedDomain.id,
-            // })
+            Amplitude.logEventWithProperties('add school', {
+                domainId: selectedDomain.id,
+            })
 
             //new analytics
-            // addSchoolSub(selectedDomain.url)
+            addSchoolSub(selectedDomain.url)
 
-            // addDomain({
-            //     id: selectedDomain.id,
-            //     name: selectedDomain.school,
-            //     publication: selectedDomain.publication,
-            //     active: false,
-            //     notificationCategories: [],
-            //     url: selectedDomain.url,
-            // })
+            addDomain({
+                id: selectedDomain.id,
+                name: selectedDomain.school,
+                publication: selectedDomain.publication,
+                active: false,
+                notificationCategories: [],
+                url: selectedDomain.url,
+            })
 
             // set new domain as active
-            // setActiveDomain(selectedDomain.id)
+            setActiveDomain(selectedDomain.id)
 
             setModalVisible(true)
         } catch (error) {
@@ -186,9 +188,41 @@ const DeepSelectScreen = (props) => {
     return (
         <ScrollView style={styles.container}>
             <View style={{ margin: 10 }}>
-                <Text style={{ fontSize: 16, marginBottom: 10 }}>
-                    You have selected {`${item.school}  •  ${item.city}, ${item.state}`}
+                <Text
+                    style={{ fontSize: 18, fontWeight: 'bold', marginTop: 20, textAlign: 'center' }}
+                >
+                    You have selected:
                 </Text>
+                <List.Item
+                    title={selectedSchool.school}
+                    titleEllipsizeMode='tail'
+                    description={`${selectedSchool.publication}  •  ${selectedSchool.city}, ${selectedSchool.state}`}
+                    descriptionEllipsizeMode='tail'
+                    style={{ paddingVertical: 0, marginVertical: 25 }}
+                    left={(props) => {
+                        if (selectedSchool.icon) {
+                            return (
+                                <List.Icon
+                                    {...props}
+                                    icon={({ size, color }) => (
+                                        <Image
+                                            source={{
+                                                uri: selectedSchool.icon,
+                                            }}
+                                            style={{
+                                                width: size + 5,
+                                                height: size + 5,
+                                                borderRadius: 4,
+                                            }}
+                                        />
+                                    )}
+                                />
+                            )
+                        } else {
+                            return <List.Icon {...props} icon='chevron-right' />
+                        }
+                    }}
+                />
                 <Button
                     mode='contained'
                     theme={{
@@ -200,10 +234,10 @@ const DeepSelectScreen = (props) => {
                                     : Constants.manifest.extra.college.primary,
                         },
                     }}
-                    style={{ padding: 10 }}
+                    style={{ padding: 10, marginHorizontal: 20 }}
                     onPress={() => {
                         Haptics.selectionAsync()
-                        _handleSelect(item)
+                        _handleSelect(selectedSchool)
                     }}
                 >
                     Get Started
@@ -219,7 +253,7 @@ const DeepSelectScreen = (props) => {
 }
 
 DeepSelectScreen.navigationOptions = {
-    title: 'Select Your School',
+    title: 'Selected School',
 }
 
 const styles = StyleSheet.create({

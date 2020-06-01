@@ -19,7 +19,7 @@ export function* fetchMenu(action) {
         const mobileMenu = yield call(domainApiService.getMobileMenu, domain.url)
 
         //filter out all menu items that are custom
-        let filteredMobileMenu = mobileMenu.filter(menu => {
+        let filteredMobileMenu = mobileMenu.filter((menu) => {
             if (menu.object !== 'custom') {
                 return menu
             }
@@ -40,13 +40,13 @@ export function* fetchMenu(action) {
         }
         yield put(domainsActions.setNotificationCategories(domain.id, updatedDbCategories))
 
-         yield put(globalActions.fetchMenusSuccess(filteredMobileMenu))
+        yield put(globalActions.fetchMenusSuccess(filteredMobileMenu))
         return {
             menu: filteredMobileMenu,
-            dbCategories: updatedDbCategories
+            dbCategories: updatedDbCategories,
         }
     } catch (err) {
-        console.log('error fetching menus in saga', err)
+        console.log('error fetching menus in saga', err, err.response)
         yield put(globalActions.fetchMenusError('error fetching menus'))
         throw err
     }
@@ -57,49 +57,49 @@ function* syncDbCategories(dbCategories, mobileMenu, domain) {
         const apiToken = yield select(getApiToken)
         //loop through and check if category of menu is in DB -- if not then add it
         for (let menu of mobileMenu) {
-            let foundCategory = dbCategories.find(category => {
+            let foundCategory = dbCategories.find((category) => {
                 return Number(menu.object_id) === category.category_id
             })
             if (!foundCategory && menu.object_id) {
                 const postObj = {
                     categoryId: menu.object_id,
                     organizationId: domain.id,
-                    categoryName: menu.title
+                    categoryName: menu.title,
                 }
                 yield call(domainApiService.addDbCategory, apiToken, postObj)
             }
         }
         // check if "custom push" category has been added
-        let foundCustom = dbCategories.find(category => {
+        let foundCustom = dbCategories.find((category) => {
             return category.category_name === 'custom_push'
         })
         if (!foundCustom) {
             //add custom push category
             const postObj = {
                 organizationId: domain.id,
-                categoryName: 'custom_push'
+                categoryName: 'custom_push',
             }
             yield call(domainApiService.addDbCategory, apiToken, postObj)
         }
 
         //check for any old categories -- ignore custom push category
-        let oldCategories = dbCategories.filter(dbCategory => {
+        let oldCategories = dbCategories.filter((dbCategory) => {
             if (dbCategory.category_name === 'custom_push') {
                 return false
             }
-            return !mobileMenu.find(menuItem => {
+            return !mobileMenu.find((menuItem) => {
                 return Number(menuItem.object_id) === dbCategory.category_id
             })
         })
         //if any are found
         if (oldCategories.length > 0) {
             //create array of category ID's to remove
-            const categoriesToDelete = oldCategories.map(category => {
+            const categoriesToDelete = oldCategories.map((category) => {
                 return category.id
             })
             //remove them
             yield call(domainApiService.deleteDbCategories, apiToken, {
-                categoryIds: categoriesToDelete
+                categoryIds: categoriesToDelete,
             })
         }
         console.log('sync successful')

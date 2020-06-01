@@ -371,11 +371,12 @@ function* initializeDeepLinkUser() {
         yield call(findOrCreateUser)
 
         // yield put(domainsActions.setActiveDomain(activeDomain[0].id))
-        NavigationService.navigate('App')
+        // NavigationService.navigate('App')
         // yield call(loadActiveDomain)
 
         // direct to deep link select here
 
+        SplashScreen.hide()
         yield put(globalActions.initializeDeepLinkUserSuccess())
     } catch (err) {
         console.log('error initializing deep link user in saga', err)
