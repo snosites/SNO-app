@@ -46,7 +46,7 @@ const AuthLoadingScreen = (props) => {
     const checkIfDeepLinkUser = async () => {
         const { path } = await Linking.parseInitialURLAsync()
 
-        const isDeepSelect = path.includes('deepSelect')
+        let isDeepSelect = path ? path.includes('deepSelect') : false
 
         console.log('url', path, isDeepSelect)
 
