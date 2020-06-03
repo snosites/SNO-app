@@ -44,14 +44,15 @@ const AuthLoadingScreen = (props) => {
     }, [switchingDomain])
 
     const checkIfDeepLinkUser = async () => {
-        const { path } = await Linking.parseInitialURLAsync()
+        const { path, queryParams } = await Linking.parseInitialURLAsync()
 
         let isDeepSelect = path ? path.includes('deepSelect') : false
-
-        console.log('url', path, isDeepSelect)
+        let isDeepLinkArticle = path ? path.includes('article') : false
 
         if (path && isDeepSelect && !loadedDeepLink) {
             initializeDeepLinkUser()
+        } else if (path && isDeepLinkArticle) {
+            console.log('in else if', path, queryParams)
         } else {
             console.log('in else')
             initializeUser()

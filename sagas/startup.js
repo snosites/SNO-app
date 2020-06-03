@@ -348,7 +348,7 @@ function* checkIfDomainIsInDb(domainId) {
     }
 }
 
-function* initializeUser() {
+function* initializeUser({ fromDeepLink }) {
     try {
         yield put(globalActions.initializeUserRequest())
 
