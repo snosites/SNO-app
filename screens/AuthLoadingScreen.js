@@ -6,6 +6,8 @@ import { types as userTypes } from '../redux/user'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { createErrorMessageSelector } from '../redux/errors'
 
+import { actions as domainActions, getActiveDomain } from '../redux/domains'
+
 import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'
@@ -28,7 +30,7 @@ const createUserErrorSelector = createErrorMessageSelector([
 const AuthLoadingScreen = (props) => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
     const loadedDeepLink = props.navigation.getParam('loadedDeepLink', false)
-    const { initializeUser, initializeDeepLinkUser, error } = props
+    const { initializeUser, initializeDeepLinkUser, error, activeDomain } = props
 
     useEffect(() => {
         if (switchingDomain) {
@@ -52,10 +54,46 @@ const AuthLoadingScreen = (props) => {
         if (path && isDeepSelect && !loadedDeepLink) {
             initializeDeepLinkUser()
         } else if (path && isDeepLinkArticle) {
-            console.log('in else if', path, queryParams)
+            handleDeepLinkArticle(queryParams.schoolId || null)
         } else {
             console.log('in else')
             initializeUser()
+        }
+    }
+
+    const handleDeepLinkArticle = async (params) => {
+        if (params.schoolId == activeDomain.id) {
+            // get article
+            const article = await asyncFetchArticle(activeDomain.url, notification.data.post_id)
+            // handleArticlePress(article, activeDomain)
+            // } else {
+            //     // make sure domain origin is a saved domain
+            //     let found = domains.find((domain) => {
+            //         return domain.id == notification.data.domain_id
+            //     })
+            //     if (!found) {
+            //         // user doesnt have this domain saved so dont direct anywhere
+            //         throw new Error('no domain saved for this notification')
+            //     }
+            //     Alert.alert(
+            //         'Switch Active School?',
+            //         `Viewing this story will switch your active school to ${notification.data.site_name}.`,
+            //         [
+            //             {
+            //                 text: 'Cancel',
+            //                 onPress: () => {},
+            //                 style: 'cancel',
+            //             },
+            //             {
+            //                 text: 'Proceed',
+            //                 onPress: () => {
+            //                     _notificationSwitchDomain(found.url)
+            //                 },
+            //             },
+            //         ],
+            //         { cancelable: false }
+            //     )
+            // }
         }
     }
 
@@ -123,6 +161,7 @@ const AuthLoadingScreen = (props) => {
 const mapStateToProps = (state) => {
     return {
         error: createUserErrorSelector(state),
+        activeDomain: getActiveDomain(state),
     }
 }
 
