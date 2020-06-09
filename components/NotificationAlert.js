@@ -10,6 +10,7 @@ import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { actions as userActions } from '../redux/user'
 import { createLoadingSelector } from '../redux/loading'
 import { types as globalTypes } from '../redux/global'
+import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
 
@@ -32,6 +33,7 @@ const NotificationAlert = (props) => {
     const { user, activeDomain, domains, setActiveDomain, setFromPush, initialized } = props
 
     const [notification, setNotification] = useState({})
+    const [deepLink, setDeepLink] = useState({})
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
@@ -56,6 +58,65 @@ const NotificationAlert = (props) => {
             handleNotificationPress()
         }
     }, [notification, initialized])
+
+    useEffect(() => {
+        Linking.addEventListener('url', handleDeepLink)
+        return () => {
+            Linking.removeEventListener('url', () => {})
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!initialized) return
+        if (!deepLink.path || !deepLink.params) return
+        handleDeepLinkNavigation()
+    }, [initialized, deepLink])
+
+    const handleDeepLink = (e) => {
+        // const route = e.url.replace(/.*?:\/\//g, '')
+
+        const parsedDeepLink = Linking.parse(e.url)
+
+        if (parsedDeepLink.path.includes('article')) {
+            setDeepLink({ path: parsedDeepLink.path, params: parsedDeepLink.queryParams })
+        }
+    }
+
+    const handleDeepLinkNavigation = async () => {
+        if (deepLink.params.schoolId == activeDomain.id) {
+            // get article
+            const article = await asyncFetchArticle(activeDomain.url, deepLink.params.postId)
+
+            handleArticlePress(article, activeDomain)
+        } else {
+            // make sure domain origin is a saved domain
+            let found = domains.find((domain) => {
+                return domain.id == notification.data.domain_id
+            })
+            if (!found) {
+                // user doesnt have this domain saved so dont direct anywhere
+                throw new Error('no domain saved for this notification')
+            }
+            Alert.alert(
+                'Switch Active School?',
+                `Viewing this story will switch your active school to ${notification.data.site_name}.`,
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => {},
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Proceed',
+                        onPress: () => {
+                            _notificationSwitchDomain(found.url)
+                        },
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+    }
 
     const handleNotificationPress = async () => {
         try {

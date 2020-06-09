@@ -8,12 +8,18 @@ import { createErrorMessageSelector } from '../redux/errors'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
 
+import { handleArticlePress } from '../utils/articlePress'
+import { asyncFetchArticle } from '../utils/sagaHelpers'
+
 import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'
 import { getReleaseChannel } from '../constants/config'
 
 import * as Linking from 'expo-linking'
+
+import NavigationService from '../utils/NavigationService'
+import { SplashScreen } from 'expo'
 
 const version = getReleaseChannel()
 
@@ -38,11 +44,6 @@ const AuthLoadingScreen = (props) => {
         }
 
         checkIfDeepLinkUser()
-        // Linking.addEventListener('url', (x) => console.log('x', x))
-
-        // return () => {
-        //     Linking.removeEventListener('url', (x) => console.log('x remove', x))
-        // }
     }, [switchingDomain])
 
     const checkIfDeepLinkUser = async () => {
@@ -54,46 +55,19 @@ const AuthLoadingScreen = (props) => {
         if (path && isDeepSelect && !loadedDeepLink) {
             initializeDeepLinkUser()
         } else if (path && isDeepLinkArticle) {
-            handleDeepLinkArticle(queryParams.schoolId || null)
+            initializeUser()
         } else {
             console.log('in else')
             initializeUser()
         }
     }
 
-    const handleDeepLinkArticle = async (params) => {
+    const handleDeepLinkArticle = async (params, path) => {
         if (params.schoolId == activeDomain.id) {
             // get article
-            const article = await asyncFetchArticle(activeDomain.url, notification.data.post_id)
-            // handleArticlePress(article, activeDomain)
-            // } else {
-            //     // make sure domain origin is a saved domain
-            //     let found = domains.find((domain) => {
-            //         return domain.id == notification.data.domain_id
-            //     })
-            //     if (!found) {
-            //         // user doesnt have this domain saved so dont direct anywhere
-            //         throw new Error('no domain saved for this notification')
-            //     }
-            //     Alert.alert(
-            //         'Switch Active School?',
-            //         `Viewing this story will switch your active school to ${notification.data.site_name}.`,
-            //         [
-            //             {
-            //                 text: 'Cancel',
-            //                 onPress: () => {},
-            //                 style: 'cancel',
-            //             },
-            //             {
-            //                 text: 'Proceed',
-            //                 onPress: () => {
-            //                     _notificationSwitchDomain(found.url)
-            //                 },
-            //             },
-            //         ],
-            //         { cancelable: false }
-            //     )
-            // }
+            const article = await asyncFetchArticle(activeDomain.url, Number(params.postId))
+
+            initializeDeepLinkUser(params, path)
         }
     }
 
@@ -167,7 +141,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
-    initializeDeepLinkUser: () => dispatch(globalActions.initializeDeepLinkUser()),
+    initializeDeepLinkUser: (params, path) =>
+        dispatch(globalActions.initializeDeepLinkUser(params, path)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthLoadingScreen)

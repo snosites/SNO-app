@@ -19,6 +19,8 @@ import { loadActiveDomain } from '../sagas/global'
 import domainApiService from '../api/domain'
 import apiService from '../api/api'
 
+import * as Linking from 'expo-linking'
+
 import NavigationService from '../utils/NavigationService'
 import { handleArticlePress } from '../utils/articlePress'
 
@@ -362,13 +364,27 @@ function* initializeUser({ fromDeepLink }) {
     }
 }
 
-function* initializeDeepLinkUser() {
+function* initializeDeepLinkUser({ params, path }) {
     try {
         // if deep link this will run
         yield put(globalActions.initializeDeepLinkUserRequest())
 
         console.log('in deep link init')
         yield call(findOrCreateUser)
+
+        if (params) {
+            console.log('params', params)
+            yield call(loadActiveDomain)
+
+            const linkUrl = Linking.makeUrl(path, params)
+            const canOpen = yield Linking.canOpenURL(linkUrl)
+            console.log('info', linkUrl, canOpen)
+            if (canOpen) {
+                Linking.openURL(
+                    'exp://192.168.1.9:19000/--/app/main-app/main-drawer/home/article/1271?schoolId=182442528&postId=1271'
+                )
+            }
+        }
 
         // yield put(domainsActions.setActiveDomain(activeDomain[0].id))
         // NavigationService.navigate('App')

@@ -198,7 +198,11 @@ export const actions = {
     initializeUserRequest: () => ({ type: types.INITIALIZE_USER_REQUEST }),
     initializeUserSuccess: () => ({ type: types.INITIALIZE_USER_SUCCESS }),
     initializeUserError: (error) => ({ type: types.INITIALIZE_USER_ERROR, error }),
-    initializeDeepLinkUser: () => ({ type: types.INITIALIZE_DEEP_LINK_USER }),
+    initializeDeepLinkUser: (params, path) => ({
+        type: types.INITIALIZE_DEEP_LINK_USER,
+        params,
+        path,
+    }),
     initializeDeepLinkUserRequest: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_REQUEST }),
     initializeDeepLinkUserSuccess: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_SUCCESS }),
     initializeDeepLinkUserError: (error) => ({

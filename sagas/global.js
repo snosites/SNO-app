@@ -23,7 +23,7 @@ function* fetchAvailableDomains() {
 
         // sort domains
         if (response.length > 0) {
-            response.sort(function(a, b) {
+            response.sort(function (a, b) {
                 if (a.school < b.school) return -1
                 if (a.school > b.school) return 1
                 return 0
@@ -32,7 +32,7 @@ function* fetchAvailableDomains() {
         if (__DEV__) {
             yield put(globalActions.fetchAvailableDomainsSuccess(response))
         } else {
-            const filteredDomains = response.filter(domain => {
+            const filteredDomains = response.filter((domain) => {
                 return !domain.development
             })
             yield put(globalActions.fetchAvailableDomainsSuccess(filteredDomains))
@@ -57,7 +57,7 @@ function* searchAvailableDomains(action) {
 
         // sort domains
         if (response.length > 0) {
-            response.sort(function(a, b) {
+            response.sort(function (a, b) {
                 if (a.school < b.school) return -1
                 if (a.school > b.school) return 1
                 return 0
@@ -67,7 +67,7 @@ function* searchAvailableDomains(action) {
         if (__DEV__) {
             yield put(globalActions.searchAvailableDomainsSuccess(response))
         } else {
-            const filteredDomains = response.filter(domain => {
+            const filteredDomains = response.filter((domain) => {
                 return !domain.development
             })
             yield put(globalActions.searchAvailableDomainsSuccess(filteredDomains))
@@ -84,7 +84,7 @@ export function* loadActiveDomain() {
 
         const domains = yield select(getSavedDomains)
 
-        const activeDomain = domains.filter(domain => {
+        const activeDomain = domains.filter((domain) => {
             if (domain.active) {
                 return domain
             }
@@ -100,10 +100,12 @@ export function* loadActiveDomain() {
             NavigationService.navigate('Auth')
         }
         yield put(domainsActions.loadActiveDomainSuccess())
+        return
     } catch (err) {
         console.log('error in load active domain saga', err)
         yield put(domainsActions.loadActiveDomainError('error loading active domain'))
         NavigationService.navigate('Auth')
+        return
     }
 }
 
@@ -155,7 +157,7 @@ function* globalSaga() {
         takeLatest(globalTypes.SEARCH_AVAILABLE_DOMAINS, searchAvailableDomains),
         takeLatest(globalTypes.ADD_SCHOOL_SUB, addSchoolSub),
         takeLatest(globalTypes.REMOVE_SCHOOL_SUB, removeSchoolSub),
-        takeLatest(globalTypes.ADD_STORY_VIEW, addStoryView)
+        takeLatest(globalTypes.ADD_STORY_VIEW, addStoryView),
     ])
 }
 

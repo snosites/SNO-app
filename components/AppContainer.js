@@ -20,25 +20,13 @@ const AppContainer = ({ theme, homeScreenMode }) => {
     let primaryColor = Color(theme.colors.primary)
     let isDark = primaryColor.isDark()
 
-    useEffect(() => {
-        Linking.addEventListener('url', handleDeepLink)
-        return () => {
-            Linking.removeEventListener('url', () => {})
-        }
-    }, [])
-
-    const handleDeepLink = (e) => {
-        const route = e.url.replace(/.*?:\/\//g, '')
-        console.log('e', e)
-        console.log('e data', e.url, route)
-    }
-
     return (
         <PaperProvider theme={theme}>
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
                 <AppNavigator
                     uriPrefix={prefix}
+                    enableURLHandling={false}
                     screenProps={{ theme: theme, homeScreenMode: homeScreenMode }}
                     ref={(navigatorRef) => {
                         NavigationService.setTopLevelNavigator(navigatorRef)
