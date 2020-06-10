@@ -36,7 +36,13 @@ const createUserErrorSelector = createErrorMessageSelector([
 const AuthLoadingScreen = (props) => {
     const switchingDomain = props.navigation.getParam('switchingDomain', false)
     const loadedDeepLink = props.navigation.getParam('loadedDeepLink', false)
-    const { initializeUser, initializeDeepLinkUser, error, activeDomain } = props
+    const {
+        initializeUser,
+        initializeDeepLinkUser,
+        error,
+        activeDomain,
+        setDeepLinkArticle,
+    } = props
 
     useEffect(() => {
         if (switchingDomain) {
@@ -53,8 +59,10 @@ const AuthLoadingScreen = (props) => {
         let isDeepLinkArticle = path ? path.includes('article') : false
 
         if (path && isDeepSelect && !loadedDeepLink) {
-            initializeDeepLinkUser()
+            console.log('q params', queryParams)
+            initializeDeepLinkUser({ schoolId: queryParams.schoolId })
         } else if (path && isDeepLinkArticle) {
+            setDeepLinkArticle({ params: queryParams, path })
             initializeUser()
         } else {
             console.log('in else')
@@ -141,8 +149,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
-    initializeDeepLinkUser: (params, path) =>
-        dispatch(globalActions.initializeDeepLinkUser(params, path)),
+    initializeDeepLinkUser: (params) => dispatch(globalActions.initializeDeepLinkUser(params)),
+    setDeepLinkArticle: (payload) => dispatch(globalActions.setDeepLinkArticle(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthLoadingScreen)

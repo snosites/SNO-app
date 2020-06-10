@@ -364,35 +364,17 @@ function* initializeUser({ fromDeepLink }) {
     }
 }
 
-function* initializeDeepLinkUser({ params, path }) {
+function* initializeDeepLinkUser({ params: { schoolId } }) {
     try {
         // if deep link this will run
         yield put(globalActions.initializeDeepLinkUserRequest())
 
-        console.log('in deep link init')
+        console.log('in deep link init', schoolId)
         yield call(findOrCreateUser)
 
-        if (params) {
-            console.log('params', params)
-            yield call(loadActiveDomain)
-
-            const linkUrl = Linking.makeUrl(path, params)
-            const canOpen = yield Linking.canOpenURL(linkUrl)
-            console.log('info', linkUrl, canOpen)
-            if (canOpen) {
-                Linking.openURL(
-                    'exp://192.168.1.9:19000/--/app/main-app/main-drawer/home/article/1271?schoolId=182442528&postId=1271'
-                )
-            }
-        }
-
-        // yield put(domainsActions.setActiveDomain(activeDomain[0].id))
-        // NavigationService.navigate('App')
-        // yield call(loadActiveDomain)
-
-        // direct to deep link select here
-
         SplashScreen.hide()
+        NavigationService.navigate('DeepSelect', { schoolId: schoolId })
+
         yield put(globalActions.initializeDeepLinkUserSuccess())
     } catch (err) {
         console.log('error initializing deep link user in saga', err)

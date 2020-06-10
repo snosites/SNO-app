@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { actions as userActions } from '../redux/user'
 import { createLoadingSelector } from '../redux/loading'
-import { types as globalTypes } from '../redux/global'
+import { types as globalTypes, actions as globalActions } from '../redux/global'
 import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
@@ -30,7 +30,16 @@ const amplitudeKey = getAmplitudeKey()
 Amplitude.initialize(amplitudeKey)
 
 const NotificationAlert = (props) => {
-    const { user, activeDomain, domains, setActiveDomain, setFromPush, initialized } = props
+    const {
+        user,
+        activeDomain,
+        domains,
+        setActiveDomain,
+        setFromPush,
+        initialized,
+        deepLinkArticle,
+        setDeepLinkArticle,
+    } = props
 
     const [notification, setNotification] = useState({})
     const [deepLink, setDeepLink] = useState({})
@@ -72,8 +81,17 @@ const NotificationAlert = (props) => {
         handleDeepLinkNavigation()
     }, [initialized, deepLink])
 
+    useEffect(() => {
+        if (deepLinkArticle.path && deepLinkArticle.params) {
+            setDeepLink({ path: deepLinkArticle.path, params: deepLinkArticle.params })
+            setDeepLinkArticle({})
+        }
+    }, [deepLinkArticle])
+
     const handleDeepLink = (e) => {
         // const route = e.url.replace(/.*?:\/\//g, '')
+
+        console.log('handling deep link', e)
 
         const parsedDeepLink = Linking.parse(e.url)
 
@@ -266,11 +284,13 @@ const mapStateToProps = (state) => ({
     activeDomain: getActiveDomain(state),
     domains: state.domains,
     initialized: state.global.initialized,
+    deepLinkArticle: state.global.deepLinkArticle,
 })
 
 const mapDispatchToProps = (dispatch) => ({
     setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
     setFromPush: (payload) => dispatch(userActions.setFromPush(payload)),
+    setDeepLinkArticle: (payload) => dispatch(globalActions.setDeepLinkArticle(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationAlert)

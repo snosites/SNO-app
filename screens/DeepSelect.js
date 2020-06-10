@@ -60,8 +60,6 @@ const DeepSelectScreen = (props) => {
 
     const [selectedSchool, setSelectedSchool] = useState({})
 
-    // TODO set async startup code to run first
-
     useEffect(() => {
         fetchAvailableDomains()
     }, [])
@@ -69,6 +67,7 @@ const DeepSelectScreen = (props) => {
     useEffect(() => {
         if (!availableDomains.length) return
         const schoolId = navigation.getParam('schoolId', null)
+        console.log('this is school ID', schoolId)
 
         if (schoolId) {
             const foundSchool = availableDomains.find((domain) => domain.id === Number(schoolId))

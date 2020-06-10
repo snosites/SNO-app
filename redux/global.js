@@ -52,6 +52,7 @@ export const types = {
     FETCH_HOME_SCREEN_ARTICLES_SUCCESS: 'FETCH_HOME_SCREEN_ARTICLES_SUCCESS',
     FETCH_HOME_SCREEN_ARTICLES_ERROR: 'FETCH_HOME_SCREEN_ARTICLES_ERROR',
     SET_ACTIVE_CATEGORY: 'SET_ACTIVE_CATEGORY',
+    SET_DEEP_LINK_ARTICLE: 'SET_DEEP_LINK_ARTICLE',
 }
 
 const initialState = {
@@ -70,6 +71,7 @@ const initialState = {
     homeScreenMode: 'categories',
     initialized: false,
     activeCategory: null,
+    deepLinkArticle: {},
 }
 
 export default function global(state = initialState, action) {
@@ -78,6 +80,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 initialized: true,
+            }
+        case types.SET_DEEP_LINK_ARTICLE:
+            return {
+                ...state,
+                deepLinkArticle: action.payload,
             }
         case types.FETCH_AVAILABLE_DOMAINS_SUCCESS:
         case types.SEARCH_AVAILABLE_DOMAINS_SUCCESS:
@@ -198,10 +205,9 @@ export const actions = {
     initializeUserRequest: () => ({ type: types.INITIALIZE_USER_REQUEST }),
     initializeUserSuccess: () => ({ type: types.INITIALIZE_USER_SUCCESS }),
     initializeUserError: (error) => ({ type: types.INITIALIZE_USER_ERROR, error }),
-    initializeDeepLinkUser: (params, path) => ({
+    initializeDeepLinkUser: (params) => ({
         type: types.INITIALIZE_DEEP_LINK_USER,
         params,
-        path,
     }),
     initializeDeepLinkUserRequest: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_REQUEST }),
     initializeDeepLinkUserSuccess: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_SUCCESS }),
@@ -274,5 +280,9 @@ export const actions = {
     setActiveCategory: (categoryId) => ({
         type: types.SET_ACTIVE_CATEGORY,
         categoryId,
+    }),
+    setDeepLinkArticle: (payload) => ({
+        type: types.SET_DEEP_LINK_ARTICLE,
+        payload,
     }),
 }
