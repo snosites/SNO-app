@@ -109,15 +109,16 @@ const NotificationAlert = (props) => {
         } else {
             // make sure domain origin is a saved domain
             let found = domains.find((domain) => {
-                return domain.id == notification.data.domain_id
+                return domain.id == deepLink.params.schoolId
             })
             if (!found) {
                 // user doesnt have this domain saved so dont direct anywhere
-                throw new Error('no domain saved for this notification')
+                NavigationService.navigate('DeepSelect', { schoolId: deepLink.params.schoolId })
+                return
             }
             Alert.alert(
                 'Switch Active School?',
-                `Viewing this story will switch your active school to ${notification.data.site_name}.`,
+                `Viewing this story will switch your active school to ${found.name}.`,
                 [
                     {
                         text: 'Cancel',
@@ -127,13 +128,14 @@ const NotificationAlert = (props) => {
                     {
                         text: 'Proceed',
                         onPress: () => {
-                            _notificationSwitchDomain(found.url)
+                            _deepLinkSwitchDomain(found, deepLink.params.postId)
                         },
                     },
                 ],
                 { cancelable: false }
             )
         }
+        setDeepLink({})
     }
 
     const handleNotificationPress = async () => {
@@ -209,6 +211,32 @@ const NotificationAlert = (props) => {
             })
         } catch (err) {
             console.log('error in notification switch domain', err)
+            NavigationService.navigate('AuthLoading', {
+                switchingDomain: false,
+            })
+            Sentry.captureException(err)
+        }
+    }
+
+    const _deepLinkSwitchDomain = async (domain, postId) => {
+        try {
+            NavigationService.navigate('AuthLoading', {
+                switchingDomain: true,
+            })
+            // get article
+            const article = await asyncFetchArticle(domain.url, postId)
+
+            // sets key for app to look for on new domain load
+            setFromPush(article)
+            // change active domain
+            setActiveDomain(Number(domain.id))
+            //navigate to auth loading to load initial domain data
+            let nav = NavigationService
+            nav.navigate('AuthLoading', {
+                switchingDomain: false,
+            })
+        } catch (err) {
+            console.log('error in deeplink switch domain', err)
             NavigationService.navigate('AuthLoading', {
                 switchingDomain: false,
             })

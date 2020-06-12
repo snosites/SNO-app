@@ -8,8 +8,8 @@ const isIos = Platform.OS === 'ios'
 const appVersion = Constants.manifest.releaseChannel // sns / cns
 
 const getAppStoreUrl = () => {
-    if(isIos) {
-        if(appVersion === 'sns'){
+    if (isIos) {
+        if (appVersion === 'sns') {
             //ios -sns
             return 'https://apps.apple.com/us/app/student-news-source/id1463449523?ls=1'
         } else {
@@ -27,33 +27,32 @@ const getAppStoreUrl = () => {
     }
 }
 
+// ;('itms://apps.apple.com/us/app/student-news-source/id1463449523?ls=1')
+
 const appStoreUrl = getAppStoreUrl()
 
-const UpdateApp = props => {
+const UpdateApp = (props) => {
     useEffect(() => {
-         Alert.alert(
-             'There is an update available',
-             `You need to update your app to the lastest version.  You may have to turn your push notification settings back on after the update.`,
-             [
-                 {
-                     text: 'Proceed',
-                     onPress: () => {
-                         _openStore()
-                     }
-                 }
-             ],
-             { cancelable: false }
-         )
-    },[])
+        Alert.alert(
+            'There is an update available',
+            `You need to update your app to the lastest version.  You may have to turn your push notification settings back on after the update.`,
+            [
+                {
+                    text: 'Proceed',
+                    onPress: () => {
+                        _openStore()
+                    },
+                },
+            ],
+            { cancelable: false }
+        )
+    }, [])
 
     const _openStore = () => {
-        Linking.openURL(appStoreUrl).catch(err => console.log('error opening app store', err))
+        Linking.openURL(appStoreUrl).catch((err) => console.log('error opening app store', err))
     }
 
-
-    return (
-        <View></View>
-    )
+    return <View></View>
 }
 
 export default UpdateApp
