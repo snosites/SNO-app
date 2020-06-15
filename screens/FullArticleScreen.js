@@ -65,6 +65,10 @@ class FullArticleScreen extends React.Component {
     }
 
     _getFilteredWriters = (domainId, terms, writerSubscriptions) => {
+        console.log('terms', terms)
+        if (!terms) {
+            return []
+        }
         const filteredWriters = terms.filter((termObj) => {
             const foundSub = writerSubscriptions.find(
                 (writerObj) =>
