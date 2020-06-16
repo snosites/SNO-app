@@ -70,7 +70,7 @@ const DeepSelectScreen = (props) => {
         console.log('this is school ID', schoolId)
 
         if (schoolId) {
-            const foundSchool = availableDomains.find((domain) => domain.id === Number(schoolId))
+            const foundSchool = availableDomains.find((domain) => domain.id == schoolId)
 
             if (foundSchool) {
                 console.log('found school')
@@ -160,7 +160,7 @@ const DeepSelectScreen = (props) => {
         )
     }
 
-    if (isLoading) {
+    if (isLoading || !selectedSchool || !selectedSchool.id) {
         return (
             <View style={{ flex: 1, padding: 70 }}>
                 <ActivityIndicator />

@@ -116,26 +116,26 @@ const NotificationAlert = (props) => {
             if (!found) {
                 // user doesnt have this domain saved so dont direct anywhere
                 NavigationService.navigate('DeepSelect', { schoolId: deepLink.params.schoolId })
-                return
-            }
-            Alert.alert(
-                'Switch Active School?',
-                `Viewing this story will switch your active school to ${found.name}.`,
-                [
-                    {
-                        text: 'Cancel',
-                        onPress: () => {},
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Proceed',
-                        onPress: () => {
-                            _deepLinkSwitchDomain(found, deepLink.params.postId)
+            } else {
+                Alert.alert(
+                    'Switch Active School?',
+                    `Viewing this story will switch your active school to ${found.name}.`,
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => {},
+                            style: 'cancel',
                         },
-                    },
-                ],
-                { cancelable: false }
-            )
+                        {
+                            text: 'Proceed',
+                            onPress: () => {
+                                _deepLinkSwitchDomain(found, deepLink.params.postId)
+                            },
+                        },
+                    ],
+                    { cancelable: false }
+                )
+            }
         }
         setDeepLink({})
     }
