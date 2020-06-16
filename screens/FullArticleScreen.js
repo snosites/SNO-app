@@ -66,7 +66,7 @@ class FullArticleScreen extends React.Component {
 
     _getFilteredWriters = (domainId, terms, writerSubscriptions) => {
         console.log('terms', terms)
-        if (!terms) {
+        if (terms && terms.errors) {
             return []
         }
         const filteredWriters = terms.filter((termObj) => {
@@ -121,7 +121,7 @@ class FullArticleScreen extends React.Component {
             })
         }
 
-        if (filteredWriters.length > 0) {
+        if (filteredWriters.length > 0 && terms && !terms.errors) {
             fabActions.unshift({
                 icon: 'add-alert',
                 label: 'Subscribe to this writer',
@@ -273,93 +273,98 @@ class FullArticleScreen extends React.Component {
                             <Dialog.Title>Please choose who you would like to follow</Dialog.Title>
                             <Dialog.ScrollArea>
                                 <ScrollView contentContainerStyle={{ paddingHorizontal: 24 }}>
-                                    {article.custom_fields.terms.map((term) => {
-                                        const found = this.state.subscribeTo.filter(
-                                            (writerObj) => writerObj.id === term.term_id
-                                        )
-                                        const status = found.length > 0 ? 'checked' : 'unchecked'
-                                        if (
-                                            unsubscribedWriters.some(
-                                                (writerObj) => writerObj.term_id === term.term_id
+                                    {article.custom_fields.terms &&
+                                        !article.custom_fields.terms.errors &&
+                                        article.custom_fields.terms.map((term) => {
+                                            const found = this.state.subscribeTo.filter(
+                                                (writerObj) => writerObj.id === term.term_id
                                             )
-                                        ) {
-                                            return (
-                                                <TouchableOpacity
-                                                    key={term.term_id}
-                                                    onPress={() => {
-                                                        if (status === 'unchecked') {
-                                                            this.setState({
-                                                                subscribeTo: [
-                                                                    ...this.state.subscribeTo,
-                                                                    {
-                                                                        id: term.term_id,
-                                                                        name: term.name,
-                                                                    },
-                                                                ],
-                                                            })
-                                                        } else {
-                                                            const updatedList = this.state.subscribeTo.filter(
-                                                                (writerObj) =>
-                                                                    writerObj.id !== term.term_id
-                                                            )
-                                                            this.setState({
-                                                                subscribeTo: updatedList,
-                                                            })
-                                                        }
-                                                    }}
-                                                >
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'flex-start',
+                                            const status =
+                                                found.length > 0 ? 'checked' : 'unchecked'
+                                            if (
+                                                unsubscribedWriters.some(
+                                                    (writerObj) =>
+                                                        writerObj.term_id === term.term_id
+                                                )
+                                            ) {
+                                                return (
+                                                    <TouchableOpacity
+                                                        key={term.term_id}
+                                                        onPress={() => {
+                                                            if (status === 'unchecked') {
+                                                                this.setState({
+                                                                    subscribeTo: [
+                                                                        ...this.state.subscribeTo,
+                                                                        {
+                                                                            id: term.term_id,
+                                                                            name: term.name,
+                                                                        },
+                                                                    ],
+                                                                })
+                                                            } else {
+                                                                const updatedList = this.state.subscribeTo.filter(
+                                                                    (writerObj) =>
+                                                                        writerObj.id !==
+                                                                        term.term_id
+                                                                )
+                                                                this.setState({
+                                                                    subscribeTo: updatedList,
+                                                                })
+                                                            }
                                                         }}
                                                     >
-                                                        <Checkbox.Android
-                                                            uncheckedColor='#757575'
-                                                            status={status}
-                                                        />
-                                                        <Text
+                                                        <View
                                                             style={{
-                                                                marginLeft: 5,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'flex-start',
                                                             }}
                                                         >
-                                                            {term.name}
-                                                        </Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )
-                                        } else {
-                                            return (
-                                                <TouchableOpacity key={term.term_id}>
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'flex-start',
-                                                        }}
-                                                    >
-                                                        <Text
+                                                            <Checkbox.Android
+                                                                uncheckedColor='#757575'
+                                                                status={status}
+                                                            />
+                                                            <Text
+                                                                style={{
+                                                                    marginLeft: 5,
+                                                                }}
+                                                            >
+                                                                {term.name}
+                                                            </Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TouchableOpacity key={term.term_id}>
+                                                        <View
                                                             style={{
-                                                                marginRight: 5,
-                                                                marginLeft: 40,
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'flex-start',
                                                             }}
                                                         >
-                                                            {term.name}
-                                                        </Text>
-                                                        <Text
-                                                            style={{
-                                                                marginLeft: 5,
-                                                                fontWeight: 'bold',
-                                                            }}
-                                                        >
-                                                            - Already subscribed
-                                                        </Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )
-                                        }
-                                    })}
+                                                            <Text
+                                                                style={{
+                                                                    marginRight: 5,
+                                                                    marginLeft: 40,
+                                                                }}
+                                                            >
+                                                                {term.name}
+                                                            </Text>
+                                                            <Text
+                                                                style={{
+                                                                    marginLeft: 5,
+                                                                    fontWeight: 'bold',
+                                                                }}
+                                                            >
+                                                                - Already subscribed
+                                                            </Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )
+                                            }
+                                        })}
                                 </ScrollView>
                             </Dialog.ScrollArea>
                             <Dialog.Actions>

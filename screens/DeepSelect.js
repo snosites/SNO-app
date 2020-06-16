@@ -67,15 +67,15 @@ const DeepSelectScreen = (props) => {
     useEffect(() => {
         if (!availableDomains.length) return
         const schoolId = navigation.getParam('schoolId', null)
-        console.log('this is school ID', schoolId)
 
         if (schoolId) {
             const foundSchool = availableDomains.find((domain) => domain.id == schoolId)
 
             if (foundSchool) {
-                console.log('found school')
-
                 setSelectedSchool(foundSchool)
+            } else {
+                console.log('no school matches ID passed')
+                navigation.navigate('AuthLoading')
             }
         } else {
             console.log('no school ID passed')
@@ -166,10 +166,6 @@ const DeepSelectScreen = (props) => {
         return (
             <View style={{ flex: 1, padding: 70 }}>
                 <ActivityIndicator />
-                <Text>{schoolId}</Text>
-                {availableDomains.map((d) => (
-                    <Text>{d.name}</Text>
-                ))}
             </View>
         )
     }
