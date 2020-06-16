@@ -68,7 +68,7 @@ const AuthLoadingScreen = (props) => {
         } else if (path && isDeepLinkArticle) {
             console.log('is deep link article', queryParams)
             setDeepLinkArticle({ params: queryParams, path })
-            setFromDeepLink(true)
+            initializeUser()
         } else {
             initializeUser()
         }
