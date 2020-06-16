@@ -167,6 +167,9 @@ const DeepSelectScreen = (props) => {
             <View style={{ flex: 1, padding: 70 }}>
                 <ActivityIndicator />
                 <Text>{schoolId}</Text>
+                {availableDomains.map((d) => (
+                    <Text>{d.name}</Text>
+                ))}
             </View>
         )
     }
