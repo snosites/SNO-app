@@ -115,6 +115,7 @@ const NotificationAlert = (props) => {
             })
             if (!found) {
                 // user doesnt have this domain saved so dont direct anywhere
+                console.log('directing to deep select', deepLink.params.schoolId)
                 NavigationService.navigate('DeepSelect', { schoolId: deepLink.params.schoolId })
             } else {
                 Alert.alert(

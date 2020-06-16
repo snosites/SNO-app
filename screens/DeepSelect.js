@@ -164,6 +164,7 @@ const DeepSelectScreen = (props) => {
         return (
             <View style={{ flex: 1, padding: 70 }}>
                 <ActivityIndicator />
+                <Text>{schoolId}</Text>
             </View>
         )
     }
