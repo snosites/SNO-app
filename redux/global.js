@@ -53,6 +53,7 @@ export const types = {
     FETCH_HOME_SCREEN_ARTICLES_ERROR: 'FETCH_HOME_SCREEN_ARTICLES_ERROR',
     SET_ACTIVE_CATEGORY: 'SET_ACTIVE_CATEGORY',
     SET_DEEP_LINK_ARTICLE: 'SET_DEEP_LINK_ARTICLE',
+    SET_FROM_DEEP_LINK: 'SET_FROM_DEEP_LINK',
 }
 
 const initialState = {
@@ -72,6 +73,7 @@ const initialState = {
     initialized: false,
     activeCategory: null,
     deepLinkArticle: {},
+    fromDeepLink: false,
 }
 
 export default function global(state = initialState, action) {
@@ -80,6 +82,11 @@ export default function global(state = initialState, action) {
             return {
                 ...state,
                 initialized: true,
+            }
+        case types.SET_FROM_DEEP_LINK:
+            return {
+                ...state,
+                fromDeepLink: action.payload,
             }
         case types.SET_DEEP_LINK_ARTICLE:
             return {
@@ -283,6 +290,10 @@ export const actions = {
     }),
     setDeepLinkArticle: (payload) => ({
         type: types.SET_DEEP_LINK_ARTICLE,
+        payload,
+    }),
+    setFromDeepLink: (payload) => ({
+        type: types.SET_FROM_DEEP_LINK,
         payload,
     }),
 }

@@ -89,8 +89,6 @@ const NotificationAlert = (props) => {
     }, [deepLinkArticle])
 
     const handleDeepLink = (e) => {
-        // const route = e.url.replace(/.*?:\/\//g, '')
-
         console.log('handling deep link', e)
 
         const parsedDeepLink = Linking.parse(e.url)
@@ -101,6 +99,10 @@ const NotificationAlert = (props) => {
     }
 
     const handleDeepLinkNavigation = async () => {
+        console.log('handling deep link nav', deepLinkArticle, deepLink)
+        if (!deepLink.params) {
+            return
+        }
         if (deepLink.params.schoolId == activeDomain.id) {
             // get article
             const article = await asyncFetchArticle(activeDomain.url, deepLink.params.postId)

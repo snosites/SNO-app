@@ -42,41 +42,37 @@ const AuthLoadingScreen = (props) => {
         error,
         activeDomain,
         setDeepLinkArticle,
+        fromDeepLink,
+        setFromDeepLink,
     } = props
 
     useEffect(() => {
         if (switchingDomain) {
             return
         }
+        if (fromDeepLink) {
+            handleFromDeepLink()
+        } else {
+            initializeUser()
+        }
+    }, [switchingDomain, fromDeepLink])
 
-        checkIfDeepLinkUser()
-    }, [switchingDomain])
-
-    const checkIfDeepLinkUser = async () => {
+    const handleFromDeepLink = async () => {
         const { path, queryParams } = await Linking.parseInitialURLAsync()
 
         let isDeepSelect = path ? path.includes('deepSelect') : false
         let isDeepLinkArticle = path ? path.includes('article') : false
 
-        if (path && isDeepSelect && !loadedDeepLink) {
-            console.log('q params', queryParams)
+        if (path && isDeepSelect) {
             initializeDeepLinkUser({ schoolId: queryParams.schoolId })
         } else if (path && isDeepLinkArticle) {
+            console.log('is deep link article', queryParams)
             setDeepLinkArticle({ params: queryParams, path })
-            initializeUser()
+            setFromDeepLink(true)
         } else {
-            console.log('in else')
             initializeUser()
         }
-    }
-
-    const handleDeepLinkArticle = async (params, path) => {
-        if (params.schoolId == activeDomain.id) {
-            // get article
-            const article = await asyncFetchArticle(activeDomain.url, Number(params.postId))
-
-            initializeDeepLinkUser(params, path)
-        }
+        setFromDeepLink(false)
     }
 
     if (error) {
@@ -144,6 +140,7 @@ const mapStateToProps = (state) => {
     return {
         error: createUserErrorSelector(state),
         activeDomain: getActiveDomain(state),
+        fromDeepLink: state.global.fromDeepLink,
     }
 }
 
@@ -151,6 +148,7 @@ const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
     initializeDeepLinkUser: (params) => dispatch(globalActions.initializeDeepLinkUser(params)),
     setDeepLinkArticle: (payload) => dispatch(globalActions.setDeepLinkArticle(payload)),
+    setFromDeepLink: (payload) => dispatch(globalActions.setFromDeepLink(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthLoadingScreen)
