@@ -87,6 +87,8 @@ const DeepSelectScreen = (props) => {
 
     const [modalVisible, setModalVisible] = useState(false)
 
+    const schoolId = navigation.getParam('schoolId', null)
+
     _handleSelect = async (selectedDomain) => {
         console.log('this is selected domain', selectedDomain)
         Haptics.selectionAsync()
