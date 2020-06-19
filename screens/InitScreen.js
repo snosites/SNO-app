@@ -117,7 +117,7 @@ class InitScreen extends React.Component {
                                     style={{ padding: 10, marginBottom: 30, width: 300 }}
                                     onPress={this._handleUseLocation}
                                 >
-                                    Use Your Current Location
+                                    Use Current Location
                                 </Button>
                                 <Button
                                     mode='contained'
