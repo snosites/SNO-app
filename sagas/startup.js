@@ -1,6 +1,7 @@
-import { put, call, takeLatest, all, select } from 'redux-saga/effects'
+import { put, call, takeLatest, all, select, fork } from 'redux-saga/effects'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { types as adTypes, actions as adActions } from '../redux/ads'
 import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } from '../redux/user'
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
@@ -155,7 +156,16 @@ function* getHomeScreenArticles() {
 function* getCustomOptions(domain) {
     try {
         //get home page options
-        const [headerImage, headerLogo, theme, primary, accent, comments, listStyle] = yield all([
+        const [
+            headerImage,
+            headerLogo,
+            theme,
+            primary,
+            accent,
+            comments,
+            listStyle,
+            appAdOptions,
+        ] = yield all([
             call(domainApiService.getCustomHeader, domain.url),
             call(domainApiService.getCustomHeaderLogo, domain.url),
             call(domainApiService.getCustomTheme, domain.url),
@@ -163,6 +173,7 @@ function* getCustomOptions(domain) {
             call(domainApiService.getCustomAccentColor, domain.url),
             call(domainApiService.getCommentsToggle, domain.url),
             call(domainApiService.getStoryListStyle, domain.url),
+            call(domainApiService.getAdOptions, domain.url),
         ])
 
         //home screen categories
@@ -230,6 +241,15 @@ function* getCustomOptions(domain) {
         if (!homeScreenCategoryColor.result) {
             homeScreenCategoryColor.result = null
         }
+
+        const newAdOptions = {}
+
+        Object.keys(appAdOptions).forEach((adName) => {
+            newAdOptions[adName] = appAdOptions[adName] === 'on' ? true : false
+        })
+        yield put(globalActions.receiveAppAdOptions(newAdOptions))
+
+        yield fork(fetchAds, domain, newAdOptions)
 
         yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
 
@@ -379,6 +399,30 @@ function* initializeDeepLinkUser({ params: { schoolId } }) {
     } catch (err) {
         console.log('error initializing deep link user in saga', err)
         yield put(globalActions.initializeDeepLinkUserError('error initializing deep link user'))
+    }
+}
+
+function* fetchAds(domain, adOptions) {
+    console.log('in fetch ads', adOptions)
+    try {
+        yield all(
+            Object.keys(adOptions).map((adName) => {
+                if (adOptions[adName]) {
+                    return call(fetchAdType, domain, adName)
+                } else return null
+            })
+        )
+    } catch (err) {
+        console.log('error getting ad images', err)
+    }
+}
+
+function* fetchAdType(domain, adName) {
+    try {
+        const { data } = yield call(domainApiService.getAds, domain.url, adName)
+        yield put(adActions.fetchAdsSuccess(adName, data))
+    } catch (err) {
+        console.log('error in fetch ad type', err)
     }
 }
 

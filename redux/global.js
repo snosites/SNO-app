@@ -26,6 +26,7 @@ export const types = {
     RECEIVE_SPORTCENTER_OPTION: 'RECEIVE_SPORTCENTER_OPTION',
     RECEIVE_COMMENTS_OPTION: 'RECEIVE_COMMENTS_OPTION',
     RECEIVE_STORY_LIST_STYLE: 'RECEIVE_STORY_LIST_STYLE',
+    RECEIVE_APP_AD_OPTIONS: 'RECEIVE_APP_AD_OPTIONS',
     RECEIVE_HOME_SCREEN_MODE: 'RECEIVE_HOME_SCREEN_MODE',
     RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
     RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS: 'RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS',
@@ -61,6 +62,7 @@ const initialState = {
     splashScreen: '',
     header: '',
     headerSmall: '',
+    appAdOptions: {},
     menuItems: [],
     sportCenterEnabled: false,
     enableComments: false,
@@ -134,6 +136,11 @@ export default function global(state = initialState, action) {
                 ...state,
                 storyListStyle: action.listStyle,
             }
+        case types.RECEIVE_APP_AD_OPTIONS:
+            return {
+                ...state,
+                appAdOptions: action.appAdOptions,
+            }
         case types.RECEIVE_HOME_SCREEN_CATEGORIES:
             return {
                 ...state,
@@ -180,120 +187,124 @@ export default function global(state = initialState, action) {
 }
 
 export const actions = {
-    fetchAvailableDomains: () => ({ type: types.FETCH_AVAILABLE_DOMAINS }),
-    fetchAvailableDomainsRequest: () => ({ type: types.FETCH_AVAILABLE_DOMAINS_REQUEST }),
-    fetchAvailableDomainsSuccess: (payload) => ({
-        type: types.FETCH_AVAILABLE_DOMAINS_SUCCESS,
-        payload,
-    }),
-    fetchAvailableDomainsError: (error) => ({
-        type: types.FETCH_AVAILABLE_DOMAINS_ERROR,
-        error,
-    }),
-    searchAvailableDomains: (searchTerm) => ({
-        type: types.SEARCH_AVAILABLE_DOMAINS,
-        searchTerm,
-    }),
-    searchAvailableDomainsRequest: () => ({ type: types.SEARCH_AVAILABLE_DOMAINS_REQUEST }),
-    searchAvailableDomainsSuccess: (payload) => ({
-        type: types.SEARCH_AVAILABLE_DOMAINS_SUCCESS,
-        payload,
-    }),
-    searchAvailableDomainsError: (error) => ({
-        type: types.SEARCH_AVAILABLE_DOMAINS_ERROR,
-        error,
-    }),
-    clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS }),
-    startup: (domain) => ({ type: types.STARTUP, domain }),
-    startupRequest: () => ({ type: types.STARTUP_REQUEST }),
-    startupSuccess: () => ({ type: types.STARTUP_SUCCESS }),
-    startupError: (error) => ({ type: types.STARTUP_ERROR, error }),
-    initializeUser: () => ({ type: types.INITIALIZE_USER }),
-    initializeUserRequest: () => ({ type: types.INITIALIZE_USER_REQUEST }),
-    initializeUserSuccess: () => ({ type: types.INITIALIZE_USER_SUCCESS }),
-    initializeUserError: (error) => ({ type: types.INITIALIZE_USER_ERROR, error }),
-    initializeDeepLinkUser: (params) => ({
-        type: types.INITIALIZE_DEEP_LINK_USER,
-        params,
-    }),
-    initializeDeepLinkUserRequest: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_REQUEST }),
-    initializeDeepLinkUserSuccess: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_SUCCESS }),
-    initializeDeepLinkUserError: (error) => ({
-        type: types.INITIALIZE_DEEP_LINK_USER_ERROR,
-        error,
-    }),
-    receiveSplash: (splash) => ({ type: types.RECEIVE_SPLASH, splash }),
-    receiveHeader: (header) => ({ type: types.RECEIVE_HEADER, header }),
-    receiveHeaderLogo: (headerLogo) => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
-    receiveSportCenterOption: (sportCenter) => ({
-        type: types.RECEIVE_SPORTCENTER_OPTION,
-        sportCenter,
-    }),
-    receiveCommentsOption: (comments) => ({
-        type: types.RECEIVE_COMMENTS_OPTION,
-        comments,
-    }),
-    receiveStoryListStyle: (listStyle) => ({
-        type: types.RECEIVE_STORY_LIST_STYLE,
-        listStyle,
-    }),
-    receiveHomeScreenCategories: (categories) => ({
-        type: types.RECEIVE_HOME_SCREEN_CATEGORIES,
-        categories,
-    }),
-    receiveHomeScreenCategoryAmounts: (payload) => ({
-        type: types.RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS,
-        payload,
-    }),
-    receiveHomeScreenListStyle: (listStyle) => ({
-        type: types.RECEIVE_HOME_SCREEN_LIST_STYLE,
-        listStyle,
-    }),
-    receiveHomeScreenMode: (mode) => ({
-        type: types.RECEIVE_HOME_SCREEN_MODE,
-        mode,
-    }),
-    receiveHomeScreenCategoryColor: (color) => ({
-        type: types.RECEIVE_HOME_SCREEN_CATEGORY_COLOR,
-        color,
-    }),
-    fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
-    fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
-    fetchMenusSuccess: (payload) => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
-    fetchMenusError: (error) => ({ type: types.FETCH_MENUS_ERROR, error }),
-    addSchoolSub: (url) => ({ type: types.ADD_SCHOOL_SUB, url }),
-    addSchoolSubRequest: () => ({ type: types.ADD_SCHOOL_SUB_REQUEST }),
-    addSchoolSubSuccess: () => ({ type: types.ADD_SCHOOL_SUB_SUCCESS }),
-    addSchoolSubError: (error) => ({ type: types.ADD_SCHOOL_SUB_ERROR, error }),
-    removeSchoolSub: (url) => ({ type: types.REMOVE_SCHOOL_SUB, url }),
-    removeSchoolSubRequest: () => ({ type: types.REMOVE_SCHOOL_SUB_REQUEST }),
-    removeSchoolSubSuccess: () => ({ type: types.REMOVE_SCHOOL_SUB_SUCCESS }),
-    removeSchoolSubError: (error) => ({ type: types.REMOVE_SCHOOL_SUB_ERROR, error }),
-    addStoryView: (url, postId) => ({ type: types.ADD_STORY_VIEW, url, postId }),
-    addStoryViewRequest: () => ({ type: types.ADD_STORY_VIEW_REQUEST }),
-    addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
-    addStoryViewError: (error) => ({ type: types.ADD_STORY_VIEW_ERROR, error }),
-    fetchHomeScreenArticles: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES }),
-    fetchHomeScreenArticlesRequest: () => ({
-        type: types.FETCH_HOME_SCREEN_ARTICLES_REQUEST,
-    }),
-    fetchHomeScreenArticlesSuccess: () => ({
-        type: types.FETCH_HOME_SCREEN_ARTICLES_SUCCESS,
-    }),
-    fetchHomeScreenArticlesError: (error) => ({
-        type: types.FETCH_HOME_SCREEN_ARTICLES_ERROR,
-        error,
-    }),
-    setActiveCategory: (categoryId) => ({
-        type: types.SET_ACTIVE_CATEGORY,
-        categoryId,
-    }),
-    setDeepLinkArticle: (payload) => ({
-        type: types.SET_DEEP_LINK_ARTICLE,
-        payload,
-    }),
-    setFromDeepLink: (payload) => ({
-        type: types.SET_FROM_DEEP_LINK,
-        payload,
-    }),
-}
+           fetchAvailableDomains: () => ({ type: types.FETCH_AVAILABLE_DOMAINS }),
+           fetchAvailableDomainsRequest: () => ({ type: types.FETCH_AVAILABLE_DOMAINS_REQUEST }),
+           fetchAvailableDomainsSuccess: (payload) => ({
+               type: types.FETCH_AVAILABLE_DOMAINS_SUCCESS,
+               payload,
+           }),
+           fetchAvailableDomainsError: (error) => ({
+               type: types.FETCH_AVAILABLE_DOMAINS_ERROR,
+               error,
+           }),
+           searchAvailableDomains: (searchTerm) => ({
+               type: types.SEARCH_AVAILABLE_DOMAINS,
+               searchTerm,
+           }),
+           searchAvailableDomainsRequest: () => ({ type: types.SEARCH_AVAILABLE_DOMAINS_REQUEST }),
+           searchAvailableDomainsSuccess: (payload) => ({
+               type: types.SEARCH_AVAILABLE_DOMAINS_SUCCESS,
+               payload,
+           }),
+           searchAvailableDomainsError: (error) => ({
+               type: types.SEARCH_AVAILABLE_DOMAINS_ERROR,
+               error,
+           }),
+           clearAvailableDomains: () => ({ type: types.CLEAR_AVAILABLE_DOMAINS }),
+           startup: (domain) => ({ type: types.STARTUP, domain }),
+           startupRequest: () => ({ type: types.STARTUP_REQUEST }),
+           startupSuccess: () => ({ type: types.STARTUP_SUCCESS }),
+           startupError: (error) => ({ type: types.STARTUP_ERROR, error }),
+           initializeUser: () => ({ type: types.INITIALIZE_USER }),
+           initializeUserRequest: () => ({ type: types.INITIALIZE_USER_REQUEST }),
+           initializeUserSuccess: () => ({ type: types.INITIALIZE_USER_SUCCESS }),
+           initializeUserError: (error) => ({ type: types.INITIALIZE_USER_ERROR, error }),
+           initializeDeepLinkUser: (params) => ({
+               type: types.INITIALIZE_DEEP_LINK_USER,
+               params,
+           }),
+           initializeDeepLinkUserRequest: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_REQUEST }),
+           initializeDeepLinkUserSuccess: () => ({ type: types.INITIALIZE_DEEP_LINK_USER_SUCCESS }),
+           initializeDeepLinkUserError: (error) => ({
+               type: types.INITIALIZE_DEEP_LINK_USER_ERROR,
+               error,
+           }),
+           receiveSplash: (splash) => ({ type: types.RECEIVE_SPLASH, splash }),
+           receiveHeader: (header) => ({ type: types.RECEIVE_HEADER, header }),
+           receiveHeaderLogo: (headerLogo) => ({ type: types.RECEIVE_HEADER_LOGO, headerLogo }),
+           receiveSportCenterOption: (sportCenter) => ({
+               type: types.RECEIVE_SPORTCENTER_OPTION,
+               sportCenter,
+           }),
+           receiveAppAdOptions: (appAdOptions) => ({
+               type: types.RECEIVE_APP_AD_OPTIONS,
+               appAdOptions,
+           }),
+           receiveCommentsOption: (comments) => ({
+               type: types.RECEIVE_COMMENTS_OPTION,
+               comments,
+           }),
+           receiveStoryListStyle: (listStyle) => ({
+               type: types.RECEIVE_STORY_LIST_STYLE,
+               listStyle,
+           }),
+           receiveHomeScreenCategories: (categories) => ({
+               type: types.RECEIVE_HOME_SCREEN_CATEGORIES,
+               categories,
+           }),
+           receiveHomeScreenCategoryAmounts: (payload) => ({
+               type: types.RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS,
+               payload,
+           }),
+           receiveHomeScreenListStyle: (listStyle) => ({
+               type: types.RECEIVE_HOME_SCREEN_LIST_STYLE,
+               listStyle,
+           }),
+           receiveHomeScreenMode: (mode) => ({
+               type: types.RECEIVE_HOME_SCREEN_MODE,
+               mode,
+           }),
+           receiveHomeScreenCategoryColor: (color) => ({
+               type: types.RECEIVE_HOME_SCREEN_CATEGORY_COLOR,
+               color,
+           }),
+           fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
+           fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
+           fetchMenusSuccess: (payload) => ({ type: types.FETCH_MENUS_SUCCESS, payload }),
+           fetchMenusError: (error) => ({ type: types.FETCH_MENUS_ERROR, error }),
+           addSchoolSub: (url) => ({ type: types.ADD_SCHOOL_SUB, url }),
+           addSchoolSubRequest: () => ({ type: types.ADD_SCHOOL_SUB_REQUEST }),
+           addSchoolSubSuccess: () => ({ type: types.ADD_SCHOOL_SUB_SUCCESS }),
+           addSchoolSubError: (error) => ({ type: types.ADD_SCHOOL_SUB_ERROR, error }),
+           removeSchoolSub: (url) => ({ type: types.REMOVE_SCHOOL_SUB, url }),
+           removeSchoolSubRequest: () => ({ type: types.REMOVE_SCHOOL_SUB_REQUEST }),
+           removeSchoolSubSuccess: () => ({ type: types.REMOVE_SCHOOL_SUB_SUCCESS }),
+           removeSchoolSubError: (error) => ({ type: types.REMOVE_SCHOOL_SUB_ERROR, error }),
+           addStoryView: (url, postId) => ({ type: types.ADD_STORY_VIEW, url, postId }),
+           addStoryViewRequest: () => ({ type: types.ADD_STORY_VIEW_REQUEST }),
+           addStoryViewSuccess: () => ({ type: types.ADD_STORY_VIEW_SUCCESS }),
+           addStoryViewError: (error) => ({ type: types.ADD_STORY_VIEW_ERROR, error }),
+           fetchHomeScreenArticles: () => ({ type: types.FETCH_HOME_SCREEN_ARTICLES }),
+           fetchHomeScreenArticlesRequest: () => ({
+               type: types.FETCH_HOME_SCREEN_ARTICLES_REQUEST,
+           }),
+           fetchHomeScreenArticlesSuccess: () => ({
+               type: types.FETCH_HOME_SCREEN_ARTICLES_SUCCESS,
+           }),
+           fetchHomeScreenArticlesError: (error) => ({
+               type: types.FETCH_HOME_SCREEN_ARTICLES_ERROR,
+               error,
+           }),
+           setActiveCategory: (categoryId) => ({
+               type: types.SET_ACTIVE_CATEGORY,
+               categoryId,
+           }),
+           setDeepLinkArticle: (payload) => ({
+               type: types.SET_DEEP_LINK_ARTICLE,
+               payload,
+           }),
+           setFromDeepLink: (payload) => ({
+               type: types.SET_FROM_DEEP_LINK,
+               payload,
+           }),
+       }

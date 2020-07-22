@@ -11,6 +11,7 @@ import savedArticlesBySchool from './savedArticles'
 import searchArticles from './search'
 import profiles from './profiles'
 import recentArticles from './recent'
+import ads from './ads'
 
 const appReducer = combineReducers({
     user,
@@ -24,9 +25,9 @@ const appReducer = combineReducers({
     savedArticlesBySchool,
     searchArticles,
     profiles,
-    recentArticles
+    recentArticles,
+    ads,
 })
-
 
 // if user chnges domain clear out domain specific state data
 const rootReducer = (state, action) => {
@@ -38,8 +39,9 @@ const rootReducer = (state, action) => {
             searchArticles: undefined,
             profiles: undefined,
             entities: undefined,
+            ads: undefined,
             errors: {},
-            loading: {}
+            loading: {},
         }
     }
     if (action.type === 'PURGE_USER_STATE') {

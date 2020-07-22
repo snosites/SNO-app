@@ -248,6 +248,31 @@ const domainApiService = {
             throw err
         }
     },
+    getAdOptions: async (domainUrl) => {
+        try {
+            const response = await axios.get(`https://${domainUrl}/wp-json/sns-v2/app-ad-options`)
+            return response.data
+        } catch (err) {
+            console.log('error in fetch app ad options api', err)
+            throw err
+        }
+    },
+    getAds: async (domainUrl, adType) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/app-ads?ad_position=${adType}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch app ads api', err)
+            throw err
+        }
+    },
     getHomeScreenMode: async (domainUrl) => {
         try {
             const response = await axios.get(
