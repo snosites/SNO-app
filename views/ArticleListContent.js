@@ -6,6 +6,7 @@ import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
 import AlternatingThumbnailListItem from '../components/AlternatingThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
 import SmallLargeListItem from '../components/SmallLargeListItem'
+import AdBlock from '../components/AdBlock'
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -22,6 +23,7 @@ export default class ArticleListContent extends React.Component {
             saveRef,
             loadMore,
             handleRefresh,
+            listAds,
         } = this.props
         return (
             <View style={{ flex: 1 }}>
@@ -71,56 +73,155 @@ export default class ArticleListContent extends React.Component {
             activeDomain,
             enableComments,
             storyListStyle,
+            listAds,
         } = this.props
+
+        let shouldRenderAd = false
+        if (listAds && listAds.displayLocation) {
+            shouldRenderAd = index % Number(listAds.displayLocation) === 0 && index !== 0
+        }
 
         const article = item
 
-        if (storyListStyle === 'large') {
-            return (
-                <LargeThumbnailListItem
-                    article={article}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
-                    enableComments={enableComments}
-                />
-            )
-        } else if (storyListStyle === 'alternating') {
-            return (
-                <AlternatingThumbnailListItem
-                    article={article}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
-                    enableComments={enableComments}
-                    alternate={index % 2 === 0}
-                />
-            )
-        } else if (storyListStyle === 'mix') {
-            return (
-                <SmallLargeListItem
-                    article={article}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
-                    enableComments={enableComments}
-                    large={index % 4 === 0}
-                />
-            )
-        } else {
-            return (
-                <SmallThumbnailListItem
-                    article={article}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
-                    enableComments={enableComments}
-                />
-            )
+        let ArticleComponent
+
+        switch (storyListStyle) {
+            case 'large':
+                if (shouldRenderAd) {
+                    return (
+                        <View style={{ flex: 1 }}>
+                            <AdBlock
+                                image={
+                                    listAds.images[
+                                        Math.floor(Math.random() * listAds.images.length)
+                                    ]
+                                }
+                            />
+                            <LargeThumbnailListItem
+                                article={article}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                deleteIcon={deleteIcon}
+                                onIconPress={onIconPress}
+                                enableComments={enableComments}
+                            />
+                        </View>
+                    )
+                } else {
+                    return (
+                        <LargeThumbnailListItem
+                            article={article}
+                            activeDomain={activeDomain}
+                            theme={theme}
+                            deleteIcon={deleteIcon}
+                            onIconPress={onIconPress}
+                            enableComments={enableComments}
+                        />
+                    )
+                }
+            case 'alternating':
+                if (shouldRenderAd) {
+                    return (
+                        <View style={{ flex: 1 }}>
+                            <AdBlock
+                                image={
+                                    listAds.images[
+                                        Math.floor(Math.random() * listAds.images.length)
+                                    ]
+                                }
+                            />
+                            <AlternatingThumbnailListItem
+                                article={article}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                deleteIcon={deleteIcon}
+                                onIconPress={onIconPress}
+                                enableComments={enableComments}
+                                alternate={index % 2 === 0}
+                            />
+                        </View>
+                    )
+                } else {
+                    return (
+                        <AlternatingThumbnailListItem
+                            article={article}
+                            activeDomain={activeDomain}
+                            theme={theme}
+                            deleteIcon={deleteIcon}
+                            onIconPress={onIconPress}
+                            enableComments={enableComments}
+                            alternate={index % 2 === 0}
+                        />
+                    )
+                }
+            case 'mix':
+                if (shouldRenderAd) {
+                    return (
+                        <View style={{ flex: 1 }}>
+                            <AdBlock
+                                image={
+                                    listAds.images[
+                                        Math.floor(Math.random() * listAds.images.length)
+                                    ]
+                                }
+                            />
+                            <SmallLargeListItem
+                                article={article}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                deleteIcon={deleteIcon}
+                                onIconPress={onIconPress}
+                                enableComments={enableComments}
+                                large={index % 4 === 0}
+                            />
+                        </View>
+                    )
+                } else {
+                    return (
+                        <SmallLargeListItem
+                            article={article}
+                            activeDomain={activeDomain}
+                            theme={theme}
+                            deleteIcon={deleteIcon}
+                            onIconPress={onIconPress}
+                            enableComments={enableComments}
+                            large={index % 4 === 0}
+                        />
+                    )
+                }
+            default:
+                if (shouldRenderAd) {
+                    return (
+                        <View style={{ flex: 1 }}>
+                            <AdBlock
+                                image={
+                                    listAds.images[
+                                        Math.floor(Math.random() * listAds.images.length)
+                                    ]
+                                }
+                            />
+                            <SmallThumbnailListItem
+                                article={article}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                deleteIcon={deleteIcon}
+                                onIconPress={onIconPress}
+                                enableComments={enableComments}
+                            />
+                        </View>
+                    )
+                } else {
+                    return (
+                        <SmallThumbnailListItem
+                            article={article}
+                            activeDomain={activeDomain}
+                            theme={theme}
+                            deleteIcon={deleteIcon}
+                            onIconPress={onIconPress}
+                            enableComments={enableComments}
+                        />
+                    )
+                }
         }
     }
 }

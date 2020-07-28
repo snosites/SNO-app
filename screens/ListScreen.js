@@ -13,6 +13,7 @@ import { Snackbar, Button } from 'react-native-paper'
 
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
+import { actions as adActions, getListAds } from '../redux/ads'
 
 import { getActiveDomain } from '../redux/domains'
 
@@ -123,7 +124,7 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation, articlesByCategory, category, theme, activeDomain, global } = this.props
+        const { navigation, articlesByCategory, category, theme, activeDomain, global, listAds } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
 
@@ -222,6 +223,7 @@ class ListScreen extends React.Component {
                         enableComments={global.enableComments}
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
+                        listAds={listAds}
                     />
                 ) : (
                     <ArticleListContent
@@ -237,6 +239,7 @@ class ListScreen extends React.Component {
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
                         storyListStyle={global.storyListStyle}
+                        listAds={listAds}
                     />
                 )}
                 <Snackbar
@@ -359,6 +362,8 @@ const mapStateToProps = (state, ownProps) => {
     // gets category ID from navigation params or defaults to first item in the list
     const categoryId = ownProps.navigation.getParam('categoryId', null)
     const activeDomain = getActiveDomain(state)
+    const listAds = getListAds(state)
+
     if (!categoryId || !state.articlesByCategory[categoryId]) {
         return {
             theme: state.theme,
@@ -369,6 +374,7 @@ const mapStateToProps = (state, ownProps) => {
             },
             articlesByCategory: [],
             global: state.global,
+            listAds,
         }
     }
     return {
@@ -376,6 +382,7 @@ const mapStateToProps = (state, ownProps) => {
         activeDomain,
         menus: state.global.menuItems,
         global: state.global,
+        listAds,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map((articleId) => {
             const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {

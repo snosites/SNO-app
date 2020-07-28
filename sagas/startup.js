@@ -242,14 +242,9 @@ function* getCustomOptions(domain) {
             homeScreenCategoryColor.result = null
         }
 
-        const newAdOptions = {}
+        yield put(globalActions.receiveAppAdOptions(appAdOptions))
 
-        Object.keys(appAdOptions).forEach((adName) => {
-            newAdOptions[adName] = appAdOptions[adName] === 'on' ? true : false
-        })
-        yield put(globalActions.receiveAppAdOptions(newAdOptions))
-
-        yield fork(fetchAds, domain, newAdOptions)
+        yield fork(fetchAds, domain, appAdOptions)
 
         yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
 
@@ -419,10 +414,12 @@ function* fetchAds(domain, adOptions) {
 
 function* fetchAdType(domain, adName) {
     try {
-        const { data } = yield call(domainApiService.getAds, domain.url, adName)
-        yield put(adActions.fetchAdsSuccess(adName, data))
+        const response = yield call(domainApiService.getAds, domain.url, adName)
+        console.log('ad type data', response, adName)
+        yield put(adActions.fetchAdsSuccess(adName, response))
     } catch (err) {
         console.log('error in fetch ad type', err)
+        throw err
     }
 }
 

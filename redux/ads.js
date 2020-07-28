@@ -5,12 +5,18 @@ export const types = {
     FETCH_ADS_ERROR: 'FETCH_ADS_ERROR',
 }
 
-const initialState = {}
+const initialState = {
+    displayLocation: null,
+    images: [],
+}
 
 function ads(state = initialState, action) {
     switch (action.type) {
         case types.FETCH_ADS_SUCCESS:
-            return action.payload
+            return {
+                displayLocation: action.payload.display_location,
+                images: action.payload.images,
+            }
         default:
             return state
     }
@@ -36,3 +42,6 @@ export const actions = {
 }
 
 //selectors
+export const getStoryAds = (state) => state.ads.story
+export const getListAds = (state) => state.ads.list
+export const getHomeAds = (state) => state.ads.home
