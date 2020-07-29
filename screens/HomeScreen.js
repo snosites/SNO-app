@@ -11,9 +11,12 @@ import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
 import { Snackbar, Button } from 'react-native-paper'
 
+import AdBlock from '../components/AdBlock'
+
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { getHomeAds } from '../redux/ads'
 import { createLoadingSelector } from '../redux/loading'
 
 import { getActiveDomain } from '../redux/domains'
@@ -87,10 +90,11 @@ class HomeScreen extends React.Component {
         snackbarSavedVisible: false,
         snackbarRemovedVisible: false,
         isTablet: false,
+        ad: null,
     }
 
     componentDidMount() {
-        const { navigation, global } = this.props
+        const { navigation, global, homeAds } = this.props
         if (this.animation) {
             this._playAnimation()
         }
@@ -107,6 +111,11 @@ class HomeScreen extends React.Component {
                     categoryId: menus[0].object_id,
                 })
             }
+            return
+        }
+
+        if (homeAds) {
+            this.setState({ ad: homeAds.images[Math.floor(Math.random() * homeAds.images.length)] })
         }
     }
 
@@ -157,8 +166,11 @@ class HomeScreen extends React.Component {
             isLoading,
             articlesLoading,
             setActiveCategory,
+            homeAds,
         } = this.props
-        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
+        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet, ad } = this.state
+
+        console.log('home ads', homeAds, ad)
 
         const {
             homeScreenCategories,
@@ -240,6 +252,8 @@ class HomeScreen extends React.Component {
                 {categoryTitles.map((title, i) => {
                     const margin = i ? 40 : 0
                     const listLength = homeScreenCategoryAmounts[i] || 5
+                    const shouldShowAd =
+                        homeAds.displayLocation && homeAds.displayLocation.includes(i + 1)
                     return (
                         <View style={{ flex: 1 }} key={i}>
                             <TouchableOpacity
@@ -255,6 +269,15 @@ class HomeScreen extends React.Component {
                                     justifyContent: 'center',
                                     paddingVertical: 10,
                                     marginTop: margin,
+                                    shadowColor: '#000',
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 2,
+                                    },
+                                    shadowOpacity: 0.23,
+                                    shadowRadius: 2.62,
+
+                                    elevation: 4,
                                 }}
                             >
                                 <HTML
@@ -300,6 +323,7 @@ class HomeScreen extends React.Component {
                                     storyListStyle={homeScreenListStyle}
                                 />
                             )}
+                            {shouldShowAd && <AdBlock image={ad} style={{ marginBottom: -40 }} />}
                         </View>
                     )
                 })}
@@ -435,9 +459,11 @@ const mapStateToProps = (state) => {
             articlesByCategory: [],
             isLoading: homeScreenLoadingSelector(state),
             articlesLoading: false,
+            homeAds: getHomeAds(state),
         }
     }
     return {
+        homeAds: getHomeAds(state),
         theme: state.theme,
         activeDomain,
         menus: state.global.menuItems,

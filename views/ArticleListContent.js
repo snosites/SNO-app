@@ -74,29 +74,22 @@ export default class ArticleListContent extends React.Component {
             enableComments,
             storyListStyle,
             listAds,
+            ad,
         } = this.props
 
         let shouldRenderAd = false
-        if (listAds && listAds.displayLocation) {
+        if (ad && listAds && listAds.displayLocation) {
             shouldRenderAd = index % Number(listAds.displayLocation) === 0 && index !== 0
         }
 
         const article = item
-
-        let ArticleComponent
 
         switch (storyListStyle) {
             case 'large':
                 if (shouldRenderAd) {
                     return (
                         <View style={{ flex: 1 }}>
-                            <AdBlock
-                                image={
-                                    listAds.images[
-                                        Math.floor(Math.random() * listAds.images.length)
-                                    ]
-                                }
-                            />
+                            <AdBlock image={ad} />
                             <LargeThumbnailListItem
                                 article={article}
                                 activeDomain={activeDomain}
@@ -123,13 +116,7 @@ export default class ArticleListContent extends React.Component {
                 if (shouldRenderAd) {
                     return (
                         <View style={{ flex: 1 }}>
-                            <AdBlock
-                                image={
-                                    listAds.images[
-                                        Math.floor(Math.random() * listAds.images.length)
-                                    ]
-                                }
-                            />
+                            <AdBlock image={ad} />
                             <AlternatingThumbnailListItem
                                 article={article}
                                 activeDomain={activeDomain}
@@ -158,13 +145,7 @@ export default class ArticleListContent extends React.Component {
                 if (shouldRenderAd) {
                     return (
                         <View style={{ flex: 1 }}>
-                            <AdBlock
-                                image={
-                                    listAds.images[
-                                        Math.floor(Math.random() * listAds.images.length)
-                                    ]
-                                }
-                            />
+                            <AdBlock image={ad} />
                             <SmallLargeListItem
                                 article={article}
                                 activeDomain={activeDomain}
@@ -193,13 +174,7 @@ export default class ArticleListContent extends React.Component {
                 if (shouldRenderAd) {
                     return (
                         <View style={{ flex: 1 }}>
-                            <AdBlock
-                                image={
-                                    listAds.images[
-                                        Math.floor(Math.random() * listAds.images.length)
-                                    ]
-                                }
-                            />
+                            <AdBlock image={ad} />
                             <SmallThumbnailListItem
                                 article={article}
                                 activeDomain={activeDomain}

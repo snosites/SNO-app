@@ -7,7 +7,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
 } from 'react-native'
 import Moment from 'moment'
 import Color from 'color'
@@ -24,17 +24,17 @@ const screenWidth = Dimensions.get('window').width
 
 Moment.updateLocale('en', {
     relativeTime: {
-        d: '1 day'
-    }
+        d: '1 day',
+    },
 })
 
 export default class TabletArticleListContent extends React.Component {
     state = {
         height: 0,
-        width: 0
+        width: 0,
     }
 
-    _handleLayout = e => {
+    _handleLayout = (e) => {
         const { height, width } = e.nativeEvent.layout
 
         if (this.state.height !== height || this.state.width !== width) {
@@ -49,7 +49,7 @@ export default class TabletArticleListContent extends React.Component {
             isFetching,
             saveRef,
             loadMore,
-            handleRefresh
+            handleRefresh,
         } = this.props
         return (
             <View style={{ flex: 1, flexWrap: 'wrap' }} onLayout={this._handleLayout}>
@@ -57,8 +57,8 @@ export default class TabletArticleListContent extends React.Component {
                     numColumns={2}
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
-                    keyExtractor={item => item.id.toString()}
-                    ref={ref => {
+                    keyExtractor={(item) => item.id.toString()}
+                    ref={(ref) => {
                         if (saveRef) {
                             saveRef(ref)
                         }
@@ -89,15 +89,24 @@ export default class TabletArticleListContent extends React.Component {
                     renderItem={this._renderItem}
                     columnWrapperStyle={{
                         borderBottomColor: '#9e9e9e',
-                        borderBottomWidth: 0.5
+                        borderBottomWidth: 0.5,
                     }}
                 />
             </View>
         )
     }
 
+    // TODO: show adds in tablet version
     _renderItem = ({ item, index }) => {
-        const { theme, onIconPress, deleteIcon, activeDomain, enableComments } = this.props
+        const {
+            theme,
+            onIconPress,
+            deleteIcon,
+            activeDomain,
+            enableComments,
+            listAds,
+            ad,
+        } = this.props
         const { width, height } = this.state
         const article = item
         const hasFeaturedImage = article.featuredImage
@@ -114,7 +123,7 @@ export default class TabletArticleListContent extends React.Component {
                         flex: 1,
                         height: imageHeight + 175,
                         borderRightWidth: 0.5,
-                        borderRightColor: '#9e9e9e'
+                        borderRightColor: '#9e9e9e',
                     }}
                     onPress={() => handleArticlePress(article, activeDomain)}
                 >
@@ -125,7 +134,7 @@ export default class TabletArticleListContent extends React.Component {
                                 style={{
                                     width: imageWidth,
                                     height: imageHeight,
-                                    borderRadius: 8
+                                    borderRadius: 8,
                                 }}
                             />
                         ) : null}
@@ -133,13 +142,13 @@ export default class TabletArticleListContent extends React.Component {
                             <HTML
                                 html={article.title.rendered}
                                 baseFontStyle={{ fontSize: 28 }}
-                                customWrapper={text => {
+                                customWrapper={(text) => {
                                     return (
                                         <Text
                                             style={{
                                                 fontSize: 27,
                                                 fontWeight: 'bold',
-                                                color: theme.dark ? 'white' : 'black'
+                                                color: theme.dark ? 'white' : 'black',
                                             }}
                                             ellipsizeMode='tail'
                                             numberOfLines={2}
@@ -152,8 +161,8 @@ export default class TabletArticleListContent extends React.Component {
                                     rawtext: {
                                         fontSize: 23,
                                         fontWeight: 'bold',
-                                        color: theme.dark ? 'white' : 'black'
-                                    }
+                                        color: theme.dark ? 'white' : 'black',
+                                    },
                                 }}
                             />
                             <Text
@@ -161,7 +170,7 @@ export default class TabletArticleListContent extends React.Component {
                                 numberOfLines={1}
                                 style={{
                                     color: theme.colors.accent,
-                                    fontSize: 20
+                                    fontSize: 20,
                                 }}
                             >
                                 {article.custom_fields.writer
@@ -172,7 +181,7 @@ export default class TabletArticleListContent extends React.Component {
                                 <HTML
                                     html={article.excerpt.rendered}
                                     baseFontStyle={{ fontSize: 18 }}
-                                    customWrapper={text => {
+                                    customWrapper={(text) => {
                                         return (
                                             <Text
                                                 ellipsizeMode='tail'
@@ -186,8 +195,8 @@ export default class TabletArticleListContent extends React.Component {
                                     tagsStyles={{
                                         rawtext: {
                                             fontSize: 21,
-                                            color: theme.dark ? 'white' : 'black'
-                                        }
+                                            color: theme.dark ? 'white' : 'black',
+                                        },
                                     }}
                                 />
                             ) : null}
@@ -196,7 +205,7 @@ export default class TabletArticleListContent extends React.Component {
                             style={{
                                 marginTop: 'auto',
                                 flexDirection: 'row',
-                                alignItems: 'center'
+                                alignItems: 'center',
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -205,7 +214,7 @@ export default class TabletArticleListContent extends React.Component {
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    marginLeft: 'auto'
+                                    marginLeft: 'auto',
                                 }}
                             >
                                 {enableComments && (
@@ -218,7 +227,7 @@ export default class TabletArticleListContent extends React.Component {
                                                     position: 'absolute',
                                                     top: -4,
                                                     right: -6,
-                                                    backgroundColor: theme.colors.accent
+                                                    backgroundColor: theme.colors.accent,
                                                 }}
                                             >
                                                 {article.comments.length > 99
@@ -258,7 +267,7 @@ export default class TabletArticleListContent extends React.Component {
                     <HTML
                         html={article.title.rendered}
                         baseFontStyle={{ fontSize: 23 }}
-                        customWrapper={text => {
+                        customWrapper={(text) => {
                             return (
                                 <Text ellipsizeMode='tail' numberOfLines={2}>
                                     {text}
@@ -269,8 +278,8 @@ export default class TabletArticleListContent extends React.Component {
                             rawtext: {
                                 fontSize: 23,
                                 fontWeight: 'bold',
-                                color: theme.dark ? 'white' : 'black'
-                            }
+                                color: theme.dark ? 'white' : 'black',
+                            },
                         }}
                     />
                     <View style={{ alignSelf: 'flex-end' }}>
@@ -279,7 +288,7 @@ export default class TabletArticleListContent extends React.Component {
                             numberOfLines={1}
                             style={{
                                 color: theme.colors.accent,
-                                fontSize: 15
+                                fontSize: 15,
                             }}
                         >
                             {article.custom_fields.writer
@@ -290,7 +299,7 @@ export default class TabletArticleListContent extends React.Component {
                             style={{
                                 flexDirection: 'row',
                                 alignItems: 'center',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -300,7 +309,7 @@ export default class TabletArticleListContent extends React.Component {
                         <View
                             style={{
                                 justifySelf: 'end',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
                             }}
                         >
                             <View>
@@ -311,7 +320,7 @@ export default class TabletArticleListContent extends React.Component {
                                         position: 'absolute',
                                         bottom: 2,
                                         right: 4,
-                                        backgroundColor: theme.colors.accent
+                                        backgroundColor: theme.colors.accent,
                                     }}
                                 >
                                     {article.comments.length > 99 ? '99' : article.comments.length}
@@ -339,12 +348,12 @@ export default class TabletArticleListContent extends React.Component {
         )
     }
 
-    _renderDate = date => {
+    _renderDate = (date) => {
         return (
             <Text
                 style={{
                     fontSize: 17,
-                    color: '#9e9e9e'
+                    color: '#9e9e9e',
                 }}
             >
                 {Moment().isAfter(Moment(date).add(7, 'days'))
@@ -354,7 +363,7 @@ export default class TabletArticleListContent extends React.Component {
         )
     }
 
-    _renderWriters = writers => {
+    _renderWriters = (writers) => {
         let newArr = ''
         for (let i = 0; i < writers.length; i++) {
             if (i === writers.length - 2) {
@@ -374,17 +383,17 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         paddingBottom: 30,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     storyContainer: {
-        flex: 1
+        flex: 1,
     },
     featuredImage: {
         width: 125,
         height: 80,
-        borderRadius: 8
+        borderRadius: 8,
     },
     storyInfo: {
-        flex: 1
-    }
+        flex: 1,
+    },
 })

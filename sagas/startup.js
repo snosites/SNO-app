@@ -398,7 +398,6 @@ function* initializeDeepLinkUser({ params: { schoolId } }) {
 }
 
 function* fetchAds(domain, adOptions) {
-    console.log('in fetch ads', adOptions)
     try {
         yield all(
             Object.keys(adOptions).map((adName) => {

@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
 
-const AdBlock = ({ image }) => {
+const AdBlock = ({ image, style }) => {
     console.log('image', image)
     return (
         <TouchableOpacity
@@ -17,6 +17,7 @@ const AdBlock = ({ image }) => {
                 alignItems: 'center',
                 backgroundColor: '#e0e0e0',
                 marginVertical: 10,
+                ...style,
             }}
             onPress={async () => {
                 if (image.link) {

@@ -86,10 +86,11 @@ class ListScreen extends React.Component {
         snackbarSavedVisible: false,
         snackbarRemovedVisible: false,
         isTablet: false,
+        ad: null,
     }
 
     componentDidMount() {
-        const { navigation, global } = this.props
+        const { navigation, global, listAds } = this.props
         if (this.animation) {
             this._playAnimation()
         }
@@ -97,6 +98,8 @@ class ListScreen extends React.Component {
             headerLogo: global.headerSmall,
         })
         this.getDeviceTypeComponent()
+
+        this.setState({ ad: listAds.images[Math.floor(Math.random() * listAds.images.length)] })
     }
 
     componentDidUpdate() {
@@ -124,7 +127,15 @@ class ListScreen extends React.Component {
     }
 
     render() {
-        const { navigation, articlesByCategory, category, theme, activeDomain, global, listAds } = this.props
+        const {
+            navigation,
+            articlesByCategory,
+            category,
+            theme,
+            activeDomain,
+            global,
+            listAds,
+        } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
 
@@ -224,6 +235,7 @@ class ListScreen extends React.Component {
                         navigation={navigation}
                         onIconPress={this._saveRemoveToggle}
                         listAds={listAds}
+                        ad={this.state.ad}
                     />
                 ) : (
                     <ArticleListContent
@@ -240,6 +252,7 @@ class ListScreen extends React.Component {
                         onIconPress={this._saveRemoveToggle}
                         storyListStyle={global.storyListStyle}
                         listAds={listAds}
+                        ad={this.state.ad}
                     />
                 )}
                 <Snackbar
