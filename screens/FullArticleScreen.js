@@ -16,6 +16,7 @@ import { NavigationEvents, SafeAreaView } from 'react-navigation'
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { getActiveDomain } from '../redux/domains'
 import { actions as userActions, getPushToken, getWriterSubscriptions } from '../redux/user'
+import { getStoryAds } from '../redux/ads'
 
 import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
 
@@ -39,18 +40,24 @@ class FullArticleScreen extends React.Component {
         showDialog: false,
         subscribeTo: [],
         loadingLink: false,
+        ad: null,
     }
 
     componentDidMount() {
+        const { storyAds } = this.props
         if (this.animation) {
             this.animation.play()
+        }
+        if (storyAds) {
+            this.setState({
+                ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
+            })
         }
     }
 
     componentDidUpdate() {
-        console.log('component did update')
         const scrollToTop = this.props.navigation.getParam('scrollToTop', false)
-        console.log('scroll to top', scrollToTop)
+
         if (scrollToTop && this.flatListRef) {
             this._scrollToTop()
         }
@@ -65,7 +72,6 @@ class FullArticleScreen extends React.Component {
     }
 
     _getFilteredWriters = (domainId, terms, writerSubscriptions) => {
-        console.log('terms', terms)
         if (terms && terms.errors) {
             return []
         }
@@ -146,8 +152,9 @@ class FullArticleScreen extends React.Component {
             subscribe,
             activeDomain,
             writerSubscriptions,
+            storyAds,
         } = this.props
-        const { snackbarSavedVisible, loadingLink } = this.state
+        const { snackbarSavedVisible, loadingLink, ad } = this.state
 
         let article = navigation.getParam('article', 'loading')
         let articleChapters = navigation.getParam('articleChapters', [])
@@ -210,6 +217,8 @@ class FullArticleScreen extends React.Component {
                         expandCaption={this.state.expandCaption}
                         activeDomain={activeDomain}
                         setLoadingLink={(state) => this.setState({ loadingLink: state })}
+                        ad={ad}
+                        adPosition={storyAds ? storyAds.displayLocation : null}
                     />
                     {articleChapters.map((article) => (
                         <ArticleBodyContent
@@ -446,6 +455,7 @@ const mapStateToProps = (state) => ({
     pushToken: getPushToken(state),
     writerSubscriptions: getWriterSubscriptions(state),
     enableComments: state.global.enableComments,
+    storyAds: getStoryAds(state),
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -18,10 +18,12 @@ import { WebView } from 'react-native-webview'
 
 import TouchableItem from '../constants/TouchableItem'
 import Slideshow from './Slideshow'
-import { slideshowRenderer, relatedRenderer } from '../utils/Renderers'
+import { slideshowRenderer, relatedRenderer, adBlockRenderer } from '../utils/Renderers'
 
 import { handleArticlePress } from '../utils/articlePress'
 import { asyncFetchArticle } from '../utils/sagaHelpers'
+
+import AdBlock from '../components/AdBlock'
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -36,7 +38,8 @@ const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
     render() {
-        const { theme, article } = this.props
+        const { theme, article, ad, adPosition } = this.props
+
         return (
             <View>
                 <View style={styles.featuredMediaContainer}>
@@ -104,6 +107,7 @@ export default class ArticleBodyContent extends React.Component {
                 >
                     {this._renderDate(article.date)}
                 </View>
+                {ad && adPosition === 'beginning' ? <AdBlock image={ad} /> : null}
                 {article.content.rendered ? (
                     <View style={styles.articleContents}>
                         <ScrollView>
@@ -161,34 +165,37 @@ export default class ArticleBodyContent extends React.Component {
                                         color: '#757575',
                                     },
                                 }}
-                                // possibly alter node here for links in app
+                                onParsed={(dom, RNElements) => {
+                                    if (!ad || !adPosition || adPosition !== 'middle')
+                                        return RNElements
 
-                                // alterNode={(node) => {
-                                //     if (node.attribs && node.attribs['data-photo-ids']) {
-                                //         return {
-                                //             attribs: {
-                                //                 class: "photowrap",
-                                //                 ['data-photo-ids']: "602,410,403,453,197"
-                                //             },
-                                //             children: [],
-                                //             name: "snsgallery",
-                                //             next: {},
-                                //             parent: null,
-                                //             prev: {},
-                                //             type: "tag"
-                                //         }
+                                    // Find the index of the first paragraph
+                                    const ad = {
+                                        wrapper: null,
+                                        tagName: 'adBlock',
+                                        attribs: {},
+                                        parent: false,
+                                        parentTag: false,
+                                        nodeIndex: Math.floor(RNElements.length / 2),
+                                    }
+                                    // // Insert the component
+                                    RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
 
-                                //     }
-                                //     return node
-                                // }}
+                                    return RNElements
+                                }}
                                 renderers={{
                                     snsgallery: slideshowRenderer,
                                     snsrelated: relatedRenderer,
+                                    adBlock: adBlockRenderer,
+                                }}
+                                renderersProps={{
+                                    adImage: ad,
                                 }}
                             />
                         </ScrollView>
                     </View>
                 ) : null}
+                {ad && adPosition === 'end' ? <AdBlock image={ad} /> : null}
             </View>
         )
     }

@@ -3,6 +3,8 @@ import { View, Dimensions } from 'react-native'
 
 import Slideshow from '../views/Slideshow'
 import RelatedStories from '../views/RelatedStories'
+import AdBlock from '../components/AdBlock'
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
 const MEDIASIZE = viewportHeight * 0.35
@@ -36,10 +38,42 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
                 marginLeft: -20,
                 marginVertical: 20,
                 // paddingHorizontal: 10,
-                backgroundColor: '#eeeeee'
+                backgroundColor: '#eeeeee',
             }}
         >
             <RelatedStories relatedStoryIds={storyIdArr} />
+        </View>
+    )
+}
+
+export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
+    if (!passProps.renderersProps || !passProps.renderersProps.adImage) return
+
+    return (
+        <View
+            key={passProps.key}
+            style={{
+                width: viewportWidth,
+                position: 'relative',
+                left: -20,
+                overflow: 'visible',
+            }}
+        >
+            <AdBlock style={{ marginVertical: 20 }} image={passProps.renderersProps.adImage} />
+        </View>
+    )
+    return (
+        <View
+            key={passProps.key}
+            style={{
+                width: viewportWidth,
+                height: 250,
+                marginLeft: -20,
+                marginVertical: 10,
+                backgroundColor: 'red',
+            }}
+        >
+            <View style={{ flex: 1, backgroundColor: 'green', marginLeft: -20 }} />
         </View>
     )
 }

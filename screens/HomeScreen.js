@@ -170,8 +170,6 @@ class HomeScreen extends React.Component {
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet, ad } = this.state
 
-        console.log('home ads', homeAds, ad)
-
         const {
             homeScreenCategories,
             homeScreenListStyle,

@@ -9,7 +9,6 @@ import * as Linking from 'expo-linking'
 import NavigationService from '../utils/NavigationService'
 
 const AdBlock = ({ image, style }) => {
-    console.log('image', image)
     return (
         <TouchableOpacity
             style={{
