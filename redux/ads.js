@@ -3,6 +3,10 @@ export const types = {
     FETCH_ADS_REQUEST: 'FETCH_ADS_REQUEST',
     FETCH_ADS_SUCCESS: 'FETCH_ADS_SUCCESS',
     FETCH_ADS_ERROR: 'FETCH_ADS_ERROR',
+    SEND_AD_ANALYTIC: 'SEND_AD_ANALYTIC',
+    SEND_AD_ANALYTIC_REQUEST: 'SEND_AD_ANALYTIC_REQUEST',
+    SEND_AD_ANALYTIC_SUCCESS: 'SEND_AD_ANALYTIC_SUCCESS',
+    SEND_AD_ANALYTIC_ERROR: 'SEND_AD_ANALYTIC_ERROR',
 }
 
 const initialState = {
@@ -39,6 +43,15 @@ export const actions = {
     fetchAdsRequest: () => ({ type: types.FETCH_ADS_REQUEST }),
     fetchAdsSuccess: (adType, payload) => ({ type: types.FETCH_ADS_SUCCESS, adType, payload }),
     fetchAdsError: (adType, error) => ({ type: types.FETCH_ADS_ERROR, adType, error }),
+    sendAdAnalytic: (url, imageId, field) => ({
+        type: types.SEND_AD_ANALYTIC,
+        url,
+        imageId,
+        field,
+    }),
+    sendAdAnalyticRequest: () => ({ type: types.SEND_AD_ANALYTIC_REQUEST }),
+    sendAdAnalyticSuccess: () => ({ type: types.SEND_AD_ANALYTIC_SUCCESS }),
+    sendAdAnalyticError: (error) => ({ type: types.SEND_AD_ANALYTIC_ERROR, error }),
 }
 
 //selectors

@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
+import { NavigationEvents, SafeAreaView } from 'react-navigation'
 import Color from 'color'
 import { connect } from 'react-redux'
 import * as Device from 'expo-device'
@@ -16,8 +17,6 @@ import { actions as articlesActions } from '../redux/articles'
 import { actions as adActions, getListAds } from '../redux/ads'
 
 import { getActiveDomain } from '../redux/domains'
-
-import { SafeAreaView } from 'react-navigation'
 
 import ArticleListContent from '../views/ArticleListContent'
 import TabletArticleListContent from '../views/TabletArticleListContent'
@@ -90,7 +89,7 @@ class ListScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { navigation, global, listAds } = this.props
+        const { navigation, global, listAds, activeDomain, sendAdAnalytic } = this.props
         if (this.animation) {
             this._playAnimation()
         }
@@ -99,7 +98,11 @@ class ListScreen extends React.Component {
         })
         this.getDeviceTypeComponent()
 
-        this.setState({ ad: listAds.images[Math.floor(Math.random() * listAds.images.length)] })
+        if (listAds) {
+            const activeAdImage = listAds.images[Math.floor(Math.random() * listAds.images.length)]
+            this.setState({ ad: activeAdImage })
+            sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')
+        }
     }
 
     componentDidUpdate() {
@@ -135,8 +138,9 @@ class ListScreen extends React.Component {
             activeDomain,
             global,
             listAds,
+            sendAdAnalytic,
         } = this.props
-        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet } = this.state
+        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet, ad } = this.state
         const categoryId = this.props.navigation.getParam('categoryId', null)
 
         if (!categoryId) {
@@ -221,6 +225,14 @@ class ListScreen extends React.Component {
 
         return (
             <View style={{ flex: 1 }}>
+                <NavigationEvents
+                    onDidFocus={() => {
+                        if (ad && ad.id) {
+                            console.log('sending ad analytic')
+                            sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+                        }
+                    }}
+                />
                 {isTablet ? (
                     <TabletArticleListContent
                         articleList={articlesByCategory}
@@ -420,6 +432,8 @@ const mapDispatchToProps = (dispatch) => ({
     fetchArticlesIfNeeded: (payload) => dispatch(articlesActions.fetchArticlesIfNeeded(payload)),
     fetchMoreArticlesIfNeeded: (payload) =>
         dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload)),
+    sendAdAnalytic: (url, imageId, field) =>
+        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListScreen)

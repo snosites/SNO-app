@@ -4,11 +4,14 @@ import { Text, TouchableOpacity, Image } from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
 
+import { getActiveDomain } from '../redux/domains'
+import { actions as adActions } from '../redux/ads'
+
 import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
 
-const AdBlock = ({ image, style }) => {
+const AdBlock = ({ image, style, activeDomain, sendAdAnalytic }) => {
     return (
         <TouchableOpacity
             style={{
@@ -19,9 +22,8 @@ const AdBlock = ({ image, style }) => {
                 ...style,
             }}
             onPress={async () => {
-                if (image.link) {
-                    await WebBrowser.openBrowserAsync(image.link)
-                }
+                if (image.id) sendAdAnalytic(activeDomain.url, image.id, 'ad_clicks')
+                if (image.link) await WebBrowser.openBrowserAsync(image.link)
             }}
         >
             <Text
@@ -53,4 +55,13 @@ const AdBlock = ({ image, style }) => {
     )
 }
 
-export default AdBlock
+const mapStateToProps = (state) => ({
+    activeDomain: getActiveDomain(state),
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    sendAdAnalytic: (url, imageId, field) =>
+        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdBlock)

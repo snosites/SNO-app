@@ -16,7 +16,7 @@ import { NavigationEvents, SafeAreaView } from 'react-navigation'
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { getActiveDomain } from '../redux/domains'
 import { actions as userActions, getPushToken, getWriterSubscriptions } from '../redux/user'
-import { getStoryAds } from '../redux/ads'
+import { actions as adActions, getStoryAds } from '../redux/ads'
 
 import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
 
@@ -48,7 +48,7 @@ class FullArticleScreen extends React.Component {
         if (this.animation) {
             this.animation.play()
         }
-        if (storyAds) {
+        if (storyAds && storyAds.images) {
             this.setState({
                 ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
             })
@@ -153,6 +153,7 @@ class FullArticleScreen extends React.Component {
             activeDomain,
             writerSubscriptions,
             storyAds,
+            sendAdAnalytic,
         } = this.props
         const { snackbarSavedVisible, loadingLink, ad } = this.state
 
@@ -196,11 +197,14 @@ class FullArticleScreen extends React.Component {
                     }}
                 >
                     <NavigationEvents
-                        onDidFocus={() =>
+                        onDidFocus={() => {
                             this.setState({
                                 showPortal: true,
                             })
-                        }
+                            if (ad && ad.id) {
+                                sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+                            }
+                        }}
                         onWillBlur={() => {
                             StatusBar.setHidden(false)
                             this.setState({
@@ -462,6 +466,8 @@ const mapDispatchToProps = (dispatch) => ({
     saveArticle: (article, domainId) =>
         dispatch(savedArticleActions.saveArticle(article, domainId)),
     subscribe: (payload) => dispatch(userActions.subscribe(payload)),
+    sendAdAnalytic: (url, imageId, field) =>
+        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FullArticleScreen)

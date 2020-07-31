@@ -2,6 +2,7 @@ import { put, call, takeLatest, select, all } from 'redux-saga/effects'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { actions as domainsActions, getSavedDomains } from '../redux/domains'
 import { actions as userActions, getApiToken } from '../redux/user'
+import { types as adTypes, actions as adActions } from '../redux/ads'
 
 import NavigationService from '../utils/NavigationService'
 import api from '../api/api'
@@ -151,6 +152,21 @@ function* addStoryView(action) {
     }
 }
 
+function* sendAdAnalytic(action) {
+    try {
+        const { url, imageId, field } = action
+        yield put(adActions.sendAdAnalyticRequest())
+
+        const response = yield call(domainApiService.sendAdAnalytic, url, imageId, field)
+        console.log('ad resp', response, imageId)
+
+        yield put(adActions.sendAdAnalyticSuccess())
+    } catch (err) {
+        console.log('error in send ad analytic saga', err)
+        yield put(adActions.sendAdAnalyticError('error adding ad analytic'))
+    }
+}
+
 function* globalSaga() {
     yield all([
         takeLatest(globalTypes.FETCH_AVAILABLE_DOMAINS, fetchAvailableDomains),
@@ -158,6 +174,7 @@ function* globalSaga() {
         takeLatest(globalTypes.ADD_SCHOOL_SUB, addSchoolSub),
         takeLatest(globalTypes.REMOVE_SCHOOL_SUB, removeSchoolSub),
         takeLatest(globalTypes.ADD_STORY_VIEW, addStoryView),
+        takeLatest(adTypes.SEND_AD_ANALYTIC, sendAdAnalytic),
     ])
 }
 

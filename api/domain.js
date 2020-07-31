@@ -273,6 +273,23 @@ const domainApiService = {
             throw err
         }
     },
+    sendAdAnalytic: async (domainUrl, imageId, field) => {
+        try {
+            const response = await axios.post(
+                `https://${domainUrl}/wp-json/sns-v2/ad-analytics`,
+                { image_id: imageId, field },
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch app ads api', err, err.response)
+            throw err
+        }
+    },
     getHomeScreenMode: async (domainUrl) => {
         try {
             const response = await axios.get(

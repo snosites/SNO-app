@@ -1,5 +1,6 @@
 import React from 'react'
 import { ScrollView, View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
+import { NavigationEvents, SafeAreaView } from 'react-navigation'
 import Color from 'color'
 import { connect } from 'react-redux'
 import * as Device from 'expo-device'
@@ -16,12 +17,10 @@ import AdBlock from '../components/AdBlock'
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { getHomeAds } from '../redux/ads'
+import { actions as adActions, getHomeAds } from '../redux/ads'
 import { createLoadingSelector } from '../redux/loading'
 
 import { getActiveDomain } from '../redux/domains'
-
-import { SafeAreaView } from 'react-navigation'
 
 import ArticleListContent from '../views/ArticleListContent'
 import TabletArticleListContent from '../views/TabletArticleListContent'
@@ -94,7 +93,7 @@ class HomeScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { navigation, global, homeAds } = this.props
+        const { navigation, global, homeAds, sendAdAnalytic, activeDomain } = this.props
         if (this.animation) {
             this._playAnimation()
         }
@@ -115,7 +114,9 @@ class HomeScreen extends React.Component {
         }
 
         if (homeAds) {
-            this.setState({ ad: homeAds.images[Math.floor(Math.random() * homeAds.images.length)] })
+            const activeAdImage = homeAds.images[Math.floor(Math.random() * homeAds.images.length)]
+            this.setState({ ad: activeAdImage })
+            sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')
         }
     }
 
@@ -167,6 +168,7 @@ class HomeScreen extends React.Component {
             articlesLoading,
             setActiveCategory,
             homeAds,
+            sendAdAnalytic,
         } = this.props
         const { snackbarSavedVisible, snackbarRemovedVisible, isTablet, ad } = this.state
 
@@ -247,6 +249,14 @@ class HomeScreen extends React.Component {
 
         return (
             <ScrollView style={{ flex: 1 }}>
+                <NavigationEvents
+                    onDidFocus={() => {
+                        if (ad && ad.id) {
+                            console.log('sending ad analytic')
+                            sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+                        }
+                    }}
+                />
                 {categoryTitles.map((title, i) => {
                     const margin = i ? 40 : 0
                     const listLength = homeScreenCategoryAmounts[i] || 5
@@ -510,6 +520,8 @@ const mapDispatchToProps = (dispatch) => ({
     refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
     invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
+    sendAdAnalytic: (url, imageId, field) =>
+        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
