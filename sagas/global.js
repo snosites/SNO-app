@@ -158,12 +158,24 @@ function* sendAdAnalytic(action) {
         yield put(adActions.sendAdAnalyticRequest())
 
         const response = yield call(domainApiService.sendAdAnalytic, url, imageId, field)
-        console.log('ad resp', response, imageId)
 
         yield put(adActions.sendAdAnalyticSuccess())
     } catch (err) {
         console.log('error in send ad analytic saga', err)
         yield put(adActions.sendAdAnalyticError('error adding ad analytic'))
+    }
+}
+
+function* fetchSnoAdImage({ adSpotId }) {
+    try {
+        yield put(adActions.fetchSnoAdImageRequest())
+        console.log('fetching', adSpotId)
+        const response = yield call(domainApiService.getSnoAdImage, adSpotId)
+        console.log('fetchSnoAdImage', response)
+        yield put(adActions.fetchSnoAdImageSuccess('story', response))
+    } catch (err) {
+        console.log('error in fetch sno ad image', err)
+        throw err
     }
 }
 
@@ -175,6 +187,7 @@ function* globalSaga() {
         takeLatest(globalTypes.REMOVE_SCHOOL_SUB, removeSchoolSub),
         takeLatest(globalTypes.ADD_STORY_VIEW, addStoryView),
         takeLatest(adTypes.SEND_AD_ANALYTIC, sendAdAnalytic),
+        takeLatest(adTypes.FETCH_SNO_AD_IMAGE, fetchSnoAdImage),
     ])
 }
 

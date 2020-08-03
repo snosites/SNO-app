@@ -98,7 +98,7 @@ class ListScreen extends React.Component {
         })
         this.getDeviceTypeComponent()
 
-        if (listAds) {
+        if (listAds && listAds.images && listAds.images.length) {
             const activeAdImage = listAds.images[Math.floor(Math.random() * listAds.images.length)]
             this.setState({ ad: activeAdImage })
             sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')

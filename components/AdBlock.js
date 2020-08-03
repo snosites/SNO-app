@@ -11,7 +11,7 @@ import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
 
-const AdBlock = ({ image, style, activeDomain, sendAdAnalytic }) => {
+const AdBlock = ({ image, style, activeDomain, sendAdAnalytic, snoAd = null }) => {
     return (
         <TouchableOpacity
             style={{
@@ -22,8 +22,12 @@ const AdBlock = ({ image, style, activeDomain, sendAdAnalytic }) => {
                 ...style,
             }}
             onPress={async () => {
-                if (image.id) sendAdAnalytic(activeDomain.url, image.id, 'ad_clicks')
-                if (image.link) await WebBrowser.openBrowserAsync(image.link)
+                if (!snoAd) {
+                    if (image.id) sendAdAnalytic(activeDomain.url, image.id, 'ad_clicks')
+                    if (image.link) await WebBrowser.openBrowserAsync(image.link)
+                } else {
+                    console.log('pressed sno ad image', image.link)
+                }
             }}
         >
             <Text

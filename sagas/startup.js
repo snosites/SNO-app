@@ -402,7 +402,11 @@ function* fetchAds(domain, adOptions) {
         yield all(
             Object.keys(adOptions).map((adName) => {
                 if (adOptions[adName]) {
-                    return call(fetchAdType, domain, adName)
+                    if (adOptions[adName] === 'snoads') {
+                        return call(fetchSnoAdInfo, domain, adName)
+                    } else {
+                        return call(fetchAdType, domain, adName)
+                    }
                 } else return null
             })
         )
@@ -414,10 +418,19 @@ function* fetchAds(domain, adOptions) {
 function* fetchAdType(domain, adName) {
     try {
         const response = yield call(domainApiService.getAds, domain.url, adName)
-        console.log('ad type data', response, adName)
         yield put(adActions.fetchAdsSuccess(adName, response))
     } catch (err) {
         console.log('error in fetch ad type', err)
+        throw err
+    }
+}
+
+function* fetchSnoAdInfo(domain, adName) {
+    try {
+        const response = yield call(domainApiService.getSnoAdInfo, domain.url)
+        yield put(adActions.fetchAdsSuccess(adName, response))
+    } catch (err) {
+        console.log('error in fetch sno ad info', err)
         throw err
     }
 }

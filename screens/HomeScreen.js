@@ -113,7 +113,7 @@ class HomeScreen extends React.Component {
             return
         }
 
-        if (homeAds) {
+        if (homeAds && homeAds.images && homeAds.images.length) {
             const activeAdImage = homeAds.images[Math.floor(Math.random() * homeAds.images.length)]
             this.setState({ ad: activeAdImage })
             sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')

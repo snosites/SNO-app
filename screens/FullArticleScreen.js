@@ -44,14 +44,16 @@ class FullArticleScreen extends React.Component {
     }
 
     componentDidMount() {
-        const { storyAds } = this.props
+        const { storyAds, fetchSnoAdImage } = this.props
         if (this.animation) {
             this.animation.play()
         }
-        if (storyAds && storyAds.images) {
+        if (storyAds && storyAds.images && !storyAds.snoAds) {
             this.setState({
                 ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
             })
+        } else if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
+            fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
         }
     }
 
@@ -154,6 +156,7 @@ class FullArticleScreen extends React.Component {
             writerSubscriptions,
             storyAds,
             sendAdAnalytic,
+            fetchSnoAdImage,
         } = this.props
         const { snackbarSavedVisible, loadingLink, ad } = this.state
 
@@ -204,6 +207,9 @@ class FullArticleScreen extends React.Component {
                             if (ad && ad.id) {
                                 sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
                             }
+                            if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
+                                fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
+                            }
                         }}
                         onWillBlur={() => {
                             StatusBar.setHidden(false)
@@ -223,6 +229,7 @@ class FullArticleScreen extends React.Component {
                         setLoadingLink={(state) => this.setState({ loadingLink: state })}
                         ad={ad}
                         adPosition={storyAds ? storyAds.displayLocation : null}
+                        snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
                     />
                     {articleChapters.map((article) => (
                         <ArticleBodyContent
@@ -468,6 +475,7 @@ const mapDispatchToProps = (dispatch) => ({
     subscribe: (payload) => dispatch(userActions.subscribe(payload)),
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),
+    fetchSnoAdImage: (adSpotId) => dispatch(adActions.fetchSnoAdImage(adSpotId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FullArticleScreen)

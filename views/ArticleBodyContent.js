@@ -38,7 +38,7 @@ const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
     render() {
-        const { theme, article, ad, adPosition } = this.props
+        const { theme, article, ad, snoAd, adPosition } = this.props
 
         return (
             <View>
@@ -166,6 +166,20 @@ export default class ArticleBodyContent extends React.Component {
                                     },
                                 }}
                                 onParsed={(dom, RNElements) => {
+                                    if (snoAd) {
+                                        const ad = {
+                                            wrapper: null,
+                                            tagName: 'adBlock',
+                                            attribs: {},
+                                            parent: false,
+                                            parentTag: false,
+                                            nodeIndex: Math.floor(RNElements.length / 2),
+                                        }
+                                        // // Insert the component
+                                        RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
+
+                                        return RNElements
+                                    }
                                     if (!ad || !adPosition || adPosition !== 'middle')
                                         return RNElements
 
@@ -190,6 +204,7 @@ export default class ArticleBodyContent extends React.Component {
                                 }}
                                 renderersProps={{
                                     adImage: ad,
+                                    snoAdImage: snoAd,
                                 }}
                             />
                         </ScrollView>

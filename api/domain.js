@@ -273,6 +273,33 @@ const domainApiService = {
             throw err
         }
     },
+    getSnoAdInfo: async (domainUrl) => {
+        try {
+            const response = await axios.get(`https://${domainUrl}/wp-json/sns-v2/sno-ads`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                },
+            })
+            return response.data
+        } catch (err) {
+            console.log('error in fetch app ads api', err)
+            throw err
+        }
+    },
+    getSnoAdImage: async (adSpotId) => {
+        try {
+            const response = await axios.get(`https://snoads.com/api/v1/adspot/${adSpotId}/serve`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                },
+            })
+            console.log('response daaaata', response)
+            return response.data
+        } catch (err) {
+            console.log('error in fetch sno ad image api', err, err.response)
+            throw err
+        }
+    },
     sendAdAnalytic: async (domainUrl, imageId, field) => {
         try {
             const response = await axios.post(

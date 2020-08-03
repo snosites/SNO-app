@@ -7,6 +7,10 @@ export const types = {
     SEND_AD_ANALYTIC_REQUEST: 'SEND_AD_ANALYTIC_REQUEST',
     SEND_AD_ANALYTIC_SUCCESS: 'SEND_AD_ANALYTIC_SUCCESS',
     SEND_AD_ANALYTIC_ERROR: 'SEND_AD_ANALYTIC_ERROR',
+    FETCH_SNO_AD_IMAGE: 'FETCH_SNO_AD_IMAGE',
+    FETCH_SNO_AD_IMAGE_REQUEST: 'FETCH_SNO_AD_IMAGE_REQUEST',
+    FETCH_SNO_AD_IMAGE_SUCCESS: 'FETCH_SNO_AD_IMAGE_SUCCESS',
+    FETCH_SNO_AD_IMAGE_ERROR: 'FETCH_SNO_AD_IMAGE_ERROR',
 }
 
 const initialState = {
@@ -17,18 +21,31 @@ const initialState = {
 function ads(state = initialState, action) {
     switch (action.type) {
         case types.FETCH_ADS_SUCCESS:
+            const obj = {
+                displayLocation: action.payload.display_location || 'middle',
+                images: action.payload.images || [],
+            }
+            if (action.payload.images) {
+                return obj
+            }
             return {
-                displayLocation: action.payload.display_location,
-                images: action.payload.images,
+                ...obj,
+                snoAds: action.payload,
+            }
+        case types.FETCH_SNO_AD_IMAGE_SUCCESS:
+            return {
+                ...state,
+                snoAdImage: action.payload,
             }
         default:
             return state
     }
 }
 
-export default function adsByType(state = {}, action) {
+export default function adsByType(state = { list: {}, story: {}, home: {} }, action) {
     switch (action.type) {
         case types.FETCH_ADS_SUCCESS:
+        case types.FETCH_SNO_AD_IMAGE_SUCCESS:
             return {
                 ...state,
                 [action.adType]: ads(state[action.adType], action),
@@ -52,9 +69,17 @@ export const actions = {
     sendAdAnalyticRequest: () => ({ type: types.SEND_AD_ANALYTIC_REQUEST }),
     sendAdAnalyticSuccess: () => ({ type: types.SEND_AD_ANALYTIC_SUCCESS }),
     sendAdAnalyticError: (error) => ({ type: types.SEND_AD_ANALYTIC_ERROR, error }),
+    fetchSnoAdImage: (adSpotId) => ({ type: types.FETCH_SNO_AD_IMAGE, adSpotId }),
+    fetchSnoAdImageRequest: () => ({ type: types.FETCH_SNO_AD_IMAGE_REQUEST }),
+    fetchSnoAdImageSuccess: (adType, payload) => ({
+        type: types.FETCH_SNO_AD_IMAGE_SUCCESS,
+        adType,
+        payload,
+    }),
+    fetchSnoAdImageError: (error) => ({ type: types.FETCH_SNO_AD_IMAGE_ERROR, error }),
 }
 
 //selectors
-export const getStoryAds = (state) => state.ads.story
-export const getListAds = (state) => state.ads.list
-export const getHomeAds = (state) => state.ads.home
+export const getStoryAds = (state) => state.ads.story || {}
+export const getListAds = (state) => state.ads.list || {}
+export const getHomeAds = (state) => state.ads.home || {}

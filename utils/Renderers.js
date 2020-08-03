@@ -47,7 +47,9 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
 }
 
 export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
-    if (!passProps.renderersProps || !passProps.renderersProps.adImage) return
+    const adImage = passProps.renderersProps.adImage
+    const snoAdImage = passProps.renderersProps.snoAdImage
+    if (!passProps.renderersProps || (!adImage && !snoAdImage)) return
 
     return (
         <View
@@ -59,21 +61,13 @@ export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passP
                 overflow: 'visible',
             }}
         >
-            <AdBlock style={{ marginVertical: 20 }} image={passProps.renderersProps.adImage} />
-        </View>
-    )
-    return (
-        <View
-            key={passProps.key}
-            style={{
-                width: viewportWidth,
-                height: 250,
-                marginLeft: -20,
-                marginVertical: 10,
-                backgroundColor: 'red',
-            }}
-        >
-            <View style={{ flex: 1, backgroundColor: 'green', marginLeft: -20 }} />
+            <AdBlock
+                style={{ marginVertical: 20 }}
+                snoAd={snoAdImage ? true : false}
+                image={
+                    snoAdImage ? { url: snoAdImage.image.url, link: snoAdImage.link.link } : adImage
+                }
+            />
         </View>
     )
 }
