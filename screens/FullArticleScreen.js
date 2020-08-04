@@ -44,6 +44,7 @@ class FullArticleScreen extends React.Component {
     }
 
     componentDidMount() {
+        // console.log('full article screen mounted')
         const { storyAds, fetchSnoAdImage } = this.props
         if (this.animation) {
             this.animation.play()
@@ -52,9 +53,11 @@ class FullArticleScreen extends React.Component {
             this.setState({
                 ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
             })
-        } else if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
-            fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
         }
+        // else if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
+        //     console.log('calling fetch sno ad image')
+        //     fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
+        // }
     }
 
     componentDidUpdate() {

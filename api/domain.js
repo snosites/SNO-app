@@ -293,10 +293,22 @@ const domainApiService = {
                     'Cache-Control': 'no-cache',
                 },
             })
-            console.log('response daaaata', response)
             return response.data
         } catch (err) {
             console.log('error in fetch sno ad image api', err, err.response)
+            throw err
+        }
+    },
+    sendSnoAdAnalytic: async (id) => {
+        try {
+            const response = await axios.post(`https://snoads.com/api/v1/ad/${id}/click`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                },
+            })
+            return response.data
+        } catch (err) {
+            console.log('error in send sno ad image analytic api', err, err.response)
             throw err
         }
     },

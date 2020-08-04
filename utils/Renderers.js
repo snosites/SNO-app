@@ -49,7 +49,9 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
 export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
     const adImage = passProps.renderersProps.adImage
     const snoAdImage = passProps.renderersProps.snoAdImage
+    console.log('rendering ad block', adImage, snoAdImage)
     if (!passProps.renderersProps || (!adImage && !snoAdImage)) return
+    console.log('again rendering ad block')
 
     return (
         <View
@@ -65,7 +67,13 @@ export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passP
                 style={{ marginVertical: 20 }}
                 snoAd={snoAdImage ? true : false}
                 image={
-                    snoAdImage ? { url: snoAdImage.image.url, link: snoAdImage.link.link } : adImage
+                    snoAdImage
+                        ? {
+                              url: snoAdImage.image.url,
+                              link: snoAdImage.link.link,
+                              id: snoAdImage.id,
+                          }
+                        : adImage
                 }
             />
         </View>

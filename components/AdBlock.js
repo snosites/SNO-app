@@ -11,7 +11,14 @@ import * as Linking from 'expo-linking'
 
 import NavigationService from '../utils/NavigationService'
 
-const AdBlock = ({ image, style, activeDomain, sendAdAnalytic, snoAd = null }) => {
+const AdBlock = ({
+    image,
+    style,
+    activeDomain,
+    sendAdAnalytic,
+    sendSnoAdAnalytic,
+    snoAd = null,
+}) => {
     return (
         <TouchableOpacity
             style={{
@@ -26,7 +33,8 @@ const AdBlock = ({ image, style, activeDomain, sendAdAnalytic, snoAd = null }) =
                     if (image.id) sendAdAnalytic(activeDomain.url, image.id, 'ad_clicks')
                     if (image.link) await WebBrowser.openBrowserAsync(image.link)
                 } else {
-                    console.log('pressed sno ad image', image.link)
+                    if (image.link) await WebBrowser.openBrowserAsync(image.link)
+                    if (image.id) sendSnoAdAnalytic(image.id)
                 }
             }}
         >
@@ -66,6 +74,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),
+    sendSnoAdAnalytic: (id) => dispatch(adActions.sendSnoAdAnalytic(id)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdBlock)

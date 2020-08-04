@@ -37,6 +37,9 @@ const MEDIASIZE = viewportHeight * 0.35
 const MEDIAWIDTH = viewportWidth * 0.9
 
 export default class ArticleBodyContent extends React.Component {
+    componentDidUpdate() {
+        console.log('article body content updated', this.props.snoAd)
+    }
     render() {
         const { theme, article, ad, snoAd, adPosition } = this.props
 
@@ -166,7 +169,9 @@ export default class ArticleBodyContent extends React.Component {
                                     },
                                 }}
                                 onParsed={(dom, RNElements) => {
+                                    console.log('parsed DOM', snoAd)
                                     if (snoAd) {
+                                        console.log('rendering ad block for sno ad')
                                         const ad = {
                                             wrapper: null,
                                             tagName: 'adBlock',
