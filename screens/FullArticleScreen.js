@@ -54,10 +54,6 @@ class FullArticleScreen extends React.Component {
                 ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
             })
         }
-        // else if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
-        //     console.log('calling fetch sno ad image')
-        //     fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
-        // }
     }
 
     componentDidUpdate() {
@@ -211,7 +207,7 @@ class FullArticleScreen extends React.Component {
                                 sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
                             }
                             if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
-                                fetchSnoAdImage(storyAds.snoAds.ad_spot_id)
+                                fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
                             }
                         }}
                         onWillBlur={() => {
@@ -478,7 +474,8 @@ const mapDispatchToProps = (dispatch) => ({
     subscribe: (payload) => dispatch(userActions.subscribe(payload)),
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),
-    fetchSnoAdImage: (adSpotId) => dispatch(adActions.fetchSnoAdImage(adSpotId)),
+    fetchSnoAdImage: (adSpotId, fallbackUrl) =>
+        dispatch(adActions.fetchSnoAdImage(adSpotId, fallbackUrl)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FullArticleScreen)

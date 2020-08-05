@@ -252,7 +252,6 @@ class HomeScreen extends React.Component {
                 <NavigationEvents
                     onDidFocus={() => {
                         if (ad && ad.id) {
-                            console.log('sending ad analytic')
                             sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
                         }
                     }}

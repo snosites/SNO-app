@@ -49,9 +49,7 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
 export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
     const adImage = passProps.renderersProps.adImage
     const snoAdImage = passProps.renderersProps.snoAdImage
-    console.log('rendering ad block', adImage, snoAdImage)
     if (!passProps.renderersProps || (!adImage && !snoAdImage)) return
-    console.log('again rendering ad block')
 
     return (
         <View

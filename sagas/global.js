@@ -166,7 +166,7 @@ function* sendAdAnalytic(action) {
     }
 }
 
-function* fetchSnoAdImage({ adSpotId }) {
+function* fetchSnoAdImage({ adSpotId, fallbackUrl }) {
     try {
         yield put(adActions.fetchSnoAdImageRequest())
         const response = yield call(domainApiService.getSnoAdImage, adSpotId)
@@ -174,7 +174,11 @@ function* fetchSnoAdImage({ adSpotId }) {
         yield put(adActions.fetchSnoAdImageSuccess('story', response))
     } catch (err) {
         console.log('error in fetch sno ad image', err)
-        yield put(adActions.fetchSnoAdImageError('story'))
+        if (fallbackUrl) {
+            yield put(
+                adActions.fetchSnoAdImageSuccess('story', { image: { url: fallbackUrl }, link: {} })
+            )
+        }
     }
 }
 
@@ -182,7 +186,6 @@ function* sendSnoAdAnalytic({ id }) {
     try {
         yield put(adActions.sendSnoAdAnalyticRequest())
         const response = yield call(domainApiService.sendSnoAdAnalytic, id)
-        console.log('sendSnoAdAnalytic', response)
         yield put(adActions.sendSnoAdAnalyticSuccess())
     } catch (err) {
         console.log('error in send sno ad analytic', err)

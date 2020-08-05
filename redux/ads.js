@@ -83,7 +83,11 @@ export const actions = {
     sendAdAnalyticRequest: () => ({ type: types.SEND_AD_ANALYTIC_REQUEST }),
     sendAdAnalyticSuccess: () => ({ type: types.SEND_AD_ANALYTIC_SUCCESS }),
     sendAdAnalyticError: (error) => ({ type: types.SEND_AD_ANALYTIC_ERROR, error }),
-    fetchSnoAdImage: (adSpotId) => ({ type: types.FETCH_SNO_AD_IMAGE, adSpotId }),
+    fetchSnoAdImage: (adSpotId, fallbackUrl) => ({
+        type: types.FETCH_SNO_AD_IMAGE,
+        adSpotId,
+        fallbackUrl,
+    }),
     fetchSnoAdImageRequest: () => ({ type: types.FETCH_SNO_AD_IMAGE_REQUEST }),
     fetchSnoAdImageSuccess: (adType, payload) => ({
         type: types.FETCH_SNO_AD_IMAGE_SUCCESS,
