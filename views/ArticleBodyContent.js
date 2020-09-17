@@ -147,6 +147,9 @@ export default class ArticleBodyContent extends React.Component {
                                         height: MEDIASIZE,
                                         width: viewportWidth,
                                     },
+                                    a: {
+                                        fontSize: 18,
+                                    },
                                 }}
                                 classesStyles={{
                                     pullquote: {
@@ -223,8 +226,10 @@ export default class ArticleBodyContent extends React.Component {
             return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
         } else if (article.custom_fields.video && article.custom_fields.video[0]) {
             const source = article.custom_fields.video[0]
+            console.log('this is the source', source)
             if (source.includes('iframe')) {
-                let regex = /<iframe.*?src="(.*?)"/
+                let regex = /<iframe.*?src=["'](.*?)["']/
+                console.log('does include iframe', regex.exec(source))
                 var src = regex.exec(source)[1]
                 return (
                     <WebView

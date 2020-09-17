@@ -129,6 +129,7 @@ class HomeScreen extends React.Component {
 
         if (!articlesLoading && !global.homeScreenCategories.length) {
             const menus = global.menuItems
+            console.log('test', menus)
             if (menus.length > 0) {
                 this.props.navigation.navigate('List', {
                     menuTitle: menus[0].title,
