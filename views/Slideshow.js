@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect } from 'react'
 import {
     Platform,
     Dimensions,
@@ -35,90 +35,89 @@ const itemHorizontalMargin = wp(0.5)
 const sliderWidth = viewportWidth
 const itemWidth = slideWidth + itemHorizontalMargin * 2
 
-class Slideshow extends React.Component {
-    state = {
-        activeSlide: SLIDER_FIRST_ITEM,
-        photos: [],
-        error: false,
-    }
+const Slideshow = (props) => {
 
-    componentDidMount() {
-        if (this.props.imageIds) {
-            this._getImageData(this.props.imageIds)
-        }
-    }
+    const { imageIds } = props
+    
+    const [activeSlide, setActiveSlide] = useState(SLIDER_FIRST_ITEM)
+    const [photos, setPhotos] = useState([])
+    const [error, setError] = useState(false)
 
-    render() {
-        const { activeSlide, photos, error } = this.state
-        if (error) {
-            return (
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text style={{ textAlign: 'center', margin: 20 }}>Error loading slideshow</Text>
-                </View>
-            )
+    useEffect(() => {
+        if(imageIds) {
+            _getImageData(imageIds)
         }
-        if (this.props.imageIds && photos.length == 0) {
-            return (
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <ActivityIndicator />
-                </View>
-            )
-        }
+    }, [])
+
+
+    if (error) {
         return (
-            <View style={{ flex: 1 }}>
-                <Carousel
-                    // layout={'stack'}
-                    // layoutCardOffset={18}
-                    ref={(c) => {
-                        this._carousel = c
-                    }}
-                    data={this.props.imageIds ? photos : this.props.images}
-                    renderItem={this._renderItem}
-                    sliderWidth={sliderWidth}
-                    itemWidth={itemWidth}
-                    firstItem={SLIDER_FIRST_ITEM}
-                    hasParallaxImages={true}
-                    loop={true}
-                    loopClonesPerSide={2}
-                    autoplay={true}
-                    autoplayDelay={1000}
-                    autoplayInterval={3000}
-                    inactiveSlideScale={0.94}
-                    inactiveSlideOpacity={0.7}
-                    containerCustomStyle={styles.slider}
-                    onSnapToItem={(index) =>
-                        this.setState({
-                            activeSlide: index,
-                        })
-                    }
-                />
-                <Pagination
-                    dotsLength={this.props.imageIds ? photos.length : this.props.images.length}
-                    activeDotIndex={activeSlide}
-                    containerStyle={styles.paginationContainer}
-                    dotColor={this.props.accentColor}
-                    dotStyle={styles.paginationDot}
-                    inactiveDotColor={'#1a1917'}
-                    inactiveDotOpacity={0.4}
-                    inactiveDotScale={0.6}
-                    carouselRef={this._carousel}
-                    tappableDots={!!this._carousel}
-                />
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Text style={{ textAlign: 'center', margin: 20 }}>Error loading slideshow</Text>
             </View>
         )
     }
+
+    if (imageIds && photos.length == 0) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <ActivityIndicator />
+            </View>
+        )
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+            <Carousel
+                ref={(c) => {
+                    this._carousel = c
+                }}
+                data={this.props.imageIds ? photos : this.props.images}
+                renderItem={this._renderItem}
+                sliderWidth={sliderWidth}
+                itemWidth={itemWidth}
+                firstItem={SLIDER_FIRST_ITEM}
+                hasParallaxImages={true}
+                loop={true}
+                loopClonesPerSide={2}
+                autoplay={true}
+                autoplayDelay={1000}
+                autoplayInterval={3000}
+                inactiveSlideScale={0.94}
+                inactiveSlideOpacity={0.7}
+                containerCustomStyle={styles.slider}
+                onSnapToItem={(index) =>
+                    this.setState({
+                        activeSlide: index,
+                    })
+                }
+            />
+            <Pagination
+                dotsLength={this.props.imageIds ? photos.length : this.props.images.length}
+                activeDotIndex={activeSlide}
+                containerStyle={styles.paginationContainer}
+                dotColor={this.props.accentColor}
+                dotStyle={styles.paginationDot}
+                inactiveDotColor={'#1a1917'}
+                inactiveDotOpacity={0.4}
+                inactiveDotScale={0.6}
+                carouselRef={this._carousel}
+                tappableDots={!!this._carousel}
+            />
+        </View>
+    )
 
     _getImage = async (imageId) => {
         const { activeDomain } = this.props
@@ -145,13 +144,22 @@ class Slideshow extends React.Component {
         }
     }
 
+    _expandCaption() {
+        console.log('this', this.state)
+    }
+
     _renderItem({ item, index }, parallaxProps) {
         const photographer =
             item.meta_fields && item.meta_fields.photographer
                 ? item.meta_fields.photographer[0]
                 : ''
+
         return (
-            <TouchableOpacity activeOpacity={1} style={styles.slideInnerContainer}>
+            <TouchableOpacity
+                activeOpacity={1}
+                style={styles.slideInnerContainer}
+                onPress={() => this._expandCaption()}
+            >
                 <View style={styles.shadow} />
                 <View style={styles.imageContainer}>
                     <Image

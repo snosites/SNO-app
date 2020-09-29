@@ -9,8 +9,8 @@ import {
     ActivityIndicator,
     FlatList,
     TouchableOpacity,
-    StatusBar
 } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import { Button, TextInput } from 'react-native-paper'
 
 import NavigationService from '../utils/NavigationService'
@@ -23,7 +23,7 @@ export default class ErrorBoundary extends React.Component {
         feedback: '',
         eventId: null,
         submitting: false,
-        successful: false
+        successful: false,
     }
 
     componentDidCatch(error, errorInfo) {
@@ -41,28 +41,28 @@ export default class ErrorBoundary extends React.Component {
             return (
                 <SafeAreaView
                     style={{
-                        flex: 1
+                        flex: 1,
                     }}
                 >
                     <ScrollView keyboardShouldPersistTaps={'handled'}>
                         <KeyboardAvoidingView
                             style={{
-                                flex: 1
+                                flex: 1,
                             }}
                             behavior='position'
                             enabled
                         >
-                            <StatusBar barStyle={'dark-content'} />
+                            <StatusBar style={'dark'} />
                             <View
                                 style={{
                                     flex: 1,
                                     alignItems: 'center',
-                                    margin: 20
+                                    margin: 20,
                                 }}
                             >
                                 <View
                                     style={{
-                                        paddingTop: 20
+                                        paddingTop: 20,
                                     }}
                                 >
                                     <Text style={{ textAlign: 'center', fontSize: 16 }}>
@@ -76,20 +76,20 @@ export default class ErrorBoundary extends React.Component {
                                 <Button
                                     mode='contained'
                                     style={{
-                                        marginTop: 20
+                                        marginTop: 20,
                                     }}
                                     theme={{
                                         roundness: 7,
                                         colors: {
-                                            primary: '#2099CE'
-                                        }
+                                            primary: '#2099CE',
+                                        },
                                     }}
                                     onPress={() => {
                                         this.setState({
                                             error: null,
                                             feedback: '',
                                             eventId: null,
-                                            submitting: false
+                                            submitting: false,
                                         })
                                         NavigationService.navigate('AuthLoading')
                                     }}
@@ -98,7 +98,7 @@ export default class ErrorBoundary extends React.Component {
                                 </Button>
                                 <View
                                     style={{
-                                        paddingTop: 20
+                                        paddingTop: 20,
                                     }}
                                 >
                                     <Text style={{ textAlign: 'center', fontSize: 16 }}>
@@ -109,7 +109,7 @@ export default class ErrorBoundary extends React.Component {
                                 <View
                                     style={{
                                         paddingTop: 20,
-                                        alignItems: 'center'
+                                        alignItems: 'center',
                                     }}
                                 >
                                     <TextInput
@@ -119,22 +119,22 @@ export default class ErrorBoundary extends React.Component {
                                             roundness: 7,
                                             colors: {
                                                 background: 'white',
-                                                primary: '#2099CE'
-                                            }
+                                                primary: '#2099CE',
+                                            },
                                         }}
                                         multiline
                                         mode='outlined'
                                         selectionColor='black'
                                         onSubmitEditing={this._handleSubmit}
                                         value={this.state.feedback}
-                                        onChangeText={feedback => this.setState({ feedback })}
+                                        onChangeText={(feedback) => this.setState({ feedback })}
                                     />
                                     {successful ? (
                                         <Text
                                             style={{
                                                 textAlign: 'center',
                                                 fontSize: 17,
-                                                fontWeight: 'bold'
+                                                fontWeight: 'bold',
                                             }}
                                         >
                                             Thank you for your feedback
@@ -146,8 +146,8 @@ export default class ErrorBoundary extends React.Component {
                                             theme={{
                                                 roundness: 7,
                                                 colors: {
-                                                    primary: '#2099CE'
-                                                }
+                                                    primary: '#2099CE',
+                                                },
                                             }}
                                             style={{ marginBottom: 20 }}
                                             onPress={this._handleSubmit}
@@ -170,11 +170,11 @@ export default class ErrorBoundary extends React.Component {
     _handleSubmit = async () => {
         const { feedback, eventId } = this.state
         this.setState({
-            submitting: true
+            submitting: true,
         })
         setTimeout(() => {
             this.setState({
-                successful: true
+                successful: true,
             })
         }, 1000)
         Sentry.captureMessage(`FEEDBACK: ${feedback}`)
@@ -184,7 +184,7 @@ export default class ErrorBoundary extends React.Component {
                 error: null,
                 feedback: '',
                 eventId: null,
-                submitting: false
+                submitting: false,
             })
             NavigationService.navigate('AuthLoading')
         }, 2000)

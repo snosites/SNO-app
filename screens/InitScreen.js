@@ -1,7 +1,6 @@
 import React from 'react'
 import {
     Platform,
-    StatusBar,
     Image,
     StyleSheet,
     Text,
@@ -11,6 +10,7 @@ import {
     KeyboardAvoidingView,
     SafeAreaView,
 } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import { Button, TextInput } from 'react-native-paper'
 import * as Haptics from 'expo-haptics'
 import * as Permissions from 'expo-permissions'
@@ -93,7 +93,7 @@ class InitScreen extends React.Component {
         }
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <StatusBar barStyle={'dark-content'} />
+                <StatusBar style={'dark'} />
                 <ScrollView keyboardShouldPersistTaps={'handled'}>
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior='position' enabled>
                         <View style={styles.container}>

@@ -1,13 +1,6 @@
 import React from 'react'
-import {
-    ScrollView,
-    StyleSheet,
-    Share,
-    StatusBar,
-    View,
-    TouchableOpacity,
-    Text,
-} from 'react-native'
+import { ScrollView, StyleSheet, Share, View, TouchableOpacity, Text } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import * as Amplitude from 'expo-analytics-amplitude'
 import LottieView from 'lottie-react-native'
 import { connect } from 'react-redux'
@@ -130,7 +123,7 @@ class FullArticleScreen extends React.Component {
 
         if (filteredWriters.length > 0 && terms && !terms.errors) {
             fabActions.unshift({
-                icon: 'add-alert',
+                icon: 'account-plus',
                 label: 'Subscribe to this writer',
                 onPress: () => this._handleSubscribeToWriter(terms),
             })
@@ -211,7 +204,7 @@ class FullArticleScreen extends React.Component {
                             }
                         }}
                         onWillBlur={() => {
-                            StatusBar.setHidden(false)
+                            StatusBar.setStatusBarHidden(true)
                             this.setState({
                                 showPortal: false,
                                 expandCaption: false,
@@ -267,7 +260,7 @@ class FullArticleScreen extends React.Component {
                                         paddingBottom: snackbarSavedVisible ? 100 : 50,
                                     }}
                                     open={this.state.fabOpen}
-                                    icon={this.state.fabOpen ? 'clear' : 'add'}
+                                    icon={this.state.fabOpen ? 'close' : 'plus'}
                                     actions={this._renderFabActions(article)}
                                     onStateChange={({ open }) =>
                                         this.setState({

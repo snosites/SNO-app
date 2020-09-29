@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { ActivityIndicator, StatusBar, View, Text, Image } from 'react-native'
+import { ActivityIndicator, View, Text, Image } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import Constants from 'expo-constants'
 
 import { types as userTypes } from '../redux/user'
@@ -85,7 +86,7 @@ const AuthLoadingScreen = (props) => {
                     backgroundColor: 'white',
                 }}
             >
-                <StatusBar barStyle='light-content' />
+                <StatusBar style='light' />
                 <Image
                     source={
                         version === 'sns'
@@ -130,7 +131,7 @@ const AuthLoadingScreen = (props) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
-            <StatusBar barStyle='light-content' />
+            <StatusBar style='light' />
             <ActivityIndicator />
         </View>
     )

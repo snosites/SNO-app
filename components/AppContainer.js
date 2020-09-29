@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { StatusBar, View } from 'react-native'
+import { View } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import { connect } from 'react-redux'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
@@ -40,7 +41,7 @@ const AppContainer = ({ theme, homeScreenMode, setFromDeepLink }) => {
     return (
         <PaperProvider theme={theme}>
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
-                <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+                <StatusBar style={isDark ? 'light' : 'dark'} />
                 <AppNavigator
                     uriPrefix={prefix}
                     enableURLHandling={false}
