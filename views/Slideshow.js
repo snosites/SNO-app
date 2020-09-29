@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
     Platform,
     Dimensions,
@@ -36,19 +36,107 @@ const sliderWidth = viewportWidth
 const itemWidth = slideWidth + itemHorizontalMargin * 2
 
 const Slideshow = (props) => {
+    const { imageIds, images, activeDomain, accentColor } = props
 
-    const { imageIds } = props
-    
     const [activeSlide, setActiveSlide] = useState(SLIDER_FIRST_ITEM)
     const [photos, setPhotos] = useState([])
     const [error, setError] = useState(false)
+    const [expandCaption, setExpandCaption] = useState(false)
+
+    const carouselRef = useRef(null)
 
     useEffect(() => {
-        if(imageIds) {
+        if (imageIds) {
             _getImageData(imageIds)
         }
     }, [])
 
+    useEffect(() => {
+        console.log('expand cap', expandCaption)
+    })
+
+    _getImage = async (imageId) => {
+        const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
+        return await result.json()
+    }
+
+    _getImageData = async (imageIds) => {
+        try {
+            const images = await Promise.all(
+                imageIds.map(async (id) => {
+                    return await _getImage(id)
+                })
+            )
+            const filteredImages = images.filter((img) => img.id)
+            setPhotos(filteredImages)
+        } catch (err) {
+            console.log('error getting slideshow images', err)
+            setError(true)
+        }
+    }
+
+    _renderItem = ({ item, index }, parallaxProps) => {
+        const photographer =
+            item.meta_fields && item.meta_fields.photographer
+                ? item.meta_fields.photographer[0]
+                : ''
+
+        return (
+            <TouchableOpacity
+                activeOpacity={1}
+                style={styles.slideInnerContainer}
+                delayPressIn={300}
+                onPress={() => {
+                    console.log('photos', photos)
+                    if (expandCaption) {
+                        setExpandCaption(false)
+                    } else {
+                        setExpandCaption(true)
+                    }
+                }}
+            >
+                <View style={styles.shadow} />
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{ uri: item.media_details.sizes.full.source_url }}
+                        style={styles.image}
+                    />
+                    <View style={styles.radiusMask} />
+                </View>
+                <View style={styles.textContainer}>
+                    {item.caption && item.caption.rendered ? (
+                        <HTML
+                            html={item.caption.rendered}
+                            baseFontStyle={{ fontSize: 12 }}
+                            customWrapper={(text) => {
+                                return (
+                                    <Text
+                                        ellipsizeMode='tail'
+                                        numberOfLines={expandCaption ? 10 : 2}
+                                    >
+                                        {text}
+                                    </Text>
+                                )
+                            }}
+                            tagsStyles={{
+                                rawtext: {
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                    letterSpacing: 0.5,
+                                },
+                            }}
+                        />
+                    ) : null}
+                    {photographer ? (
+                        <Text style={styles.subtitle} numberOfLines={2}>
+                            {photographer}
+                        </Text>
+                    ) : null}
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     if (error) {
         return (
@@ -82,10 +170,11 @@ const Slideshow = (props) => {
         <View style={{ flex: 1 }}>
             <Carousel
                 ref={(c) => {
-                    this._carousel = c
+                    carouselRef.current = c
                 }}
-                data={this.props.imageIds ? photos : this.props.images}
-                renderItem={this._renderItem}
+                data={imageIds ? photos : images}
+                extraData={expandCaption}
+                renderItem={_renderItem}
                 sliderWidth={sliderWidth}
                 itemWidth={itemWidth}
                 firstItem={SLIDER_FIRST_ITEM}
@@ -98,107 +187,22 @@ const Slideshow = (props) => {
                 inactiveSlideScale={0.94}
                 inactiveSlideOpacity={0.7}
                 containerCustomStyle={styles.slider}
-                onSnapToItem={(index) =>
-                    this.setState({
-                        activeSlide: index,
-                    })
-                }
+                onSnapToItem={(index) => setActiveSlide(index)}
             />
             <Pagination
-                dotsLength={this.props.imageIds ? photos.length : this.props.images.length}
+                dotsLength={imageIds ? photos.length : images.length}
                 activeDotIndex={activeSlide}
                 containerStyle={styles.paginationContainer}
-                dotColor={this.props.accentColor}
+                dotColor={accentColor}
                 dotStyle={styles.paginationDot}
                 inactiveDotColor={'#1a1917'}
                 inactiveDotOpacity={0.4}
                 inactiveDotScale={0.6}
-                carouselRef={this._carousel}
-                tappableDots={!!this._carousel}
+                carouselRef={carouselRef.current}
+                tappableDots={!!carouselRef.current}
             />
         </View>
     )
-
-    _getImage = async (imageId) => {
-        const { activeDomain } = this.props
-        const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
-        return await result.json()
-    }
-
-    _getImageData = async (imageIds) => {
-        try {
-            const images = await Promise.all(
-                imageIds.map(async (id) => {
-                    return await this._getImage(id)
-                })
-            )
-            const filteredImages = images.filter((img) => img.id)
-            this.setState({
-                photos: filteredImages,
-            })
-        } catch (err) {
-            console.log('error getting slideshow images', err)
-            this.setState({
-                error: true,
-            })
-        }
-    }
-
-    _expandCaption() {
-        console.log('this', this.state)
-    }
-
-    _renderItem({ item, index }, parallaxProps) {
-        const photographer =
-            item.meta_fields && item.meta_fields.photographer
-                ? item.meta_fields.photographer[0]
-                : ''
-
-        return (
-            <TouchableOpacity
-                activeOpacity={1}
-                style={styles.slideInnerContainer}
-                onPress={() => this._expandCaption()}
-            >
-                <View style={styles.shadow} />
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={{ uri: item.media_details.sizes.full.source_url }}
-                        style={styles.image}
-                    />
-                    <View style={styles.radiusMask} />
-                </View>
-                <View style={styles.textContainer}>
-                    {item.caption && item.caption.rendered ? (
-                        <HTML
-                            html={item.caption.rendered}
-                            baseFontStyle={{ fontSize: 12 }}
-                            customWrapper={(text) => {
-                                return (
-                                    <Text ellipsizeMode='tail' numberOfLines={2}>
-                                        {text}
-                                    </Text>
-                                )
-                            }}
-                            tagsStyles={{
-                                rawtext: {
-                                    color: 'white',
-                                    fontSize: 12,
-                                    fontWeight: 'bold',
-                                    letterSpacing: 0.5,
-                                },
-                            }}
-                        />
-                    ) : null}
-                    {photographer ? (
-                        <Text style={styles.subtitle} numberOfLines={2}>
-                            {photographer}
-                        </Text>
-                    ) : null}
-                </View>
-            </TouchableOpacity>
-        )
-    }
 }
 
 const entryBorderRadius = 8
@@ -248,7 +252,7 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         justifyContent: 'center',
-        paddingTop: 4,
+        paddingTop: 2,
         paddingBottom: 4 + entryBorderRadius,
         paddingHorizontal: 16,
         backgroundColor: Colors.black,
