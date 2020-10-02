@@ -108,6 +108,11 @@ class ProfileScreen extends React.Component {
                                             fontSize: 17,
                                         },
                                     }}
+                                    onParsed={(dom, RNElements) => {
+                                        // Find the index of the first paragraph
+                                        console.log('onParsed', dom, RNElements)
+                                        return RNElements
+                                    }}
                                 />
                             ) : (
                                 <View style={{ height: 150 }}></View>

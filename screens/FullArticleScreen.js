@@ -204,7 +204,7 @@ class FullArticleScreen extends React.Component {
                             }
                         }}
                         onWillBlur={() => {
-                            StatusBar.setStatusBarHidden(true)
+                            // StatusBar.setStatusBarHidden(true)
                             this.setState({
                                 showPortal: false,
                                 expandCaption: false,

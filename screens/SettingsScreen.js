@@ -155,7 +155,7 @@ class SettingsScreen extends React.Component {
                                 right={() => {
                                     return (
                                         <IconButton
-                                            icon='create'
+                                            icon='plus'
                                             color={Colors.grey300}
                                             size={28}
                                             onPress={() => this._handleUserInfoEdit('username')}
@@ -189,7 +189,7 @@ class SettingsScreen extends React.Component {
                                 right={() => {
                                     return (
                                         <IconButton
-                                            icon='create'
+                                            icon='plus'
                                             color={Colors.grey300}
                                             size={28}
                                             onPress={() => this._handleUserInfoEdit('email')}
@@ -237,7 +237,7 @@ class SettingsScreen extends React.Component {
                     <List.Item
                         style={{ paddingVertical: 0 }}
                         title='Add New Organization'
-                        left={() => <List.Icon icon={`add`} />}
+                        left={() => <List.Icon icon={`plus`} />}
                         onPress={this._handleAddNewOrg}
                     />
                     <Divider />
@@ -401,7 +401,7 @@ class SettingsScreen extends React.Component {
                     <List.Item
                         title='Privacy Policy'
                         style={{ paddingVertical: 0 }}
-                        left={(props) => <List.Icon {...props} icon='supervisor-account' />}
+                        left={(props) => <List.Icon {...props} icon='account-supervisor' />}
                         onPress={this._viewLink}
                     />
                     <View>
