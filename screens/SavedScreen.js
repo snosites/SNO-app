@@ -24,13 +24,14 @@ class SavedArticlesScreen extends React.Component {
                     resizeMode='contain'
                 />
             ),
-            headerBackTitle: null
+            headerBackTitle: null,
+            headerTitleAlign: 'center',
         }
     }
 
     state = {
         snackbarVisible: false,
-        isTablet: false
+        isTablet: false,
     }
 
     componentDidMount() {
@@ -39,7 +40,7 @@ class SavedArticlesScreen extends React.Component {
             this._playAnimation()
         }
         navigation.setParams({
-            headerLogo: global.headerSmall
+            headerLogo: global.headerSmall,
         })
         this.getDeviceTypeComponent()
     }
@@ -76,12 +77,12 @@ class SavedArticlesScreen extends React.Component {
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <View style={styles.animationContainer}>
                         <LottieView
-                            ref={animation => {
+                            ref={(animation) => {
                                 this.animation = animation
                             }}
                             style={{
                                 width: 400,
-                                height: 400
+                                height: 400,
                             }}
                             loop={true}
                             speed={1}
@@ -100,7 +101,7 @@ class SavedArticlesScreen extends React.Component {
                             fontSize: 18,
                             textAlign: 'center',
                             padding: 20,
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
                         }}
                     >
                         You don't have any saved articles for this school yet
@@ -143,7 +144,7 @@ class SavedArticlesScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Removed
@@ -152,7 +153,7 @@ class SavedArticlesScreen extends React.Component {
         )
     }
 
-    _saveRef = ref => {
+    _saveRef = (ref) => {
         this.flatListRef = ref
     }
 
@@ -160,11 +161,11 @@ class SavedArticlesScreen extends React.Component {
         this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _handleArticleRemove = article => {
+    _handleArticleRemove = (article) => {
         const { activeDomain, removeSavedArticle } = this.props
         removeSavedArticle(article.id, activeDomain.id)
         this.setState({
-            snackbarVisible: true
+            snackbarVisible: true,
         })
     }
 
@@ -177,17 +178,17 @@ class SavedArticlesScreen extends React.Component {
 const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
-        height: 400
+        height: 400,
     },
     snackbar: {
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0
-    }
+        right: 0,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     return {
         activeDomain,
@@ -195,13 +196,13 @@ const mapStateToProps = state => {
         global: state.global,
         savedArticles: state.savedArticlesBySchool[activeDomain.id]
             ? state.savedArticlesBySchool[activeDomain.id]
-            : []
+            : [],
     }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     removeSavedArticle: (articleId, domainId) =>
-        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId))
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SavedArticlesScreen)

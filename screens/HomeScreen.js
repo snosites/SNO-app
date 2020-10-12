@@ -82,6 +82,7 @@ class HomeScreen extends React.Component {
                 />
             ),
             headerBackTitle: null,
+            headerTitleAlign: 'center',
         }
     }
 

@@ -14,13 +14,14 @@ axios.interceptors.response.use(function (response) {
 
 const domainApiService = {
     getSplashScreenId: async (domainUrl) => {
+        console.log('ere', domainUrl)
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_splash_screen`
             )
             return response.data
         } catch (err) {
-            console.log('error in fetch splash screen ID api', err)
+            console.log('error in fetch splash screen ID api', err, err.response)
             throw err
         }
     },

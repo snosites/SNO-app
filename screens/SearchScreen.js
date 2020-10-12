@@ -19,7 +19,7 @@ import ArticleListContent from '../views/ArticleListContent'
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 
 // header icon native look component
-const IoniconsHeaderButton = passMeFurther => (
+const IoniconsHeaderButton = (passMeFurther) => (
     <HeaderButton
         {...passMeFurther}
         IconComponent={Ionicons}
@@ -55,13 +55,14 @@ class SearchScreen extends React.Component {
                     resizeMode='contain'
                 />
             ),
-            headerBackTitle: null
+            headerBackTitle: null,
+            headerTitleAlign: 'center',
         }
     }
 
     state = {
         snackbarSavedVisible: false,
-        snackbarRemovedVisible: false
+        snackbarRemovedVisible: false,
     }
 
     componentDidMount() {
@@ -70,7 +71,7 @@ class SearchScreen extends React.Component {
             this._playAnimation()
         }
         navigation.setParams({
-            headerLogo: menus.headerSmall
+            headerLogo: menus.headerSmall,
         })
     }
 
@@ -84,7 +85,7 @@ class SearchScreen extends React.Component {
                     <Animation
                         style={{
                             width: 400,
-                            height: 400
+                            height: 400,
                         }}
                         source={require('../assets/lottiefiles/search-processing')}
                         saveRef={this._saveAnimationRef}
@@ -99,7 +100,7 @@ class SearchScreen extends React.Component {
                     <Animation
                         style={{
                             width: 200,
-                            height: 200
+                            height: 200,
                         }}
                         source={require('../assets/lottiefiles/broken-stick-error')}
                         saveRef={this._saveAnimationRef}
@@ -109,7 +110,7 @@ class SearchScreen extends React.Component {
                         style={{
                             textAlign: 'center',
                             fontSize: 17,
-                            padding: 30
+                            padding: 30,
                         }}
                     >
                         Sorry, something went wrong.
@@ -125,7 +126,7 @@ class SearchScreen extends React.Component {
                             textAlign: 'center',
                             fontSize: 17,
                             padding: 20,
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
                         }}
                     >
                         No results. Try searching again.
@@ -154,7 +155,7 @@ class SearchScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarSavedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Added To Saved List
@@ -168,7 +169,7 @@ class SearchScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarRemovedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Removed From Saved List
@@ -177,11 +178,11 @@ class SearchScreen extends React.Component {
         )
     }
 
-    _saveRef = ref => {
+    _saveRef = (ref) => {
         this.flatListRef = ref
     }
 
-    _saveAnimationRef = ref => {
+    _saveAnimationRef = (ref) => {
         this.animation = ref
     }
 
@@ -189,7 +190,7 @@ class SearchScreen extends React.Component {
         this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _saveRemoveToggle = article => {
+    _saveRemoveToggle = (article) => {
         if (article.saved) {
             this._handleArticleRemove(article.id)
         } else {
@@ -197,19 +198,19 @@ class SearchScreen extends React.Component {
         }
     }
 
-    _handleArticleSave = article => {
+    _handleArticleSave = (article) => {
         const { activeDomain, saveArticle } = this.props
         saveArticle(article, activeDomain.id)
         this.setState({
-            snackbarSavedVisible: true
+            snackbarSavedVisible: true,
         })
     }
 
-    _handleArticleRemove = articleId => {
+    _handleArticleRemove = (articleId) => {
         const { activeDomain, removeSavedArticle } = this.props
         removeSavedArticle(articleId, activeDomain.id)
         this.setState({
-            snackbarRemovedVisible: true
+            snackbarRemovedVisible: true,
         })
     }
 
@@ -231,29 +232,29 @@ class SearchScreen extends React.Component {
 const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
-        height: 400
+        height: 400,
     },
     animationContainerError: {
         width: 200,
-        height: 200
+        height: 200,
     },
     snackbar: {
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0
-    }
+        right: 0,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     return {
         theme: state.theme,
         activeDomain,
         search: state.searchArticles,
         menus: state.global.menuItems,
-        searchArticles: state.searchArticles.items.map(articleId => {
-            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+        searchArticles: state.searchArticles.items.map((articleId) => {
+            const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
                 return savedArticle.id === articleId
             })
             if (found) {
@@ -262,20 +263,17 @@ const mapStateToProps = state => {
                 state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
-        })
+        }),
     }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     saveArticle: (article, domainId) =>
         dispatch(savedArticleActions.saveArticle(article, domainId)),
     removeSavedArticle: (articleId, domainId) =>
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
     fetchMoreSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
-        dispatch(searchActions.fetchMoreSearchArticlesIfNeeded(domainUrl, searchTerm))
+        dispatch(searchActions.fetchMoreSearchArticlesIfNeeded(domainUrl, searchTerm)),
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SearchScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SearchScreen)

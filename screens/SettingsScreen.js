@@ -54,6 +54,7 @@ class SettingsScreen extends React.Component {
                     resizeMode='contain'
                 />
             ),
+            headerTitleAlign: 'center',
         }
     }
 

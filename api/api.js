@@ -3,7 +3,7 @@ import axios from 'axios'
 const BASE_URL = 'https://mobileapi.snosites.com/api'
 // const BASE_URL = 'http://localhost:8888/api'
 
-axios.interceptors.response.use(function(response) {
+axios.interceptors.response.use(function (response) {
     const contentType = response.headers['content-type']
     if (contentType && contentType.indexOf('application/json') !== -1) {
         return response
@@ -19,7 +19,7 @@ const apiService = {
                 '/user/find-or-create',
                 { deviceId, pushToken },
                 {
-                    baseURL: BASE_URL
+                    baseURL: BASE_URL,
                 }
             )
             return response.data
@@ -28,10 +28,10 @@ const apiService = {
             throw err
         }
     },
-    fetchUser: async apiToken => {
+    fetchUser: async (apiToken) => {
         try {
             const response = await axios.get(`/user?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -43,7 +43,7 @@ const apiService = {
     updateUser: async (apiToken, postObj) => {
         try {
             const response = await axios.post(`/user?api_token=${apiToken}`, postObj, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -51,10 +51,10 @@ const apiService = {
             throw err
         }
     },
-    deleteUser: async apiToken => {
+    deleteUser: async (apiToken) => {
         try {
             const response = await axios.delete(`/user?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -65,8 +65,9 @@ const apiService = {
     fetchAvailableDomains: async (apiToken, version) => {
         try {
             const response = await axios.get(`/domains/all/${version}?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
+
             return response.data
         } catch (err) {
             console.log('error in fetch all available domains api', err)
@@ -78,7 +79,7 @@ const apiService = {
             const response = await axios.get(
                 `/domains/search/${searchTerm}/${version}?api_token=${apiToken}`,
                 {
-                    baseURL: BASE_URL
+                    baseURL: BASE_URL,
                 }
             )
             return response.data
@@ -93,13 +94,13 @@ const apiService = {
         try {
             const postObj = {
                 subscriptionType,
-                domainId
+                domainId,
             }
             subscriptionType === 'categories'
                 ? (postObj.categoryIds = ids)
                 : (postObj.writers = ids)
             const response = await axios.post(`/user/subscribe?api_token=${apiToken}`, postObj, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -111,14 +112,14 @@ const apiService = {
     unsubscribe: async (apiToken, subscriptionType, ids) => {
         try {
             const postObj = {
-                subscriptionType
+                subscriptionType,
             }
             subscriptionType === 'categories'
                 ? (postObj.categoryIds = ids)
                 : (postObj.writerIds = ids)
 
             const response = await axios.post(`/user/unsubscribe?api_token=${apiToken}`, postObj, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -126,10 +127,10 @@ const apiService = {
             throw err
         }
     },
-    getSubscriptions: async apiToken => {
+    getSubscriptions: async (apiToken) => {
         try {
             const response = await axios.get(`/user/categories?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -137,10 +138,10 @@ const apiService = {
             throw err
         }
     },
-    getWriterSubscriptions: async apiToken => {
+    getWriterSubscriptions: async (apiToken) => {
         try {
             const response = await axios.get(`/user/writers?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
@@ -151,14 +152,14 @@ const apiService = {
     findDomain: async (apiToken, domainId) => {
         try {
             const response = await axios.get(`/domains/${domainId}?api_token=${apiToken}`, {
-                baseURL: BASE_URL
+                baseURL: BASE_URL,
             })
             return response.data
         } catch (err) {
             console.log('error in find domain api call', err)
             throw err
         }
-    }
+    },
 }
 
 export default apiService

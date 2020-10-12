@@ -28,7 +28,8 @@ class RecentScreen extends React.Component {
                     resizeMode='contain'
                 />
             ),
-            headerBackTitle: null
+            headerBackTitle: null,
+            headerTitleAlign: 'center',
         }
     }
 
@@ -36,7 +37,7 @@ class RecentScreen extends React.Component {
         snackbarSavedVisible: false,
         snackbarRemovedVisible: false,
         offset: 0,
-        isTablet: false
+        isTablet: false,
     }
 
     async getDeviceTypeComponent() {
@@ -58,7 +59,7 @@ class RecentScreen extends React.Component {
             fetchRecentArticlesIfNeeded(activeDomain.url)
         })
         navigation.setParams({
-            headerLogo: global.headerSmall
+            headerLogo: global.headerSmall,
         })
         this.getDeviceTypeComponent()
     }
@@ -89,11 +90,11 @@ class RecentScreen extends React.Component {
                 <SafeAreaView
                     style={{
                         flex: 1,
-                        marginTop: 20
+                        marginTop: 20,
                     }}
                 >
                     <LottieView
-                        ref={animation => this._saveAnimationRef(animation)}
+                        ref={(animation) => this._saveAnimationRef(animation)}
                         style={StyleSheet.absoluteFill}
                         speed={0.8}
                         loop={true}
@@ -109,14 +110,14 @@ class RecentScreen extends React.Component {
                     <View
                         style={{
                             width: 200,
-                            height: 200
+                            height: 200,
                         }}
                     >
                         <LottieView
-                            ref={animation => this._saveAnimationRef(animation)}
+                            ref={(animation) => this._saveAnimationRef(animation)}
                             style={{
                                 width: 200,
-                                height: 200
+                                height: 200,
                             }}
                             loop={true}
                             autoPlay={true}
@@ -171,7 +172,7 @@ class RecentScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarSavedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Added To Saved List
@@ -185,7 +186,7 @@ class RecentScreen extends React.Component {
                         label: 'Dismiss',
                         onPress: () => {
                             this.setState({ snackbarRemovedVisible: false })
-                        }
+                        },
                     }}
                 >
                     Article Removed From Saved List
@@ -194,11 +195,11 @@ class RecentScreen extends React.Component {
         )
     }
 
-    _saveRef = ref => {
+    _saveRef = (ref) => {
         this.flatListRef = ref
     }
 
-    _saveAnimationRef = ref => {
+    _saveAnimationRef = (ref) => {
         this.animation = ref
     }
 
@@ -206,7 +207,7 @@ class RecentScreen extends React.Component {
         this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _saveRemoveToggle = article => {
+    _saveRemoveToggle = (article) => {
         if (article.saved) {
             this._handleArticleRemove(article.id)
         } else {
@@ -214,19 +215,19 @@ class RecentScreen extends React.Component {
         }
     }
 
-    _handleArticleSave = article => {
+    _handleArticleSave = (article) => {
         const { activeDomain, saveArticle } = this.props
         saveArticle(article, activeDomain.id)
         this.setState({
-            snackbarSavedVisible: true
+            snackbarSavedVisible: true,
         })
     }
 
-    _handleArticleRemove = articleId => {
+    _handleArticleRemove = (articleId) => {
         const { activeDomain, removeSavedArticle } = this.props
         removeSavedArticle(articleId, activeDomain.id)
         this.setState({
-            snackbarRemovedVisible: true
+            snackbarRemovedVisible: true,
         })
     }
 
@@ -250,29 +251,29 @@ class RecentScreen extends React.Component {
 const styles = StyleSheet.create({
     animationContainer: {
         width: 400,
-        height: 400
+        height: 400,
     },
     animationContainerError: {
         width: 200,
-        height: 200
+        height: 200,
     },
     snackbar: {
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0
-    }
+        right: 0,
+    },
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     return {
         theme: state.theme,
         activeDomain,
         global: state.global,
         recent: state.recentArticles,
-        recentArticles: state.recentArticles.items.map(articleId => {
-            const found = state.savedArticlesBySchool[activeDomain.id].find(savedArticle => {
+        recentArticles: state.recentArticles.items.map((articleId) => {
+            const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
                 return savedArticle.id === articleId
             })
             if (found) {
@@ -281,21 +282,21 @@ const mapStateToProps = state => {
                 state.entities.articles[articleId].saved = false
             }
             return state.entities.articles[articleId]
-        })
+        }),
     }
 }
 
-const mapdispatchToProps = dispatch => ({
+const mapdispatchToProps = (dispatch) => ({
     saveArticle: (article, domainId) =>
         dispatch(savedArticleActions.saveArticle(article, domainId)),
     removeSavedArticle: (articleId, domainId) =>
         dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
-    invalidateRecentArticles: categoryId =>
+    invalidateRecentArticles: (categoryId) =>
         dispatch(recentActions.invalidateRecentArticles(categoryId)),
-    fetchRecentArticlesIfNeeded: domainUrl =>
+    fetchRecentArticlesIfNeeded: (domainUrl) =>
         dispatch(recentActions.fetchRecentArticlesIfNeeded(domainUrl)),
-    fetchMoreRecentArticlesIfNeeded: payload =>
-        dispatch(recentActions.fetchMoreRecentArticlesIfNeeded(payload))
+    fetchMoreRecentArticlesIfNeeded: (payload) =>
+        dispatch(recentActions.fetchMoreRecentArticlesIfNeeded(payload)),
 })
 
 export default connect(mapStateToProps, mapdispatchToProps)(RecentScreen)

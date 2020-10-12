@@ -38,7 +38,8 @@ class SportcenterScreen extends React.Component {
                     style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
                     resizeMode='cover'
                 />
-            )
+            ),
+            headerTitleAlign: 'center',
         }
     }
 
