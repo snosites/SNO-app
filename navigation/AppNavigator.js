@@ -1,5 +1,6 @@
 import React from 'react'
-import { createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator, createSwitchNavigator } from 'react-navigation'
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen'
 import AppStack from './AppStack'
@@ -38,21 +39,25 @@ class AppStackWithErrorBoundary extends React.Component {
     }
 }
 
-export default AppContainer = createAppContainer(
-    createSwitchNavigator(
-        {
-            AuthLoading: AuthLoadingScreen,
-            App: {
-                screen: AppStackWithErrorBoundary,
-                path: 'app',
-            },
-            Auth: {
-                screen: AuthStack,
-                path: 'auth',
-            },
-        },
-        {
-            initialRouteName: 'AuthLoading',
-        }
+export default function AppContainer() {
+    return (
+        <NavigationContainer>
+            {createSwitchNavigator(
+                {
+                    AuthLoading: AuthLoadingScreen,
+                    App: {
+                        screen: AppStackWithErrorBoundary,
+                        path: 'app',
+                    },
+                    Auth: {
+                        screen: AuthStack,
+                        path: 'auth',
+                    },
+                },
+                {
+                    initialRouteName: 'AuthLoading',
+                }
+            )}
+        </NavigationContainer>
     )
-)
+}
