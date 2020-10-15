@@ -19,6 +19,8 @@ import * as Linking from 'expo-linking'
 
 // const prefix = Linking.makeUrl('/')
 
+const Stack = createStackNavigator()
+
 const AppContainer = (props) => {
     const {
         initializeUser,
@@ -70,8 +72,26 @@ const AppContainer = (props) => {
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar style={isDark ? 'light' : 'dark'} />
                 <NavigationContainer>
-                    {activeDomain.length ? <AppStack /> : <AuthStack />}
+                    <Stack.Navigator>
+                        {activeDomain.length ? (
+                            // doesn't have a saved domain
+                            <Stack.Screen
+                                name='Auth'
+                                component={AuthStack}
+                                options={{
+                                    title: 'Sign in',
+                                    // When logging out, a pop animation feels intuitive
+                                    // You can remove this if you want the default 'push' animation
+                                    animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                                }}
+                            />
+                        ) : (
+                            // has domain saved
+                            <Stack.Screen name='App' component={AppStack} />
+                        )}
+                    </Stack.Navigator>
                 </NavigationContainer>
+
                 {/* <AuthNavigator
                     uriPrefix={prefix}
                     enableURLHandling={false}
