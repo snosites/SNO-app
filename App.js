@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import {
-    ActivityIndicator,
-    Platform
-} from 'react-native'
+import { ActivityIndicator, Platform } from 'react-native'
 import { AppLoading } from 'expo'
 import * as Icon from '@expo/vector-icons'
 import * as Font from 'expo-font'
@@ -15,9 +12,6 @@ import { persistor, store } from './redux/configureStore'
 import AppContainer from './components/AppContainer'
 
 import * as Sentry from 'sentry-expo'
-
-import UpdateApp from './components/UpdateApp'
-
 
 export default App = () => {
     const [isLoadingComplete, setIsLoadingComplete] = useState(false)
@@ -33,15 +27,15 @@ export default App = () => {
                 //college assets
                 require('./assets/images/cns-icon.png'),
                 require('./assets/images/cns-logo.png'),
-                require('./assets/images/cns-splash.png')
+                require('./assets/images/cns-splash.png'),
             ]),
             Font.loadAsync({
-                ...Icon.Ionicons.font
-            })
+                ...Icon.Ionicons.font,
+            }),
         ])
     }
 
-    _handleLoadingError = error => {
+    _handleLoadingError = (error) => {
         console.warn('there was an error loading assets', error)
         Sentry.captureException(error)
     }
@@ -62,11 +56,9 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 100 }} />}
                     persistor={persistor}
                 >
-                    {/* <UpdateApp /> */}
                     <AppContainer />
                 </PersistGate>
             </ReduxProvider>
         )
     }
 }
-
