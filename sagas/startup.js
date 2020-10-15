@@ -6,7 +6,7 @@ import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } fro
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
 import { actions as savedArticleActions } from '../redux/savedArticles'
-import { getActiveDomain } from '../redux/domains'
+import { getActiveDomain, getSavedDomains } from '../redux/domains'
 
 import { fetchMenu } from '../sagas/menu'
 import {
@@ -15,7 +15,6 @@ import {
     fetchNotificationSubscriptions,
     findOrCreateUser,
 } from '../sagas/user'
-import { loadActiveDomain } from '../sagas/global'
 
 import domainApiService from '../api/domain'
 import apiService from '../api/api'
@@ -30,7 +29,50 @@ import * as Amplitude from 'expo-analytics-amplitude'
 import * as Sentry from 'sentry-expo'
 import Constants from 'expo-constants'
 
-// get new home screen options
+function* initializeUser() {
+    try {
+        yield put(globalActions.initializeUserRequest())
+
+        yield call(findOrCreateUser)
+        yield call(loadActiveDomain)
+
+        yield put(globalActions.initializeUserSuccess())
+    } catch (err) {
+        console.log('error initializing user in saga', err)
+        yield put(globalActions.initializeUserError('error initializing user'))
+    }
+}
+
+function* loadActiveDomain() {
+    try {
+        yield put(domainsActions.loadActiveDomainRequest())
+
+        const domains = yield select(getSavedDomains)
+
+        const activeDomain = domains.filter((domain) => {
+            if (domain.active) {
+                return domain
+            }
+        })
+        // sets active domain for app and then navigates to app
+        if (activeDomain.length) {
+            yield put(domainsActions.setActiveDomain(activeDomain[0].id))
+            // NavigationService.navigate('App')
+        }
+        // no active domain navigate to auth
+        else {
+            SplashScreen.hide()
+            NavigationService.navigate('Auth')
+        }
+        yield put(domainsActions.loadActiveDomainSuccess())
+        return
+    } catch (err) {
+        console.log('error in load active domain saga', err)
+        yield put(domainsActions.loadActiveDomainError('error loading active domain'))
+        NavigationService.navigate('Auth')
+        return
+    }
+}
 
 function* startup(action) {
     // if coming from deep link need to handle that
@@ -365,20 +407,6 @@ function* checkIfDomainIsInDb(domainId) {
     }
 }
 
-function* initializeUser({ fromDeepLink }) {
-    try {
-        yield put(globalActions.initializeUserRequest())
-
-        yield call(findOrCreateUser)
-        yield call(loadActiveDomain)
-
-        yield put(globalActions.initializeUserSuccess())
-    } catch (err) {
-        console.log('error initializing user in saga', err)
-        yield put(globalActions.initializeUserError('error initializing user'))
-    }
-}
-
 function* initializeDeepLinkUser({ params: { schoolId } }) {
     try {
         // if deep link this will run
@@ -439,7 +467,7 @@ function* startupSaga() {
     yield all([
         takeLatest(globalTypes.STARTUP, startup),
         takeLatest(globalTypes.INITIALIZE_USER, initializeUser),
-        takeLatest(globalTypes.INITIALIZE_DEEP_LINK_USER, initializeDeepLinkUser),
+        // takeLatest(globalTypes.INITIALIZE_DEEP_LINK_USER, initializeDeepLinkUser),
         takeLatest(globalTypes.FETCH_HOME_SCREEN_ARTICLES, getHomeScreenArticles),
     ])
 }

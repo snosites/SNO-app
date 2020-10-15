@@ -10,7 +10,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import { persistor, store } from './redux/configureStore'
 
-import AppContainer from './components/AppContainer'
+import AppContainerContainer from './containers/appContainerContainer'
 
 import * as Sentry from 'sentry-expo'
 
@@ -57,7 +57,7 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 100 }} />}
                     persistor={persistor}
                 >
-                    <AppContainer />
+                    <AppContainerContainer />
                 </PersistGate>
             </ReduxProvider>
         )

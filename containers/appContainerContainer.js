@@ -7,18 +7,21 @@ import { createErrorMessageSelector } from '../redux/errors'
 import { getActiveDomain } from '../redux/domains'
 import { createLoadingSelector } from '../redux/loading'
 
-const createUserErrorSelector = createErrorMessageSelector([
+const initializeUserErrorSelector = createErrorMessageSelector([
     userTypes.FIND_OR_CREATE_USER,
     globalTypes.INITIALIZE_USER,
 ])
+
+const initializeUserLoading = createLoadingSelector([globalTypes.INITIALIZE_USER])
 
 const mapStateToProps = (state) => {
     return {
         theme: state.theme,
         homeScreenMode: state.global.homeScreenMode,
-        error: createUserErrorSelector(state),
+        initializeUserLoading: initializeUserLoading(state),
+        initializeUserErrorSelector: initializeUserErrorSelector(state),
         activeDomain: getActiveDomain(state),
-        fromDeepLink: state.global.fromDeepLink,
+        // fromDeepLink: state.global.fromDeepLink,
     }
 }
 

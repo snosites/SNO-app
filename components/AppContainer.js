@@ -7,7 +7,8 @@ import { connect } from 'react-redux'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 
-import RootNavigator from '../navigation/RootNavigator'
+import AuthStack from '../navigation/AuthStack'
+import AppStack from '../navigation/AppStack'
 import NotificationAlert from './NotificationAlert'
 import NavigationService from '../utils/NavigationService'
 
@@ -16,25 +17,42 @@ import Color from 'color'
 
 import * as Linking from 'expo-linking'
 
-const prefix = Linking.makeUrl('/')
-console.log('prefix', prefix)
+// const prefix = Linking.makeUrl('/')
 
-// Need to check if coming from a deep link to handle startup logic
+const AppContainer = (props) => {
+    const {
+        initializeUser,
+        initializeUserLoading,
+        initializeUserError,
+        initializeDeepLinkUser,
+        activeDomain,
+        setDeepLinkArticle,
+        fromDeepLink,
+        setFromDeepLink,
+        theme,
+        homeScreenMode,
+    } = props
 
-const AppContainer = ({ theme, homeScreenMode, setFromDeepLink }) => {
     let primaryColor = Color(theme.colors.primary)
     let isDark = primaryColor.isDark()
 
     useEffect(() => {
-        if (switchingDomain) {
-            return
+        initializeUser()
+    }, [])
+    useEffect(() => {
+        if (!initializeUserLoading && !initializeUserError) {
         }
-        if (fromDeepLink) {
-            handleFromDeepLink()
-        } else {
-            initializeUser()
-        }
-    }, [switchingDomain, fromDeepLink])
+    }, [initializeUserLoading, initializeUserError])
+    // useEffect(() => {
+    //     if (switchingDomain) {
+    //         return
+    //     }
+    //     if (fromDeepLink) {
+    //         handleFromDeepLink()
+    //     } else {
+    //         initializeUser()
+    //     }
+    // }, [switchingDomain, fromDeepLink])
 
     const checkIfDeepLinkUser = async () => {
         const { path, queryParams } = await Linking.parseInitialURLAsync()
@@ -52,7 +70,7 @@ const AppContainer = ({ theme, homeScreenMode, setFromDeepLink }) => {
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar style={isDark ? 'light' : 'dark'} />
                 <NavigationContainer>
-                    <AuthLoadingScreen />
+                    {activeDomain.length ? <AppStack /> : <AuthStack />}
                 </NavigationContainer>
                 {/* <AuthNavigator
                     uriPrefix={prefix}
