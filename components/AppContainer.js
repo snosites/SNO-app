@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { View } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { connect } from 'react-redux'
 
@@ -41,10 +41,6 @@ const AppContainer = (props) => {
     useEffect(() => {
         initializeUser()
     }, [])
-    useEffect(() => {
-        if (!initializeUserLoading && !initializeUserError) {
-        }
-    }, [initializeUserLoading, initializeUserError])
     // useEffect(() => {
     //     if (switchingDomain) {
     //         return
@@ -67,6 +63,13 @@ const AppContainer = (props) => {
         }
     }
 
+    if (initializeUserLoading) {
+        return (
+            <View style={{ flex: 1, backgroundColor: '#fff', paddingVertical: 40 }}>
+                <ActivityIndicator />
+            </View>
+        )
+    }
     return (
         <PaperProvider theme={theme}>
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
