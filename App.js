@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { ActivityIndicator, Platform } from 'react-native'
+import { ActivityIndicator } from 'react-native'
+
 import { AppLoading } from 'expo'
 import * as Icon from '@expo/vector-icons'
 import * as Font from 'expo-font'
 import { Asset } from 'expo-asset'
-import { Provider as ReduxProvider } from 'react-redux'
 
+import { Provider as ReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import { persistor, store } from './redux/configureStore'
 

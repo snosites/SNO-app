@@ -3,23 +3,23 @@ import { ActivityIndicator, View, Text, Image } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import Constants from 'expo-constants'
 
-import { types as userTypes } from '../redux/user'
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { createErrorMessageSelector } from '../redux/errors'
+import { types as userTypes } from '../../redux/user'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { createErrorMessageSelector } from '../../redux/errors'
 
-import { actions as domainActions, getActiveDomain } from '../redux/domains'
+import { actions as domainActions, getActiveDomain } from '../../redux/domains'
 
-import { handleArticlePress } from '../utils/articlePress'
-import { asyncFetchArticle } from '../utils/sagaHelpers'
+import { handleArticlePress } from '../../utils/articlePress'
+import { asyncFetchArticle } from '../../utils/sagaHelpers'
 
 import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 import * as Linking from 'expo-linking'
 
-import NavigationService from '../utils/NavigationService'
+import NavigationService from '../../utils/NavigationService'
 import { SplashScreen } from 'expo'
 
 const version = getReleaseChannel()
@@ -131,7 +131,6 @@ const AuthLoadingScreen = (props) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
-            <StatusBar style='light' />
             <ActivityIndicator />
         </View>
     )

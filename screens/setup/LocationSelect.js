@@ -7,15 +7,15 @@ import {
     Text,
     Platform,
     Image,
-    SafeAreaView
+    SafeAreaView,
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as domainsActions } from '../redux/domains'
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { actions as domainsActions } from '../../redux/domains'
+import { types as userTypes, actions as userActions } from '../../redux/user'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 import { isPointWithinRadius, getDistance } from 'geolib'
 
@@ -27,13 +27,13 @@ import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import InitModal from './InitModal'
+import InitModal from '../InitModal'
 
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
-const LocationSelectScreen = props => {
+const LocationSelectScreen = (props) => {
     const {
         navigation,
         availableDomains,
@@ -45,7 +45,7 @@ const LocationSelectScreen = props => {
         addDomain,
         clearAvailableDomains,
         setSubscribeAll,
-        addSchoolSub
+        addSchoolSub,
     } = props
 
     const cityLocation = navigation.getParam('location', null)
@@ -74,36 +74,36 @@ const LocationSelectScreen = props => {
         let searchRadius = radius * 1609.34
 
         // filter schools based on users location and the radius they selected
-        const filteredSchools = availableDomains.filter(school => {
+        const filteredSchools = availableDomains.filter((school) => {
             return isPointWithinRadius(
                 {
                     latitude: coords.latitude,
-                    longitude: coords.longitude
+                    longitude: coords.longitude,
                 },
                 {
                     latitude: school.latitude,
-                    longitude: school.longitude
+                    longitude: school.longitude,
                 },
                 searchRadius
             )
         })
 
-        const filteredSchoolsWithDistance = filteredSchools.map(school => {
+        const filteredSchoolsWithDistance = filteredSchools.map((school) => {
             let distance = getDistance(
                 {
                     latitude: coords.latitude,
-                    longitude: coords.longitude
+                    longitude: coords.longitude,
                 },
                 {
                     latitude: school.latitude,
-                    longitude: school.longitude
+                    longitude: school.longitude,
                 }
             )
             school.distanceAway = distance / 1609.34
             return school
         })
 
-        filteredSchoolsWithDistance.sort(function(a, b) {
+        filteredSchoolsWithDistance.sort(function (a, b) {
             if (a.distanceAway < b.distanceAway) return -1
             if (a.distanceAway > b.distanceAway) return 1
             return 0
@@ -113,10 +113,10 @@ const LocationSelectScreen = props => {
         setSchoolsInRadius(filteredSchoolsWithDistance)
     }
 
-    _handleSelect = async selectedDomain => {
+    _handleSelect = async (selectedDomain) => {
         Haptics.selectionAsync()
         try {
-            const found = domains.find(domain => {
+            const found = domains.find((domain) => {
                 return domain.id == selectedDomain.id
             })
             // if already added then set as active -- dont save
@@ -127,7 +127,7 @@ const LocationSelectScreen = props => {
             }
             // save new domain and send analytics
             Amplitude.logEventWithProperties('add school', {
-                domainId: selectedDomain.id
+                domainId: selectedDomain.id,
             })
 
             //new analytics
@@ -139,7 +139,7 @@ const LocationSelectScreen = props => {
                 publication: selectedDomain.publication,
                 active: false,
                 notificationCategories: [],
-                url: selectedDomain.url
+                url: selectedDomain.url,
             })
 
             // set new domain as active
@@ -152,7 +152,7 @@ const LocationSelectScreen = props => {
     }
 
     // dismiss modal and redirect back to auth loading
-    _handleModalDismiss = allNotifications => {
+    _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
         navigation.navigate('AuthLoading')
@@ -175,7 +175,7 @@ const LocationSelectScreen = props => {
                     style={{
                         fontSize: 19,
                         fontWeight: 'bold',
-                        textAlign: 'center'
+                        textAlign: 'center',
                     }}
                 >
                     Sorry, no schools are available
@@ -191,7 +191,7 @@ const LocationSelectScreen = props => {
                     style={{
                         textAlign: 'center',
                         fontSize: 18,
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
                     }}
                 >
                     Schools within {radius} miles
@@ -200,14 +200,14 @@ const LocationSelectScreen = props => {
                     style={{
                         textAlign: 'center',
                         fontSize: 18,
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
                     }}
                 >
                     of {cityLocation.city}, {cityLocation.region}
                 </Text>
                 <Slider
                     value={20}
-                    onValueChange={radius => setRadius(radius)}
+                    onValueChange={(radius) => setRadius(radius)}
                     onSlidingComplete={_handleRadiusSearch}
                     minimumValue={5}
                     maximumValue={100}
@@ -219,7 +219,7 @@ const LocationSelectScreen = props => {
                     }
                     thumbTouchSize={{
                         width: 80,
-                        height: 80
+                        height: 80,
                     }}
                 />
             </View>
@@ -236,7 +236,7 @@ const LocationSelectScreen = props => {
                 </View>
             ) : (
                 <ScrollView style={{ flex: 1 }}>
-                    {schoolsInRadius.map(item => {
+                    {schoolsInRadius.map((item) => {
                         return (
                             item.school && (
                                 <View key={item.id}>
@@ -248,9 +248,9 @@ const LocationSelectScreen = props => {
                                         }\n${item.distanceAway.toFixed(2)} miles away`}
                                         descriptionEllipsizeMode='tail'
                                         style={{
-                                            paddingVertical: 0
+                                            paddingVertical: 0,
                                         }}
-                                        left={props => {
+                                        left={(props) => {
                                             if (item.icon) {
                                                 return (
                                                     <List.Icon
@@ -258,12 +258,12 @@ const LocationSelectScreen = props => {
                                                         icon={({ size, color }) => (
                                                             <Image
                                                                 source={{
-                                                                    uri: item.icon
+                                                                    uri: item.icon,
                                                                 }}
                                                                 style={{
                                                                     width: size + 5,
                                                                     height: size + 5,
-                                                                    borderRadius: 4
+                                                                    borderRadius: 4,
                                                                 }}
                                                             />
                                                         )}
@@ -294,28 +294,28 @@ const LocationSelectScreen = props => {
 }
 
 LocationSelectScreen.navigationOptions = {
-    title: 'Select Your School'
+    title: 'Select Your School',
 }
 
 const availableDomainsLoadingSelector = createLoadingSelector([globalTypes.FETCH_AVAILABLE_DOMAINS])
 const availableDomainsErrorSelector = createErrorMessageSelector([
-    globalTypes.FETCH_AVAILABLE_DOMAINS
+    globalTypes.FETCH_AVAILABLE_DOMAINS,
 ])
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     availableDomains: state.global.availableDomains,
     domains: state.domains,
     isLoading: availableDomainsLoadingSelector(state),
-    error: availableDomainsErrorSelector(state)
+    error: availableDomainsErrorSelector(state),
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
-    setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
-    addDomain: domain => dispatch(domainsActions.addDomain(domain)),
+    setActiveDomain: (domainId) => dispatch(domainsActions.setActiveDomain(domainId)),
+    addDomain: (domain) => dispatch(domainsActions.addDomain(domain)),
     clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload)),
-    addSchoolSub: url => dispatch(globalActions.addSchoolSub(url))
+    setSubscribeAll: (payload) => dispatch(userActions.setSubscribeAll(payload)),
+    addSchoolSub: (url) => dispatch(globalActions.addSchoolSub(url)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationSelectScreen)

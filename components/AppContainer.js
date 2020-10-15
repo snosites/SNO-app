@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 import { View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { connect } from 'react-redux'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 
-import AppNavigator from '../navigation/AppNavigator'
+import RootNavigator from '../navigation/RootNavigator'
 import NotificationAlert from './NotificationAlert'
 import NavigationService from '../utils/NavigationService'
 
@@ -24,8 +26,15 @@ const AppContainer = ({ theme, homeScreenMode, setFromDeepLink }) => {
     let isDark = primaryColor.isDark()
 
     useEffect(() => {
-        checkIfDeepLinkUser()
-    }, [])
+        if (switchingDomain) {
+            return
+        }
+        if (fromDeepLink) {
+            handleFromDeepLink()
+        } else {
+            initializeUser()
+        }
+    }, [switchingDomain, fromDeepLink])
 
     const checkIfDeepLinkUser = async () => {
         const { path, queryParams } = await Linking.parseInitialURLAsync()
@@ -42,14 +51,17 @@ const AppContainer = ({ theme, homeScreenMode, setFromDeepLink }) => {
         <PaperProvider theme={theme}>
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar style={isDark ? 'light' : 'dark'} />
-                <AppNavigator
+                <NavigationContainer>
+                    <AuthLoadingScreen />
+                </NavigationContainer>
+                {/* <AuthNavigator
                     uriPrefix={prefix}
                     enableURLHandling={false}
                     screenProps={{ theme: theme, homeScreenMode: homeScreenMode }}
                     ref={(navigatorRef) => {
                         NavigationService.setTopLevelNavigator(navigatorRef)
                     }}
-                />
+                /> */}
             </View>
             <NotificationAlert />
         </PaperProvider>

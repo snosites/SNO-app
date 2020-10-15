@@ -18,13 +18,13 @@ import * as Location from 'expo-location'
 import Constants from 'expo-constants'
 import { connect } from 'react-redux'
 
-import { actions as globalActions } from '../redux/global'
+import { actions as globalActions } from '../../redux/global'
 
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
-class InitScreen extends React.Component {
+class WelcomeScreen extends React.Component {
     static navigationOptions = {
         header: null,
     }
@@ -301,4 +301,4 @@ const mapDispatchToProps = (dispatch) => ({
     fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(InitScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen)

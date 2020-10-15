@@ -10,11 +10,11 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as domainsActions } from '../redux/domains'
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { actions as domainsActions } from '../../redux/domains'
+import { types as userTypes, actions as userActions } from '../../redux/user'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 import { List, Button } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude'
@@ -22,9 +22,9 @@ import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import InitModal from './InitModal'
+import InitModal from '../InitModal'
 
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 // todo add deep link params
 
