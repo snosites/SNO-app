@@ -7,11 +7,11 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 import LottieView from 'lottie-react-native'
 
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
-const initModal = props => {
+const initModal = (props) => {
     const { modalVisible, handleDismiss } = props
 
     const [showText, setShowText] = useState(false)
@@ -48,12 +48,12 @@ const initModal = props => {
                             ref={animationRef}
                             style={{
                                 width: 250,
-                                height: 250
+                                height: 250,
                             }}
                             loop={false}
                             speed={0.75}
                             duration={1200}
-                            source={require('../assets/lottiefiles/animation-success.json')}
+                            source={require('../../assets/lottiefiles/animation-success.json')}
                         />
                     </View>
                     {showText && (
@@ -73,7 +73,7 @@ const initModal = props => {
                                     flexDirection: 'row',
                                     padding: 20,
                                     alignItems: 'center',
-                                    justifyContent: 'center'
+                                    justifyContent: 'center',
                                 }}
                             >
                                 <Text
@@ -89,7 +89,7 @@ const initModal = props => {
                                     }
                                     value={allNotifications}
                                     onValueChange={() => {
-                                        setAllNotifications(prevValue => !prevValue)
+                                        setAllNotifications((prevValue) => !prevValue)
                                     }}
                                 />
                             </View>
@@ -105,8 +105,8 @@ const initModal = props => {
                                         primary:
                                             version === 'sns'
                                                 ? Constants.manifest.extra.highSchool.primary
-                                                : Constants.manifest.extra.college.primary
-                                    }
+                                                : Constants.manifest.extra.college.primary,
+                                    },
                                 }}
                                 style={{ padding: 10 }}
                                 onPress={() => {
@@ -129,16 +129,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        marginTop: 10
+        marginTop: 10,
     },
     animationContainer: {
         width: 250,
-        height: 250
+        height: 250,
     },
     textContainer: {
         alignContent: 'center',
-        marginHorizontal: 20
-    }
+        marginHorizontal: 20,
+    },
 })
 
 export default initModal

@@ -22,7 +22,7 @@ import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import InitModal from '../InitModal'
+import InitModal from './InitModal'
 
 import { getReleaseChannel } from '../../constants/config'
 

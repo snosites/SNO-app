@@ -3,25 +3,9 @@ import { ScrollView, StyleSheet, ActivityIndicator, View, Text, Image } from 're
 
 import { List, Divider } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude'
-import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
-import * as Sentry from 'sentry-expo'
 
-import InitModal from '../InitModal'
-
-import { getReleaseChannel } from '../../constants/config'
-
-const version = getReleaseChannel()
-
-const theme = {
-    roundness: 7,
-    colors: {
-        primary:
-            version === 'sns'
-                ? Constants.manifest.extra.highSchool.primary
-                : Constants.manifest.extra.college.primary,
-    },
-}
+import InitModal from './InitModal'
 
 const SelectScreen = (props) => {
     const {
@@ -63,15 +47,15 @@ const SelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                navigation.navigate('AuthLoading')
+                navigation.navigate('Auth')
                 return
             }
-            // save new domain and send analytics
+
+            // send old analytic
             Amplitude.logEventWithProperties('add school', {
                 domainId: selectedDomain.id,
             })
-
-            //new analytics
+            //send new analytic
             addSchoolSub(selectedDomain.url)
 
             addDomain({
@@ -88,7 +72,7 @@ const SelectScreen = (props) => {
 
             setModalVisible(true)
         } catch (error) {
-            console.log('error saving users org', error)
+            console.log('error saving users school', error)
         }
     }
 
