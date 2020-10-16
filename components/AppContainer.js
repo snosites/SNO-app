@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 
 import AuthStack from '../navigation/AuthStack'
-import AppStack from '../navigation/AppStack'
+import MainStackContainer from '../containers/MainStackContainer'
 import NotificationAlert from './NotificationAlert'
 import NavigationService from '../utils/NavigationService'
 
@@ -90,7 +90,7 @@ const AppContainer = (props) => {
                             />
                         ) : (
                             // has domain saved
-                            <Stack.Screen name='App' component={AppStack} />
+                            <Stack.Screen name='Main' component={MainStackContainer} />
                         )}
                     </Stack.Navigator>
                 </NavigationContainer>

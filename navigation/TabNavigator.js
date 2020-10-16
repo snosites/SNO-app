@@ -2,6 +2,7 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import Color from 'color'
 
@@ -185,41 +186,34 @@ const AppNav = createBottomTabNavigator(
     }
 )
 
-export default createSwitchNavigator(
-    {
-        AppSetup: {
-            screen: AppSetupScreen,
-            path: 'app-setup',
-        },
-        MainApp: {
-            screen: AppNav,
-            path: 'main-app',
-        },
-        Error: ErrorScreen,
-    },
-    {
-        initialRouteName: 'AppSetup',
-    }
-)
+const Tab = createBottomTabNavigator()
+
 export default () => {
     return (
-        <Stack.Navigator>
-            {activeDomain.length ? (
-                // doesn't have a saved domain
-                <Stack.Screen
-                    name='Auth'
-                    component={AuthStack}
-                    options={{
-                        title: 'Sign in',
-                        // When logging out, a pop animation feels intuitive
-                        // You can remove this if you want the default 'push' animation
-                        animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                    }}
-                />
-            ) : (
-                // has domain saved
-                <Stack.Screen name='App' component={AppStack} />
-            )}
-        </Stack.Navigator>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName
+
+                    if (route.name === 'Home') {
+                        iconName = Platform.OS === 'ios' ? `ios-home` : 'md-home'
+                    } else if (route.name === 'Recent') {
+                        iconName = 'md-funnel'
+                    } else if (route.name === 'Settings') {
+                        iconName = Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'
+                    }
+                    return (
+                        <TabBarIcon focused={focused} color={color} name={iconName} size={size} />
+                    )
+                },
+            })}
+            tabBarOptions={{
+                activeTintColor: theme.colors.primary,
+            }}
+        >
+            <Tab.Screen name='Home' component={MainDrawerNavigator} />
+            <Tab.Screen name='Recent' component={RecentStack} />
+            <Tab.Screen name='Settings' component={SettingsScreen} />
+        </Tab.Navigator>
     )
 }

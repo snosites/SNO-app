@@ -1,18 +1,16 @@
-import React from 'react';
-import * as Icon from '@expo/vector-icons';
+import React from 'react'
+import * as Icon from '@expo/vector-icons'
 
-const TABICONDEFAULT = '#ccc';
+import { tabIconDefault } from '../constants/Colors'
 
-export default class TabBarIcon extends React.Component {
-    render() {
-        const { color, horizontal } = this.props;
-        return (
-            <Icon.Ionicons
-                name={this.props.name}
-                size={26}
-                style={{ marginBottom: -3 }}
-                color={this.props.focused ? color : TABICONDEFAULT}
-            />
-        );
-    }
+export default (props) => {
+    const { color, name, focused, size } = props
+    return (
+        <Icon.Ionicons
+            name={name}
+            size={size}
+            style={{ marginBottom: -3 }}
+            color={focused ? color : tabIconDefault}
+        />
+    )
 }
