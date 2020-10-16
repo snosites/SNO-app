@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import WelcomeScreen from '../screens/setup/WelcomeScreen'
-import SelectScreen from '../screens/setup/SelectScreen'
+import SelectScreenContainer from '../containers/SelectScreenContainer'
 import DeepSelectScreen from '../screens/setup/DeepSelect'
 import LocationSelect from '../screens/setup/LocationSelect'
 
@@ -33,9 +33,9 @@ export default () => {
             />
             <AuthStack.Screen
                 name='Select'
-                component={SelectScreen}
+                component={SelectScreenContainer}
                 options={{
-                    title: 'Select School',
+                    title: 'Select a School',
                 }}
             />
             <AuthStack.Screen name='DeepSelect' component={DeepSelectScreen} />

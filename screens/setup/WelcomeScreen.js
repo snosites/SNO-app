@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
     Platform,
     Image,
@@ -18,8 +18,6 @@ import * as Permissions from 'expo-permissions'
 import * as Location from 'expo-location'
 import Constants from 'expo-constants'
 
-import { actions as globalActions } from '../../redux/global'
-
 import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
@@ -35,11 +33,11 @@ const theme = {
 }
 
 const WelcomeScreen = (props) => {
-    const { errors, navigation, fetchAvailableDomains, domains } = props
+    const { navigation, domains } = props
 
     const [loading, setLoading] = useState(false)
     const [schoolName, setSchoolName] = useState('')
-    const [zipcode, setZipcode] = useState('')
+    // const [zipcode, setZipcode] = useState('')
     const [error, setError] = useState(null)
 
     _handleSubmit = () => {
@@ -257,12 +255,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => ({
-    errors: state.errors,
     domains: state.domains,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen)
+export default connect(mapStateToProps)(WelcomeScreen)

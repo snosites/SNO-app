@@ -1,20 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-    ScrollView,
-    StyleSheet,
-    ActivityIndicator,
-    View,
-    Text,
-    Platform,
-    Image,
-} from 'react-native'
-import { connect } from 'react-redux'
-
-import { types as globalTypes, actions as globalActions } from '../../redux/global'
-import { actions as domainsActions } from '../../redux/domains'
-import { types as userTypes, actions as userActions } from '../../redux/user'
-import { createLoadingSelector } from '../../redux/loading'
-import { createErrorMessageSelector } from '../../redux/errors'
+import { ScrollView, StyleSheet, ActivityIndicator, View, Text, Image } from 'react-native'
 
 import { List, Divider } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude'
@@ -40,6 +25,7 @@ const theme = {
 
 const SelectScreen = (props) => {
     const {
+        route,
         navigation,
         availableDomains,
         domains,
@@ -54,14 +40,16 @@ const SelectScreen = (props) => {
         addSchoolSub,
     } = props
 
+    const searchTerm = route.params && route.params.searchTerm
+    console.log('params', route.params)
+
     useEffect(() => {
-        const searchTerm = navigation.getParam('searchTerm', null)
         if (searchTerm) {
             searchAvailableDomains(searchTerm)
         } else {
             fetchAvailableDomains()
         }
-    }, [])
+    }, [searchTerm])
 
     const [modalVisible, setModalVisible] = useState(false)
 
@@ -108,7 +96,7 @@ const SelectScreen = (props) => {
     _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
-        navigation.navigate('AuthLoading')
+        navigation.navigate('Auth')
 
         setModalVisible(false)
         clearAvailableDomains()
@@ -225,31 +213,4 @@ const styles = StyleSheet.create({
     },
 })
 
-const availableDomainsLoadingSelector = createLoadingSelector([
-    globalTypes.FETCH_AVAILABLE_DOMAINS,
-    globalTypes.SEARCH_AVAILABLE_DOMAINS,
-])
-const availableDomainsErrorSelector = createErrorMessageSelector([
-    globalTypes.FETCH_AVAILABLE_DOMAINS,
-    globalTypes.SEARCH_AVAILABLE_DOMAINS,
-])
-
-const mapStateToProps = (state) => ({
-    availableDomains: state.global.availableDomains,
-    domains: state.domains,
-    isLoading: availableDomainsLoadingSelector(state),
-    error: availableDomainsErrorSelector(state),
-})
-
-const mapDispatchToProps = (dispatch) => ({
-    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
-    searchAvailableDomains: (searchTerm) =>
-        dispatch(globalActions.searchAvailableDomains(searchTerm)),
-    setActiveDomain: (domainId) => dispatch(domainsActions.setActiveDomain(domainId)),
-    addDomain: (domain) => dispatch(domainsActions.addDomain(domain)),
-    clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: (payload) => dispatch(userActions.setSubscribeAll(payload)),
-    addSchoolSub: (url) => dispatch(globalActions.addSchoolSub(url)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SelectScreen)
+export default SelectScreen
