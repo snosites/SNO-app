@@ -25,7 +25,6 @@ const SelectScreen = (props) => {
     } = props
 
     const searchTerm = route.params && route.params.searchTerm
-    console.log('params', route.params)
 
     useEffect(() => {
         if (searchTerm) {

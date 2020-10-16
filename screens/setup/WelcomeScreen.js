@@ -124,7 +124,7 @@ const WelcomeScreen = (props) => {
         )
     } else if (loading) {
         return (
-            <View style={{ flex: 1, paddingVertical: 40 }}>
+            <View style={{ flex: 1, paddingVertical: 100 }}>
                 <ActivityIndicator />
             </View>
         )
@@ -239,11 +239,13 @@ const styles = StyleSheet.create({
         width: 300,
     },
     getStartedText: {
+        fontFamily: 'openSans',
         fontSize: 19,
         textAlign: 'center',
         marginBottom: 20,
     },
     locationContainerText: {
+        fontFamily: 'openSans',
         fontSize: 19,
         textAlign: 'center',
         marginBottom: 20,

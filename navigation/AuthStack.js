@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import WelcomeScreen from '../screens/setup/WelcomeScreen'
 import SelectScreenContainer from '../containers/SelectScreenContainer'
 import DeepSelectScreen from '../screens/setup/DeepSelect'
-import LocationSelect from '../screens/setup/LocationSelect'
+import LocationSelectContainer from '../containers/LocationSelectContainer'
 
 const AuthStack = createStackNavigator()
 
@@ -36,10 +36,21 @@ export default () => {
                 component={SelectScreenContainer}
                 options={{
                     title: 'Select a School',
+                    headerBackTitleVisible: false,
                 }}
             />
             <AuthStack.Screen name='DeepSelect' component={DeepSelectScreen} />
-            <AuthStack.Screen name='LocationSelect' component={LocationSelect} />
+            <AuthStack.Screen
+                name='LocationSelect'
+                component={LocationSelectContainer}
+                initialParams={{
+                    coords: {},
+                }}
+                options={{
+                    title: 'Select a School',
+                    headerBackTitleVisible: false,
+                }}
+            />
         </AuthStack.Navigator>
     )
 }

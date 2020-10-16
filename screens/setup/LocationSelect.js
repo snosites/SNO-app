@@ -9,13 +9,6 @@ import {
     Image,
     SafeAreaView,
 } from 'react-native'
-import { connect } from 'react-redux'
-
-import { types as globalTypes, actions as globalActions } from '../../redux/global'
-import { actions as domainsActions } from '../../redux/domains'
-import { types as userTypes, actions as userActions } from '../../redux/user'
-import { createLoadingSelector } from '../../redux/loading'
-import { createErrorMessageSelector } from '../../redux/errors'
 
 import { isPointWithinRadius, getDistance } from 'geolib'
 
@@ -35,6 +28,7 @@ const version = getReleaseChannel()
 
 const LocationSelectScreen = (props) => {
     const {
+        route,
         navigation,
         availableDomains,
         domains,
@@ -48,7 +42,7 @@ const LocationSelectScreen = (props) => {
         addSchoolSub,
     } = props
 
-    const cityLocation = navigation.getParam('location', null)
+    const cityLocation = route.params ? route.params.location : null
 
     const [modalVisible, setModalVisible] = useState(false)
     const [schoolsInRadius, setSchoolsInRadius] = useState([])
@@ -67,7 +61,7 @@ const LocationSelectScreen = (props) => {
         if (availableDomains.length === 0) {
             return
         }
-        const coords = navigation.getParam('coords', {})
+        const coords = route.params.coords
 
         setReloading(true)
 
@@ -122,7 +116,7 @@ const LocationSelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                navigation.navigate('AuthLoading')
+                navigation.navigate('Auth')
                 return
             }
             // save new domain and send analytics
@@ -155,7 +149,7 @@ const LocationSelectScreen = (props) => {
     _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
-        navigation.navigate('AuthLoading')
+        navigation.navigate('Auth')
 
         setModalVisible(false)
         clearAvailableDomains()
@@ -163,7 +157,7 @@ const LocationSelectScreen = (props) => {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, padding: 70 }}>
+            <View style={{ flex: 1, paddingVertical: 70 }}>
                 <ActivityIndicator />
             </View>
         )
@@ -189,18 +183,19 @@ const LocationSelectScreen = (props) => {
             <View style={{ padding: 20 }}>
                 <Text
                     style={{
+                        fontFamily: 'openSansBold',
                         textAlign: 'center',
                         fontSize: 18,
-                        fontWeight: 'bold',
+                        // fontWeight: 'bold',
                     }}
                 >
                     Schools within {radius} miles
                 </Text>
                 <Text
                     style={{
+                        fontFamily: 'openSansBold',
                         textAlign: 'center',
                         fontSize: 18,
-                        fontWeight: 'bold',
                     }}
                 >
                     of {cityLocation.city}, {cityLocation.region}
@@ -293,29 +288,4 @@ const LocationSelectScreen = (props) => {
     )
 }
 
-LocationSelectScreen.navigationOptions = {
-    title: 'Select Your School',
-}
-
-const availableDomainsLoadingSelector = createLoadingSelector([globalTypes.FETCH_AVAILABLE_DOMAINS])
-const availableDomainsErrorSelector = createErrorMessageSelector([
-    globalTypes.FETCH_AVAILABLE_DOMAINS,
-])
-
-const mapStateToProps = (state) => ({
-    availableDomains: state.global.availableDomains,
-    domains: state.domains,
-    isLoading: availableDomainsLoadingSelector(state),
-    error: availableDomainsErrorSelector(state),
-})
-
-const mapDispatchToProps = (dispatch) => ({
-    fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
-    setActiveDomain: (domainId) => dispatch(domainsActions.setActiveDomain(domainId)),
-    addDomain: (domain) => dispatch(domainsActions.addDomain(domain)),
-    clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: (payload) => dispatch(userActions.setSubscribeAll(payload)),
-    addSchoolSub: (url) => dispatch(globalActions.addSchoolSub(url)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(LocationSelectScreen)
+export default LocationSelectScreen

@@ -32,6 +32,9 @@ export default App = () => {
             ]),
             Font.loadAsync({
                 ...Icon.Ionicons.font,
+                openSans: require('./assets/fonts/OpenSans-Regular.ttf'),
+                openSansLight: require('./assets/fonts/OpenSans-Light.ttf'),
+                openSansBold: require('./assets/fonts/OpenSans-Bold.ttf'),
             }),
         ])
     }
@@ -39,6 +42,7 @@ export default App = () => {
     _handleLoadingError = (error) => {
         console.warn('there was an error loading assets', error)
         Sentry.captureException(error)
+        setIsLoadingComplete(true)
     }
 
     if (!isLoadingComplete) {
