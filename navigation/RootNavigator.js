@@ -9,7 +9,7 @@ import AppStack from './AppStack'
 import InitScreen from '../screens/setup/WelcomeScreen'
 import SelectScreen from '../screens/SelectScreen'
 import LocationSelect from '../screens/setup/LocationSelect'
-import ErrorBoundary from '../views/ErrorBoundary'
+import ErrorBoundary from '../screens/ErrorBoundary'
 
 import DeepSelectScreen from '../screens/setup/DeepSelect'
 import { createLoadingSelector } from '../redux/loading'

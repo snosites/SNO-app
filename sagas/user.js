@@ -7,7 +7,7 @@ import { actions as domainsActions } from '../redux/domains'
 import apiService from '../api/api'
 
 import { persistor } from '../redux/configureStore'
-import NavigationService from '../utils/NavigationService'
+// import NavigationService from '../utils/NavigationService-old'
 
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
@@ -30,7 +30,7 @@ export function* fetchNotificationSubscriptions(domainId) {
 
     const [notifications, writerNotifications] = yield all([
         call(apiService.getSubscriptions, apiToken),
-        call(apiService.getWriterSubscriptions, apiToken)
+        call(apiService.getWriterSubscriptions, apiToken),
     ])
     yield put(domainsActions.setNotifications(domainId, notifications))
     yield put(userActions.setWriterSubscriptions(writerNotifications))
@@ -91,7 +91,7 @@ export function* checkNotificationSettings() {
             //update user's push_token
             const updatedUser = yield call(apiService.updateUser, apiToken, {
                 key: 'push_token',
-                value: null
+                value: null,
             })
             yield put(userActions.setUser(updatedUser))
             return null
@@ -103,7 +103,7 @@ export function* checkNotificationSettings() {
         //update user's push_token
         let updatedUser = yield call(apiService.updateUser, apiToken, {
             key: 'push_token',
-            value: token
+            value: token,
         })
         yield put(userActions.setUser(updatedUser))
 
@@ -123,7 +123,7 @@ function* deleteUser() {
 
         persistor.purge()
         yield put({
-            type: 'PURGE_USER_STATE'
+            type: 'PURGE_USER_STATE',
         })
 
         NavigationService.navigate('AuthLoading')
@@ -141,7 +141,7 @@ function* userSaga() {
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
-        takeLatest(userTypes.DELETE_USER, deleteUser)
+        takeLatest(userTypes.DELETE_USER, deleteUser),
     ])
 }
 

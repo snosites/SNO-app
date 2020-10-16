@@ -1,23 +1,11 @@
 import React from 'react'
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    KeyboardAvoidingView,
-    ActivityIndicator,
-    FlatList,
-    TouchableOpacity,
-} from 'react-native'
+import { ScrollView, Text, View, SafeAreaView, KeyboardAvoidingView } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { Button, TextInput } from 'react-native-paper'
 
-import NavigationService from '../utils/NavigationService'
-
 import * as Sentry from 'sentry-expo'
 
-export default class ErrorBoundary extends React.Component {
+class ErrorBoundary extends React.Component {
     state = {
         error: null,
         feedback: '',
@@ -27,16 +15,14 @@ export default class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.log('error boundary')
+        console.warn('react error boundary hit')
         this.setState({ error })
         Sentry.captureException(error, { extra: errorInfo })
-        // Sentry.setEventSentSuccessfully((event) => {
-        //     console.log(Sentry.lastEventId())
-        // });
     }
 
     render() {
         const { error, submitting, successful } = this.state
+        const { navigation } = this.props
         if (error) {
             return (
                 <SafeAreaView
@@ -91,7 +77,7 @@ export default class ErrorBoundary extends React.Component {
                                             eventId: null,
                                             submitting: false,
                                         })
-                                        NavigationService.navigate('AuthLoading')
+                                        navigation.navigate('Auth')
                                     }}
                                 >
                                     Go To Home Screen
@@ -186,7 +172,9 @@ export default class ErrorBoundary extends React.Component {
                 eventId: null,
                 submitting: false,
             })
-            NavigationService.navigate('AuthLoading')
+            this.props.navigation.navigate('Auth')
         }, 2000)
     }
 }
+
+export default ErrorBoundary

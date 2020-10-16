@@ -19,7 +19,6 @@ import { getReleaseChannel } from '../../constants/config'
 
 import * as Linking from 'expo-linking'
 
-import NavigationService from '../../utils/NavigationService'
 import { SplashScreen } from 'expo'
 
 const version = getReleaseChannel()

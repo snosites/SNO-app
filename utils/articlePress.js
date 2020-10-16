@@ -1,7 +1,7 @@
 import { Platform } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
-import NavigationService from '../utils/NavigationService'
+// import NavigationService from './NavigationService-old'
 import { actions as globalActions } from '../redux/global'
 import { store } from '../redux/configureStore'
 

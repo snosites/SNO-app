@@ -1,6 +1,6 @@
 import React from 'react'
 import { Platform } from 'react-native'
-import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
+// import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
@@ -170,21 +170,21 @@ SettingsStack.navigationOptions = ({ screenProps }) => {
     }
 }
 
-const AppNav = createBottomTabNavigator(
-    {
-        HomeStack: {
-            screen: MainDrawerNavigator,
-            path: 'main-drawer',
-        },
-        RecentStack,
-        BookmarkStack,
-        SportcenterStack,
-        SettingsStack,
-    },
-    {
-        tabBarComponent: (props) => <ConnectedBottomTabBar {...props} />,
-    }
-)
+// const AppNav = createBottomTabNavigator(
+//     {
+//         HomeStack: {
+//             screen: MainDrawerNavigator,
+//             path: 'main-drawer',
+//         },
+//         RecentStack,
+//         BookmarkStack,
+//         SportcenterStack,
+//         SettingsStack,
+//     },
+//     {
+//         tabBarComponent: (props) => <ConnectedBottomTabBar {...props} />,
+//     }
+// )
 
 const Tab = createBottomTabNavigator()
 

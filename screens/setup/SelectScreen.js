@@ -6,15 +6,15 @@ import {
     View,
     Text,
     Platform,
-    Image
+    Image,
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as domainsActions } from '../redux/domains'
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { actions as domainsActions } from '../../redux/domains'
+import { types as userTypes, actions as userActions } from '../../redux/user'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 import { List, Divider } from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude'
@@ -22,9 +22,9 @@ import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import InitModal from './InitModal'
+import InitModal from '../InitModal'
 
-import { getReleaseChannel } from '../constants/config'
+import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
@@ -34,11 +34,11 @@ const theme = {
         primary:
             version === 'sns'
                 ? Constants.manifest.extra.highSchool.primary
-                : Constants.manifest.extra.college.primary
-    }
+                : Constants.manifest.extra.college.primary,
+    },
 }
 
-const SelectScreen = props => {
+const SelectScreen = (props) => {
     const {
         navigation,
         availableDomains,
@@ -51,7 +51,7 @@ const SelectScreen = props => {
         addDomain,
         isLoading,
         error,
-        addSchoolSub
+        addSchoolSub,
     } = props
 
     useEffect(() => {
@@ -65,11 +65,11 @@ const SelectScreen = props => {
 
     const [modalVisible, setModalVisible] = useState(false)
 
-    _handleSelect = async selectedDomain => {
+    _handleSelect = async (selectedDomain) => {
         console.log('this is selected domain', selectedDomain)
         Haptics.selectionAsync()
         try {
-            const found = domains.find(domain => {
+            const found = domains.find((domain) => {
                 return domain.id == selectedDomain.id
             })
             // if already added then set as active -- dont save
@@ -80,7 +80,7 @@ const SelectScreen = props => {
             }
             // save new domain and send analytics
             Amplitude.logEventWithProperties('add school', {
-                domainId: selectedDomain.id
+                domainId: selectedDomain.id,
             })
 
             //new analytics
@@ -92,7 +92,7 @@ const SelectScreen = props => {
                 publication: selectedDomain.publication,
                 active: false,
                 notificationCategories: [],
-                url: selectedDomain.url
+                url: selectedDomain.url,
             })
 
             // set new domain as active
@@ -105,7 +105,7 @@ const SelectScreen = props => {
     }
 
     // dismiss modal and redirect back to auth loading
-    _handleModalDismiss = allNotifications => {
+    _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
         navigation.navigate('AuthLoading')
@@ -121,7 +121,7 @@ const SelectScreen = props => {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    paddingHorizontal: 20
+                    paddingHorizontal: 20,
                 }}
             >
                 <Text
@@ -129,7 +129,7 @@ const SelectScreen = props => {
                         fontSize: 19,
                         fontWeight: 'bold',
                         textAlign: 'center',
-                        color: '#424242'
+                        color: '#424242',
                     }}
                 >
                     Sorry, there was a problem loading the schools. Please try again.
@@ -152,7 +152,7 @@ const SelectScreen = props => {
                     style={{
                         fontSize: 19,
                         fontWeight: 'bold',
-                        textAlign: 'center'
+                        textAlign: 'center',
                     }}
                 >
                     Sorry no schools match that search term, please try searching again.
@@ -163,7 +163,7 @@ const SelectScreen = props => {
 
     return (
         <ScrollView style={styles.container}>
-            {availableDomains.map(item => {
+            {availableDomains.map((item) => {
                 return (
                     item.school && (
                         <View key={item.id}>
@@ -173,7 +173,7 @@ const SelectScreen = props => {
                                 description={`${item.publication}  •  ${item.city}, ${item.state}`}
                                 descriptionEllipsizeMode='tail'
                                 style={{ paddingVertical: 0 }}
-                                left={props => {
+                                left={(props) => {
                                     if (item.icon) {
                                         return (
                                             <List.Icon
@@ -181,12 +181,12 @@ const SelectScreen = props => {
                                                 icon={({ size, color }) => (
                                                     <Image
                                                         source={{
-                                                            uri: item.icon
+                                                            uri: item.icon,
                                                         }}
                                                         style={{
                                                             width: size + 5,
                                                             height: size + 5,
-                                                            borderRadius: 4
+                                                            borderRadius: 4,
                                                         }}
                                                     />
                                                 )}
@@ -215,41 +215,41 @@ const SelectScreen = props => {
 }
 
 SelectScreen.navigationOptions = {
-    title: 'Select Your School'
+    title: 'Select Your School',
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
-    }
+        backgroundColor: '#fff',
+    },
 })
 
 const availableDomainsLoadingSelector = createLoadingSelector([
     globalTypes.FETCH_AVAILABLE_DOMAINS,
-    globalTypes.SEARCH_AVAILABLE_DOMAINS
+    globalTypes.SEARCH_AVAILABLE_DOMAINS,
 ])
 const availableDomainsErrorSelector = createErrorMessageSelector([
     globalTypes.FETCH_AVAILABLE_DOMAINS,
-    globalTypes.SEARCH_AVAILABLE_DOMAINS
+    globalTypes.SEARCH_AVAILABLE_DOMAINS,
 ])
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     availableDomains: state.global.availableDomains,
     domains: state.domains,
     isLoading: availableDomainsLoadingSelector(state),
-    error: availableDomainsErrorSelector(state)
+    error: availableDomainsErrorSelector(state),
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     fetchAvailableDomains: () => dispatch(globalActions.fetchAvailableDomains()),
-    searchAvailableDomains: searchTerm =>
+    searchAvailableDomains: (searchTerm) =>
         dispatch(globalActions.searchAvailableDomains(searchTerm)),
-    setActiveDomain: domainId => dispatch(domainsActions.setActiveDomain(domainId)),
-    addDomain: domain => dispatch(domainsActions.addDomain(domain)),
+    setActiveDomain: (domainId) => dispatch(domainsActions.setActiveDomain(domainId)),
+    addDomain: (domain) => dispatch(domainsActions.addDomain(domain)),
     clearAvailableDomains: () => dispatch(globalActions.clearAvailableDomains()),
-    setSubscribeAll: payload => dispatch(userActions.setSubscribeAll(payload)),
-    addSchoolSub: url => dispatch(globalActions.addSchoolSub(url))
+    setSubscribeAll: (payload) => dispatch(userActions.setSubscribeAll(payload)),
+    addSchoolSub: (url) => dispatch(globalActions.addSchoolSub(url)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectScreen)

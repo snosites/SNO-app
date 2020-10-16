@@ -4,7 +4,6 @@ import { actions as domainsActions, getSavedDomains } from '../redux/domains'
 import { actions as userActions, getApiToken } from '../redux/user'
 import { types as adTypes, actions as adActions } from '../redux/ads'
 
-import NavigationService from '../utils/NavigationService'
 import api from '../api/api'
 import domainApiService from '../api/domain'
 

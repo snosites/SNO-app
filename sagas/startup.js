@@ -1,6 +1,7 @@
 import { put, call, takeLatest, all, select, fork } from 'redux-saga/effects'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { actions as domainsActions } from '../redux/domains'
 import { types as adTypes, actions as adActions } from '../redux/ads'
 import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } from '../redux/user'
 import { actions as themeActions } from '../redux/theme'
@@ -21,13 +22,17 @@ import apiService from '../api/api'
 
 import * as Linking from 'expo-linking'
 
-import NavigationService from '../utils/NavigationService'
 import { handleArticlePress } from '../utils/articlePress'
 
-import { SplashScreen } from 'expo'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Sentry from 'sentry-expo'
 import Constants from 'expo-constants'
+
+import * as SplashScreen from 'expo-splash-screen'
+
+async function hideSplash() {
+    await SplashScreen.hideAsync()
+}
 
 function* initializeUser() {
     try {
@@ -61,15 +66,18 @@ function* loadActiveDomain() {
         }
         // no active domain navigate to auth
         else {
-            SplashScreen.hide()
-            NavigationService.navigate('Auth')
+            console.log('no active domain', activeDomain)
+            yield call(SplashScreen.hideAsync)
+            return
+
+            // NavigationService.navigate('Auth')
         }
         yield put(domainsActions.loadActiveDomainSuccess())
         return
     } catch (err) {
         console.log('error in load active domain saga', err)
         yield put(domainsActions.loadActiveDomainError('error loading active domain'))
-        NavigationService.navigate('Auth')
+        // NavigationService.navigate('Auth')
         return
     }
 }
@@ -82,16 +90,18 @@ function* startup(action) {
     const userSubscribeAll = yield select(getSubscribeAll)
     const fromPush = yield select(getFromPush)
     try {
+        yield put(globalActions.startupRequest())
+
         // set user domain for analytics
         Amplitude.setUserProperties({
             activeDomain: domain.id,
         })
 
-        yield put(globalActions.startupRequest())
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
         yield put(globalActions.receiveSplash(splashScreenUrl))
-        SplashScreen.hide()
+        yield call(SplashScreen.hideAsync)
+        // SplashScreen.hide()
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menu and DB categories
         const { menu, dbCategories } = yield call(fetchMenu, {
@@ -137,29 +147,29 @@ function* startup(action) {
 
         yield put(savedArticleActions.initializeSaved(domain.id))
 
-        if (fromPush) {
-            // go to main app
-            // NavigationService.navigate('MainApp')
-            NavigationService.nestedNavigate('MainApp', 'RecentStack')
+        // if (fromPush) {
+        //     // go to main app
+        //     // NavigationService.navigate('MainApp')
+        //     NavigationService.nestedNavigate('MainApp', 'RecentStack')
 
-            yield call(handleArticlePress, fromPush, domain)
-            // yield call(handleArticlePress, testFromPush, domain)
-            // reset push key
-            yield put(userActions.setFromPush(false))
-        } else {
-            NavigationService.navigate('MainApp')
-        }
+        //     yield call(handleArticlePress, fromPush, domain)
+        //     // yield call(handleArticlePress, testFromPush, domain)
+        //     // reset push key
+        //     yield put(userActions.setFromPush(false))
+        // } else {
+        //     NavigationService.navigate('MainApp')
+        // }
 
         yield put(globalActions.startupSuccess())
     } catch (err) {
-        console.log('initilize err', err)
+        console.log('startup saga err', err)
         // clear from push data if any is there
         yield put(userActions.setFromPush(false))
 
         // check if domain is still in DB
         const domainCheck = yield call(checkIfDomainIsInDb, domain.id)
 
-        if (domainCheck.length > 0) {
+        if (domainCheck.length) {
             yield put(globalActions.startupError('error initializing app'))
             Sentry.captureException(err)
         } else {
@@ -415,8 +425,8 @@ function* initializeDeepLinkUser({ params: { schoolId } }) {
         console.log('in deep link init', schoolId)
         yield call(findOrCreateUser)
 
-        SplashScreen.hide()
-        NavigationService.navigate('DeepSelect', { schoolId: schoolId })
+        // SplashScreen.hide()
+        // NavigationService.navigate('DeepSelect', { schoolId: schoolId })
 
         yield put(globalActions.initializeDeepLinkUserSuccess())
     } catch (err) {

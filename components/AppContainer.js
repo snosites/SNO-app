@@ -7,10 +7,13 @@ import { connect } from 'react-redux'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 
+import * as RootNavigation from '../utils/RootNavigation'
+
 import AuthStack from '../navigation/AuthStack'
-import MainStackContainer from '../containers/MainStackContainer'
-import NotificationAlert from './NotificationAlert'
-import NavigationService from '../utils/NavigationService'
+// import MainStackContainer from '../containers/MainStackContainer'
+// import NotificationAlert from './NotificationAlert'
+
+import ErrorBoundary from '../screens/ErrorBoundary'
 
 import { Provider as PaperProvider } from 'react-native-paper'
 import Color from 'color'
@@ -37,10 +40,18 @@ const AppContainer = (props) => {
 
     let primaryColor = Color(theme.colors.primary)
     let isDark = primaryColor.isDark()
+    // const navigation = useNavigation()
+
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        console.log('running...', activeDomain)
         initializeUser()
     }, [])
+
+    useEffect(() => {
+        if (!initializeUserLoading) setLoading(false)
+    }, [initializeUserLoading])
     // useEffect(() => {
     //     if (switchingDomain) {
     //         return
@@ -63,7 +74,7 @@ const AppContainer = (props) => {
         }
     }
 
-    if (initializeUserLoading) {
+    if (initializeUserLoading || loading) {
         return (
             <View style={{ flex: 1, backgroundColor: '#fff', paddingVertical: 40 }}>
                 <ActivityIndicator />
@@ -75,24 +86,26 @@ const AppContainer = (props) => {
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <StatusBar style={isDark ? 'light' : 'dark'} />
                 <NavigationContainer>
-                    <Stack.Navigator>
-                        {activeDomain.length ? (
-                            // doesn't have a saved domain
-                            <Stack.Screen
-                                name='Auth'
-                                component={AuthStack}
-                                options={{
-                                    title: 'Sign in',
-                                    // When logging out, a pop animation feels intuitive
-                                    // You can remove this if you want the default 'push' animation
-                                    animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                                }}
-                            />
-                        ) : (
-                            // has domain saved
-                            <Stack.Screen name='Main' component={MainStackContainer} />
-                        )}
-                    </Stack.Navigator>
+                    <ErrorBoundary navigation={RootNavigation}>
+                        <Stack.Navigator>
+                            {!activeDomain.length ? (
+                                // doesn't have a saved domain
+                                <Stack.Screen
+                                    name='Auth'
+                                    component={AuthStack}
+                                    options={{
+                                        headerShown: false,
+                                        // When logging out, a pop animation feels intuitive
+                                        // You can remove this if you want the default 'push' animation
+                                        // animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                                    }}
+                                />
+                            ) : (
+                                // has domain saved
+                                <Stack.Screen name='Main' component={AuthStack} />
+                            )}
+                        </Stack.Navigator>
+                    </ErrorBoundary>
                 </NavigationContainer>
 
                 {/* <AuthNavigator
@@ -104,7 +117,7 @@ const AppContainer = (props) => {
                     }}
                 /> */}
             </View>
-            <NotificationAlert />
+            {/* <NotificationAlert /> */}
         </PaperProvider>
     )
 }

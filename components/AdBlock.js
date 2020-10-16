@@ -9,8 +9,6 @@ import { actions as adActions } from '../redux/ads'
 
 import * as Linking from 'expo-linking'
 
-import NavigationService from '../utils/NavigationService'
-
 const AdBlock = ({
     image,
     style,

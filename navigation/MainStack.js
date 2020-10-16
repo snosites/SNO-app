@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, Dimensions, Image, ImageBackground } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -22,6 +22,7 @@ export default (props) => {
     const { activeDomain, startup, splashScreen, startupError, startupLoading } = props
 
     const animationRef = useRef(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         if (animationRef.current) {
@@ -32,7 +33,11 @@ export default (props) => {
         startup(activeDomain)
     }, [])
 
-    if (startupLoading) {
+    useEffect(() => {
+        if (!startupLoading) setLoading(false)
+    }, [startupLoading])
+
+    if (startupLoading || loading) {
         if (splashScreen) {
             return (
                 <Image

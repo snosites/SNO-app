@@ -12,7 +12,7 @@ import { createLoadingSelector } from '../redux/loading'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import * as Linking from 'expo-linking'
 
-import NavigationService from '../utils/NavigationService'
+// import NavigationService from '../utils/NavigationService-old'
 
 import { handleArticlePress } from '../utils/articlePress'
 import { asyncFetchArticle } from '../utils/sagaHelpers'
