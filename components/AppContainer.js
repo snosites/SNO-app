@@ -10,7 +10,7 @@ import { types as globalTypes, actions as globalActions } from '../redux/global'
 import * as RootNavigation from '../utils/RootNavigation'
 
 import AuthStack from '../navigation/AuthStack'
-// import MainStackContainer from '../containers/MainStackContainer'
+import MainStackContainer from '../containers/MainStackContainer'
 // import NotificationAlert from './NotificationAlert'
 
 import ErrorBoundary from '../screens/ErrorBoundary'
@@ -43,6 +43,8 @@ const AppContainer = (props) => {
     // const navigation = useNavigation()
 
     const [loading, setLoading] = useState(true)
+
+    console.log('aaa', activeDomain)
 
     useEffect(() => {
         console.log('running...', activeDomain)
@@ -88,7 +90,7 @@ const AppContainer = (props) => {
                 <NavigationContainer>
                     <ErrorBoundary navigation={RootNavigation}>
                         <Stack.Navigator>
-                            {!activeDomain.length ? (
+                            {!activeDomain.id ? (
                                 // doesn't have a saved domain
                                 <Stack.Screen
                                     name='Auth'
@@ -102,7 +104,7 @@ const AppContainer = (props) => {
                                 />
                             ) : (
                                 // has domain saved
-                                <Stack.Screen name='Main' component={AuthStack} />
+                                <Stack.Screen name='Main' component={MainStackContainer} />
                             )}
                         </Stack.Navigator>
                     </ErrorBoundary>

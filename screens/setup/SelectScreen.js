@@ -35,8 +35,15 @@ const SelectScreen = (props) => {
     }, [searchTerm])
 
     const [modalVisible, setModalVisible] = useState(false)
+    const [selectedDomain, setSelectedDomain] = useState(null)
 
-    _handleSelect = async (selectedDomain) => {
+    useEffect(() => {
+        if (selectedDomain) {
+            _handleSelect()
+        }
+    }, [selectedDomain])
+
+    _handleSelect = async () => {
         console.log('this is selected domain', selectedDomain)
         Haptics.selectionAsync()
         try {
@@ -46,7 +53,7 @@ const SelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                navigation.navigate('Auth')
+                // navigation.navigate('Auth')
                 return
             }
 
@@ -66,9 +73,6 @@ const SelectScreen = (props) => {
                 url: selectedDomain.url,
             })
 
-            // set new domain as active
-            setActiveDomain(selectedDomain.id)
-
             setModalVisible(true)
         } catch (error) {
             console.log('error saving users school', error)
@@ -79,10 +83,12 @@ const SelectScreen = (props) => {
     _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
-        navigation.navigate('Auth')
+        // navigation.navigate('Auth')
 
         setModalVisible(false)
         clearAvailableDomains()
+        // set new domain as active
+        setActiveDomain(selectedDomain.id)
     }
 
     if (error) {
@@ -168,6 +174,7 @@ const SelectScreen = (props) => {
                                     }
                                 }}
                                 onPress={() => {
+                                    setSelectedDomain(item)
                                     _handleSelect(item)
                                 }}
                             />

@@ -49,6 +49,14 @@ const LocationSelectScreen = (props) => {
     const [radius, setRadius] = useState(20)
     const [reloading, setReloading] = useState(false)
 
+    const [selectedDomain, setSelectedDomain] = useState(null)
+
+    useEffect(() => {
+        if (selectedDomain) {
+            _handleSelect()
+        }
+    }, [selectedDomain])
+
     useEffect(() => {
         fetchAvailableDomains()
     }, [])
@@ -107,7 +115,7 @@ const LocationSelectScreen = (props) => {
         setSchoolsInRadius(filteredSchoolsWithDistance)
     }
 
-    _handleSelect = async (selectedDomain) => {
+    _handleSelect = async () => {
         Haptics.selectionAsync()
         try {
             const found = domains.find((domain) => {
@@ -116,7 +124,6 @@ const LocationSelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                navigation.navigate('Auth')
                 return
             }
             // save new domain and send analytics
@@ -136,9 +143,6 @@ const LocationSelectScreen = (props) => {
                 url: selectedDomain.url,
             })
 
-            // set new domain as active
-            setActiveDomain(selectedDomain.id)
-
             setModalVisible(true)
         } catch (error) {
             console.log('error saving users domain selection', error)
@@ -149,10 +153,11 @@ const LocationSelectScreen = (props) => {
     _handleModalDismiss = (allNotifications) => {
         Haptics.selectionAsync()
         setSubscribeAll(allNotifications)
-        navigation.navigate('Auth')
 
         setModalVisible(false)
         clearAvailableDomains()
+
+        setActiveDomain(selectedDomain.id)
     }
 
     if (isLoading) {
@@ -269,7 +274,7 @@ const LocationSelectScreen = (props) => {
                                             }
                                         }}
                                         onPress={() => {
-                                            _handleSelect(item)
+                                            setSelectedDomain(item)
                                         }}
                                     />
                                     <Divider />

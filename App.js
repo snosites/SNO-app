@@ -35,6 +35,7 @@ export default App = () => {
                 openSans: require('./assets/fonts/OpenSans-Regular.ttf'),
                 openSansLight: require('./assets/fonts/OpenSans-Light.ttf'),
                 openSansBold: require('./assets/fonts/OpenSans-Bold.ttf'),
+                openSansItalic: require('./assets/fonts/OpenSans-Italic.ttf'),
             }),
         ])
     }

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { View, Dimensions, Image, ImageBackground } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-
+import LottieView from 'lottie-react-native'
 import ErrorScreen from '../screens/ErrorScreen'
-import TabNavigator from './TabNavigator'
+// import TabNavigator from './TabNavigator'
+import TestScreen from '../screens/TestScreen'
 
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
@@ -30,6 +31,7 @@ export default (props) => {
             animationRef.current.play()
         }
         //run startup saga
+        console.log('running startup')
         startup(activeDomain)
     }, [])
 
@@ -111,7 +113,7 @@ export default (props) => {
                 />
             ) : (
                 // no startup errors
-                <Stack.Screen name='App' component={TabNavigator} />
+                <Stack.Screen name='App' component={TestScreen} />
             )}
         </Stack.Navigator>
     )

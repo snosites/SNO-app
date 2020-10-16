@@ -58,14 +58,29 @@ const initModal = (props) => {
                     </View>
                     {showText && (
                         <View style={styles.textContainer}>
-                            <Text style={{ fontSize: 30, paddingBottom: 10, textAlign: 'center' }}>
+                            <Text
+                                style={{
+                                    fontFamily: 'openSans',
+                                    fontSize: 30,
+                                    paddingBottom: 10,
+                                    textAlign: 'center',
+                                }}
+                            >
                                 Success!
                             </Text>
-                            <Text style={{ fontSize: 17, paddingBottom: 30 }}>
+                            <Text
+                                style={{ fontFamily: 'openSans', fontSize: 17, paddingBottom: 30 }}
+                            >
                                 Your selected school has been saved. If you ever want to change this
                                 you can find it in your settings.
                             </Text>
-                            <Text style={{ fontSize: 17, textAlign: 'center' }}>
+                            <Text
+                                style={{
+                                    fontFamily: 'openSans',
+                                    fontSize: 17,
+                                    textAlign: 'center',
+                                }}
+                            >
                                 Category notifications for this school are currently:
                             </Text>
                             <View
@@ -77,7 +92,11 @@ const initModal = (props) => {
                                 }}
                             >
                                 <Text
-                                    style={{ fontSize: 19, fontWeight: 'bold', paddingRight: 10 }}
+                                    style={{
+                                        fontSize: 19,
+                                        fontFamily: 'openSansBold',
+                                        paddingRight: 10,
+                                    }}
                                 >
                                     {allNotifications ? 'ON' : 'OFF'}
                                 </Text>
@@ -93,7 +112,13 @@ const initModal = (props) => {
                                     }}
                                 />
                             </View>
-                            <Text style={{ fontSize: 14, paddingBottom: 30 }}>
+                            <Text
+                                style={{
+                                    fontFamily: 'openSansItalic',
+                                    fontSize: 14,
+                                    paddingBottom: 30,
+                                }}
+                            >
                                 You can always change this later in settings based on individual
                                 categories, and also subscribe to individual writers
                             </Text>
