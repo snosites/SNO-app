@@ -47,8 +47,9 @@ const AppContainer = (props) => {
     console.log('aaa', activeDomain)
 
     useEffect(() => {
-        console.log('running...', activeDomain)
+        console.log('running AppContainer effect...', activeDomain)
         initializeUser()
+        return () => console.log('unmounting...')
     }, [])
 
     useEffect(() => {
@@ -65,16 +66,16 @@ const AppContainer = (props) => {
     //     }
     // }, [switchingDomain, fromDeepLink])
 
-    const checkIfDeepLinkUser = async () => {
-        const { path, queryParams } = await Linking.parseInitialURLAsync()
+    // const checkIfDeepLinkUser = async () => {
+    //     const { path, queryParams } = await Linking.parseInitialURLAsync()
 
-        let isDeepSelect = path ? path.includes('deepSelect') : false
-        let isDeepLinkArticle = path ? path.includes('article') : false
+    //     let isDeepSelect = path ? path.includes('deepSelect') : false
+    //     let isDeepLinkArticle = path ? path.includes('article') : false
 
-        if (path && (isDeepSelect || isDeepLinkArticle)) {
-            setFromDeepLink(true)
-        }
-    }
+    //     if (path && (isDeepSelect || isDeepLinkArticle)) {
+    //         setFromDeepLink(true)
+    //     }
+    // }
 
     if (initializeUserLoading || loading) {
         return (
@@ -85,39 +86,17 @@ const AppContainer = (props) => {
     }
     return (
         <PaperProvider theme={theme}>
-            <View style={{ flex: 1, backgroundColor: '#fff' }}>
+            <View style={{ flex: 1 }}>
                 <StatusBar style={isDark ? 'light' : 'dark'} />
-                <NavigationContainer>
-                    <ErrorBoundary navigation={RootNavigation}>
-                        <Stack.Navigator>
-                            {!activeDomain.id ? (
-                                // doesn't have a saved domain
-                                <Stack.Screen
-                                    name='Auth'
-                                    component={AuthStack}
-                                    options={{
-                                        headerShown: false,
-                                        // When logging out, a pop animation feels intuitive
-                                        // You can remove this if you want the default 'push' animation
-                                        // animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                                    }}
-                                />
-                            ) : (
-                                // has domain saved
-                                <Stack.Screen name='Main' component={MainStackContainer} />
-                            )}
-                        </Stack.Navigator>
-                    </ErrorBoundary>
-                </NavigationContainer>
-
-                {/* <AuthNavigator
-                    uriPrefix={prefix}
-                    enableURLHandling={false}
-                    screenProps={{ theme: theme, homeScreenMode: homeScreenMode }}
-                    ref={(navigatorRef) => {
-                        NavigationService.setTopLevelNavigator(navigatorRef)
-                    }}
-                /> */}
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    {!activeDomain.id ? (
+                        // doesn't have a saved domain
+                        <Stack.Screen name='Auth' component={AuthStack} />
+                    ) : (
+                        // has domain saved
+                        <Stack.Screen name='Main' component={MainStackContainer} />
+                    )}
+                </Stack.Navigator>
             </View>
             {/* <NotificationAlert /> */}
         </PaperProvider>

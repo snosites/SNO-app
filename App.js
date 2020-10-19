@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import * as RootNavigation from './utils/RootNavigation'
+
+import ErrorBoundary from './screens/ErrorBoundary'
+
 import { AppLoading } from 'expo'
 import * as Icon from '@expo/vector-icons'
 import * as Font from 'expo-font'
@@ -13,6 +19,8 @@ import { persistor, store } from './redux/configureStore'
 import AppContainerContainer from './containers/appContainerContainer'
 
 import * as Sentry from 'sentry-expo'
+
+const Stack = createStackNavigator()
 
 export default App = () => {
     const [isLoadingComplete, setIsLoadingComplete] = useState(false)
@@ -62,7 +70,19 @@ export default App = () => {
                     loading={<ActivityIndicator style={{ padding: 100 }} />}
                     persistor={persistor}
                 >
-                    <AppContainerContainer />
+                    <NavigationContainer>
+                        <ErrorBoundary navigation={RootNavigation}>
+                            <Stack.Navigator>
+                                <Stack.Screen
+                                    name='AuthLoading'
+                                    component={AppContainerContainer}
+                                    options={{
+                                        headerShown: false,
+                                    }}
+                                />
+                            </Stack.Navigator>
+                        </ErrorBoundary>
+                    </NavigationContainer>
                 </PersistGate>
             </ReduxProvider>
         )

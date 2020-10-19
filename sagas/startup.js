@@ -147,6 +147,8 @@ function* startup(action) {
 
         yield put(savedArticleActions.initializeSaved(domain.id))
 
+        throw new Error()
+
         // if (fromPush) {
         //     // go to main app
         //     // NavigationService.navigate('MainApp')

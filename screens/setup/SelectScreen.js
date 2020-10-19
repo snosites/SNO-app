@@ -76,6 +76,7 @@ const SelectScreen = (props) => {
             setModalVisible(true)
         } catch (error) {
             console.log('error saving users school', error)
+            navigation.navigate('AuthLoading')
         }
     }
 
@@ -175,7 +176,7 @@ const SelectScreen = (props) => {
                                 }}
                                 onPress={() => {
                                     setSelectedDomain(item)
-                                    _handleSelect(item)
+                                    // _handleSelect(item)
                                 }}
                             />
                             <Divider />

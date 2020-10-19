@@ -104,11 +104,16 @@ export default (props) => {
                 <Stack.Screen
                     name='Error'
                     component={ErrorScreen}
+                    options={{
+                        headerShown: false,
+                    }}
                     initialParams={{
                         errorMessage:
                             startupError === 'error initializing app'
                                 ? 'Sorry, this school is currently unavailable'
-                                : 'Sorry, this school did not renew its Student News Source subscription',
+                                : startupError === 'school not in DB'
+                                ? 'Sorry, this school did not renew its Student News Source subscription'
+                                : null,
                     }}
                 />
             ) : (
