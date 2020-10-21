@@ -259,7 +259,7 @@ class HomeScreen extends React.Component {
                     }}
                 />
                 {categoryTitles.map((title, i) => {
-                    const margin = i ? 40 : 0
+                    // const margin = i ? 40 : 0
                     const listLength = homeScreenCategoryAmounts[i] || 5
                     const shouldShowAd =
                         homeAds.displayLocation && homeAds.displayLocation.includes(i + 1)
@@ -277,7 +277,7 @@ class HomeScreen extends React.Component {
                                     backgroundColor: categoryBackgroundColor,
                                     justifyContent: 'center',
                                     paddingVertical: 10,
-                                    marginTop: margin,
+                                    // marginTop: margin,
                                     shadowColor: '#000',
                                     shadowOffset: {
                                         width: 0,

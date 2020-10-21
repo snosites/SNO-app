@@ -52,7 +52,7 @@ export default class TabletArticleListContent extends React.Component {
             handleRefresh,
         } = this.props
         return (
-            <View style={{ flex: 1, flexWrap: 'wrap' }} onLayout={this._handleLayout}>
+            <View style={{ flex: 1 }} onLayout={this._handleLayout}>
                 <FlatList
                     numColumns={2}
                     Style={{ flex: 1, marginVertical: 5 }}
