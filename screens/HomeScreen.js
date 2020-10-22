@@ -262,7 +262,9 @@ class HomeScreen extends React.Component {
                     // const margin = i ? 40 : 0
                     const listLength = homeScreenCategoryAmounts[i] || 5
                     const shouldShowAd =
-                        homeAds.displayLocation && homeAds.displayLocation.includes(i + 1)
+                        homeAds.displayLocation && homeAds.displayLocation.includes(i + 1) && ad
+
+                    console.log('should show ad', shouldShowAd, homeAds.displayLocation, ad)
                     return (
                         <View style={{ flex: 1 }} key={i}>
                             <TouchableOpacity

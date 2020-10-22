@@ -19,6 +19,7 @@ const AdBlock = ({
     sendSnoAdAnalytic,
     snoAd = null,
 }) => {
+    console.log('ad image', image, snoAd)
     return (
         <TouchableOpacity
             style={{
