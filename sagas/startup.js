@@ -30,7 +30,7 @@ import Constants from 'expo-constants'
 
 import * as SplashScreen from 'expo-splash-screen'
 
-async function hideSplash() {
+async function hideSplashScreen() {
     await SplashScreen.hideAsync()
 }
 
@@ -39,9 +39,10 @@ function* initializeUser() {
         yield put(globalActions.initializeUserRequest())
 
         yield call(findOrCreateUser)
-        yield call(loadActiveDomain)
+        // yield call(loadActiveDomain)
 
         yield put(globalActions.initializeUserSuccess())
+        yield call(hideSplashScreen)
     } catch (err) {
         console.log('error initializing user in saga', err)
         yield put(globalActions.initializeUserError('error initializing user'))
@@ -59,10 +60,9 @@ function* loadActiveDomain() {
                 return domain
             }
         })
-        // sets active domain for app and then navigates to app
+        // sets active domain for app
         if (activeDomain.length) {
             yield put(domainsActions.setActiveDomain(activeDomain[0].id))
-            // NavigationService.navigate('App')
         }
         // no active domain navigate to auth
         else {
@@ -100,7 +100,7 @@ function* startup(action) {
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
         yield put(globalActions.receiveSplash(splashScreenUrl))
-        yield call(SplashScreen.hideAsync)
+        // yield call(SplashScreen.hideAsync)
         // SplashScreen.hide()
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menu and DB categories

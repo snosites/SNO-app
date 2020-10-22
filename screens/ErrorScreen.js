@@ -23,12 +23,20 @@ const ErrorScreen = (props) => {
             setActiveDomain(id)
             setModalVisible(false)
 
-            navigation.navigate('AuthLoading')
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+            })
+
+            // navigation.navigate('AuthLoading')
         } catch (error) {
             console.log('error selecting school from error page')
             setModalVisible(false)
 
-            navigation.navigate('AuthLoading')
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+            })
         }
     }
 
@@ -55,7 +63,7 @@ const ErrorScreen = (props) => {
                     },
                 }}
                 style={{ padding: 5, marginBottom: 20 }}
-                onPress={() => navigation.navigate('Auth')}
+                onPress={() => setActiveDomain(null)}
             >
                 Select a New School
             </Button>

@@ -30,8 +30,6 @@ export default (props) => {
             animationRef.current.reset()
             animationRef.current.play()
         }
-        //run startup saga
-        console.log('running startup')
         startup(activeDomain)
     }, [])
 

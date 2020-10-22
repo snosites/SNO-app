@@ -53,7 +53,6 @@ const SelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
-                // navigation.navigate('Auth')
                 return
             }
 
@@ -76,7 +75,6 @@ const SelectScreen = (props) => {
             setModalVisible(true)
         } catch (error) {
             console.log('error saving users school', error)
-            navigation.navigate('AuthLoading')
         }
     }
 

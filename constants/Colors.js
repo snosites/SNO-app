@@ -1,4 +1,21 @@
-const tintColor = 'red';
+import { DefaultTheme } from 'react-native-paper'
+import Color from 'color'
+import Constants from 'expo-constants'
+
+import { getReleaseChannel } from './config'
+
+const version = getReleaseChannel()
+
+const defaultPrimaryColor =
+    version === 'sns'
+        ? Constants.manifest.extra.highSchool.primary
+        : Constants.manifest.extra.college.primary
+const defaultAccentColor =
+    version === 'sns'
+        ? Constants.manifest.extra.highSchool.secondary
+        : Constants.manifest.extra.college.secondary
+
+const tintColor = 'blue'
 
 export default {
     tintColor,
@@ -13,4 +30,21 @@ export default {
     noticeText: '#fff',
     black: '#1a1917',
     gray: '#888888',
-};
+}
+
+let primaryColor = Color(defaultPrimaryColor)
+let primaryIsDark = primaryColor.isDark()
+let accentColor = Color(defaultAccentColor)
+let accentIsDark = accentColor.isDark()
+
+export const defaultColorTheme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+        ...DefaultTheme.colors,
+        primary: defaultPrimaryColor,
+        accent: defaultAccentColor,
+    },
+    primaryIsDark,
+    accentIsDark,
+}

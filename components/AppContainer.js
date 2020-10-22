@@ -26,6 +26,7 @@ const Stack = createStackNavigator()
 
 const AppContainer = (props) => {
     const {
+        user,
         initializeUser,
         initializeUserLoading,
         initializeUserError,
@@ -38,23 +39,29 @@ const AppContainer = (props) => {
         homeScreenMode,
     } = props
 
-    let primaryColor = Color(theme.colors.primary)
-    let isDark = primaryColor.isDark()
+    // let primaryColor = Color(theme.colors.primary)
+    // let isDark = primaryColor.isDark()
     // const navigation = useNavigation()
 
-    const [loading, setLoading] = useState(true)
-
-    console.log('aaa', activeDomain)
+    // const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        console.log('running AppContainer effect...', activeDomain)
-        initializeUser()
-        return () => console.log('unmounting...')
-    }, [])
+        if (!user.id) {
+            initializeUser()
+        }
+    }, [user])
 
     useEffect(() => {
-        if (!initializeUserLoading) setLoading(false)
+        console.log('user', user)
     }, [initializeUserLoading])
+
+    useEffect(() => {
+        console.log('activeDomain', activeDomain)
+    }, [activeDomain])
+
+    // useEffect(() => {
+    //     if (!initializeUserLoading) setLoading(false)
+    // }, [initializeUserLoading])
     // useEffect(() => {
     //     if (switchingDomain) {
     //         return
@@ -77,17 +84,17 @@ const AppContainer = (props) => {
     //     }
     // }
 
-    if (initializeUserLoading || loading) {
+    if (!user.id || initializeUserLoading) {
         return (
-            <View style={{ flex: 1, backgroundColor: '#fff', paddingVertical: 40 }}>
-                <ActivityIndicator />
+            <View style={{ flex: 1 }}>
+                <ActivityIndicator style={{ padding: 100 }} />
             </View>
         )
     }
     return (
         <PaperProvider theme={theme}>
             <View style={{ flex: 1 }}>
-                <StatusBar style={isDark ? 'light' : 'dark'} />
+                <StatusBar style={theme.primaryIsDark ? 'light' : 'dark'} />
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     {!activeDomain.id ? (
                         // doesn't have a saved domain
