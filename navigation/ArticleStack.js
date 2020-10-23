@@ -16,26 +16,30 @@ import TestScreen from '../screens/TestScreen'
 
 import HTML from 'react-native-render-html'
 
-const CustomHeaderTitle = ({ children, style }) => {
-    return (
-        <HTML
-            html={children}
-            customWrapper={(text) => {
-                return (
-                    <Text ellipsizeMode='tail' numberOfLines={1} style={{ fontSize: 18 }}>
-                        {text}
-                    </Text>
-                )
-            }}
-            baseFontStyle={{ fontSize: 18 }}
-        />
-    )
-}
-
 const Stack = createStackNavigator()
 
 const ArticleStack = (props) => {
     const { homeScreenMode, theme, activeCategory, headerLogo, navigation } = props
+
+    const CustomHeaderTitle = ({ children, style }) => {
+        return (
+            <HTML
+                html={children}
+                customWrapper={(text) => {
+                    return (
+                        <Text
+                            ellipsizeMode='tail'
+                            numberOfLines={1}
+                            style={{ fontSize: 18, color: theme.primaryIsDark ? '#fff' : '#000' }}
+                        >
+                            {text}
+                        </Text>
+                    )
+                }}
+                baseFontStyle={{ fontSize: 18 }}
+            />
+        )
+    }
     return (
         <Stack.Navigator
             screenOptions={{

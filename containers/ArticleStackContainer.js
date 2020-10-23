@@ -1,10 +1,13 @@
 import { connect } from 'react-redux'
 import ArticleStack from '../navigation/ArticleStack'
 
+const getActiveCategoryTitle = (menus, categoryId) =>
+    menus.find((menu) => menu.object_id === categoryId).title
+
 const mapStateToProps = (state) => ({
     homeScreenMode: state.global.homeScreenMode,
     theme: state.theme,
-    activeCategory: state.global.activeCategory,
+    activeCategory: getActiveCategoryTitle(state.global.menuItems, state.global.activeCategory),
     headerLogo: state.global.headerSmall,
 })
 
