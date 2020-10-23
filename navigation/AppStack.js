@@ -1,7 +1,9 @@
 import React from 'react'
 import { Platform } from 'react-native'
-import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
+// import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
+
 import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import Color from 'color'
 
@@ -185,41 +187,13 @@ const AppNav = createBottomTabNavigator(
     }
 )
 
-export default createSwitchNavigator(
-    {
-        AppSetup: {
-            screen: AppSetupScreen,
-            path: 'app-setup',
-        },
-        MainApp: {
-            screen: AppNav,
-            path: 'main-app',
-        },
-        Error: ErrorScreen,
-    },
-    {
-        initialRouteName: 'AppSetup',
-    }
-)
+const Tab = createBottomTabNavigator()
+
 export default () => {
     return (
-        <Stack.Navigator>
-            {activeDomain.length ? (
-                // doesn't have a saved domain
-                <Stack.Screen
-                    name='Auth'
-                    component={AuthStack}
-                    options={{
-                        title: 'Sign in',
-                        // When logging out, a pop animation feels intuitive
-                        // You can remove this if you want the default 'push' animation
-                        animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                    }}
-                />
-            ) : (
-                // has domain saved
-                <Stack.Screen name='App' component={AppStack} />
-            )}
-        </Stack.Navigator>
+        <Tab.Navigator>
+            <Tab.Screen name='Home' component={HomeScreen} />
+            <Tab.Screen name='Settings' component={SettingsScreen} />
+        </Tab.Navigator>
     )
 }

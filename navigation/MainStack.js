@@ -1,50 +1,48 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Dimensions, Image, ImageBackground } from 'react-native'
+import { View, useWindowDimensions, Image, ImageBackground } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+
 import ErrorScreen from '../screens/ErrorScreen'
-// import TabNavigator from './TabNavigator'
-import TestScreen from '../screens/TestScreen'
+import TabNavigatorContainer from '../containers/TabNavigatorContainer'
 
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
 
 import { getReleaseChannel } from '../constants/config'
+import { init } from 'sentry-expo'
 
 const version = getReleaseChannel()
-
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
-const ANIMATION_WIDTH = viewportWidth
-const ANIMATION_BOTTOM_PADDING = viewportHeight * 0.0
 
 const Stack = createStackNavigator()
 
 export default (props) => {
-    const { activeDomain, startup, splashScreen, startupError, startupLoading } = props
+    const { activeDomain, startup, splashScreen, startupError, startupLoading, initialized } = props
 
     const animationRef = useRef(null)
-    const [loading, setLoading] = useState(true)
+    const window = useWindowDimensions()
+
+    const ANIMATION_WIDTH = window.width
+    const ANIMATION_BOTTOM_PADDING = window.height * 0.0
 
     useEffect(() => {
         if (animationRef.current) {
             animationRef.current.reset()
             animationRef.current.play()
         }
-        startup(activeDomain)
-    }, [])
+        if (!initialized) startup(activeDomain)
+    }, [initialized])
 
-    useEffect(() => {
-        if (!startupLoading) setLoading(false)
-    }, [startupLoading])
-
-    if (startupLoading || loading) {
+    if (!initialized) {
         if (splashScreen) {
             return (
-                <Image
-                    source={{ uri: splashScreen }}
-                    style={{ width: viewportWidth, height: viewportHeight }}
-                    resizeMode='cover'
-                />
+                <View style={{ flex: 1, backgroundColor: 'green' }}>
+                    <Image
+                        source={{ uri: splashScreen }}
+                        style={{ width: window.width, height: window.height }}
+                        resizeMode='cover'
+                    />
+                </View>
             )
         }
         return (
@@ -54,7 +52,6 @@ export default (props) => {
                 }}
             >
                 <ImageBackground
-                    source={require('../assets/images/the-source-splash.png')}
                     source={
                         version === 'sns'
                             ? require('../assets/images/the-source-splash.png')
@@ -62,8 +59,8 @@ export default (props) => {
                     }
                     resizeMode='cover'
                     style={{
-                        width: viewportWidth,
-                        height: viewportHeight,
+                        width: window.width,
+                        height: window.height,
                         flex: 1,
                     }}
                 >
@@ -71,8 +68,8 @@ export default (props) => {
                         style={{
                             alignItems: 'center',
                             justifyContent: 'flex-end',
-                            width: viewportWidth,
-                            height: viewportHeight,
+                            width: window.width,
+                            height: window.height,
                             paddingBottom: ANIMATION_BOTTOM_PADDING,
                         }}
                     >
@@ -116,7 +113,13 @@ export default (props) => {
                 />
             ) : (
                 // no startup errors
-                <Stack.Screen name='App' component={TestScreen} />
+                <Stack.Screen
+                    name='App'
+                    options={{
+                        headerShown: false,
+                    }}
+                    component={TabNavigatorContainer}
+                />
             )}
         </Stack.Navigator>
     )

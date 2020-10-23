@@ -17,7 +17,7 @@ const defaultAccentColor =
 
 const tintColor = 'blue'
 
-export default {
+const palette = {
     tintColor,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColor,
@@ -37,6 +37,8 @@ let primaryIsDark = primaryColor.isDark()
 let accentColor = Color(defaultAccentColor)
 let accentIsDark = accentColor.isDark()
 
+export default palette
+
 export const defaultColorTheme = {
     ...DefaultTheme,
     roundness: 2,
@@ -47,4 +49,5 @@ export const defaultColorTheme = {
     },
     primaryIsDark,
     accentIsDark,
+    extraColors: palette,
 }

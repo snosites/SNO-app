@@ -13,6 +13,8 @@ import AuthStack from '../navigation/AuthStack'
 import MainStackContainer from '../containers/MainStackContainer'
 // import NotificationAlert from './NotificationAlert'
 
+import * as SplashScreen from 'expo-splash-screen'
+
 import ErrorBoundary from '../screens/ErrorBoundary'
 
 import { Provider as PaperProvider } from 'react-native-paper'
@@ -23,6 +25,10 @@ import * as Linking from 'expo-linking'
 // const prefix = Linking.makeUrl('/')
 
 const Stack = createStackNavigator()
+
+async function hideSplashScreen() {
+    await SplashScreen.hideAsync()
+}
 
 const AppContainer = (props) => {
     const {
@@ -56,7 +62,7 @@ const AppContainer = (props) => {
     }, [initializeUserLoading])
 
     useEffect(() => {
-        console.log('activeDomain', activeDomain)
+        if (!activeDomain.id) hideSplashScreen()
     }, [activeDomain])
 
     // useEffect(() => {

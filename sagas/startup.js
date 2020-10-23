@@ -26,8 +26,6 @@ import { handleArticlePress } from '../utils/articlePress'
 
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Sentry from 'sentry-expo'
-import Constants from 'expo-constants'
-
 import * as SplashScreen from 'expo-splash-screen'
 
 async function hideSplashScreen() {
@@ -42,7 +40,7 @@ function* initializeUser() {
         // yield call(loadActiveDomain)
 
         yield put(globalActions.initializeUserSuccess())
-        yield call(hideSplashScreen)
+        // yield call(hideSplashScreen)
     } catch (err) {
         console.log('error initializing user in saga', err)
         yield put(globalActions.initializeUserError('error initializing user'))
@@ -100,8 +98,7 @@ function* startup(action) {
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
         yield put(globalActions.receiveSplash(splashScreenUrl))
-        // yield call(SplashScreen.hideAsync)
-        // SplashScreen.hide()
+        yield call(SplashScreen.hideAsync)
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menu and DB categories
         const { menu, dbCategories } = yield call(fetchMenu, {
@@ -132,7 +129,7 @@ function* startup(action) {
         //get domains custom options
         yield call(getCustomOptions, domain)
 
-        yield call(getHomeScreenArticles)
+        // yield call(getHomeScreenArticles)
 
         let mainCategory = menu[0].object_id
 
@@ -147,7 +144,7 @@ function* startup(action) {
 
         yield put(savedArticleActions.initializeSaved(domain.id))
 
-        throw new Error()
+        // throw new Error()
 
         // if (fromPush) {
         //     // go to main app
@@ -164,7 +161,7 @@ function* startup(action) {
 
         yield put(globalActions.startupSuccess())
     } catch (err) {
-        console.log('startup saga err', err)
+        console.log('startup saga error', err)
         // clear from push data if any is there
         yield put(userActions.setFromPush(false))
 
@@ -209,160 +206,63 @@ function* getHomeScreenArticles() {
 
 function* getCustomOptions(domain) {
     try {
-        //get home page options
-        const [
-            headerImage,
-            headerLogo,
-            theme,
-            primary,
-            accent,
-            comments,
-            listStyle,
-            appAdOptions,
-        ] = yield all([
-            call(domainApiService.getCustomHeader, domain.url),
-            call(domainApiService.getCustomHeaderLogo, domain.url),
-            call(domainApiService.getCustomTheme, domain.url),
-            call(domainApiService.getCustomPrimaryColor, domain.url),
-            call(domainApiService.getCustomAccentColor, domain.url),
-            call(domainApiService.getCommentsToggle, domain.url),
-            call(domainApiService.getStoryListStyle, domain.url),
-            call(domainApiService.getAdOptions, domain.url),
-        ])
+        const results = yield call(domainApiService.getCustomOptions, domain.url)
 
-        //home screen categories
-        const [
-            category1,
-            category2,
-            category3,
-            category1Amount,
-            category2Amount,
-            category3Amount,
-            homeScreenListStyle,
-            homeScreenMode,
-            homeScreenCategoryColor,
-        ] = yield all([
-            call(domainApiService.getHomeScreenCategory, domain.url, 1),
-            call(domainApiService.getHomeScreenCategory, domain.url, 2),
-            call(domainApiService.getHomeScreenCategory, domain.url, 3),
-            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 1),
-            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 2),
-            call(domainApiService.getHomeScreenCategoryAmount, domain.url, 3),
-            call(domainApiService.getHomeScreenListStyle, domain.url),
-            call(domainApiService.getHomeScreenMode, domain.url),
-            call(domainApiService.getCustomHomeCategoryColor, domain.url),
-        ])
-
-        if (homeScreenMode.result == 1 || homeScreenMode.result == '1') {
-            yield put(globalActions.receiveHomeScreenMode('legacy'))
-        } else {
-            yield put(globalActions.receiveHomeScreenMode('categories'))
-        }
-
-        const homeScreenCategories = []
-
-        if (!category1.result) {
-        } else {
-            homeScreenCategories.push(Number(category1.result))
-        }
-        if (!category2.result) {
-        } else {
-            homeScreenCategories.push(Number(category2.result))
-        }
-        if (!category3.result) {
-        } else {
-            homeScreenCategories.push(Number(category3.result))
-        }
-
-        const homeScreenCategoryAmounts = []
-
-        if (!category1Amount.result) {
-            homeScreenCategoryAmounts.push(5)
-        } else {
-            homeScreenCategoryAmounts.push(Number(category1Amount.result))
-        }
-        if (!category2Amount.result) {
-            homeScreenCategoryAmounts.push(5)
-        } else {
-            homeScreenCategoryAmounts.push(Number(category2Amount.result))
-        }
-        if (!category3Amount.result) {
-            homeScreenCategoryAmounts.push(5)
-        } else {
-            homeScreenCategoryAmounts.push(Number(category3Amount.result))
-        }
-
-        if (!homeScreenCategoryColor.result) {
-            homeScreenCategoryColor.result = null
-        }
-
-        yield put(globalActions.receiveAppAdOptions(appAdOptions))
-
-        yield fork(fetchAds, domain, appAdOptions)
-
-        yield put(globalActions.receiveHomeScreenCategoryColor(homeScreenCategoryColor.result))
-
-        yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
-        yield put(globalActions.receiveHomeScreenCategoryAmounts(homeScreenCategoryAmounts))
-
-        yield put(
-            globalActions.receiveHomeScreenListStyle(
-                homeScreenListStyle.result === 'small' ||
-                    homeScreenListStyle.result === 'large' ||
-                    homeScreenListStyle.result === 'mix' ||
-                    homeScreenListStyle.result === 'alternating'
-                    ? homeScreenListStyle.result
-                    : 'small'
-            )
-        )
-
-        if (!theme.result) {
-            theme.result = 'light'
-        }
-        if (!primary.result) {
-            primary.result = '#2099CE'
-        }
-        if (!accent.result) {
-            accent.result = '#83B33B'
-        }
-
+        yield put(globalActions.receiveHeader(results.nav_header))
+        yield put(globalActions.receiveHeaderLogo(results.header_logo))
         yield put(
             themeActions.saveTheme({
-                theme: theme.result,
-                primary: primary.result,
-                accent: accent.result,
+                darkMode: results.theme,
+                primary: results.primary_color,
+                accent: results.accent_color,
             })
         )
-        // // save if images are set otherwise empty string
-        yield put(
-            globalActions.receiveHeader(
-                headerImage[0] && headerImage[0].source_url ? headerImage[0].source_url : ''
-            )
-        )
-        yield put(
-            globalActions.receiveHeaderLogo(
-                headerLogo[0] && headerLogo[0].source_url ? headerLogo[0].source_url : ''
-            )
-        )
-        yield put(globalActions.receiveCommentsOption(comments.result === 'Enable' ? true : false))
-
+        yield put(globalActions.receiveCommentsOption(results.comments === 'Enable' ? true : false))
         yield put(
             globalActions.receiveStoryListStyle(
-                listStyle.result === 'small' ||
-                    listStyle.result === 'large' ||
-                    listStyle.result === 'mix' ||
-                    listStyle.result === 'alternating'
-                    ? listStyle.result
+                results.list_type === 'small' ||
+                    results.list_type === 'large' ||
+                    results.list_type === 'mix' ||
+                    results.list_type === 'alternating'
+                    ? results.list_type
                     : 'small'
             )
         )
+        yield put(globalActions.receiveAppAdOptions(results.ads))
+        yield put(globalActions.receiveHomeScreenMode(results.legacy_home))
+        yield put(
+            globalActions.receiveHomeScreenListStyle(
+                results.home_list_type === 'small' ||
+                    results.home_list_type === 'large' ||
+                    results.home_list_type === 'mix' ||
+                    results.home_list_type === 'alternating'
+                    ? results.home_list_type
+                    : 'small'
+            )
+        )
+        yield put(globalActions.receiveHomeScreenCategoryColor(results.home_category_color))
+        yield put(globalActions.receiveSportCenterOption(results.has_sportcenter))
 
-        try {
-            // save sportcenter option
-            const sportCenter = yield call(domainApiService.getSportCenterOption, domain.url)
-            yield put(globalActions.receiveSportCenterOption(sportCenter))
-        } catch (err) {
-            yield put(globalActions.receiveSportCenterOption(false))
+        yield fork(fetchAds, domain, results.ads)
+
+        if (results.legacy_home === 'categories') {
+            const results = yield call(domainApiService.getHomeScreenCategories, domain.url)
+
+            const homeScreenCategories = [
+                results.home_category_1,
+                results.home_category_2,
+                results.home_category_3,
+            ]
+            const homeScreenCategoryAmounts = [
+                results.home_category_1_amount,
+                results.home_category_2_amount,
+                results.home_category_3_amount,
+            ]
+
+            yield put(globalActions.receiveHomeScreenCategories(homeScreenCategories))
+            yield put(globalActions.receiveHomeScreenCategoryAmounts(homeScreenCategoryAmounts))
+
+            yield fork(getHomeScreenArticles)
         }
     } catch (err) {
         console.log('error in get custom domain options saga', err)
@@ -370,14 +270,16 @@ function* getCustomOptions(domain) {
         yield put(
             themeActions.saveTheme({
                 theme: 'light',
-                primary: '#2099CE',
-                accent: '#83B33B',
+                primary: '',
+                accent: '',
             })
         )
         yield put(globalActions.receiveHeader(''))
         yield put(globalActions.receiveHeaderLogo(''))
+        yield put(globalActions.receiveCommentsOption(false))
         yield put(globalActions.receiveSportCenterOption(false))
         yield put(globalActions.receiveStoryListStyle('small'))
+        yield put(globalActions.receiveHomeScreenListStyle('small'))
     }
 }
 

@@ -8,23 +8,23 @@ export const types = {
 export default function theme(state = defaultColorTheme, action) {
     switch (action.type) {
         case types.SAVE_THEME:
-            let primaryColor = Color(action.theme.primary)
+            let primaryColor = Color(action.theme.primary || defaultColorTheme.colors.primary)
             let primaryIsDark = primaryColor.isDark()
-            let accentColor = Color(action.theme.accent)
+            let accentColor = Color(action.theme.accent || defaultColorTheme.colors.accent)
             let accentIsDark = accentColor.isDark()
 
-            let mode = true
-            if (action.theme.theme.toLowerCase() == 'light') {
-                mode = false
+            let darkMode = false
+            if (action.theme.darkMode.toLowerCase() == 'dark') {
+                darkMode = true
             }
             return {
                 ...defaultColorTheme,
-                dark: mode,
+                dark: darkMode,
                 roundness: 2,
                 colors: {
                     ...defaultColorTheme.colors,
-                    primary: action.theme.primary,
-                    accent: action.theme.accent,
+                    primary: action.theme.primary || defaultColorTheme.colors.primary,
+                    accent: action.theme.accent || defaultColorTheme.colors.accent,
                 },
                 primaryIsDark,
                 accentIsDark,

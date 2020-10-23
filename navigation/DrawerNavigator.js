@@ -1,6 +1,7 @@
 import React from 'react'
 import { Platform } from 'react-native'
-import { createDrawerNavigator, createStackNavigator } from 'react-navigation'
+// import { createDrawerNavigator, createStackNavigator } from 'react-navigation'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import Color from 'color'
 
 import TabBarIcon from '../components/TabBarIcon'
@@ -15,6 +16,8 @@ import StaffScreen from '../screens/StaffScreen'
 import DefaultPageScreen from '../screens/DefaultPageScreen'
 
 import HomeScreen from '../screens/HomeScreen'
+
+import TestScreen from '../screens/TestScreen'
 
 const ArticleStack = createStackNavigator(
     {
@@ -43,6 +46,25 @@ const ArticleStack = createStackNavigator(
         },
     }
 )
+
+const Drawer = createDrawerNavigator()
+
+export default (props) => {
+    const { theme } = props
+    return (
+        <Drawer.Navigator
+            initialRouteName='Home'
+            drawerStyle={{
+                backgroundColor: theme.colors.surface,
+                width: 280,
+            }}
+            drawerContent={(props) => <CustomDrawer {...props} />}
+        >
+            <Drawer.Screen name='Home' component={TestScreen} />
+            {/* <Drawer.Screen name='Notifications' component={NotificationsScreen} /> */}
+        </Drawer.Navigator>
+    )
+}
 
 const MyDrawerNavigator = createDrawerNavigator(
     {

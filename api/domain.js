@@ -14,7 +14,6 @@ axios.interceptors.response.use(function (response) {
 
 const domainApiService = {
     getSplashScreenId: async (domainUrl) => {
-        console.log('ere', domainUrl)
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_splash_screen`
@@ -86,175 +85,25 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomHeader: async (domainUrl) => {
+    getCustomOptions: async (domainUrl) => {
         try {
-            const headerId = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_nav_header`
-            )
-            if (!headerId.data.result) {
-                return false
-            }
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/media?include=${headerId.data.result}`
-            )
-            return response.data
+            const result = await axios.get(`https://${domainUrl}/wp-json/sns-v2/custom-app-options`)
+
+            return result.data
         } catch (err) {
-            console.log('error in get custom header api', err, err.response)
+            console.log('error in get custom app options api', err, err.response)
             throw err
         }
     },
-    getCustomHeaderLogo: async (domainUrl) => {
+    getHomeScreenCategories: async (domainUrl) => {
         try {
-            const headerLogoId = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_header_logo`
+            const result = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/custom-home-categories`
             )
-            if (!headerLogoId.data.result) {
-                return false
-            }
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/media?include=${headerLogoId.data.result}`
-            )
-            return response.data
+
+            return result.data
         } catch (err) {
-            console.log('error in get custom header logo api', err, err.response)
-            throw err
-        }
-    },
-    getCustomTheme: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_theme`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom theme api', err, err.response)
-            throw err
-        }
-    },
-    getCommentsToggle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=comments&theme_mod=true`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get comments toggle api', err, err.response)
-            throw err
-        }
-    },
-    getCustomPrimaryColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_primary_color`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom primary color api', err, err.response)
-            throw err
-        }
-    },
-    getCustomAccentColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_accent_color`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom primary color api', err, err.response)
-            throw err
-        }
-    },
-    getCustomHomeCategoryColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_color`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom home category color api', err, err.response)
-            throw err
-        }
-    },
-    getStoryListStyle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_list_type`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get story list style api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenCategory: async (domainUrl, categoryNumber) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home screen category api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenCategoryAmount: async (domainUrl, categoryNumber) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}_amount`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home screen category amount api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenListStyle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_list_type`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home list style api', err, err.response)
-            throw err
-        }
-    },
-    getAdOptions: async (domainUrl) => {
-        try {
-            const response = await axios.get(`https://${domainUrl}/wp-json/sns-v2/app-ad-options`)
-            return response.data
-        } catch (err) {
-            console.log('error in fetch app ad options api', err)
+            console.log('error in get custom home screen categories api', err, err.response)
             throw err
         }
     },

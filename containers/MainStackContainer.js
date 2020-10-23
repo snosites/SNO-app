@@ -17,6 +17,7 @@ const mapStateToProps = (state) => ({
     startupError: startupErrorSelector(state),
     menus: state.global.menuItems,
     articlesByCategory: state.articlesByCategory,
+    initialized: state.global.initialized,
 })
 
 const mapDispatchToProps = (dispatch) => ({

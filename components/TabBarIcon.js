@@ -1,7 +1,7 @@
 import React from 'react'
 import * as Icon from '@expo/vector-icons'
 
-import { tabIconDefault } from '../constants/Colors'
+import Colors from '../constants/Colors'
 
 export default (props) => {
     const { color, name, focused, size } = props
@@ -10,7 +10,7 @@ export default (props) => {
             name={name}
             size={size}
             style={{ marginBottom: -3 }}
-            color={focused ? color : tabIconDefault}
+            color={focused ? color : Colors.tabIconDefault}
         />
     )
 }
