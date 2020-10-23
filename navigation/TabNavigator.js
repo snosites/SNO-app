@@ -10,7 +10,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import TabBarIcon from '../components/TabBarIcon'
 
 // import AppSetupScreen from '../screens/AppSetupScreen'
-// import MainDrawerNavigator from './MainDrawerNavigator'
+import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
 // import SettingsScreen from '../screens/SettingsScreen'
 // import SavedScreen from '../screens/SavedScreen'
 // import RecentScreen from '../screens/RecentScreen'
@@ -206,7 +206,7 @@ export default (props) => {
                 },
             }}
         >
-            <Tab.Screen name='Home' component={TestScreen} />
+            <Tab.Screen name='Home' component={DrawerNavigatorContainer} />
             <Tab.Screen name='Recent' component={TestScreen} />
             <Tab.Screen name='Saved' component={TestScreen} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={TestScreen} />}

@@ -94,14 +94,14 @@ export default (props) => {
     }
 
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             {startupError ? (
                 <Stack.Screen
                     name='Error'
                     component={ErrorScreen}
-                    options={{
-                        headerShown: false,
-                    }}
+                    // options={{
+                    //     headerShown: false,
+                    // }}
                     initialParams={{
                         errorMessage:
                             startupError === 'error initializing app'
@@ -115,9 +115,9 @@ export default (props) => {
                 // no startup errors
                 <Stack.Screen
                     name='App'
-                    options={{
-                        headerShown: false,
-                    }}
+                    // options={{
+                    //     headerShown: false,
+                    // }}
                     component={TabNavigatorContainer}
                 />
             )}

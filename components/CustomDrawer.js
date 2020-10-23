@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native'
 import { Drawer, Colors, Searchbar } from 'react-native-paper'
 import HTML from 'react-native-render-html'
@@ -24,10 +24,13 @@ function CustomDrawerContent(props) {
         fetchArticlesIfNeeded,
         menus,
         activeDomain,
-        globals,
+        global,
         setActiveCategory,
-        theme,
     } = props
+
+    useEffect(() => {
+        navigation.openDrawer()
+    }, [])
 
     const [searchTerm, setSearchTerm] = useState('')
     // const [activeMenuIndex, setActiveMenuIndex] = useState(0)
@@ -52,10 +55,10 @@ function CustomDrawerContent(props) {
             })
 
             fetchArticlesIfNeeded(activeDomain.url, item.object_id)
-            navigation.navigate('List', {
-                menuTitle: item.title,
-                categoryId: item.object_id,
-            })
+            // navigation.navigate('List', {
+            //     menuTitle: item.title,
+            //     categoryId: item.object_id,
+            // })
 
             // setActiveMenuIndex(index)
             setActiveCategory(item.object_id)
@@ -115,7 +118,7 @@ function CustomDrawerContent(props) {
                 onChangeText={(query) => setSearchTerm(query)}
                 value={searchTerm}
             />
-            <Drawer.Section title='Categories'>
+            <Drawer.Section title='Categories' style={{ paddingTop: 10 }}>
                 {menus.map((item, index) => {
                     return (
                         <DrawerItem
@@ -153,26 +156,26 @@ function CustomDrawerContent(props) {
     )
 }
 
-class CustomDrawerComponent extends React.Component {
-    state = {
-        activeMenuIndex: 0,
-        searchTerm: '',
-    }
+// class CustomDrawerComponent extends React.Component {
+//     state = {
+//         activeMenuIndex: 0,
+//         searchTerm: '',
+//     }
 
-    render() {
-        const { menus, activeDomain, globals, setActiveCategory } = this.props
-        return (
-            <View style={styles.rootContainer}>
-                <SafeAreaView
-                    style={styles.rootContainer}
-                    forceInset={{ top: 'always', horizontal: 'never' }}
-                >
-                    <ScrollView style={styles.container}></ScrollView>
-                </SafeAreaView>
-            </View>
-        )
-    }
-}
+//     render() {
+//         const { menus, activeDomain, globals, setActiveCategory } = this.props
+//         return (
+//             <View style={styles.rootContainer}>
+//                 <SafeAreaView
+//                     style={styles.rootContainer}
+//                     forceInset={{ top: 'always', horizontal: 'never' }}
+//                 >
+//                     <ScrollView style={styles.container}></ScrollView>
+//                 </SafeAreaView>
+//             </View>
+//         )
+//     }
+// }
 
 const styles = StyleSheet.create({
     rootContainer: {
@@ -210,7 +213,6 @@ const mapStateToProps = (state) => ({
     menus: state.global.menuItems,
     articlesByCategory: state.articlesByCategory,
     global: state.global,
-    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -227,4 +229,4 @@ const mapDispatchToProps = (dispatch) => ({
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawerComponent)
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawerContent)
