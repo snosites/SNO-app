@@ -59,6 +59,9 @@ function CustomDrawerContent(props) {
             //     menuTitle: item.title,
             //     categoryId: item.object_id,
             // })
+            navigation.navigate('List', {
+                categoryId: item.object_id,
+            })
 
             // setActiveMenuIndex(index)
             setActiveCategory(item.object_id)

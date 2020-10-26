@@ -21,7 +21,7 @@ const Stack = createStackNavigator()
 const ArticleStack = (props) => {
     const { homeScreenMode, theme, activeCategory, headerLogo, navigation } = props
 
-    const CustomHeaderTitle = ({ children, style }) => {
+    const CustomHeaderTitle = ({ children }) => {
         return (
             <HTML
                 html={children}
@@ -30,13 +30,13 @@ const ArticleStack = (props) => {
                         <Text
                             ellipsizeMode='tail'
                             numberOfLines={1}
-                            style={{ fontSize: 18, color: theme.primaryIsDark ? '#fff' : '#000' }}
+                            style={{ fontSize: 20, color: theme.primaryIsDark ? '#fff' : '#000' }}
                         >
                             {text}
                         </Text>
                     )
                 }}
-                baseFontStyle={{ fontSize: 18 }}
+                baseFontStyle={{ fontSize: 20 }}
             />
         )
     }
@@ -83,7 +83,7 @@ const ArticleStack = (props) => {
                 <Stack.Screen
                     name='Home'
                     component={TestScreen}
-                    options={{ title: activeCategory, headerTitle: CustomHeaderTitle }}
+                    options={{ headerTitle: CustomHeaderTitle }}
                 />
             ) : null}
             <Stack.Screen
@@ -91,6 +91,7 @@ const ArticleStack = (props) => {
                 component={TestScreen}
                 options={{ title: activeCategory, headerTitle: CustomHeaderTitle }}
             />
+            <Stack.Screen name='Article' component={TestScreen} />
         </Stack.Navigator>
     )
 }

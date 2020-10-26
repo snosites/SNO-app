@@ -36,7 +36,7 @@ export default (props) => {
     if (!initialized) {
         if (splashScreen) {
             return (
-                <View style={{ flex: 1, backgroundColor: 'green' }}>
+                <View style={{ flex: 1 }}>
                     <Image
                         source={{ uri: splashScreen }}
                         style={{ width: window.width, height: window.height }}
@@ -99,9 +99,6 @@ export default (props) => {
                 <Stack.Screen
                     name='Error'
                     component={ErrorScreen}
-                    // options={{
-                    //     headerShown: false,
-                    // }}
                     initialParams={{
                         errorMessage:
                             startupError === 'error initializing app'
@@ -113,13 +110,7 @@ export default (props) => {
                 />
             ) : (
                 // no startup errors
-                <Stack.Screen
-                    name='App'
-                    // options={{
-                    //     headerShown: false,
-                    // }}
-                    component={TabNavigatorContainer}
-                />
+                <Stack.Screen name='App' component={TabNavigatorContainer} />
             )}
         </Stack.Navigator>
     )

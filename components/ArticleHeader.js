@@ -4,13 +4,13 @@ import { withTheme, Badge, Colors } from 'react-native-paper'
 import Color from 'color'
 import { connect } from 'react-redux'
 
-const ArticleHeader = props => {
-    const { navigation, state, theme, enableComments } = props
-    let commentNumber = navigation.getParam('commentNumber', 0)
-    let comments = navigation.getParam('comments', null)
-    let articleId = navigation.getParam('articleId', null)
-    let primaryColor = Color(theme.colors.primary)
-    let isDark = primaryColor.isDark()
+const ArticleHeader = (props) => {
+    const { navigation, state, theme, enableComments, commentNumber, comments, articleId } = props
+    // let commentNumber = navigation.getParam('commentNumber', 0)
+    // let comments = navigation.getParam('comments', null)
+    // let articleId = navigation.getParam('articleId', null)
+    // let primaryColor = Color(theme.colors.primary)
+    // let isDark = primaryColor.isDark()
 
     return (
         <View
@@ -18,12 +18,12 @@ const ArticleHeader = props => {
                 flexDirection: 'row',
                 flex: 1,
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
             }}
         >
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate('FullArticle')
+                    navigation.navigate('Article')
                 }}
             >
                 <Text
@@ -37,7 +37,7 @@ const ArticleHeader = props => {
                                 : isDark
                                 ? '#bdbdbd'
                                 : '#9e9e9e',
-                        fontSize: 19
+                        fontSize: 19,
                     }}
                 >
                     Article
@@ -48,7 +48,7 @@ const ArticleHeader = props => {
                     <Text
                         style={{
                             color: isDark ? 'white' : 'black',
-                            fontSize: 19
+                            fontSize: 19,
                         }}
                     >
                         |
@@ -57,7 +57,7 @@ const ArticleHeader = props => {
                         onPress={() => {
                             navigation.navigate('Comments', {
                                 comments,
-                                articleId
+                                articleId,
                             })
                         }}
                     >
@@ -72,7 +72,7 @@ const ArticleHeader = props => {
                                         : isDark
                                         ? '#bdbdbd'
                                         : '#9e9e9e',
-                                fontSize: 19
+                                fontSize: 19,
                             }}
                         >
                             Comments
@@ -83,7 +83,7 @@ const ArticleHeader = props => {
                                     position: 'absolute',
                                     top: -10,
                                     right: -10,
-                                    backgroundColor: isDark ? 'white' : 'black'
+                                    backgroundColor: isDark ? 'white' : 'black',
                                 }}
                             >
                                 {commentNumber}
@@ -96,10 +96,4 @@ const ArticleHeader = props => {
     )
 }
 
-const mapState = state => {
-    return {
-        enableComments: state.global.enableComments
-    }
-}
-
-export const CustomArticleHeader = connect(mapState)(withTheme(ArticleHeader))
+export default ArticleHeader

@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
 import { NavigationEvents, SafeAreaView } from 'react-navigation'
-import Color from 'color'
-import { connect } from 'react-redux'
+
 import * as Device from 'expo-device'
 
 import HTML from 'react-native-render-html'
@@ -12,75 +11,213 @@ import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
 import { Snackbar, Button } from 'react-native-paper'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { actions as articlesActions } from '../redux/articles'
-import { actions as adActions, getListAds } from '../redux/ads'
-
-import { getActiveDomain } from '../redux/domains'
-
 import ArticleListContent from '../views/ArticleListContent'
 import TabletArticleListContent from '../views/TabletArticleListContent'
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
+const ListScreen2 = (props) => {
+    const {
+        route,
+        naviogation,
+        global,
+        listAds,
+        activeDomain,
+        sendAdAnalytic,
+        category,
+        invalidateArticles,
+        fetchArticlesIfNeeded,
+    } = props
 
-// header icon native look component
-const IoniconsHeaderButton = (passMeFurther) => (
-    <HeaderButton
-        {...passMeFurther}
-        IconComponent={Ionicons}
-        iconSize={30}
-        color={Colors.tintColor}
-    />
-)
+    const [snackbarSavedVisible, setSnackbarSavedVisible] = useState(false)
+    const [snackbarRemovedVisible, setSnackbarRemovedVisible] = useState(false)
+    const [isTablet, setIsTablet] = useState(false)
+    const [ad, setAd] = useState(null)
 
-//header title -- work on later
-const CustomHeaderTitle = ({ children, style }) => {
+    const animationRef = useRef(null)
+
+    const getDeviceType = async () => {
+        const deviceType = await Device.getDeviceTypeAsync()
+
+        if (Device.DeviceType[deviceType] === 'TABLET') {
+            setIsTablet(true)
+        } else {
+            setIsTablet(false)
+        }
+    }
+
+    _playAnimation = () => {
+        animationRef.current.reset()
+        animationRef.current.play()
+    }
+
+    _handleRefresh = () => {
+        invalidateArticles(category.categoryId)
+        fetchArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: category.categoryId,
+        })
+    }
+
+    useEffect(() => {
+        getDeviceType()
+    }, [])
+
+    if (!categoryId) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    marginTop: 20,
+                }}
+            >
+                <LottieView
+                    ref={animationRef}
+                    style={StyleSheet.absoluteFill}
+                    speed={0.8}
+                    loop={true}
+                    autoPlay={true}
+                    source={require('../assets/lottiefiles/multi-article-loading')}
+                />
+            </View>
+        )
+    }
+    if (articlesByCategory.length === 0 && category.isFetching) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    marginTop: 20,
+                }}
+            >
+                <LottieView
+                    ref={animationRef}
+                    style={StyleSheet.absoluteFill}
+                    speed={0.8}
+                    loop={true}
+                    autoPlay={true}
+                    source={require('../assets/lottiefiles/multi-article-loading')}
+                />
+            </View>
+        )
+    }
+    if (category.error) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View
+                    style={{
+                        width: 150,
+                        height: 150,
+                        alignItems: 'center',
+                    }}
+                >
+                    <LottieView
+                        ref={animationRef}
+                        style={{
+                            width: 150,
+                            height: 150,
+                        }}
+                        loop={true}
+                        autoPlay={true}
+                        source={require('../assets/lottiefiles/broken-stick-error')}
+                    />
+                </View>
+                <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
+                    Sorry, something went wrong. If you are the site owner, please submit a support
+                    request.
+                </Text>
+                <Button
+                    mode='contained'
+                    theme={{
+                        roundness: 7,
+                        colors: {
+                            primary: theme.colors.primary,
+                        },
+                    }}
+                    style={{ padding: 5 }}
+                    onPress={_handleRefresh}
+                >
+                    Reload
+                </Button>
+            </View>
+        )
+    }
+
     return (
-        <HTML
-            html={children}
-            customWrapper={(text) => {
-                return (
-                    <Text ellipsizeMode='tail' numberOfLines={1} style={[...style, styles.title]}>
-                        {text}
-                    </Text>
-                )
-            }}
-            baseFontStyle={styles.title}
-        />
+        <View style={{ flex: 1 }}>
+            <NavigationEvents
+                onDidFocus={() => {
+                    if (ad && ad.id) {
+                        console.log('sending ad analytic')
+                        sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+                    }
+                }}
+            />
+            {isTablet ? (
+                <TabletArticleListContent
+                    articleList={articlesByCategory}
+                    isFetching={category.isFetching}
+                    isRefreshing={category.didInvalidate || false}
+                    loadMore={this._loadMore}
+                    handleRefresh={this._handleRefresh}
+                    saveRef={this._saveRef}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    enableComments={global.enableComments}
+                    navigation={navigation}
+                    onIconPress={this._saveRemoveToggle}
+                    listAds={listAds}
+                    ad={this.state.ad}
+                />
+            ) : (
+                <ArticleListContent
+                    articleList={articlesByCategory}
+                    isFetching={category.isFetching}
+                    isRefreshing={category.didInvalidate || false}
+                    loadMore={this._loadMore}
+                    handleRefresh={this._handleRefresh}
+                    saveRef={this._saveRef}
+                    activeDomain={activeDomain}
+                    theme={theme}
+                    enableComments={global.enableComments}
+                    navigation={navigation}
+                    onIconPress={this._saveRemoveToggle}
+                    storyListStyle={global.storyListStyle}
+                    listAds={listAds}
+                    ad={this.state.ad}
+                />
+            )}
+            <Snackbar
+                visible={snackbarSavedVisible}
+                style={styles.snackbar}
+                duration={3000}
+                onDismiss={() => this.setState({ snackbarSavedVisible: false })}
+                action={{
+                    label: 'Dismiss',
+                    onPress: () => {
+                        this.setState({ snackbarSavedVisible: false })
+                    },
+                }}
+            >
+                Article Added To Saved List
+            </Snackbar>
+            <Snackbar
+                visible={snackbarRemovedVisible}
+                style={styles.snackbar}
+                duration={3000}
+                onDismiss={() => this.setState({ snackbarRemovedVisible: false })}
+                action={{
+                    label: 'Dismiss',
+                    onPress: () => {
+                        this.setState({ snackbarRemovedVisible: false })
+                    },
+                }}
+            >
+                Article Removed From Saved List
+            </Snackbar>
+        </View>
     )
 }
 
 class ListScreen extends React.Component {
-    static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps
-        const logo = navigation.getParam('headerLogo', null)
-        const headerName = navigation.getParam('menuTitle', 'Stories')
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        return {
-            title: headerName,
-            headerTitle: CustomHeaderTitle,
-            headerRight: (
-                <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item
-                        title='menu'
-                        iconName='ios-menu'
-                        buttonStyle={{ color: isDark ? 'white' : 'black' }}
-                        onPress={() => navigation.openDrawer()}
-                    />
-                </HeaderButtons>
-            ),
-            headerLeft: logo && (
-                <Image
-                    source={{ uri: logo }}
-                    style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
-                    resizeMode='contain'
-                />
-            ),
-            headerBackTitle: null,
-        }
-    }
-
     state = {
         snackbarSavedVisible: false,
         snackbarRemovedVisible: false,
@@ -116,16 +253,6 @@ class ListScreen extends React.Component {
                 this._scrollToTop()
             }
             navigation.setParams({ scrollToTop: false })
-        }
-    }
-
-    async getDeviceTypeComponent() {
-        const deviceType = await Device.getDeviceTypeAsync()
-
-        if (Device.DeviceType[deviceType] === 'TABLET') {
-            this.setState({ isTablet: true })
-        } else {
-            this.setState({ isTablet: false })
         }
     }
 
@@ -382,58 +509,3 @@ const styles = StyleSheet.create({
         }),
     },
 })
-
-const mapStateToProps = (state, ownProps) => {
-    // gets category ID from navigation params or defaults to first item in the list
-    const categoryId = ownProps.navigation.getParam('categoryId', null)
-    const activeDomain = getActiveDomain(state)
-    const listAds = getListAds(state)
-
-    if (!categoryId || !state.articlesByCategory[categoryId]) {
-        return {
-            theme: state.theme,
-            activeDomain,
-            menus: state.global.menuItems,
-            category: {
-                isFetching: false,
-            },
-            articlesByCategory: [],
-            global: state.global,
-            listAds,
-        }
-    }
-    return {
-        theme: state.theme,
-        activeDomain,
-        menus: state.global.menuItems,
-        global: state.global,
-        listAds,
-        category: state.articlesByCategory[categoryId],
-        articlesByCategory: state.articlesByCategory[categoryId].items.map((articleId) => {
-            const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
-                return savedArticle.id == articleId
-            })
-            if (found) {
-                state.entities.articles[articleId].saved = true
-            } else {
-                state.entities.articles[articleId].saved = false
-            }
-            return state.entities.articles[articleId]
-        }),
-    }
-}
-
-const mapDispatchToProps = (dispatch) => ({
-    saveArticle: (article, domainId) =>
-        dispatch(savedArticleActions.saveArticle(article, domainId)),
-    removeSavedArticle: (articleId, domainId) =>
-        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
-    invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
-    fetchArticlesIfNeeded: (payload) => dispatch(articlesActions.fetchArticlesIfNeeded(payload)),
-    fetchMoreArticlesIfNeeded: (payload) =>
-        dispatch(articlesActions.fetchMoreArticlesIfNeeded(payload)),
-    sendAdAnalytic: (url, imageId, field) =>
-        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ListScreen)
