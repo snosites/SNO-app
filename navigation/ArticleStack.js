@@ -3,7 +3,7 @@ import { TouchableOpacity, Image, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import * as Icon from '@expo/vector-icons'
 
-import ListScreen from '../screens/ListScreen'
+import ListScreenContainer from '../containers/ListScreenContainer'
 import FullArticleScreen from '../screens/FullArticleScreen'
 import SearchScreen from '../screens/SearchScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -88,7 +88,7 @@ const ArticleStack = (props) => {
             ) : null}
             <Stack.Screen
                 name='List'
-                component={TestScreen}
+                component={ListScreenContainer}
                 options={{ title: activeCategory, headerTitle: CustomHeaderTitle }}
             />
             <Stack.Screen name='Article' component={TestScreen} />

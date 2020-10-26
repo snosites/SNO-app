@@ -8,9 +8,9 @@ import { getActiveDomain } from '../redux/domains'
 
 import ListScreen from '../screens/ListScreen'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     // gets category ID from navigation params or defaults to first item in the list
-    const categoryId = ownProps.navigation.getParam('categoryId', null)
+    const categoryId = state.global.activeCategory
     const activeDomain = getActiveDomain(state)
     const listAds = getListAds(state)
 
@@ -33,6 +33,7 @@ const mapStateToProps = (state, ownProps) => {
         menus: state.global.menuItems,
         global: state.global,
         listAds,
+        categoryId,
         category: state.articlesByCategory[categoryId],
         articlesByCategory: state.articlesByCategory[categoryId].items.map((articleId) => {
             const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
