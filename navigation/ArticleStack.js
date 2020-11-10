@@ -3,6 +3,7 @@ import { TouchableOpacity, Image, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import * as Icon from '@expo/vector-icons'
 
+import HomeScreenContainer from '../containers/HomeScreenContainer'
 import ListScreenContainer from '../containers/ListScreenContainer'
 import FullArticleScreen from '../screens/FullArticleScreen'
 import SearchScreen from '../screens/SearchScreen'
@@ -82,8 +83,8 @@ const ArticleStack = (props) => {
             {homeScreenMode === 'categories' ? (
                 <Stack.Screen
                     name='Home'
-                    component={TestScreen}
-                    options={{ headerTitle: CustomHeaderTitle }}
+                    component={HomeScreenContainer}
+                    options={{ title: 'Home', headerTitle: CustomHeaderTitle }}
                 />
             ) : null}
             <Stack.Screen

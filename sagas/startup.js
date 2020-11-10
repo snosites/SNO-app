@@ -215,6 +215,7 @@ function* getCustomOptions(domain) {
                 darkMode: results.theme,
                 primary: results.primary_color,
                 accent: results.accent_color,
+                homeCategoryColor: results.home_category_color,
             })
         )
         yield put(globalActions.receiveCommentsOption(results.comments === 'Enable' ? true : false))
@@ -240,7 +241,6 @@ function* getCustomOptions(domain) {
                     : 'small'
             )
         )
-        yield put(globalActions.receiveHomeScreenCategoryColor(results.home_category_color))
         yield put(globalActions.receiveSportCenterOption(results.has_sportcenter))
 
         yield fork(fetchAds, domain, results.ads)

@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { View, Text, StyleSheet, Platform } from 'react-native'
 
-import * as Device from 'expo-device'
+import { useIsTablet } from '../utils/helpers'
 import LottieView from 'lottie-react-native'
 
 import { Snackbar, Button } from 'react-native-paper'
 
 import ArticleListContent from '../views/ArticleListContent'
 import TabletArticleListContent from '../views/TabletArticleListContent'
+import ErrorView from '../components/ErrorView'
 
 const ListScreen = (props) => {
     const {
@@ -29,14 +30,13 @@ const ListScreen = (props) => {
 
     const [snackbarSavedVisible, setSnackbarSavedVisible] = useState(false)
     const [snackbarRemovedVisible, setSnackbarRemovedVisible] = useState(false)
-    const [isTablet, setIsTablet] = useState(false)
+    const isTablet = useIsTablet()
     const [ad, setAd] = useState(null)
 
     const animationRef = useRef(null)
     const flatListRef = useRef(null)
 
     useEffect(() => {
-        getDeviceType()
         _playAnimation()
 
         if (listAds && listAds.images && listAds.images.length) {
@@ -58,16 +58,6 @@ const ListScreen = (props) => {
 
         return unsubscribe
     }, [navigation])
-
-    const getDeviceType = async () => {
-        const deviceType = await Device.getDeviceTypeAsync()
-
-        if (Device.DeviceType[deviceType] === 'TABLET') {
-            setIsTablet(true)
-        } else {
-            setIsTablet(false)
-        }
-    }
 
     _playAnimation = () => {
         animationRef.current.reset()
@@ -159,45 +149,7 @@ const ListScreen = (props) => {
         )
     }
     if (category.error) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View
-                    style={{
-                        width: 150,
-                        height: 150,
-                        alignItems: 'center',
-                    }}
-                >
-                    <LottieView
-                        ref={animationRef}
-                        style={{
-                            width: 150,
-                            height: 150,
-                        }}
-                        loop={true}
-                        autoPlay={true}
-                        source={require('../assets/lottiefiles/broken-stick-error')}
-                    />
-                </View>
-                <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
-                    Sorry, something went wrong. If you are the site owner, please submit a support
-                    request.
-                </Text>
-                <Button
-                    mode='contained'
-                    theme={{
-                        roundness: 7,
-                        colors: {
-                            primary: theme.colors.primary,
-                        },
-                    }}
-                    style={{ padding: 5 }}
-                    onPress={_handleRefresh}
-                >
-                    Reload
-                </Button>
-            </View>
-        )
+        return <ErrorView onRefresh={_handleRefresh} />
     }
 
     return (

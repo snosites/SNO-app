@@ -12,6 +12,10 @@ export default function theme(state = defaultColorTheme, action) {
             let primaryIsDark = primaryColor.isDark()
             let accentColor = Color(action.theme.accent || defaultColorTheme.colors.accent)
             let accentIsDark = accentColor.isDark()
+            let homeCategoryColor = Color(
+                action.theme.homeCategoryColor || defaultColorTheme.colors.homeScreenCategoryTitle
+            )
+            let homeCategoryColorIsDark = homeCategoryColor.isDark()
 
             let darkMode = false
             if (action.theme.darkMode.toLowerCase() == 'dark') {
@@ -25,9 +29,11 @@ export default function theme(state = defaultColorTheme, action) {
                     ...defaultColorTheme.colors,
                     primary: action.theme.primary || defaultColorTheme.colors.primary,
                     accent: action.theme.accent || defaultColorTheme.colors.accent,
+                    homeScreenCategoryTitle: homeCategoryColor,
                 },
                 primaryIsDark,
                 accentIsDark,
+                homeScreenCategoryTitleIsDark: homeCategoryColorIsDark,
             }
         default:
             return state

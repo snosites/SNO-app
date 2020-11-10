@@ -58,12 +58,12 @@ export default class TabletArticleListContent extends React.Component {
                     Style={{ flex: 1, marginVertical: 5 }}
                     data={articleList}
                     keyExtractor={(item) => item.id.toString()}
-                    ref={(ref) => {
-                        if (saveRef) {
-                            saveRef(ref)
-                        }
-                        return
-                    }}
+                    // ref={(ref) => {
+                    //     if (saveRef) {
+                    //         saveRef(ref)
+                    //     }
+                    //     return
+                    // }}
                     onEndReachedThreshold={0.25}
                     onEndReached={() => {
                         if (!this.onEndReachedCalledDuringMomentum && loadMore) {

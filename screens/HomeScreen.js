@@ -1,390 +1,109 @@
-import React from 'react'
-import { ScrollView, View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
-import { NavigationEvents, SafeAreaView } from 'react-navigation'
-import Color from 'color'
-import { connect } from 'react-redux'
-import * as Device from 'expo-device'
+import React, { useEffect, useState, useRef } from 'react'
+import {
+    SafeAreaView,
+    ScrollView,
+    View,
+    StyleSheet,
+    Platform,
+    TouchableOpacity,
+} from 'react-native'
 
 import HTML from 'react-native-render-html'
 import LottieView from 'lottie-react-native'
 
-import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons'
-import { Snackbar, Button } from 'react-native-paper'
+import { Snackbar } from 'react-native-paper'
 
 import AdBlock from '../components/AdBlock'
-
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { actions as articlesActions } from '../redux/articles'
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as adActions, getHomeAds } from '../redux/ads'
-import { createLoadingSelector } from '../redux/loading'
-
-import { getActiveDomain } from '../redux/domains'
-
 import ArticleListContent from '../views/ArticleListContent'
 import TabletArticleListContent from '../views/TabletArticleListContent'
+import ErrorView from '../components/ErrorView'
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
+import { useIsTablet } from '../utils/helpers'
 
-// header icon native look component
-const IoniconsHeaderButton = (passMeFurther) => (
-    <HeaderButton
-        {...passMeFurther}
-        IconComponent={Ionicons}
-        iconSize={30}
-        color={Colors.tintColor}
-    />
-)
+const HomeScreen = (props) => {
+    const {
+        navigation,
+        global,
+        theme,
+        homeAds,
+        sendAdAnalytic,
+        activeDomain,
+        isLoading,
+        articlesLoading,
+        articlesByCategory,
+        categoryTitles,
+        setActiveCategory,
+    } = props
 
-//header title -- work on later
-const CustomHeaderTitle = ({ children, style }) => {
-    return (
-        <HTML
-            html={children}
-            customWrapper={(text) => {
-                return (
-                    <Text ellipsizeMode='tail' numberOfLines={1} style={[...style, styles.title]}>
-                        {text}
-                    </Text>
-                )
-            }}
-            baseFontStyle={styles.title}
-        />
-    )
-}
+    const { homeScreenCategories, homeScreenListStyle, homeScreenCategoryAmounts } = global
 
-class HomeScreen extends React.Component {
-    static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps
-        const logo = navigation.getParam('headerLogo', null)
-        // const headerName = navigation.getParam('menuTitle', 'Stories')
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        return {
-            title: 'Home',
-            headerTitle: CustomHeaderTitle,
-            headerRight: (
-                <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item
-                        title='menu'
-                        iconName='ios-menu'
-                        buttonStyle={{ color: isDark ? 'white' : 'black' }}
-                        onPress={() => navigation.openDrawer()}
-                    />
-                </HeaderButtons>
-            ),
-            headerLeft: logo && (
-                <Image
-                    source={{ uri: logo }}
-                    style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
-                    resizeMode='contain'
-                />
-            ),
-            headerBackTitle: null,
-            headerTitleAlign: 'center',
-        }
-    }
+    const [snackbarSavedVisible, setSnackbarSavedVisible] = useState(false)
+    const [snackbarRemovedVisible, setSnackbarRemovedVisible] = useState(false)
+    const [ad, setAd] = useState(null)
+    const isTablet = useIsTablet()
 
-    state = {
-        snackbarSavedVisible: false,
-        snackbarRemovedVisible: false,
-        isTablet: false,
-        ad: null,
-    }
+    const animationRef = useRef(null)
+    const flatListRef = useRef(null)
 
-    componentDidMount() {
-        const { navigation, global, homeAds, sendAdAnalytic, activeDomain } = this.props
-        if (this.animation) {
-            this._playAnimation()
-        }
-        navigation.setParams({
-            headerLogo: global.headerSmall,
-        })
-        this.getDeviceTypeComponent()
-
-        if (global.homeScreenMode === 'legacy') {
-            const menus = global.menuItems
-            if (menus.length > 0) {
-                this.props.navigation.navigate('List', {
-                    menuTitle: menus[0].title,
-                    categoryId: menus[0].object_id,
-                })
-            }
-            return
-        }
+    useEffect(() => {
+        _playAnimation()
 
         if (homeAds && homeAds.images && homeAds.images.length) {
             const activeAdImage = homeAds.images[Math.floor(Math.random() * homeAds.images.length)]
-            this.setState({ ad: activeAdImage })
+            setAd(activeAdImage)
             sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')
         }
-    }
+    }, [homeAds])
 
-    componentDidUpdate() {
-        if (this.animation) {
-            this._playAnimation()
-        }
-
-        const { navigation, articlesLoading, global } = this.props
-
-        if (!articlesLoading && !global.homeScreenCategories.length) {
-            const menus = global.menuItems
-            console.log('test', menus)
-            if (menus.length > 0) {
-                this.props.navigation.navigate('List', {
-                    menuTitle: menus[0].title,
-                    categoryId: menus[0].object_id,
-                })
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (ad && ad.id) {
+                console.log('sending ad analytic')
+                sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
             }
-        }
+        })
 
-        if (navigation.state.params && navigation.state.params.scrollToTop) {
-            if (this.flatListRef) {
-                // scroll list to top
-                this._scrollToTop()
-            }
-            navigation.setParams({ scrollToTop: false })
-        }
+        return unsubscribe
+    }, [navigation])
+
+    _playAnimation = () => {
+        animationRef.current.reset()
+        animationRef.current.play()
     }
 
-    async getDeviceTypeComponent() {
-        const deviceType = await Device.getDeviceTypeAsync()
-
-        if (Device.DeviceType[deviceType] === 'TABLET') {
-            this.setState({ isTablet: true })
-        } else {
-            this.setState({ isTablet: false })
-        }
+    _handleRefresh = () => {
+        invalidateArticles(category.categoryId)
+        fetchArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: category.categoryId,
+        })
     }
 
-    render() {
-        const {
-            navigation,
-            theme,
-            activeDomain,
-            global,
-            articlesByCategory,
-            categoryTitles,
-            isLoading,
-            articlesLoading,
-            setActiveCategory,
-            homeAds,
-            sendAdAnalytic,
-        } = this.props
-        const { snackbarSavedVisible, snackbarRemovedVisible, isTablet, ad } = this.state
+    _handleArticleRemove = (articleId) => {
+        removeSavedArticle(articleId, activeDomain.id)
+        setSnackbarRemovedVisible(true)
+    }
 
-        const {
-            homeScreenCategories,
-            homeScreenListStyle,
-            homeScreenCategoryColor,
-            homeScreenCategoryAmounts,
-        } = global
-
-        if (articlesLoading) {
-            return (
-                <SafeAreaView
-                    style={{
-                        flex: 1,
-                        marginTop: 20,
-                    }}
-                >
-                    <LottieView
-                        ref={(animation) => this._saveAnimationRef(animation)}
-                        style={StyleSheet.absoluteFill}
-                        speed={0.8}
-                        loop={true}
-                        autoPlay={true}
-                        source={require('../assets/lottiefiles/multi-article-loading')}
-                    />
-                </SafeAreaView>
-            )
-        }
-        if (!homeScreenCategories.length) {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View
-                        style={{
-                            width: 150,
-                            height: 150,
-                            alignItems: 'center',
-                        }}
-                    >
-                        <LottieView
-                            ref={(animation) => this._saveAnimationRef(animation)}
-                            style={{
-                                width: 150,
-                                height: 150,
-                            }}
-                            loop={true}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/broken-stick-error')}
-                        />
-                    </View>
-                    <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
-                        Sorry, something went wrong. If you are the site owner, please submit a
-                        support request.
-                    </Text>
-                    <Button
-                        mode='contained'
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: theme ? theme.colors.primary : '#2099CE',
-                            },
-                        }}
-                        style={{ padding: 5 }}
-                        onPress={this._handleRefresh}
-                    >
-                        Reload
-                    </Button>
-                </View>
-            )
-        }
-
-        const categoryBackgroundColor = homeScreenCategoryColor
-            ? homeScreenCategoryColor
-            : theme.colors.primary
-
-        let primaryCategoryBackgroundColor = Color(categoryBackgroundColor)
-        let isCategoryColorDark = primaryCategoryBackgroundColor.isDark()
-
-        return (
-            <ScrollView style={{ flex: 1 }}>
-                <NavigationEvents
-                    onDidFocus={() => {
-                        if (ad && ad.id) {
-                            sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-                        }
-                    }}
-                />
-                {categoryTitles.map((title, i) => {
-                    // const margin = i ? 40 : 0
-                    const listLength = homeScreenCategoryAmounts[i] || 5
-                    const shouldShowAd =
-                        homeAds.displayLocation && homeAds.displayLocation.includes(i + 1)
-                    return (
-                        <View style={{ flex: 1 }} key={i}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigation.navigate('List', {
-                                        menuTitle: title,
-                                        categoryId: homeScreenCategories[i],
-                                    })
-                                    setActiveCategory(homeScreenCategories[i])
-                                }}
-                                style={{
-                                    backgroundColor: categoryBackgroundColor,
-                                    justifyContent: 'center',
-                                    paddingVertical: 10,
-                                    // marginTop: margin,
-                                    shadowColor: '#000',
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 2,
-                                    },
-                                    shadowOpacity: 0.23,
-                                    shadowRadius: 2.62,
-
-                                    elevation: 4,
-                                }}
-                            >
-                                <HTML
-                                    html={title}
-                                    baseFontStyle={{ fontSize: 28 }}
-                                    tagsStyles={{
-                                        rawtext: {
-                                            fontSize: 28,
-                                            fontWeight: 'bold',
-                                            color: isCategoryColorDark ? 'white' : 'black',
-                                            textAlign: 'center',
-                                        },
-                                    }}
-                                />
-                            </TouchableOpacity>
-                            {isTablet ? (
-                                <TabletArticleListContent
-                                    articleList={articlesByCategory[i].slice(0, Number(listLength))}
-                                    isFetching={articlesLoading}
-                                    isRefreshing={articlesLoading}
-                                    // loadMore={this._loadMore}
-                                    handleRefresh={this._handleRefresh}
-                                    saveRef={this._saveRef}
-                                    activeDomain={activeDomain}
-                                    theme={theme}
-                                    enableComments={global.enableComments}
-                                    navigation={navigation}
-                                    onIconPress={this._saveRemoveToggle}
-                                />
-                            ) : (
-                                <ArticleListContent
-                                    articleList={articlesByCategory[i].slice(0, Number(listLength))}
-                                    isFetching={articlesLoading}
-                                    isRefreshing={articlesLoading}
-                                    // loadMore={this._loadMore}
-                                    handleRefresh={this._handleRefresh}
-                                    saveRef={this._saveRef}
-                                    activeDomain={activeDomain}
-                                    theme={theme}
-                                    enableComments={global.enableComments}
-                                    navigation={navigation}
-                                    onIconPress={this._saveRemoveToggle}
-                                    storyListStyle={homeScreenListStyle}
-                                />
-                            )}
-                            {shouldShowAd && <AdBlock image={ad} style={{ marginBottom: -40 }} />}
-                        </View>
-                    )
-                })}
-                <Snackbar
-                    visible={snackbarSavedVisible}
-                    style={styles.snackbar}
-                    duration={3000}
-                    onDismiss={() => this.setState({ snackbarSavedVisible: false })}
-                    action={{
-                        label: 'Dismiss',
-                        onPress: () => {
-                            this.setState({ snackbarSavedVisible: false })
-                        },
-                    }}
-                >
-                    Article Added To Saved List
-                </Snackbar>
-                <Snackbar
-                    visible={snackbarRemovedVisible}
-                    style={styles.snackbar}
-                    duration={3000}
-                    onDismiss={() => this.setState({ snackbarRemovedVisible: false })}
-                    action={{
-                        label: 'Dismiss',
-                        onPress: () => {
-                            this.setState({ snackbarRemovedVisible: false })
-                        },
-                    }}
-                >
-                    Article Removed From Saved List
-                </Snackbar>
-            </ScrollView>
-        )
+    _loadMore = () => {
+        fetchMoreArticlesIfNeeded({
+            domain: activeDomain.url,
+            category: category.categoryId,
+        })
     }
 
     _scrollToTop = () => {
-        this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
+        flatListRef.scrollToOffset({ animated: true, offset: 0 })
     }
 
     _saveRef = (ref) => {
-        this.flatListRef = ref
-    }
-
-    _saveAnimationRef = (ref) => {
-        this.animation = ref
+        flatListRef = ref
     }
 
     _saveRemoveToggle = (article) => {
         if (article.saved) {
-            this._handleArticleRemove(article.id)
+            _handleArticleRemove(article.id)
         } else {
-            this._handleArticleSave(article)
+            _handleArticleSave(article)
         }
     }
 
@@ -396,35 +115,135 @@ class HomeScreen extends React.Component {
         })
     }
 
-    _handleArticleRemove = (articleId) => {
-        const { activeDomain } = this.props
-        this.props.removeSavedArticle(articleId, activeDomain.id)
-        this.setState({
-            snackbarRemovedVisible: true,
-        })
+    if (articlesLoading) {
+        return (
+            <SafeAreaView
+                style={{
+                    flex: 1,
+                    marginTop: 20,
+                }}
+            >
+                <LottieView
+                    ref={animationRef}
+                    style={StyleSheet.absoluteFill}
+                    speed={0.8}
+                    loop={true}
+                    autoPlay={true}
+                    source={require('../assets/lottiefiles/multi-article-loading')}
+                />
+            </SafeAreaView>
+        )
+    }
+    if (!homeScreenCategories.length) {
+        return <ErrorView onRefresh={_handleRefresh} />
     }
 
-    // _loadMore = () => {
-    //     const { activeDomain, category, fetchMoreArticlesIfNeeded } = this.props
-    //     fetchMoreArticlesIfNeeded({
-    //         domain: activeDomain.url,
-    //         category: category.categoryId,
-    //     })
-    // }
+    return (
+        <ScrollView style={{ flex: 1 }}>
+            {categoryTitles.map((title, i) => {
+                // const margin = i ? 40 : 0
+                const listLength = homeScreenCategoryAmounts[i] || 5
+                const shouldShowAd =
+                    homeAds.displayLocation && homeAds.displayLocation.includes(i + 1)
+                return (
+                    <View style={{ flex: 1 }} key={i}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('List', {
+                                    categoryId: homeScreenCategories[i],
+                                })
+                                setActiveCategory(homeScreenCategories[i])
+                            }}
+                            style={{
+                                backgroundColor: theme.colors.homeScreenCategoryTitle,
+                                justifyContent: 'center',
+                                paddingVertical: 10,
+                                shadowColor: '#000',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                shadowOpacity: 0.23,
+                                shadowRadius: 2.62,
 
-    _handleRefresh = () => {
-        const { refreshHomeScreen, invalidateArticles, homeScreenCategories } = this.props
-
-        for (let category of homeScreenCategories) {
-            invalidateArticles(category)
-        }
-        refreshHomeScreen()
-    }
-
-    _playAnimation = () => {
-        this.animation.reset()
-        this.animation.play()
-    }
+                                elevation: 4,
+                            }}
+                        >
+                            <HTML
+                                html={title}
+                                baseFontStyle={{ fontSize: 28 }}
+                                tagsStyles={{
+                                    rawtext: {
+                                        fontSize: 28,
+                                        fontWeight: 'bold',
+                                        color: theme.homeScreenCategoryTitleIsDark
+                                            ? 'white'
+                                            : 'black',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                            />
+                        </TouchableOpacity>
+                        {isTablet ? (
+                            <TabletArticleListContent
+                                articleList={articlesByCategory[i].slice(0, Number(listLength))}
+                                isFetching={articlesLoading}
+                                isRefreshing={articlesLoading}
+                                // loadMore={this._loadMore}
+                                handleRefresh={_handleRefresh}
+                                saveRef={_saveRef}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                enableComments={global.enableComments}
+                                navigation={navigation}
+                                onIconPress={_saveRemoveToggle}
+                            />
+                        ) : (
+                            <ArticleListContent
+                                articleList={articlesByCategory[i].slice(0, Number(listLength))}
+                                isFetching={articlesLoading}
+                                isRefreshing={articlesLoading}
+                                // loadMore={this._loadMore}
+                                handleRefresh={_handleRefresh}
+                                saveRef={_saveRef}
+                                activeDomain={activeDomain}
+                                theme={theme}
+                                enableComments={global.enableComments}
+                                navigation={navigation}
+                                onIconPress={_saveRemoveToggle}
+                                storyListStyle={homeScreenListStyle}
+                            />
+                        )}
+                        {shouldShowAd && <AdBlock image={ad} style={{ marginBottom: -40 }} />}
+                    </View>
+                )
+            })}
+            <Snackbar
+                visible={snackbarSavedVisible}
+                style={styles.snackbar}
+                duration={3000}
+                onDismiss={() => setSnackbarSavedVisible(false)}
+                action={{
+                    label: 'Dismiss',
+                    onPress: () => setSnackbarSavedVisible(false),
+                }}
+            >
+                Article Added To Saved List
+            </Snackbar>
+            <Snackbar
+                visible={snackbarRemovedVisible}
+                style={styles.snackbar}
+                duration={3000}
+                onDismiss={() => setSnackbarRemovedVisible(false)}
+                action={{
+                    label: 'Dismiss',
+                    onPress: () => setSnackbarRemovedVisible(false),
+                }}
+            >
+                Article Removed From Saved List
+            </Snackbar>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -452,77 +271,4 @@ const styles = StyleSheet.create({
     },
 })
 
-const mapStateToProps = (state) => {
-    const activeDomain = getActiveDomain(state)
-    const homeScreenCategories = state.global.homeScreenCategories
-    const homeScreenLoadingSelector = createLoadingSelector([
-        globalTypes.FETCH_HOME_SCREEN_ARTICLES,
-    ])
-
-    if (!homeScreenCategories.length) {
-        return {
-            theme: state.theme,
-            activeDomain,
-            menus: state.global.menuItems,
-            global: state.global,
-            articlesByCategory: [],
-            isLoading: homeScreenLoadingSelector(state),
-            articlesLoading: false,
-            homeAds: getHomeAds(state),
-        }
-    }
-    return {
-        homeAds: getHomeAds(state),
-        theme: state.theme,
-        activeDomain,
-        menus: state.global.menuItems,
-        global: state.global,
-        isLoading: homeScreenLoadingSelector(state),
-        categoryTitles: homeScreenCategories.map((category) => {
-            return state.global.menuItems.find((menuItem) => menuItem.object_id == category).title
-        }),
-        articlesByCategory: homeScreenCategories.map((categoryId) => {
-            if (
-                state.articlesByCategory[categoryId] &&
-                state.articlesByCategory[categoryId].items
-            ) {
-                return state.articlesByCategory[categoryId].items.map((articleId) => {
-                    const found = state.savedArticlesBySchool[activeDomain.id].find(
-                        (savedArticle) => {
-                            return savedArticle.id == articleId
-                        }
-                    )
-                    if (found) {
-                        state.entities.articles[articleId].saved = true
-                    } else {
-                        state.entities.articles[articleId].saved = false
-                    }
-                    return state.entities.articles[articleId]
-                })
-            } else {
-                return []
-            }
-        }),
-        articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
-            if (state.articlesByCategory[categoryId]) {
-                return state.articlesByCategory[categoryId].isFetching
-            } else {
-                return false
-            }
-        }, false),
-    }
-}
-
-const mapDispatchToProps = (dispatch) => ({
-    saveArticle: (article, domainId) =>
-        dispatch(savedArticleActions.saveArticle(article, domainId)),
-    removeSavedArticle: (articleId, domainId) =>
-        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
-    refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
-    invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
-    setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
-    sendAdAnalytic: (url, imageId, field) =>
-        dispatch(adActions.sendAdAnalytic(url, imageId, field)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+export default HomeScreen

@@ -33,7 +33,6 @@ export const types = {
     RECEIVE_HOME_SCREEN_CATEGORIES: 'RECEIVE_HOME_SCREEN_CATEGORIES',
     RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS: 'RECEIVE_HOME_SCREEN_CATEGORY_AMOUNTS',
     RECEIVE_HOME_SCREEN_LIST_STYLE: 'RECEIVE_HOME_SCREEN_LIST_STYLE',
-    RECEIVE_HOME_SCREEN_CATEGORY_COLOR: 'RECEIVE_HOME_SCREEN_CATEGORY_COLOR',
     FETCH_MENUS: 'FETCH_MENUS',
     FETCH_MENUS_REQUEST: 'FETCH_MENUS_REQUEST',
     FETCH_MENUS_SUCCESS: 'FETCH_MENUS_SUCCESS',
@@ -282,10 +281,6 @@ export const actions = {
     receiveHomeScreenMode: (mode) => ({
         type: types.RECEIVE_HOME_SCREEN_MODE,
         mode,
-    }),
-    receiveHomeScreenCategoryColor: (color) => ({
-        type: types.RECEIVE_HOME_SCREEN_CATEGORY_COLOR,
-        color,
     }),
     fetchMenus: (domain) => ({ type: types.FETCH_MENUS, domain }),
     fetchMenusRequest: () => ({ type: types.FETCH_MENUS_REQUEST }),
