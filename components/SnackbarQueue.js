@@ -5,10 +5,6 @@ import { Snackbar } from 'react-native-paper'
 import { connect } from 'react-redux'
 
 import { actions as snackbarQueueActions } from '../redux/snackbarQueue'
-import { actions as domainsActions } from '../redux/domains'
-import { actions as userActions } from '../redux/user'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
 
 const SnackbarQueue = (props) => {
     const { snackbarQueue, removeMessage } = props

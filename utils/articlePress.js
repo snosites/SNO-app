@@ -2,6 +2,7 @@ import { Platform } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 // import NavigationService from './NavigationService-old'
+import { navigate } from './RootNavigation'
 import { actions as globalActions } from '../redux/global'
 import { store } from '../redux/configureStore'
 
@@ -12,6 +13,8 @@ getAttachmentsAsync = async (article) => {
 }
 
 export const handleArticlePress = (article, activeDomain, scrollToTop = false) => {
+    navigate('ArticleNavigator')
+    return
     // log the article to analytics
     Amplitude.logEventWithProperties('view story', {
         storyId: article.id,

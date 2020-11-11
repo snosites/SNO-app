@@ -6,7 +6,7 @@ import LottieView from 'lottie-react-native'
 import { connect } from 'react-redux'
 import { NavigationEvents, SafeAreaView } from 'react-navigation'
 
-import { CustomArticleHeader } from '../components/ArticleHeader'
+import { CustomArticleHeader } from '../components/ArticleNavigatorHeader'
 
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { getActiveDomain } from '../redux/domains'
@@ -15,7 +15,7 @@ import { actions as adActions, getStoryAds } from '../redux/ads'
 
 import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
 
-import { CustomArticleHeader } from '../components/ArticleHeader'
+import { CustomArticleHeader } from '../components/ArticleNavigatorHeader'
 import ArticleBodyContent from '../views/ArticleBodyContent'
 
 import layout from '../constants/Layout'
@@ -33,7 +33,7 @@ const ArticleScren = (props) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerTitle: () => <CustomArticleHeader />,
+            headerTitle: () => <CustomArticleHeader navigation={navigation} />,
         })
     }, [navigation, value])
 }

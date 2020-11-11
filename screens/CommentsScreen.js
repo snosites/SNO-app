@@ -23,7 +23,7 @@ import { getActiveDomain } from '../redux/domains'
 import Moment from 'moment'
 import Color from 'color'
 import HTML from 'react-native-render-html'
-import { CustomArticleHeader } from '../components/ArticleHeader'
+import { CustomArticleHeader } from '../components/ArticleNavigatorHeader'
 import { Ionicons } from '@expo/vector-icons'
 import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
 

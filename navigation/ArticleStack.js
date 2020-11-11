@@ -5,6 +5,7 @@ import * as Icon from '@expo/vector-icons'
 
 import HomeScreenContainer from '../containers/HomeScreenContainer'
 import ListScreenContainer from '../containers/ListScreenContainer'
+import ArticleNavigator from './ArticleNavigator'
 import FullArticleScreen from '../screens/FullArticleScreen'
 import SearchScreen from '../screens/SearchScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -92,7 +93,13 @@ const ArticleStack = (props) => {
                 component={ListScreenContainer}
                 options={{ title: activeCategory, headerTitle: CustomHeaderTitle }}
             />
-            <Stack.Screen name='Article' component={TestScreen} />
+            <Stack.Screen
+                name='ArticleNavigator'
+                component={ArticleNavigator}
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack.Navigator>
     )
 }
