@@ -62,7 +62,6 @@ const HomeScreen = (props) => {
                 sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
             }
         })
-
         return unsubscribe
     }, [navigation])
 
