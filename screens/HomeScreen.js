@@ -33,12 +33,12 @@ const HomeScreen = (props) => {
         articlesByCategory,
         categoryTitles,
         setActiveCategory,
+        saveArticle,
+        removeSavedArticle,
     } = props
 
     const { homeScreenCategories, homeScreenListStyle, homeScreenCategoryAmounts } = global
 
-    const [snackbarSavedVisible, setSnackbarSavedVisible] = useState(false)
-    const [snackbarRemovedVisible, setSnackbarRemovedVisible] = useState(false)
     const [ad, setAd] = useState(null)
     const isTablet = useIsTablet()
 
@@ -79,11 +79,6 @@ const HomeScreen = (props) => {
         })
     }
 
-    _handleArticleRemove = (articleId) => {
-        removeSavedArticle(articleId, activeDomain.id)
-        setSnackbarRemovedVisible(true)
-    }
-
     _loadMore = () => {
         fetchMoreArticlesIfNeeded({
             domain: activeDomain.url,
@@ -101,18 +96,10 @@ const HomeScreen = (props) => {
 
     _saveRemoveToggle = (article) => {
         if (article.saved) {
-            _handleArticleRemove(article.id)
+            removeSavedArticle(article.id, activeDomain.id)
         } else {
-            _handleArticleSave(article)
+            saveArticle(article, activeDomain.id)
         }
-    }
-
-    _handleArticleSave = (article) => {
-        const { activeDomain, saveArticle } = this.props
-        saveArticle(article, activeDomain.id)
-        this.setState({
-            snackbarSavedVisible: true,
-        })
     }
 
     if (articlesLoading) {
@@ -218,30 +205,6 @@ const HomeScreen = (props) => {
                     </View>
                 )
             })}
-            <Snackbar
-                visible={snackbarSavedVisible}
-                style={styles.snackbar}
-                duration={3000}
-                onDismiss={() => setSnackbarSavedVisible(false)}
-                action={{
-                    label: 'Dismiss',
-                    onPress: () => setSnackbarSavedVisible(false),
-                }}
-            >
-                Article Added To Saved List
-            </Snackbar>
-            <Snackbar
-                visible={snackbarRemovedVisible}
-                style={styles.snackbar}
-                duration={3000}
-                onDismiss={() => setSnackbarRemovedVisible(false)}
-                action={{
-                    label: 'Dismiss',
-                    onPress: () => setSnackbarRemovedVisible(false),
-                }}
-            >
-                Article Removed From Saved List
-            </Snackbar>
         </ScrollView>
     )
 }

@@ -12,6 +12,7 @@ import searchArticles from './search'
 import profiles from './profiles'
 import recentArticles from './recent'
 import ads from './ads'
+import snackbarQueue from './snackbarQueue'
 
 const appReducer = combineReducers({
     user,
@@ -27,6 +28,7 @@ const appReducer = combineReducers({
     profiles,
     recentArticles,
     ads,
+    snackbarQueue,
 })
 
 // if user chnges domain clear out domain specific state data

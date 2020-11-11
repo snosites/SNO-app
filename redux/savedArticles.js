@@ -1,7 +1,7 @@
 export const types = {
     SAVE_ARTICLE: 'SAVE_ARTICLE',
     REMOVE_SAVED_ARTICLE: 'REMOVE_SAVED_ARTICLE',
-    INITIALIZE_SAVED: 'INITIALIZE_SAVED'
+    INITIALIZE_SAVED: 'INITIALIZE_SAVED',
 }
 
 export default function savedArticlesBySchool(state = {}, action) {
@@ -11,7 +11,7 @@ export default function savedArticlesBySchool(state = {}, action) {
         case types.INITIALIZE_SAVED:
             return {
                 ...state,
-                [action.school]: savedArticles(state[action.school], action)
+                [action.school]: savedArticles(state[action.school], action),
             }
         default:
             return state
@@ -21,7 +21,7 @@ export default function savedArticlesBySchool(state = {}, action) {
 function savedArticles(state = [], action) {
     switch (action.type) {
         case types.SAVE_ARTICLE:
-            let found = state.find(article => {
+            let found = state.find((article) => {
                 return action.article.id == article.id
             })
             if (found) {
@@ -29,7 +29,7 @@ function savedArticles(state = [], action) {
             }
             return [...state, action.article]
         case types.REMOVE_SAVED_ARTICLE:
-            return state.filter(article => {
+            return state.filter((article) => {
                 return article.id !== action.articleId
             })
         default:
@@ -47,5 +47,5 @@ export const actions = {
     },
     initializeSaved(schoolId) {
         return { type: types.INITIALIZE_SAVED, school: schoolId }
-    }
+    },
 }

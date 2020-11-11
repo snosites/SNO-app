@@ -11,6 +11,7 @@ import * as RootNavigation from '../utils/RootNavigation'
 
 import AuthStack from '../navigation/AuthStack'
 import MainStackContainer from '../containers/MainStackContainer'
+import SnackbarQueue from './SnackbarQueue'
 // import NotificationAlert from './NotificationAlert'
 
 import * as SplashScreen from 'expo-splash-screen'
@@ -110,6 +111,7 @@ const AppContainer = (props) => {
                         <Stack.Screen name='Main' component={MainStackContainer} />
                     )}
                 </Stack.Navigator>
+                <SnackbarQueue />
             </View>
             {/* <NotificationAlert /> */}
         </PaperProvider>
