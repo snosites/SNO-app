@@ -20,7 +20,7 @@ import ErrorView from '../components/ErrorView'
 
 import { useIsTablet } from '../utils/helpers'
 
-// import ArticleListItem from '../views/ArticleListItem'
+import ArticleListItem from '../views/ArticleListItem'
 
 const HomeScreen = (props) => {
     const {
@@ -30,10 +30,7 @@ const HomeScreen = (props) => {
         homeAds,
         sendAdAnalytic,
         activeDomain,
-        isLoading,
         articlesLoading,
-        articlesByCategory,
-        categoryTitles,
         setActiveCategory,
         saveArticle,
         removeSavedArticle,
@@ -98,14 +95,6 @@ const HomeScreen = (props) => {
         flatListRef = ref
     }
 
-    _saveRemoveToggle = (article) => {
-        if (article.saved) {
-            removeSavedArticle(article.id, activeDomain.id)
-        } else {
-            saveArticle(article, activeDomain.id)
-        }
-    }
-
     if (articlesLoading) {
         return (
             <SafeAreaView
@@ -133,71 +122,54 @@ const HomeScreen = (props) => {
         <SectionList
             sections={homeScreenData}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => <Text>{index}</Text>}
-            renderSectionHeader={({ section: { title } }) => (
-                <TouchableOpacity
-                    onPress={() => {
-                        // navigation.navigate('List', {
-                        //     categoryId: homeScreenCategories[i],
-                        // })
-                        // setActiveCategory(homeScreenCategories[i])
-                    }}
-                    style={{
-                        backgroundColor: theme.colors.homeScreenCategoryTitle,
-                        justifyContent: 'center',
-                        paddingVertical: 10,
-                        shadowColor: '#000',
-                        shadowOffset: {
-                            width: 0,
-                            height: 2,
-                        },
-                        shadowOpacity: 0.23,
-                        shadowRadius: 2.62,
-
-                        elevation: 4,
-                    }}
-                >
-                    <HTML
-                        html={title}
-                        baseFontStyle={{ fontSize: 28 }}
-                        tagsStyles={{
-                            rawtext: {
-                                fontSize: 28,
-                                fontWeight: 'bold',
-                                color: theme.homeScreenCategoryTitleIsDark ? 'white' : 'black',
-                                textAlign: 'center',
-                            },
-                        }}
-                    />
-                </TouchableOpacity>
+            renderItem={({ item, index }) => (
+                <ArticleListItem
+                    article={item}
+                    storyListStyle={homeScreenListStyle}
+                    index={index}
+                />
             )}
+            renderSectionHeader={({ section: { title, id } }) => {
+                return (
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('List', {
+                                categoryId: id,
+                            })
+                            setActiveCategory(id)
+                        }}
+                        style={{
+                            backgroundColor: theme.colors.homeScreenCategoryTitle,
+                            justifyContent: 'center',
+                            paddingVertical: 10,
+                            shadowColor: '#000',
+                            shadowOffset: {
+                                width: 0,
+                                height: 2,
+                            },
+                            shadowOpacity: 0.23,
+                            shadowRadius: 2.62,
+
+                            elevation: 4,
+                        }}
+                    >
+                        <HTML
+                            html={title}
+                            baseFontStyle={{ fontSize: 28 }}
+                            tagsStyles={{
+                                rawtext: {
+                                    fontSize: 28,
+                                    fontWeight: 'bold',
+                                    color: theme.homeScreenCategoryTitleIsDark ? 'white' : 'black',
+                                    textAlign: 'center',
+                                },
+                            }}
+                        />
+                    </TouchableOpacity>
+                )
+            }}
         />
     )
 }
-
-const styles = StyleSheet.create({
-    snackbar: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-    },
-    title: {
-        ...Platform.select({
-            ios: {
-                fontSize: 17,
-                fontWeight: '600',
-            },
-            android: {
-                fontSize: 20,
-                fontWeight: '500',
-            },
-            default: {
-                fontSize: 18,
-                fontWeight: '400',
-            },
-        }),
-    },
-})
 
 export default HomeScreen

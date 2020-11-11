@@ -23,7 +23,7 @@ const Stack = createStackNavigator()
 const ArticleStack = (props) => {
     const { homeScreenMode, theme, activeCategory, headerLogo, navigation } = props
 
-    console.log('header logo', headerLogo)
+    console.log('header logo', activeCategory)
     const CustomHeaderTitle = ({ children }) => {
         return (
             <HTML

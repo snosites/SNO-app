@@ -2,6 +2,10 @@ import React from 'react'
 import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
 import Moment from 'moment'
 
+import { connect } from 'react-redux'
+import { getActiveDomain } from '../redux/domains'
+import { actions as savedArticleActions } from '../redux/savedArticles'
+
 import SmallThumbnailListItem from '../components/SmallThumbnailListItem'
 import AlternatingThumbnailListItem from '../components/AlternatingThumbnailListItem'
 import LargeThumbnailListItem from '../components/LargeThumbnailListItem'
@@ -14,18 +18,24 @@ Moment.updateLocale('en', {
     },
 })
 
-export default (props) => {
+const ArticleListItem = (props) => {
     const {
         article,
-        theme,
-        onIconPress,
-        deleteIcon,
+        index,
         activeDomain,
+        theme,
         enableComments,
         storyListStyle,
+        deleteIcon = false,
     } = props
 
-    const article = item
+    _saveRemoveToggle = (article) => {
+        if (article.saved) {
+            removeSavedArticle(article.id, activeDomain.id)
+        } else {
+            saveArticle(article, activeDomain.id)
+        }
+    }
 
     switch (storyListStyle) {
         case 'large':
@@ -35,7 +45,7 @@ export default (props) => {
                     activeDomain={activeDomain}
                     theme={theme}
                     deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
+                    onIconPress={_saveRemoveToggle}
                     enableComments={enableComments}
                 />
             )
@@ -46,7 +56,7 @@ export default (props) => {
                     activeDomain={activeDomain}
                     theme={theme}
                     deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
+                    onIconPress={_saveRemoveToggle}
                     enableComments={enableComments}
                     alternate={index % 2 === 0}
                 />
@@ -58,7 +68,7 @@ export default (props) => {
                     activeDomain={activeDomain}
                     theme={theme}
                     deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
+                    onIconPress={_saveRemoveToggle}
                     enableComments={enableComments}
                     large={index % 4 === 0}
                 />
@@ -70,7 +80,7 @@ export default (props) => {
                     activeDomain={activeDomain}
                     theme={theme}
                     deleteIcon={deleteIcon}
-                    onIconPress={onIconPress}
+                    onIconPress={_saveRemoveToggle}
                     enableComments={enableComments}
                 />
             )
@@ -101,3 +111,18 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
 })
+
+const mapStateToProps = (state) => ({
+    theme: state.theme,
+    activeDomain: getActiveDomain(state),
+    enableComments: state.global.enableComments,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    saveArticle: (article, domainId) =>
+        dispatch(savedArticleActions.saveArticle(article, domainId)),
+    removeSavedArticle: (articleId, domainId) =>
+        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ArticleListItem)

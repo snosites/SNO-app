@@ -38,9 +38,9 @@ const mapStateToProps = (state) => {
         }
 
         homeScreenData.push({
-            title: state.global.menuItems.find(
-                (menuItem) => menuItem.object_id == homeScreenCategories[i]
-            ).title,
+            title: state.global.menuItems.find((menuItem) => menuItem.object_id == categoryId)
+                .title,
+            id: categoryId,
             data: matchedArticles,
         })
     }

@@ -1,8 +1,9 @@
 import { connect } from 'react-redux'
 import ArticleStack from '../navigation/ArticleStack'
 
-const getActiveCategoryTitle = (menus, categoryId) =>
-    menus.find((menu) => menu.object_id === categoryId).title
+const getActiveCategoryTitle = (menus, categoryId) => {
+    return menus.find((menu) => menu.object_id == categoryId).title
+}
 
 const mapStateToProps = (state) => ({
     homeScreenMode: state.global.homeScreenMode,
