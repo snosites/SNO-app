@@ -23,6 +23,7 @@ const Stack = createStackNavigator()
 const ArticleStack = (props) => {
     const { homeScreenMode, theme, activeCategory, headerLogo, navigation } = props
 
+    console.log('header logo', headerLogo)
     const CustomHeaderTitle = ({ children }) => {
         return (
             <HTML
@@ -68,16 +69,18 @@ const ArticleStack = (props) => {
                         </TouchableOpacity>
                     )
                 },
-                headerLeft: (props) => {
-                    headerLogo && (
-                        <Image
-                            source={{ uri: headerLogo }}
-                            style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
-                            resizeMode='contain'
-                        />
-                    )
+                headerLeft: () => {
+                    if (headerLogo) {
+                        return (
+                            <Image
+                                source={{ uri: headerLogo }}
+                                style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
+                                resizeMode='contain'
+                            />
+                        )
+                    }
+                    return null
                 },
-                headerBackTitle: null,
                 headerTitleAlign: 'center',
             }}
         >

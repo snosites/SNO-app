@@ -17,11 +17,11 @@ const ArticleNavigator = (props) => {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerShown: true,
                 headerStyle: {
                     backgroundColor: theme.colors.primary,
                 },
-                headerBackTitle: null,
+                headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
+                headerBackTitleVisible: false,
                 headerTitleAlign: 'center',
                 headerTitle: () => <ArticleNavigatorHeader route={route} navigation={navigation} />,
             }}
