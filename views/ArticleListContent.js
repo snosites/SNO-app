@@ -26,42 +26,42 @@ export default class ArticleListContent extends React.Component {
             listAds,
         } = this.props
         return (
-            <View style={{ flex: 1 }}>
-                <FlatList
-                    Style={{ flex: 1, marginVertical: 5 }}
-                    data={articleList}
-                    keyExtractor={(item) => item.id.toString()}
-                    // ref={(ref) => {
-                    //     if (saveRef) {
-                    //         saveRef(ref)
-                    //     }
-                    //     return
-                    // }}
-                    onEndReachedThreshold={0.25}
-                    onEndReached={() => {
-                        if (!this.onEndReachedCalledDuringMomentum && loadMore) {
-                            loadMore()
-                            this.onEndReachedCalledDuringMomentum = true
-                        }
-                    }}
-                    onRefresh={handleRefresh ? handleRefresh : null}
-                    refreshing={isRefreshing}
-                    onMomentumScrollBegin={() => {
-                        this.onEndReachedCalledDuringMomentum = false
-                    }}
-                    ListFooterComponent={() => {
-                        if (!isFetching) {
-                            return null
-                        }
-                        return (
-                            <View style={styles.loadingMore}>
-                                <ActivityIndicator />
-                            </View>
-                        )
-                    }}
-                    renderItem={this._renderItem}
-                />
-            </View>
+            // <View style={{ flex: 1 }}>
+            <FlatList
+                Style={{ flex: 1, marginVertical: 5 }}
+                data={articleList}
+                keyExtractor={(item) => item.id.toString()}
+                // ref={(ref) => {
+                //     if (saveRef) {
+                //         saveRef(ref)
+                //     }
+                //     return
+                // }}
+                onEndReachedThreshold={0.25}
+                onEndReached={() => {
+                    if (!this.onEndReachedCalledDuringMomentum && loadMore) {
+                        loadMore()
+                        this.onEndReachedCalledDuringMomentum = true
+                    }
+                }}
+                onRefresh={handleRefresh ? handleRefresh : null}
+                refreshing={isRefreshing}
+                onMomentumScrollBegin={() => {
+                    this.onEndReachedCalledDuringMomentum = false
+                }}
+                ListFooterComponent={() => {
+                    if (!isFetching) {
+                        return null
+                    }
+                    return (
+                        <View style={styles.loadingMore}>
+                            <ActivityIndicator />
+                        </View>
+                    )
+                }}
+                renderItem={this._renderItem}
+            />
+            // </View>
         )
     }
 

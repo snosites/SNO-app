@@ -5,44 +5,23 @@ import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { actions as adActions, getHomeAds } from '../redux/ads'
-import { createLoadingSelector } from '../redux/loading'
 
 import { getActiveDomain } from '../redux/domains'
-
-const homeScreenLoadingSelector = createLoadingSelector([globalTypes.FETCH_HOME_SCREEN_ARTICLES])
 
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     const homeScreenCategories = state.global.homeScreenCategories
+    const homeScreenCategoryAmounts = state.global.homeScreenCategoryAmounts
 
-    if (!homeScreenCategories.length) {
-        return {
-            theme: state.theme,
-            activeDomain,
-            menus: state.global.menuItems,
-            global: state.global,
-            articlesByCategory: [],
-            isLoading: homeScreenLoadingSelector(state),
-            articlesLoading: false,
-            homeAds: getHomeAds(state),
-        }
-    }
-    return {
-        homeAds: getHomeAds(state),
-        theme: state.theme,
-        activeDomain,
-        menus: state.global.menuItems,
-        global: state.global,
-        isLoading: homeScreenLoadingSelector(state),
-        categoryTitles: homeScreenCategories.map((category) => {
-            return state.global.menuItems.find((menuItem) => menuItem.object_id == category).title
-        }),
-        articlesByCategory: homeScreenCategories.map((categoryId) => {
-            if (
-                state.articlesByCategory[categoryId] &&
-                state.articlesByCategory[categoryId].items
-            ) {
-                return state.articlesByCategory[categoryId].items.map((articleId) => {
+    const homeScreenData = []
+
+    for (let i = 0; i < homeScreenCategories.length; i++) {
+        const categoryId = homeScreenCategories[i]
+        let matchedArticles = []
+
+        if (state.articlesByCategory[categoryId] && state.articlesByCategory[categoryId].items) {
+            matchedArticles = state.articlesByCategory[categoryId].items
+                .map((articleId) => {
                     const found = state.savedArticlesBySchool[activeDomain.id].find(
                         (savedArticle) => {
                             return savedArticle.id == articleId
@@ -55,10 +34,36 @@ const mapStateToProps = (state) => {
                     }
                     return state.entities.articles[articleId]
                 })
-            } else {
-                return []
-            }
-        }),
+                .slice(0, Number(homeScreenCategoryAmounts[i]))
+        }
+
+        homeScreenData.push({
+            title: state.global.menuItems.find(
+                (menuItem) => menuItem.object_id == homeScreenCategories[i]
+            ).title,
+            data: matchedArticles,
+        })
+    }
+
+    if (!homeScreenCategories.length) {
+        return {
+            theme: state.theme,
+            activeDomain,
+            menus: state.global.menuItems,
+            global: state.global,
+            homeScreenData: homeScreenData,
+            articlesLoading: false,
+            homeAds: getHomeAds(state),
+        }
+    }
+
+    return {
+        homeAds: getHomeAds(state),
+        theme: state.theme,
+        activeDomain,
+        menus: state.global.menuItems,
+        global: state.global,
+        homeScreenData: homeScreenData,
         articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
             if (state.articlesByCategory[categoryId]) {
                 return state.articlesByCategory[categoryId].isFetching
