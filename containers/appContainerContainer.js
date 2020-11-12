@@ -18,12 +18,14 @@ const mapStateToProps = (state) => {
         initializeUserErrorSelector: initializeUserErrorSelector(state),
         activeDomain: getActiveDomain(state),
         user: state.user.user,
+        initialized: state.global.initialized,
         // fromDeepLink: state.global.fromDeepLink,
     }
 }
 
 const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
+    setInitialized: (payload) => dispatch(globalActions.setInitialized(payload)),
     // initializeDeepLinkUser: (params) => dispatch(globalActions.initializeDeepLinkUser(params)),
     // setDeepLinkArticle: (payload) => dispatch(globalActions.setDeepLinkArticle(payload)),
     // setFromDeepLink: (payload) => dispatch(globalActions.setFromDeepLink(payload)),

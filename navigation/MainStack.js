@@ -30,7 +30,7 @@ export default (props) => {
             animationRef.current.reset()
             animationRef.current.play()
         }
-        if (!initialized) startup(activeDomain)
+        if (!initialized && activeDomain.id) startup(activeDomain)
     }, [initialized])
 
     if (!initialized) {

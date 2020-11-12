@@ -36,6 +36,7 @@ const AppContainer = (props) => {
         user,
         initializeUser,
         initializeUserLoading,
+        setInitialized,
         initializeUserError,
         initializeDeepLinkUser,
         activeDomain,
@@ -44,6 +45,7 @@ const AppContainer = (props) => {
         setFromDeepLink,
         theme,
         homeScreenMode,
+        initialized,
     } = props
 
     // let primaryColor = Color(theme.colors.primary)
@@ -63,7 +65,10 @@ const AppContainer = (props) => {
     }, [initializeUserLoading])
 
     useEffect(() => {
-        if (!activeDomain.id) hideSplashScreen()
+        if (!activeDomain.id) {
+            hideSplashScreen()
+            if (initialized) setInitialized(false)
+        }
     }, [activeDomain])
 
     // useEffect(() => {

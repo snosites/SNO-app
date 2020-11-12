@@ -257,7 +257,7 @@ const SettingsScreen = (props) => {
                     onPress={() => {
                         Haptics.selectionAsync()
                         setActiveDomain(null)
-                        setTimeout(() => setInitialized(false), 1000)
+                        // setTimeout(() => setInitialized(false), 1000)
                     }}
                 />
                 <Divider />
