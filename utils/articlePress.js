@@ -2,7 +2,7 @@ import { Platform } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 // import NavigationService from './NavigationService-old'
-import { navigate } from './RootNavigation'
+import { navigate, push } from './RootNavigation'
 import { actions as globalActions } from '../redux/global'
 import { store } from '../redux/configureStore'
 
@@ -13,8 +13,6 @@ getAttachmentsAsync = async (article) => {
 }
 
 export const handleArticlePress = (article, activeDomain, scrollToTop = false) => {
-    navigate('ArticleNavigator')
-    return
     // log the article to analytics
     Amplitude.logEventWithProperties('view story', {
         storyId: article.id,
@@ -29,15 +27,18 @@ export const handleArticlePress = (article, activeDomain, scrollToTop = false) =
             article.custom_fields.sno_format == 'Full-Width' ||
             article.custom_fields.sno_format == 'Side-Rails')
     ) {
+        console.log('scroll to top', scrollToTop)
         handleRegularArticle(article, scrollToTop)
     } else {
-        handleLongFormArticle(article, activeDomain, scrollToTop)
+        console.log('long form')
+        // handleLongFormArticle(article, activeDomain, scrollToTop)
     }
 }
 
 handleRegularArticle = async (article, scrollToTop) => {
     Haptics.selectionAsync()
-    NavigationService.navigate('FullArticle', { scrollToTop })
+    // NavigationService.navigate('FullArticle', { scrollToTop })
+    navigate('ArticleNavigator', { screen: 'Article', params: {}, comments: article.comments })
     // check if there is a slideshow
     if (
         article.custom_fields.featureimage &&
@@ -45,13 +46,18 @@ handleRegularArticle = async (article, scrollToTop) => {
     ) {
         article.slideshow = await getAttachmentsAsync(article)
     }
-    NavigationService.navigate('FullArticle', {
-        articleId: article.id,
-        article,
-        commentNumber: article.comments.length,
+    navigate('ArticleNavigator', {
+        screen: 'Article',
+        params: { article },
         comments: article.comments,
-        scrollToTop,
     })
+    // NavigationService.navigate('FullArticle', {
+    //     articleId: article.id,
+    //     article,
+    //     commentNumber: article.comments.length,
+    //     comments: article.comments,
+    //     scrollToTop,
+    // })
 }
 
 handleLongFormArticle = async (article, activeDomain, scrollToTop) => {

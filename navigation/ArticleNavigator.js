@@ -5,6 +5,7 @@ import * as Icon from '@expo/vector-icons'
 import { connect } from 'react-redux'
 
 import ArticleNavigatorHeader from '../components/ArticleNavigatorHeader'
+import ArticleScreenContainer from '../containers/ArticleScreenContainer'
 import TestScreen from '../screens/TestScreen'
 
 import HTML from 'react-native-render-html'
@@ -12,21 +13,25 @@ import HTML from 'react-native-render-html'
 const Stack = createStackNavigator()
 
 const ArticleNavigator = (props) => {
-    const { homeScreenMode, theme, activeCategory, navigation, route } = props
+    const { theme } = props
 
     return (
         <Stack.Navigator
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor: theme.colors.primary,
-                },
-                headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
-                headerBackTitleVisible: false,
-                headerTitleAlign: 'center',
-                headerTitle: () => <ArticleNavigatorHeader route={route} navigation={navigation} />,
+            screenOptions={({ route, navigation }) => {
+                return {
+                    headerStyle: {
+                        backgroundColor: theme.colors.primary,
+                    },
+                    headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerTitle: () => (
+                        <ArticleNavigatorHeader route={route} navigation={navigation} />
+                    ),
+                }
             }}
         >
-            <Stack.Screen name='Article' component={TestScreen} />
+            <Stack.Screen name='Article' component={ArticleScreenContainer} />
             <Stack.Screen name='Comments' component={TestScreen} />
         </Stack.Navigator>
     )

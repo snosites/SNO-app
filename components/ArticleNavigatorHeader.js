@@ -6,21 +6,13 @@ import { connect } from 'react-redux'
 import { actions as snackbarQueueActions } from '../redux/snackbarQueue'
 
 const ArticleNavigatorHeader = (props) => {
-    const {
-        route,
-        navigation,
-        state,
-        theme,
-        enableComments,
-        commentNumber,
-        comments,
-        articleId,
-    } = props
+    const { route, navigation, theme, enableComments } = props
     // let commentNumber = navigation.getParam('commentNumber', 0)
-    // let comments = navigation.getParam('comments', null)
-    // let articleId = navigation.getParam('articleId', null)
-    // let primaryColor = Color(theme.colors.primary)
-    // let isDark = primaryColor.isDark()
+
+    const comments = route && route.params && route.params.comments ? route.params.comments : []
+    const articleId = route && route.params ? route.params.articleId : null
+
+    console.log('route', route, comments)
 
     const baseStyle = {
         paddingHorizontal: 5,
@@ -67,14 +59,14 @@ const ArticleNavigatorHeader = (props) => {
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
-                            // navigation.navigate('Comments', {
-                            //     comments,
-                            //     articleId,
-                            // })
+                            navigation.navigate('Comments', {
+                                comments,
+                                articleId,
+                            })
                         }}
                     >
                         <Text style={commentStyle}>Comments</Text>
-                        {/* {commentNumber ? (
+                        {comments.length ? (
                             <Badge
                                 style={{
                                     position: 'absolute',
@@ -83,9 +75,9 @@ const ArticleNavigatorHeader = (props) => {
                                     backgroundColor: theme.primaryIsDark ? 'white' : 'black',
                                 }}
                             >
-                                {commentNumber}
+                                {comments.length}
                             </Badge>
-                        ) : null} */}
+                        ) : null}
                     </TouchableOpacity>
                 </View>
             )}
