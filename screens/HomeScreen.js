@@ -39,8 +39,6 @@ const HomeScreen = (props) => {
 
     const { homeScreenListStyle, enableComments } = global
 
-    console.log('home screen stuff', homeScreenData)
-
     const [ad, setAd] = useState(null)
     const isTablet = useIsTablet()
 
@@ -68,8 +66,10 @@ const HomeScreen = (props) => {
     }, [navigation])
 
     _playAnimation = () => {
-        animationRef.current.reset()
-        animationRef.current.play()
+        if (animationRef && animationRef.current) {
+            animationRef.current.reset()
+            animationRef.current.play()
+        }
     }
 
     _handleRefresh = () => {

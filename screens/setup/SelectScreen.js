@@ -53,6 +53,7 @@ const SelectScreen = (props) => {
             // if already added then set as active -- dont save
             if (found) {
                 setActiveDomain(selectedDomain.id)
+
                 return
             }
 

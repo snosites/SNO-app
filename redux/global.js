@@ -83,6 +83,7 @@ const initialState = {
 export default function global(state = initialState, action) {
     switch (action.type) {
         case types.STARTUP_REQUEST:
+            // case domainTypes.SET_ACTIVE_DOMAIN:
             return {
                 ...state,
                 initialized: false,

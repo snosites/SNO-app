@@ -37,9 +37,10 @@ const mapStateToProps = (state) => {
                 .slice(0, Number(homeScreenCategoryAmounts[i]))
         }
 
+        const category = state.global.menuItems.find((menuItem) => menuItem.object_id == categoryId)
+
         homeScreenData.push({
-            title: state.global.menuItems.find((menuItem) => menuItem.object_id == categoryId)
-                .title,
+            title: category ? category.title : '',
             id: categoryId,
             data: matchedArticles,
         })

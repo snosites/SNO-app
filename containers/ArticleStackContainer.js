@@ -2,7 +2,11 @@ import { connect } from 'react-redux'
 import ArticleStack from '../navigation/ArticleStack'
 
 const getActiveCategoryTitle = (menus, categoryId) => {
-    return menus.find((menu) => menu.object_id == categoryId).title
+    const category = menus.find((menu) => menu.object_id == categoryId)
+    if (category) {
+        return category.title
+    }
+    return ''
 }
 
 const mapStateToProps = (state) => ({

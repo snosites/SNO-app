@@ -11,6 +11,7 @@ import TabBarIcon from '../components/TabBarIcon'
 
 // import AppSetupScreen from '../screens/AppSetupScreen'
 import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
+import SettingsStackContainer from '../containers/SettingsStackContainer'
 // import SettingsScreen from '../screens/SettingsScreen'
 // import SavedScreen from '../screens/SavedScreen'
 // import RecentScreen from '../screens/RecentScreen'
@@ -139,44 +140,10 @@ import TestScreen from '../screens/TestScreen'
 //     }
 // }
 
-// const SettingsStack = createStackNavigator(
-//     {
-//         Settings: SettingsScreen,
-//     },
-//     {
-//         defaultNavigationOptions: ({ screenProps }) => {
-//             let primaryColor = Color(screenProps.theme.colors.primary)
-//             let isDark = primaryColor.isDark()
-//             return {
-//                 headerStyle: {
-//                     backgroundColor: screenProps.theme.colors.primary,
-//                 },
-//                 headerTintColor: isDark ? '#fff' : '#000',
-//             }
-//         },
-//     }
-// )
-
-// SettingsStack.navigationOptions = ({ screenProps }) => {
-//     const { theme } = screenProps
-//     return {
-//         tabBarLabel: 'Settings',
-//         tabBarIcon: ({ focused, horizontal }) => (
-//             <TabBarIcon
-//                 focused={focused}
-//                 horizontal={horizontal}
-//                 color={theme.colors.primary}
-//                 name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
-//             />
-//         ),
-//     }
-// }
-
 const Tab = createBottomTabNavigator()
 
 export default (props) => {
     const { theme, sportCenterEnabled } = props
-    console.log('theme', theme)
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -210,7 +177,7 @@ export default (props) => {
             <Tab.Screen name='Recent' component={TestScreen} />
             <Tab.Screen name='Saved' component={TestScreen} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={TestScreen} />}
-            <Tab.Screen name='Settings' component={TestScreen} />
+            <Tab.Screen name='Settings' component={SettingsStackContainer} />
         </Tab.Navigator>
     )
 }

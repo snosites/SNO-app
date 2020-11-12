@@ -1,6 +1,7 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects'
 
 import { types as savedArticleTypes, actions as savedArticleActions } from '../redux/savedArticles'
+import { types as domainTypes, actions as domainActions } from '../redux/domains'
 import {
     types as snackbarQueueTypes,
     actions as snackbarQueueActions,
@@ -22,6 +23,7 @@ function* snackbarQueue() {
             addToQueue,
             'Article Removed From Saved List'
         ),
+        takeLatest(domainTypes.DELETE_DOMAIN, addToQueue, 'Organization Removed'),
     ])
 }
 
