@@ -33,7 +33,6 @@ export function* fetchMenu(action) {
         // fetch updated categories list
         const updatedDbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
 
-        console.log('updated db categories', updatedDbCategories)
         // // make sure there is at least one menu
         if (updatedDbCategories.length === 0) {
             throw new Error('no menus in DB for school')

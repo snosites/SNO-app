@@ -64,11 +64,8 @@ function* loadActiveDomain() {
         }
         // no active domain navigate to auth
         else {
-            console.log('no active domain', activeDomain)
             yield call(SplashScreen.hideAsync)
             return
-
-            // NavigationService.navigate('Auth')
         }
         yield put(domainsActions.loadActiveDomainSuccess())
         return

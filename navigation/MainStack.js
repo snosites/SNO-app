@@ -10,7 +10,6 @@ import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
 
 import { getReleaseChannel } from '../constants/config'
-import { init } from 'sentry-expo'
 
 const version = getReleaseChannel()
 

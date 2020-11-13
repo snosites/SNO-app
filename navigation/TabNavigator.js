@@ -1,147 +1,14 @@
 import React from 'react'
 import { Platform } from 'react-native'
-// import { createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
-// import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-// import Color from 'color'
-
-// import ConnectedBottomTabBar from '../components/ConnectedBottomTabBar'
 import TabBarIcon from '../components/TabBarIcon'
 
-// import AppSetupScreen from '../screens/AppSetupScreen'
 import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
 import SavedStack from '../navigation/SavedStack'
 import RecentStack from '../navigation/RecentStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
 import SportcenterStack from '../navigation/SportcenterStack'
-// import SettingsScreen from '../screens/SettingsScreen'
-// import SavedScreen from '../screens/SavedScreen'
-// import RecentScreen from '../screens/RecentScreen'
-// import SportcenterScreen from '../screens/SportcenterScreen'
-
-// import FullArticleScreen from '../screens/FullArticleScreen'
-// import ProfileScreen from '../screens/ProfileScreen'
-// import CommentsScreen from '../screens/CommentsScreen'
-// import StaffScreen from '../screens/StaffScreen'
-// import ErrorScreen from '../screens/ErrorScreen'
-
-import TestScreen from '../screens/TestScreen'
-
-// const RecentStack = createStackNavigator(
-//     {
-//         Recent: RecentScreen,
-//         FullArticle: FullArticleScreen,
-//         Profile: ProfileScreen,
-//         Comments: CommentsScreen,
-//         Staff: StaffScreen,
-//     },
-//     {
-//         defaultNavigationOptions: ({ screenProps }) => {
-//             let primaryColor = Color(screenProps.theme.colors.primary)
-//             let isDark = primaryColor.isDark()
-//             return {
-//                 headerStyle: {
-//                     backgroundColor: screenProps.theme.colors.primary,
-//                 },
-//                 headerTintColor: isDark ? '#fff' : '#000',
-//             }
-//         },
-//     }
-// )
-
-// RecentStack.navigationOptions = ({ screenProps }) => {
-//     const { theme } = screenProps
-//     return {
-//         tabBarLabel: 'Recent',
-//         tabBarIcon: ({ focused }) => (
-//             <TabBarIcon focused={focused} color={theme.colors.primary} name={'md-funnel'} />
-//         ),
-//         tabBarOnPress: ({ navigation }) => {
-//             navigation.navigate('Recent', {
-//                 scrollToTop: true,
-//             })
-//         },
-//     }
-// }
-
-// const BookmarkStack = createStackNavigator(
-//     {
-//         Saved: SavedScreen,
-//         FullArticle: FullArticleScreen,
-//         Profile: ProfileScreen,
-//         Comments: CommentsScreen,
-//         Staff: StaffScreen,
-//     },
-//     {
-//         defaultNavigationOptions: ({ screenProps }) => {
-//             let primaryColor = Color(screenProps.theme.colors.primary)
-//             let isDark = primaryColor.isDark()
-//             return {
-//                 headerStyle: {
-//                     backgroundColor: screenProps.theme.colors.primary,
-//                 },
-//                 headerTintColor: isDark ? '#fff' : '#000',
-//             }
-//         },
-//     }
-// )
-
-// BookmarkStack.navigationOptions = ({ screenProps }) => {
-//     const { theme } = screenProps
-//     return {
-//         tabBarLabel: 'Saved',
-//         tabBarIcon: ({ focused }) => (
-//             <TabBarIcon
-//                 focused={focused}
-//                 color={theme.colors.primary}
-//                 name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-//             />
-//         ),
-//         tabBarOnPress: ({ navigation }) => {
-//             navigation.navigate('Saved', {
-//                 scrollToTop: true,
-//             })
-//         },
-//     }
-// }
-
-// const SportcenterStack = createStackNavigator(
-//     {
-//         Sportcenter: SportcenterScreen,
-//     },
-//     {
-//         defaultNavigationOptions: ({ screenProps }) => {
-//             let primaryColor = Color(screenProps.theme.colors.primary)
-//             let isDark = primaryColor.isDark()
-//             return {
-//                 headerStyle: {
-//                     backgroundColor: screenProps.theme.colors.primary,
-//                 },
-//                 headerTintColor: isDark ? '#fff' : '#000',
-//             }
-//         },
-//     }
-// )
-
-// SportcenterStack.navigationOptions = ({ screenProps }) => {
-//     const { theme } = screenProps
-//     return {
-//         tabBarLabel: 'Sports Center',
-//         tabBarIcon: ({ focused }) => (
-//             <TabBarIcon
-//                 focused={focused}
-//                 color={theme.colors.primary}
-//                 name={Platform.OS === 'ios' ? 'ios-basketball' : 'md-basketball'}
-//             />
-//         ),
-//         tabBarOnPress: ({ navigation }) => {
-//             navigation.navigate('SportcenterStack', {
-//                 scrollToTop: true,
-//             })
-//         },
-//     }
-// }
 
 const Tab = createBottomTabNavigator()
 

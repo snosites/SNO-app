@@ -1,15 +1,12 @@
 import React from 'react'
-import { TouchableOpacity, Image, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as Icon from '@expo/vector-icons'
 import { connect } from 'react-redux'
 
 import ArticleNavigatorHeader from '../components/ArticleNavigatorHeader'
 import ArticleScreenContainer from '../containers/ArticleScreenContainer'
 import TestScreen from '../screens/TestScreen'
 
-import HTML from 'react-native-render-html'
-
+//TODO: Add comments screen
 const Stack = createStackNavigator()
 
 const ArticleNavigator = (props) => {

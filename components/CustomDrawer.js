@@ -48,7 +48,6 @@ function CustomDrawerContent(props) {
     _handleMenuPress = (item, index) => {
         navigation.closeDrawer()
         if (item.object === 'category') {
-            console.log('category page', item)
             // log category press to analytics
             Amplitude.logEventWithProperties('click category', {
                 categoryId: item.object_id,
@@ -67,7 +66,6 @@ function CustomDrawerContent(props) {
             setActiveCategory(item.object_id)
         } else if (item.object === 'page') {
             if (item.template === 'snostaff.php') {
-                console.log('staff page', item)
                 // log to analytics
                 Amplitude.logEventWithProperties('click page', {
                     pageType: 'staff',
@@ -83,6 +81,8 @@ function CustomDrawerContent(props) {
             } else if (!item.template) {
                 // default template
                 console.log('page default template')
+                // TODO: add default page
+
                 // navigation.navigate('DefaultPage', {
                 //     menuTitle: item.title,
                 //     pageId: item.object_id,

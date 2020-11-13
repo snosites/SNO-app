@@ -1,13 +1,8 @@
 import React from 'react'
-import { TouchableOpacity, Image, Text } from 'react-native'
+import { Image } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as Icon from '@expo/vector-icons'
 
 import SettingsScreenContainer from '../containers/SettingsScreenContainer'
-
-import TestScreen from '../screens/TestScreen'
-
-import HTML from 'react-native-render-html'
 
 const Stack = createStackNavigator()
 

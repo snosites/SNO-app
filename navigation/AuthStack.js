@@ -8,19 +8,6 @@ import LocationSelectContainer from '../containers/LocationSelectContainer'
 
 const AuthStack = createStackNavigator()
 
-// const AuthStack = createStackNavigator({
-//     Init: InitScreen,
-//     Select: {
-//         screen: SelectScreen,
-//         path: 'select/:schoolId',
-//     },
-//     DeepSelect: {
-//         screen: DeepSelectScreen,
-//         path: 'deepSelect/:schoolId',
-//     },
-//     LocationSelect: LocationSelect,
-// })
-
 export default () => {
     return (
         <AuthStack.Navigator>

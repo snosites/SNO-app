@@ -36,8 +36,6 @@ function* fetchProfileArticles(action) {
         // get list of articles written by writer
         const authorArticles = yield call(domainApiService.fetchProfileArticles, url, writerTermId)
 
-        console.log('writer aeticles', authorArticles)
-
         if (authorArticles.length == 0) {
             throw new Error('no posts')
         }
@@ -46,17 +44,17 @@ function* fetchProfileArticles(action) {
 
         // get the full posts for all articles
         const updatedArticlesByWriter = yield all(
-            articlesByWriter.map(article => {
+            articlesByWriter.map((article) => {
                 return call(fetchAuthorArticle, url, article.ID)
             })
         )
         // filter out any bad requests
-        const verifiedArticlesByWriter = updatedArticlesByWriter.filter(article => {
+        const verifiedArticlesByWriter = updatedArticlesByWriter.filter((article) => {
             return !!article.id
         })
         // get featured images
         yield all(
-            verifiedArticlesByWriter.map(story => {
+            verifiedArticlesByWriter.map((story) => {
                 if (story._links['wp:featuredmedia']) {
                     return call(
                         asyncFetchFeaturedImage,
@@ -69,7 +67,7 @@ function* fetchProfileArticles(action) {
             })
         )
         yield all(
-            verifiedArticlesByWriter.map(story => {
+            verifiedArticlesByWriter.map((story) => {
                 return call(asyncFetchComments, url, story)
             })
         )
@@ -91,7 +89,7 @@ function* fetchProfileArticles(action) {
 function* profilesSaga() {
     yield all([
         takeLatest(profileTypes.FETCH_PROFILES, fetchProfiles),
-        takeLatest(profileTypes.FETCH_PROFILE_ARTICLES, fetchProfileArticles)
+        takeLatest(profileTypes.FETCH_PROFILE_ARTICLES, fetchProfileArticles),
     ])
 }
 

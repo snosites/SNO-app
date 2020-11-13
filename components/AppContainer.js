@@ -16,10 +16,7 @@ import SnackbarQueue from './SnackbarQueue'
 
 import * as SplashScreen from 'expo-splash-screen'
 
-import ErrorBoundary from '../screens/ErrorBoundary'
-
 import { Provider as PaperProvider } from 'react-native-paper'
-import Color from 'color'
 
 import * as Linking from 'expo-linking'
 
@@ -48,21 +45,11 @@ const AppContainer = (props) => {
         initialized,
     } = props
 
-    // let primaryColor = Color(theme.colors.primary)
-    // let isDark = primaryColor.isDark()
-    // const navigation = useNavigation()
-
-    // const [loading, setLoading] = useState(true)
-
     useEffect(() => {
         if (!user.id) {
             initializeUser()
         }
     }, [user])
-
-    useEffect(() => {
-        console.log('user', user)
-    }, [initializeUserLoading])
 
     useEffect(() => {
         if (!activeDomain.id) {
@@ -117,8 +104,8 @@ const AppContainer = (props) => {
                     )}
                 </Stack.Navigator>
                 <SnackbarQueue />
+                {/* <NotificationAlert /> */}
             </View>
-            {/* <NotificationAlert /> */}
         </PaperProvider>
     )
 }

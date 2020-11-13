@@ -10,15 +10,9 @@ import ArticleNavigator from './ArticleNavigator'
 import StaffScreenContainer from '../containers/StaffScreenContainer'
 import ProfileScreenContainer from '../containers/ProfileScreenContainer'
 
-import FullArticleScreen from '../screens/FullArticleScreen'
 import SearchScreen from '../screens/SearchScreen'
-import ProfileScreen from '../screens/ProfileScreen'
-import CommentsScreen from '../screens/CommentsScreen'
-import StaffScreen from '../screens/StaffScreen'
-import DefaultPageScreen from '../screens/DefaultPageScreen'
 
-import HomeScreen from '../screens/HomeScreen'
-import TestScreen from '../screens/TestScreen'
+import DefaultPageScreen from '../screens/DefaultPageScreen'
 
 import HTML from 'react-native-render-html'
 
