@@ -6,14 +6,10 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native'
 import Moment from 'moment'
 import Color from 'color'
-import { connect } from 'react-redux'
-
-import { actions as profileActions } from '../redux/profiles'
-import { getActiveDomain } from '../redux/domains'
 
 import { NavigationEvents } from 'react-navigation'
 
@@ -52,7 +48,7 @@ class SportcenterScreen extends React.Component {
         modalVisible: false,
         doneLoading: false,
         noSports: false,
-        tabLoading: false
+        tabLoading: false,
     }
 
     _showModal = () => this.setState({ modalVisible: true })
@@ -61,7 +57,7 @@ class SportcenterScreen extends React.Component {
     componentDidMount() {
         const { navigation, global } = this.props
         navigation.setParams({
-            headerLogo: global.headerSmall
+            headerLogo: global.headerSmall,
         })
 
         if (this.animation) {
@@ -90,12 +86,12 @@ class SportcenterScreen extends React.Component {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.animationContainer}>
                         <LottieView
-                            ref={animation => {
+                            ref={(animation) => {
                                 this.animation = animation
                             }}
                             style={{
                                 width: 250,
-                                height: 250
+                                height: 250,
                             }}
                             loop={true}
                             speed={0.8}
@@ -131,7 +127,7 @@ class SportcenterScreen extends React.Component {
                             fontSize: 28,
                             textAlign: 'center',
                             paddingTop: 10,
-                            paddingBottom: 10
+                            paddingBottom: 10,
                         }}
                     >
                         {selectedSport === 'all'
@@ -145,7 +141,7 @@ class SportcenterScreen extends React.Component {
                             fontSize: 14,
                             textAlign: 'center',
                             paddingBottom: 10,
-                            color: Colors.gray
+                            color: Colors.gray,
                         }}
                     >
                         Select a sport to view the full schedule and toggle between other options
@@ -159,12 +155,12 @@ class SportcenterScreen extends React.Component {
                             horizontal={true}
                             contentContainerStyle={{
                                 justifyContent: 'center',
-                                flex: 1
+                                flex: 1,
                             }}
                         >
                             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                                 <Button
-                                    icon='event'
+                                    icon='calendar'
                                     mode={
                                         this.state.selectedButton === 'game_schedule'
                                             ? 'contained'
@@ -208,7 +204,7 @@ class SportcenterScreen extends React.Component {
                                     flex: 1,
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    paddingTop: 50
+                                    paddingTop: 50,
                                 }}
                             >
                                 <ActivityIndicator />
@@ -223,7 +219,7 @@ class SportcenterScreen extends React.Component {
                                             padding: 20,
                                             paddingHorizontal: 20,
                                             backgroundColor: '#F1F1F1',
-                                            borderRadius: 15
+                                            borderRadius: 15,
                                         }}
                                     >
                                         <Text style={{ fontSize: 18, textAlign: 'center' }}>
@@ -237,7 +233,7 @@ class SportcenterScreen extends React.Component {
                                                 fontSize: 18,
                                                 fontWeight: 'bold',
                                                 paddingTop: 15,
-                                                paddingLeft: 20
+                                                paddingLeft: 20,
                                             }}
                                         >
                                             Conference Standings
@@ -250,7 +246,7 @@ class SportcenterScreen extends React.Component {
                                                 fontSize: 18,
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
-                                                paddingLeft: 20
+                                                paddingLeft: 20,
                                             }}
                                         >
                                             State Rankings
@@ -266,7 +262,7 @@ class SportcenterScreen extends React.Component {
                                                 fontSize: 18,
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
-                                                paddingLeft: 20
+                                                paddingLeft: 20,
                                             }}
                                         >
                                             Recent Results
@@ -281,7 +277,7 @@ class SportcenterScreen extends React.Component {
                                                 fontSize: 18,
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
-                                                paddingLeft: 20
+                                                paddingLeft: 20,
                                             }}
                                         >
                                             Upcoming
@@ -309,7 +305,7 @@ class SportcenterScreen extends React.Component {
                             shadowColor: 'black',
                             shadowOffset: { width: 3, height: 3 },
                             shadowOpacity: 0.2,
-                            shadowRadius: 5
+                            shadowRadius: 5,
                         }}
                     >
                         <View
@@ -317,7 +313,7 @@ class SportcenterScreen extends React.Component {
                                 flex: 1,
                                 padding: 20,
                                 backgroundColor: '#F1F1F1',
-                                borderRadius: 15
+                                borderRadius: 15,
                             }}
                         >
                             <ScrollView style={{ flex: 1 }}>
@@ -328,7 +324,9 @@ class SportcenterScreen extends React.Component {
                                 </Text>
                                 <Text style={{ fontSize: 18, paddingVertical: 10 }}>Sport</Text>
                                 <RadioButton.Group
-                                    onValueChange={value => this.setState({ selectedSport: value })}
+                                    onValueChange={(value) =>
+                                        this.setState({ selectedSport: value })
+                                    }
                                     value={this.state.selectedSport}
                                 >
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -361,7 +359,9 @@ class SportcenterScreen extends React.Component {
                                     Year
                                 </Text>
                                 <RadioButton.Group
-                                    onValueChange={value => this.setState({ selectedYear: value })}
+                                    onValueChange={(value) =>
+                                        this.setState({ selectedYear: value })
+                                    }
                                     value={this.state.selectedYear}
                                 >
                                     {this.state.sportcenterOptions.years.map((year, i) => {
@@ -370,7 +370,7 @@ class SportcenterScreen extends React.Component {
                                                 key={i}
                                                 style={{
                                                     flexDirection: 'row',
-                                                    alignItems: 'center'
+                                                    alignItems: 'center',
                                                 }}
                                             >
                                                 <RadioButton value={year.name} />
@@ -415,7 +415,7 @@ class SportcenterScreen extends React.Component {
                             padding: 20,
                             paddingHorizontal: 20,
                             backgroundColor: '#F1F1F1',
-                            borderRadius: 15
+                            borderRadius: 15,
                         }}
                     >
                         <View style={styles.gameItem}>
@@ -455,13 +455,13 @@ class SportcenterScreen extends React.Component {
                             padding: 20,
                             paddingHorizontal: 20,
                             backgroundColor: '#F1F1F1',
-                            borderRadius: 15
+                            borderRadius: 15,
                         }}
                     >
                         <View
                             style={{
                                 flexDirection: 'row',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -501,14 +501,14 @@ class SportcenterScreen extends React.Component {
                                 padding: 20,
                                 paddingHorizontal: 20,
                                 backgroundColor: '#F1F1F1',
-                                borderRadius: 15
+                                borderRadius: 15,
                             }}
                         >
                             <View
                                 style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
-                                    marginBottom: 5
+                                    marginBottom: 5,
                                 }}
                             >
                                 <View style={{ flexDirection: 'row' }}>
@@ -552,7 +552,7 @@ class SportcenterScreen extends React.Component {
                                             flexDirection: 'row',
                                             alignItems: 'center',
                                             marginLeft: 'auto',
-                                            paddingBottom: 5
+                                            paddingBottom: 5,
                                         }}
                                     >
                                         <Text style={styles.textHeader}>W/L:</Text>
@@ -583,14 +583,14 @@ class SportcenterScreen extends React.Component {
                                 padding: 20,
                                 paddingHorizontal: 20,
                                 backgroundColor: '#F1F1F1',
-                                borderRadius: 15
+                                borderRadius: 15,
                             }}
                         >
                             <View
                                 style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
-                                    marginBottom: 5
+                                    marginBottom: 5,
                                 }}
                             >
                                 <View style={{ flexDirection: 'row' }}>
@@ -634,7 +634,7 @@ class SportcenterScreen extends React.Component {
                                             flexDirection: 'row',
                                             alignItems: 'center',
                                             marginLeft: 'auto',
-                                            paddingBottom: 5
+                                            paddingBottom: 5,
                                         }}
                                     >
                                         <Text style={styles.textHeader}>W/L:</Text>
@@ -670,14 +670,14 @@ class SportcenterScreen extends React.Component {
                             padding: 20,
                             paddingHorizontal: 20,
                             backgroundColor: '#F1F1F1',
-                            borderRadius: 15
+                            borderRadius: 15,
                         }}
                     >
                         <View
                             style={{
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
-                                marginBottom: 5
+                                marginBottom: 5,
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -721,7 +721,7 @@ class SportcenterScreen extends React.Component {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         marginLeft: 'auto',
-                                        paddingBottom: 5
+                                        paddingBottom: 5,
                                     }}
                                 >
                                     <Text style={styles.textHeader}>W/L:</Text>
@@ -749,14 +749,14 @@ class SportcenterScreen extends React.Component {
                             padding: 20,
                             paddingHorizontal: 20,
                             backgroundColor: '#F1F1F1',
-                            borderRadius: 15
+                            borderRadius: 15,
                         }}
                     >
                         <View
                             style={{
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
-                                marginBottom: 5
+                                marginBottom: 5,
                             }}
                         >
                             <View style={{ flexDirection: 'row' }}>
@@ -786,7 +786,7 @@ class SportcenterScreen extends React.Component {
         }
     }
 
-    _handleTabChange = selectedTab => {
+    _handleTabChange = (selectedTab) => {
         this.setState({ selectedButton: selectedTab, tabLoading: true })
         this._loadData(this.state.selectedYear, this.state.selectedSport, selectedTab)
     }
@@ -803,8 +803,8 @@ class SportcenterScreen extends React.Component {
             `https://${activeDomain.url}/wp-json/sns-v2/sportcenter_options`,
             {
                 headers: {
-                    'Cache-Control': 'no-cache'
-                }
+                    'Cache-Control': 'no-cache',
+                },
             }
         )
         const options = await response.json()
@@ -814,10 +814,10 @@ class SportcenterScreen extends React.Component {
             this.setState({
                 sportcenterOptions: {
                     sports: options.sports,
-                    years: options.years
+                    years: options.years,
                 },
                 selectedSport: 'all',
-                selectedYear: options.years[0].name
+                selectedYear: options.years[0].name,
             })
             this._loadData(options.years[0].name, 'all', this.state.selectedButton)
         } else {
@@ -836,13 +836,13 @@ class SportcenterScreen extends React.Component {
             `https://${activeDomain.url}/wp-json/sns-v2/sportcenter_query?sport=${sport}&year=${year}&type=${type}`,
             {
                 headers: {
-                    'Cache-Control': 'no-cache'
-                }
+                    'Cache-Control': 'no-cache',
+                },
             }
         )
         const result = await response.json()
         console.log('this is game schedule', result)
-        result.sort(function(a, b) {
+        result.sort(function (a, b) {
             a = new Date(a.customFields.date && a.customFields.date[0])
             b = new Date(b.customFields.date && b.customFields.date[0])
             return a < b ? -1 : a > b ? 1 : 0
@@ -861,34 +861,22 @@ const styles = StyleSheet.create({
         width: 125,
         margin: 5,
         borderRadius: 5,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     animationContainer: {
         width: 300,
         height: 300,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     gameItem: {
         flexDirection: 'row',
-        paddingBottom: 5
+        paddingBottom: 5,
     },
     textHeader: {
         fontSize: 15,
         fontWeight: 'bold',
-        paddingRight: 10
-    }
+        paddingRight: 10,
+    },
 })
 
-const mapStateToProps = state => {
-    return {
-        theme: state.theme,
-        activeDomain: getActiveDomain(state),
-        global: state.global
-    }
-}
-
-const mapDispatchToProps = dispatch => ({
-    fetchProfiles: (domainUrl, year) => dispatch(profileActions.fetchProfiles(domainUrl, year))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SportcenterScreen)
+export default SportcenterScreen

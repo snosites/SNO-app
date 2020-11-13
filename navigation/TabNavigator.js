@@ -14,6 +14,7 @@ import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
 import SavedStack from '../navigation/SavedStack'
 import RecentStack from '../navigation/RecentStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
+import SportcenterStack from '../navigation/SportcenterStack'
 // import SettingsScreen from '../screens/SettingsScreen'
 // import SavedScreen from '../screens/SavedScreen'
 // import RecentScreen from '../screens/RecentScreen'
@@ -178,7 +179,7 @@ export default (props) => {
             <Tab.Screen name='Home' component={DrawerNavigatorContainer} />
             <Tab.Screen name='Recent' component={RecentStack} />
             <Tab.Screen name='Saved' component={SavedStack} />
-            {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={TestScreen} />}
+            {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen name='Settings' component={SettingsStackContainer} />
         </Tab.Navigator>
     )
