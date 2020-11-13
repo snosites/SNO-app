@@ -68,6 +68,7 @@ export default class ArticleListContent extends React.Component {
     _renderItem = ({ item, index }) => {
         const {
             theme,
+            onPress,
             onIconPress,
             deleteIcon,
             activeDomain,

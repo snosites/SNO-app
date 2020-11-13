@@ -257,7 +257,6 @@ const SettingsScreen = (props) => {
                     onPress={() => {
                         Haptics.selectionAsync()
                         setActiveDomain(null)
-                        // setTimeout(() => setInitialized(false), 1000)
                     }}
                 />
                 <Divider />
@@ -416,7 +415,7 @@ const SettingsScreen = (props) => {
                 <Divider />
                 <List.Item
                     title='Privacy Policy'
-                    style={{ paddingVertical: 0 }}
+                    style={{ paddingVertical: 10 }}
                     left={(props) => <List.Icon {...props} icon='account-supervisor' />}
                     onPress={() =>
                         WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/')
@@ -430,7 +429,7 @@ const SettingsScreen = (props) => {
                         style={{ padding: 10 }}
                         onPress={() => {
                             setDialog(true)
-                            setShowDeviceId(showDeviceId)
+                            setShowDeviceId(!showDeviceId)
                         }}
                     >
                         Clear All Settings

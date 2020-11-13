@@ -11,6 +11,7 @@ import {
     SafeAreaView,
 } from 'react-native'
 import { connect } from 'react-redux'
+import { actions as domainActions } from '../../redux/domains'
 import { StatusBar } from 'expo-status-bar'
 import { Button, TextInput } from 'react-native-paper'
 import * as Haptics from 'expo-haptics'
@@ -33,14 +34,13 @@ const theme = {
 }
 
 const WelcomeScreen = (props) => {
-    const { navigation, domains } = props
+    const { navigation, domains, setActiveDomain } = props
 
     const [loading, setLoading] = useState(false)
     const [schoolName, setSchoolName] = useState('')
-    // const [zipcode, setZipcode] = useState('')
     const [error, setError] = useState(null)
 
-    _handleSubmit = () => {
+    const _handleSubmit = () => {
         navigation.navigate('Select', { searchTerm: schoolName })
     }
 
@@ -203,7 +203,7 @@ const WelcomeScreen = (props) => {
                                         roundness: 7,
                                     }}
                                     style={{ padding: 10, width: 300, marginTop: 20 }}
-                                    onPress={() => navigation.navigate('Auth')}
+                                    onPress={() => setActiveDomain(domains[0].id)}
                                 >
                                     Go Back
                                 </Button>
@@ -260,4 +260,8 @@ const mapStateToProps = (state) => ({
     domains: state.domains,
 })
 
-export default connect(mapStateToProps)(WelcomeScreen)
+const mapDispatchToProps = (dispatch) => ({
+    setActiveDomain: (id) => dispatch(domainActions.setActiveDomain(id)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen)

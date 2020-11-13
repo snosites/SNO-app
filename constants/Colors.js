@@ -30,6 +30,7 @@ const palette = {
     noticeText: '#fff',
     black: '#1a1917',
     gray: '#888888',
+    lightGray: '#D0D0D0',
 }
 
 let primaryColor = Color(defaultPrimaryColor)

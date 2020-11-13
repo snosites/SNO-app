@@ -26,6 +26,8 @@ const ArticleListItem = (props) => {
         theme,
         enableComments,
         storyListStyle,
+        removeSavedArticle,
+        saveArticle,
         deleteIcon = false,
     } = props
 

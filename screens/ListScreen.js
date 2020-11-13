@@ -88,15 +88,13 @@ const ListScreen = (props) => {
         flatListRef = ref
     }
 
-    _saveRemoveToggle = (article) => {
+    const _saveRemoveToggle = (article) => {
         if (article.saved) {
             removeSavedArticle(article.id, activeDomain.id)
         } else {
             saveArticle(article, activeDomain.id)
         }
     }
-
-    console.log('extra', categoryId, articlesByCategory, category)
 
     if (!categoryId) {
         return (

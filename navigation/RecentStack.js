@@ -1,17 +1,13 @@
 import React from 'react'
-import { TouchableOpacity, Image, Text } from 'react-native'
+import { Image } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as Icon from '@expo/vector-icons'
+import { connect } from 'react-redux'
 
-import SettingsScreenContainer from '../containers/SettingsScreenContainer'
-
-import TestScreen from '../screens/TestScreen'
-
-import HTML from 'react-native-render-html'
+import RecentScreenContainer from '../containers/RecentScreenContainer'
 
 const Stack = createStackNavigator()
 
-const SettingsStack = (props) => {
+const RecentStack = (props) => {
     const { theme, headerLogo } = props
 
     return (
@@ -37,9 +33,18 @@ const SettingsStack = (props) => {
                 headerTitleAlign: 'center',
             }}
         >
-            <Stack.Screen name='Settings' component={SettingsScreenContainer} />
+            <Stack.Screen
+                name='Recent'
+                component={RecentScreenContainer}
+                options={{ title: 'Recent Stories' }}
+            />
         </Stack.Navigator>
     )
 }
 
-export default SettingsStack
+const mapStateToProps = (state) => ({
+    theme: state.theme,
+    headerLogo: state.global.headerSmall,
+})
+
+export default connect(mapStateToProps)(RecentStack)

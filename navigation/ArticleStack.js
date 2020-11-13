@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { TouchableOpacity, Image, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { HeaderBackButton } from '@react-navigation/stack'
 import * as Icon from '@expo/vector-icons'
 
 import HomeScreenContainer from '../containers/HomeScreenContainer'
 import ListScreenContainer from '../containers/ListScreenContainer'
 import ArticleNavigator from './ArticleNavigator'
+import StaffScreenContainer from '../containers/StaffScreenContainer'
+import ProfileScreenContainer from '../containers/ProfileScreenContainer'
+
 import FullArticleScreen from '../screens/FullArticleScreen'
 import SearchScreen from '../screens/SearchScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -21,7 +25,17 @@ import HTML from 'react-native-render-html'
 const Stack = createStackNavigator()
 
 const ArticleStack = (props) => {
-    const { homeScreenMode, theme, activeCategory, headerLogo, navigation } = props
+    const { homeScreenMode, theme, activeCategory, headerLogo, navigation, route } = props
+
+    useEffect(() => {
+        const unsubscribe = navigation.dangerouslyGetParent().addListener('tabPress', (e) => {
+            if (navigation.dangerouslyGetParent().isFocused()) {
+                navigation.popToTop()
+            }
+        })
+
+        return unsubscribe
+    }, [navigation])
 
     const CustomHeaderTitle = ({ children }) => {
         return (
@@ -80,6 +94,7 @@ const ArticleStack = (props) => {
                     }
                     return null
                 },
+                headerBackTitleVisible: false,
                 headerTitleAlign: 'center',
             }}
         >
@@ -100,6 +115,14 @@ const ArticleStack = (props) => {
                 component={ArticleNavigator}
                 options={{
                     headerShown: false,
+                }}
+            />
+            <Stack.Screen name='Staff' component={StaffScreenContainer} />
+            <Stack.Screen
+                name='Profile'
+                component={ProfileScreenContainer}
+                options={{
+                    headerLeft: (props) => <HeaderBackButton {...props} />,
                 }}
             />
         </Stack.Navigator>

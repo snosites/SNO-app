@@ -73,12 +73,12 @@ function CustomDrawerContent(props) {
                     pageType: 'staff',
                 })
 
-                // navigation.navigate('Staff', {
-                //     menuTitle: item.title,
-                //     activeYears: item.active_years,
-                //     customDisplay: item.customStaffDisplay,
-                //     staffDisplay: item.staffDisplay,
-                // })
+                navigation.navigate('Staff', {
+                    menuTitle: item.title,
+                    activeYears: item.active_years,
+                    customDisplay: item.customStaffDisplay,
+                    staffDisplay: item.staffDisplay,
+                })
                 setActiveCategory(item.object_id)
             } else if (!item.template) {
                 // default template

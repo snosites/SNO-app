@@ -11,6 +11,8 @@ import TabBarIcon from '../components/TabBarIcon'
 
 // import AppSetupScreen from '../screens/AppSetupScreen'
 import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
+import SavedStack from '../navigation/SavedStack'
+import RecentStack from '../navigation/RecentStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
 // import SettingsScreen from '../screens/SettingsScreen'
 // import SavedScreen from '../screens/SavedScreen'
@@ -174,8 +176,8 @@ export default (props) => {
             }}
         >
             <Tab.Screen name='Home' component={DrawerNavigatorContainer} />
-            <Tab.Screen name='Recent' component={TestScreen} />
-            <Tab.Screen name='Saved' component={TestScreen} />
+            <Tab.Screen name='Recent' component={RecentStack} />
+            <Tab.Screen name='Saved' component={SavedStack} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={TestScreen} />}
             <Tab.Screen name='Settings' component={SettingsStackContainer} />
         </Tab.Navigator>
