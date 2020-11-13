@@ -61,16 +61,19 @@ handleRegularArticle = async (article, scrollToTop) => {
 }
 
 handleLongFormArticle = async (article, activeDomain, scrollToTop) => {
-    console.log('long form article press', article)
     Haptics.selectionAsync()
     let storyChapters = []
-    NavigationService.navigate('FullArticle', { scrollToTop })
+
+    navigate('ArticleNavigator', {
+        screen: 'Article',
+        params: {},
+        comments: article.comments,
+    })
     if (article.custom_fields.sno_format == 'Long-Form') {
         let results = await fetch(
             `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_longform_list&meta_query[0][value]=${article.id}`
         )
         storyChapters = await results.json()
-        console.log('story chapters', storyChapters)
     } else if (article.custom_fields.sno_format == 'Grid') {
         let results = await fetch(
             `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=sno_grid_list&meta_query[0][value]=${article.id}`
@@ -144,12 +147,9 @@ handleLongFormArticle = async (article, activeDomain, scrollToTop) => {
             return 0
         })
     }
-    NavigationService.navigate('FullArticle', {
-        articleId: article.id,
-        article,
-        articleChapters: updatedStoryChapters,
-        commentNumber: article.comments.length,
+    navigate('ArticleNavigator', {
+        screen: 'Article',
+        params: { article, articleChapters: updatedStoryChapters, scrollToTop },
         comments: article.comments,
-        scrollToTop,
     })
 }

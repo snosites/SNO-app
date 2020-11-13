@@ -27,6 +27,8 @@ const ArticleScreen = (props) => {
     const scrollViewRef = useRef(null)
 
     let article = route.params && route.params.article ? route.params.article : null
+    let articleChapters =
+        route.params && route.params.articleChapters ? route.params.articleChapters : []
 
     const _handleCaptionClick = () => {
         setExpandCaption(!expandCaption)
@@ -88,7 +90,7 @@ const ArticleScreen = (props) => {
                     // adPosition={storyAds ? storyAds.displayLocation : null}
                     // snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
                 />
-                {/* {articleChapters.map((article) => (
+                {articleChapters.map((article) => (
                     <ArticleBodyContent
                         key={article.id}
                         navigation={navigation}
@@ -99,7 +101,7 @@ const ArticleScreen = (props) => {
                         activeDomain={activeDomain}
                         setLoadingLink={(state) => this.setState({ loadingLink: state })}
                     />
-                ))} */}
+                ))}
 
                 {/* {this.state.showPortal && (
                     <Portal>
