@@ -106,25 +106,7 @@ export default (props) => {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerStyle: {
-                    backgroundColor: theme.colors.primary,
-                },
-                headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
-                headerLeft: () => {
-                    if (headerLogo) {
-                        return (
-                            <Image
-                                source={{ uri: headerLogo }}
-                                style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
-                                resizeMode='contain'
-                            />
-                        )
-                    }
-                    return null
-                },
-                headerTitle: () => <Searchbar />,
-                headerBackTitleVisible: false,
-                headerTitleAlign: 'center',
+                headerShown: false,
             }}
         >
             {startupError ? (
@@ -148,7 +130,11 @@ export default (props) => {
                         component={TabNavigatorContainer}
                         // options={{ headerShown: false }}
                     />
-                    <Stack.Screen name='Article' component={ArticleNavigator} />
+                    <Stack.Screen
+                        name='Article'
+                        component={ArticleNavigator}
+                        options={{ headerShown: false }}
+                    />
                 </>
             )}
         </Stack.Navigator>

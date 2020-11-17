@@ -8,7 +8,7 @@ import { getActiveDomain } from '../redux/domains'
 import { actions as searchActions } from '../redux/search'
 
 const Searchbar = (props) => {
-    const { activeDomain, invalidateSearchArticles, fetchSearchArticlesIfNeeded } = props
+    const { theme, activeDomain, invalidateSearchArticles, fetchSearchArticlesIfNeeded } = props
 
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -26,13 +26,14 @@ const Searchbar = (props) => {
                     height: 32,
                     backgroundColor: 'rgba(0, 0, 0, 0.15)',
                     borderRadius: 8,
+                    padding: 5,
                 }}
-                inputStyle={{ color: 'white' }}
-                iconColor={'white'}
+                inputStyle={{ color: 'white', fontSize: 16 }}
+                iconColor={theme.extraColors.lightGray}
                 placeholder='Search Stories'
                 onIconPress={_search}
                 onSubmitEditing={_search}
-                theme={{ colors: { placeholder: 'white' } }}
+                theme={{ colors: { placeholder: theme.extraColors.lightGray } }}
                 onChangeText={(text) => setSearchTerm(text)}
                 value={searchTerm}
             />
@@ -42,6 +43,7 @@ const Searchbar = (props) => {
 
 const mapStateToProps = (state) => ({
     activeDomain: getActiveDomain(state),
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

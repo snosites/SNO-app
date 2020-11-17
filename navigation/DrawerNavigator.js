@@ -1,12 +1,14 @@
 import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+
+import { connect } from 'react-redux'
+
 import CustomDrawer from '../components/CustomDrawer'
 import ArticleStackContainer from '../containers/ArticleStackContainer'
 
 const Drawer = createDrawerNavigator()
 
-export default (props) => {
-    const { theme } = props
+export default ({ theme }) => {
     return (
         <Drawer.Navigator
             hideStatusBar={true}
@@ -21,3 +23,9 @@ export default (props) => {
         </Drawer.Navigator>
     )
 }
+
+const mapStateToProps = (state) => ({
+    theme: state.theme,
+})
+
+export default connect(mapStateToProps)(DrawerNavigator)

@@ -47,6 +47,7 @@ export const defaultColorTheme = {
         ...DefaultTheme.colors,
         primary: defaultPrimaryColor,
         accent: defaultAccentColor,
+        background: '#dddddd',
         homeScreenCategoryTitle: defaultAccentColor,
     },
     primaryIsDark,

@@ -4,8 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import TabBarIcon from '../components/TabBarIcon'
 
-import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
-import HomeStack from './HomeNavigator'
+import HomeNavigator from './HomeNavigator'
+import ListNavigator from './ListNavigator'
 import SavedStack from '../navigation/SavedStack'
 import RecentStack from '../navigation/RecentStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
@@ -21,10 +21,10 @@ export default (props) => {
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName
 
-                    if (route.name === 'Home') {
+                    if (route.name === 'HomeTab') {
                         iconName = Platform.OS === 'ios' ? `ios-home` : 'md-home'
-                    } else if (route.name === 'Recent') {
-                        iconName = 'md-funnel'
+                    } else if (route.name === 'ListDrawer') {
+                        iconName = 'md-list'
                     } else if (route.name === 'Saved') {
                         iconName = Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
                     } else if (route.name === 'SportsCenter') {
@@ -44,8 +44,8 @@ export default (props) => {
                 },
             }}
         >
-            <Tab.Screen name='Home' component={HomeStack} />
-            <Tab.Screen name='Recent' component={RecentStack} />
+            <Tab.Screen name='HomeTab' component={HomeNavigator} options={{ title: 'Home' }} />
+            <Tab.Screen name='ListDrawer' component={ListNavigator} options={{ title: 'List' }} />
             <Tab.Screen name='Saved' component={SavedStack} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen name='Settings' component={SettingsStackContainer} />

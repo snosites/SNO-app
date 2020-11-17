@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {
     View,
+    ScrollView,
     SafeAreaView,
     SectionList,
     Text,
@@ -11,8 +12,9 @@ import {
 
 import HTML from 'react-native-render-html'
 import LottieView from 'lottie-react-native'
-
+import { LinearGradient } from 'expo-linear-gradient'
 import { Snackbar } from 'react-native-paper'
+import { AntDesign } from '@expo/vector-icons'
 
 import AdBlock from '../components/AdBlock'
 import ArticleListContent from '../views/ArticleListContent'
@@ -22,6 +24,10 @@ import ErrorView from '../components/ErrorView'
 import { useIsTablet } from '../utils/helpers'
 
 import ArticleListItem from '../views/ArticleListItem'
+
+import { Html5Entities } from 'html-entities'
+
+const entities = new Html5Entities()
 
 const HomeScreen = (props) => {
     const {
@@ -120,61 +126,78 @@ const HomeScreen = (props) => {
         return <ErrorView onRefresh={_handleRefresh} />
     }
 
-    return (
-        <View style={{ flex: 1 }}>
-            <SectionList
-                sections={homeScreenData}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <ArticleListItem
-                        article={item}
-                        storyListStyle={homeScreenListStyle}
-                        index={index}
-                    />
-                )}
-                renderSectionHeader={({ section: { title, id } }) => {
-                    return (
-                        <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate('List', {
-                                    categoryId: id,
-                                })
-                                setActiveCategory(id)
-                            }}
-                            style={{
-                                backgroundColor: theme.colors.homeScreenCategoryTitle,
-                                justifyContent: 'center',
-                                paddingVertical: 10,
-                                shadowColor: '#000',
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2,
-                                },
-                                shadowOpacity: 0.23,
-                                shadowRadius: 2.62,
+    console.log('home screen data', homeScreenData)
 
-                                elevation: 4,
+    return (
+        <ScrollView style={{ flex: 1 }}>
+            {homeScreenData.map((item, i) => {
+                return (
+                    <LinearGradient
+                        key={i}
+                        colors={[theme.colors.surface, theme.colors.background]}
+                        style={{
+                            paddingHorizontal: 10,
+                            paddingVertical: 10,
+                            borderRadius: 16,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: 'openSansExtraBold',
+                                fontSize: 32,
+                                color: theme.colors.accent,
                             }}
                         >
-                            <HTML
-                                html={title}
-                                baseFontStyle={{ fontSize: 28 }}
-                                tagsStyles={{
-                                    rawtext: {
-                                        fontSize: 28,
-                                        fontWeight: 'bold',
-                                        color: theme.homeScreenCategoryTitleIsDark
-                                            ? 'white'
-                                            : 'black',
-                                        textAlign: 'center',
-                                    },
+                            {entities.decode(item.title)}
+                        </Text>
+                        <View style={{ marginLeft: -10 }}>
+                            {item.data.map((story, i) => (
+                                <ArticleListItem
+                                    article={story}
+                                    storyListStyle={homeScreenListStyle}
+                                    index={i}
+                                />
+                            ))}
+                        </View>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'flex-end',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Text style={{ fontFamily: 'openSansBold', fontSize: 14 }}>More </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate('List', {
+                                        categoryId: id,
+                                    })
+                                    setActiveCategory(id)
                                 }}
-                            />
-                        </TouchableOpacity>
-                    )
-                }}
-            />
-        </View>
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text
+                                        style={{
+                                            fontFamily: 'openSansBold',
+                                            fontSize: 14,
+                                            color: theme.colors.accent,
+                                        }}
+                                    >
+                                        {entities.decode(item.title)}
+                                    </Text>
+                                    <AntDesign
+                                        name={'caretright'}
+                                        size={12}
+                                        style={{ marginBottom: -3, marginLeft: -2 }}
+                                        color={theme.colors.accent}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </LinearGradient>
+                )
+            })}
+        </ScrollView>
     )
 }
 

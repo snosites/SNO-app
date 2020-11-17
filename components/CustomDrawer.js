@@ -114,13 +114,6 @@ function CustomDrawerContent(props) {
                     {activeDomain.publication}
                 </Text>
             )}
-            <Searchbar
-                placeholder='Search Articles'
-                onIconPress={_searchArticles}
-                onSubmitEditing={_searchArticles}
-                onChangeText={(query) => setSearchTerm(query)}
-                value={searchTerm}
-            />
             <Drawer.Section title='Categories' style={{ paddingTop: 10 }}>
                 {menus.map((item, index) => {
                     return (

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { TouchableOpacity, Image, Text } from 'react-native'
+import React from 'react'
+import { Image, TouchableOpacity } from 'react-native'
 
 import { connect } from 'react-redux'
 
@@ -7,27 +7,14 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
 import Searchbar from '../components/SearchBar'
-import { HeaderBackButton } from '@react-navigation/stack'
-import * as Icon from '@expo/vector-icons'
 
 import HomeScreenContainer from '../containers/HomeScreenContainer'
 import RecentScreenContainer from '../containers/RecentScreenContainer'
-import ListScreenContainer from '../containers/ListScreenContainer'
-import ArticleNavigator from './ArticleNavigator'
-import StaffScreenContainer from '../containers/StaffScreenContainer'
-import ProfileScreenContainer from '../containers/ProfileScreenContainer'
-
-import SearchScreen from '../screens/SearchScreen'
-
-import DefaultPageScreen from '../screens/DefaultPageScreen'
-
-import HTML from 'react-native-render-html'
 
 const Tab = createMaterialTopTabNavigator()
+const Stack = createStackNavigator()
 
-const HomeNavigator = (props) => {
-    const { theme, headerLogo } = props
-
+const TabHomeNavigator = ({ theme }) => {
     return (
         <Tab.Navigator
             initialRouteName='Home'
@@ -45,4 +32,41 @@ const mapStateToProps = (state) => ({
     headerLogo: state.global.headerSmall,
 })
 
-export default connect(mapStateToProps)(HomeNavigator)
+const ConnectedTabHomeNavigator = connect(mapStateToProps)(TabHomeNavigator)
+
+const HomeStack = (props) => {
+    const { theme, headerLogo } = props
+
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.colors.primary,
+                },
+                headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
+                headerLeft: () => {
+                    if (headerLogo) {
+                        return (
+                            <Image
+                                source={{ uri: headerLogo }}
+                                style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
+                                resizeMode='contain'
+                            />
+                        )
+                    }
+                    return null
+                },
+                headerTitle: () => <Searchbar />,
+                headerTitleAlign: 'center',
+            }}
+        >
+            <Stack.Screen
+                name='HomeTabs'
+                component={ConnectedTabHomeNavigator}
+                // options={{ title: 'Recent Stories' }}
+            />
+        </Stack.Navigator>
+    )
+}
+
+export default connect(mapStateToProps)(HomeStack)
