@@ -166,7 +166,15 @@ const HomeScreen = (props) => {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{ fontFamily: 'openSansBold', fontSize: 14 }}>More </Text>
+                            <Text
+                                style={{
+                                    fontFamily: 'openSansBold',
+                                    fontSize: 14,
+                                    color: theme.extraColors.darkGray,
+                                }}
+                            >
+                                More{' '}
+                            </Text>
                             <TouchableOpacity
                                 onPress={() => {
                                     navigation.navigate('List', {

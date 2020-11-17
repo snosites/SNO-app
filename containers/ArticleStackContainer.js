@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import ArticleStack from '../navigation/ArticleStack'
+import ArticleStack from '../navigation/ArticleStack-old'
 
 const getActiveCategoryTitle = (menus, categoryId) => {
     const category = menus.find((menu) => menu.object_id == categoryId)

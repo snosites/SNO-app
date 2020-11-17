@@ -8,6 +8,7 @@ import HomeNavigator from './HomeNavigator'
 import ListNavigator from './ListNavigator'
 import SavedStack from '../navigation/SavedStack'
 import RecentStack from '../navigation/RecentStack'
+import FollowingStack from './FollowingStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
 import SportcenterStack from '../navigation/SportcenterStack'
 
@@ -29,6 +30,8 @@ export default (props) => {
                         iconName = Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
                     } else if (route.name === 'SportsCenter') {
                         iconName = Platform.OS === 'ios' ? 'ios-basketball' : 'md-basketball'
+                    } else if (route.name === 'Following') {
+                        iconName = 'ios-apps'
                     } else if (route.name === 'Settings') {
                         iconName = Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'
                     }
@@ -46,8 +49,9 @@ export default (props) => {
         >
             <Tab.Screen name='HomeTab' component={HomeNavigator} options={{ title: 'Home' }} />
             <Tab.Screen name='ListDrawer' component={ListNavigator} options={{ title: 'List' }} />
-            <Tab.Screen name='Saved' component={SavedStack} />
+            {/* <Tab.Screen name='Saved' component={SavedStack} /> */}
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
+            <Tab.Screen name='Following' component={FollowingStack} />
             <Tab.Screen name='Settings' component={SettingsStackContainer} />
         </Tab.Navigator>
     )

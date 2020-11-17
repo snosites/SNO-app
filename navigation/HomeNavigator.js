@@ -10,6 +10,7 @@ import Searchbar from '../components/SearchBar'
 
 import HomeScreenContainer from '../containers/HomeScreenContainer'
 import RecentScreenContainer from '../containers/RecentScreenContainer'
+import SavedScreenContainer from '../containers/SavedScreenContainer'
 
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
@@ -23,6 +24,7 @@ const TabHomeNavigator = ({ theme }) => {
         >
             <Tab.Screen name='Home' component={HomeScreenContainer} />
             <Tab.Screen name='Recent' component={RecentScreenContainer} />
+            <Tab.Screen name='Saved' component={SavedScreenContainer} />
         </Tab.Navigator>
     )
 }
@@ -56,7 +58,7 @@ const HomeStack = (props) => {
                     }
                     return null
                 },
-                headerTitle: () => <Searchbar />,
+                headerTitle: () => <Searchbar placeholder='Search Stories' />,
                 headerTitleAlign: 'center',
             }}
         >
