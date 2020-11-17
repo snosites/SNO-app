@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import TabBarIcon from '../components/TabBarIcon'
 
 import DrawerNavigatorContainer from '../containers/DrawerNavigatorContainer'
+import HomeStack from './HomeNavigator'
 import SavedStack from '../navigation/SavedStack'
 import RecentStack from '../navigation/RecentStack'
 import SettingsStackContainer from '../containers/SettingsStackContainer'
@@ -43,7 +44,7 @@ export default (props) => {
                 },
             }}
         >
-            <Tab.Screen name='Home' component={DrawerNavigatorContainer} />
+            <Tab.Screen name='Home' component={HomeStack} />
             <Tab.Screen name='Recent' component={RecentStack} />
             <Tab.Screen name='Saved' component={SavedStack} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}

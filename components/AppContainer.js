@@ -12,7 +12,7 @@ import * as RootNavigation from '../utils/RootNavigation'
 import AuthStack from '../navigation/AuthStack'
 import MainStackContainer from '../containers/MainStackContainer'
 import SnackbarQueue from './SnackbarQueue'
-// import NotificationAlert from './NotificationAlert'
+import NotificationAlertContainer from '../containers/NotificationAlertContainer'
 
 import * as SplashScreen from 'expo-splash-screen'
 
@@ -94,17 +94,9 @@ const AppContainer = (props) => {
         <PaperProvider theme={theme}>
             <View style={{ flex: 1 }}>
                 <StatusBar style={theme.primaryIsDark ? 'light' : 'dark'} />
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    {!activeDomain.id ? (
-                        // doesn't have a saved domain
-                        <Stack.Screen name='Auth' component={AuthStack} />
-                    ) : (
-                        // has domain saved
-                        <Stack.Screen name='Main' component={MainStackContainer} />
-                    )}
-                </Stack.Navigator>
+                {!activeDomain.id ? <AuthStack /> : <MainStackContainer />}
                 <SnackbarQueue />
-                {/* <NotificationAlert /> */}
+                {/* <NotificationAlertContainer />s */}
             </View>
         </PaperProvider>
     )

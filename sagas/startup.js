@@ -37,43 +37,12 @@ function* initializeUser() {
         yield put(globalActions.initializeUserRequest())
 
         yield call(findOrCreateUser)
-        // yield call(loadActiveDomain)
 
         yield put(globalActions.initializeUserSuccess())
         // yield call(hideSplashScreen)
     } catch (err) {
         console.log('error initializing user in saga', err)
         yield put(globalActions.initializeUserError('error initializing user'))
-    }
-}
-
-function* loadActiveDomain() {
-    try {
-        yield put(domainsActions.loadActiveDomainRequest())
-
-        const domains = yield select(getSavedDomains)
-
-        const activeDomain = domains.filter((domain) => {
-            if (domain.active) {
-                return domain
-            }
-        })
-        // sets active domain for app
-        if (activeDomain.length) {
-            yield put(domainsActions.setActiveDomain(activeDomain[0].id))
-        }
-        // no active domain navigate to auth
-        else {
-            yield call(SplashScreen.hideAsync)
-            return
-        }
-        yield put(domainsActions.loadActiveDomainSuccess())
-        return
-    } catch (err) {
-        console.log('error in load active domain saga', err)
-        yield put(domainsActions.loadActiveDomainError('error loading active domain'))
-        // NavigationService.navigate('Auth')
-        return
     }
 }
 

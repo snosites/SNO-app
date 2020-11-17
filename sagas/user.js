@@ -9,7 +9,7 @@ import apiService from '../api/api'
 import { persistor } from '../redux/configureStore'
 // import NavigationService from '../utils/NavigationService-old'
 
-import { Notifications } from 'expo'
+import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
 import * as Sentry from 'sentry-expo'
 
@@ -86,7 +86,7 @@ export function* checkNotificationSettings() {
             const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS)
             finalStatus = status
         }
-        // Stop here if the user did not grant permissions -- save token as 0
+        // Stop here if the user did not grant permissions
         if (finalStatus !== 'granted') {
             //update user's push_token
             const updatedUser = yield call(apiService.updateUser, apiToken, {
@@ -103,9 +103,19 @@ export function* checkNotificationSettings() {
         //update user's push_token
         let updatedUser = yield call(apiService.updateUser, apiToken, {
             key: 'push_token',
-            value: token,
+            value: token.data,
         })
+        console.log('push token', token)
         yield put(userActions.setUser(updatedUser))
+
+        // if (Platform.OS === 'android') {
+        //     Notifications.setNotificationChannelAsync('default', {
+        //     name: 'default',
+        //     importance: Notifications.AndroidImportance.MAX,
+        //     vibrationPattern: [0, 250, 250, 250],
+        //     lightColor: '#FF231F7C',
+        //     });
+        // }
 
         return updatedUser.push_token
     } catch (err) {

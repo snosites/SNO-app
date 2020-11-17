@@ -10,6 +10,8 @@ const startupErrorSelector = createErrorMessageSelector([globalTypes.STARTUP])
 const startupLoadingSelector = createLoadingSelector([globalTypes.STARTUP])
 
 const mapStateToProps = (state) => ({
+    theme: state.theme,
+    headerLogo: state.global.headerSmall,
     activeDomain: getActiveDomain(state),
     user: state.user,
     splashScreen: state.global.splashScreen,

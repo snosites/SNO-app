@@ -3,7 +3,10 @@ import { View, useWindowDimensions, Image, ImageBackground } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
+import Searchbar from '../components/SearchBar'
+
 import ErrorScreen from '../screens/ErrorScreen'
+import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/TabNavigatorContainer'
 
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
@@ -16,7 +19,15 @@ const version = getReleaseChannel()
 const Stack = createStackNavigator()
 
 export default (props) => {
-    const { activeDomain, startup, splashScreen, startupError, startupLoading, initialized } = props
+    const {
+        theme,
+        headerLogo,
+        activeDomain,
+        startup,
+        splashScreen,
+        startupError,
+        initialized,
+    } = props
 
     const animationRef = useRef(null)
     const window = useWindowDimensions()
@@ -93,11 +104,34 @@ export default (props) => {
     }
 
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.colors.primary,
+                },
+                headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
+                headerLeft: () => {
+                    if (headerLogo) {
+                        return (
+                            <Image
+                                source={{ uri: headerLogo }}
+                                style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
+                                resizeMode='contain'
+                            />
+                        )
+                    }
+                    return null
+                },
+                headerTitle: () => <Searchbar />,
+                headerBackTitleVisible: false,
+                headerTitleAlign: 'center',
+            }}
+        >
             {startupError ? (
                 <Stack.Screen
                     name='Error'
                     component={ErrorScreen}
+                    options={{ headerShown: false }}
                     initialParams={{
                         errorMessage:
                             startupError === 'error initializing app'
@@ -108,8 +142,14 @@ export default (props) => {
                     }}
                 />
             ) : (
-                // no startup errors
-                <Stack.Screen name='App' component={TabNavigatorContainer} />
+                <>
+                    <Stack.Screen
+                        name='Tabs'
+                        component={TabNavigatorContainer}
+                        // options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name='Article' component={ArticleNavigator} />
+                </>
             )}
         </Stack.Navigator>
     )

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {
+    View,
     SafeAreaView,
     SectionList,
     Text,
@@ -41,6 +42,7 @@ const HomeScreen = (props) => {
 
     const [ad, setAd] = useState(null)
     const isTablet = useIsTablet()
+    const [index, setIndex] = useState(0)
 
     const animationRef = useRef(null)
     const flatListRef = useRef(null)
@@ -119,56 +121,60 @@ const HomeScreen = (props) => {
     }
 
     return (
-        <SectionList
-            sections={homeScreenData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-                <ArticleListItem
-                    article={item}
-                    storyListStyle={homeScreenListStyle}
-                    index={index}
-                />
-            )}
-            renderSectionHeader={({ section: { title, id } }) => {
-                return (
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate('List', {
-                                categoryId: id,
-                            })
-                            setActiveCategory(id)
-                        }}
-                        style={{
-                            backgroundColor: theme.colors.homeScreenCategoryTitle,
-                            justifyContent: 'center',
-                            paddingVertical: 10,
-                            shadowColor: '#000',
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.23,
-                            shadowRadius: 2.62,
-
-                            elevation: 4,
-                        }}
-                    >
-                        <HTML
-                            html={title}
-                            baseFontStyle={{ fontSize: 28 }}
-                            tagsStyles={{
-                                rawtext: {
-                                    fontSize: 28,
-                                    fontWeight: 'bold',
-                                    color: theme.homeScreenCategoryTitleIsDark ? 'white' : 'black',
-                                    textAlign: 'center',
-                                },
+        <View style={{ flex: 1 }}>
+            <SectionList
+                sections={homeScreenData}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <ArticleListItem
+                        article={item}
+                        storyListStyle={homeScreenListStyle}
+                        index={index}
+                    />
+                )}
+                renderSectionHeader={({ section: { title, id } }) => {
+                    return (
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('List', {
+                                    categoryId: id,
+                                })
+                                setActiveCategory(id)
                             }}
-                        />
-                    </TouchableOpacity>
-                )
-            }}
-        />
+                            style={{
+                                backgroundColor: theme.colors.homeScreenCategoryTitle,
+                                justifyContent: 'center',
+                                paddingVertical: 10,
+                                shadowColor: '#000',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                shadowOpacity: 0.23,
+                                shadowRadius: 2.62,
+
+                                elevation: 4,
+                            }}
+                        >
+                            <HTML
+                                html={title}
+                                baseFontStyle={{ fontSize: 28 }}
+                                tagsStyles={{
+                                    rawtext: {
+                                        fontSize: 28,
+                                        fontWeight: 'bold',
+                                        color: theme.homeScreenCategoryTitleIsDark
+                                            ? 'white'
+                                            : 'black',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                            />
+                        </TouchableOpacity>
+                    )
+                }}
+            />
+        </View>
     )
 }
 
