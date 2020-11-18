@@ -2,39 +2,34 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 
-import ArticleNavigatorHeader from '../components/ArticleNavigatorHeader'
 import ArticleScreenContainer from '../containers/ArticleScreenContainer'
 import TestScreen from '../screens/TestScreen'
 
 //TODO: Add comments screen
-const Stack = createStackNavigator()
 
-const ArticleNavigator = (props) => {
-    const { theme } = props
+const Tab = createMaterialTopTabNavigator()
 
-    return (
-        <Stack.Navigator
-            screenOptions={({ route, navigation }) => {
-                return {
-                    headerStyle: {
-                        backgroundColor: theme.colors.primary,
-                    },
-                    headerTintColor: theme.primaryIsDark ? '#fff' : '#000',
-                    headerBackTitleVisible: false,
-                    headerTitleAlign: 'center',
-                    headerTitle: () => (
-                        <ArticleNavigatorHeader route={route} navigation={navigation} />
-                    ),
-                }
-            }}
-        >
-            <Stack.Screen name='Article' component={ArticleScreenContainer} />
-            <Stack.Screen name='Comments' component={TestScreen} />
-        </Stack.Navigator>
-    )
+const ArticleNavigator = ({ theme, enableComments }) => {
+    // const comments = route && route.params && route.params.comments ? route.params.comments : []
+    // const articleId = route && route.params ? route.params.articleId : null
+    if (enableComments) {
+        return (
+            <Tab.Navigator
+                initialRouteName='Article'
+                backBehavior='order'
+                tabBarOptions={{ indicatorStyle: { backgroundColor: theme.colors.primary } }}
+            >
+                <Tab.Screen name='Article' component={ArticleScreenContainer} />
+                <Tab.Screen name='Comments' component={TestScreen} />
+            </Tab.Navigator>
+        )
+    }
+    return <ArticleScreenContainer />
 }
+
 const mapStateToProps = (state) => ({
     theme: state.theme,
+    enableComments: state.global.enableComments,
 })
 
 export default connect(mapStateToProps)(ArticleNavigator)

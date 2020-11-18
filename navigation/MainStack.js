@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
 import Searchbar from '../components/SearchBar'
+import { Entypo } from '@expo/vector-icons'
 
 import ErrorScreen from '../screens/ErrorScreen'
 import ArticleNavigator from '../navigation/ArticleNavigator'
@@ -104,11 +105,7 @@ export default (props) => {
     }
 
     return (
-        <Stack.Navigator
-            screenOptions={{
-                headerShown: false,
-            }}
-        >
+        <Stack.Navigator mode={'modal'}>
             {startupError ? (
                 <Stack.Screen
                     name='Error'
@@ -133,7 +130,48 @@ export default (props) => {
                     <Stack.Screen
                         name='Article'
                         component={ArticleNavigator}
-                        options={{ headerShown: false }}
+                        options={{
+                            headerRight: () => {
+                                return (
+                                    <View>
+                                        <Ionicons.Button
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'stretch',
+                                            }}
+                                            name={'thumbs-up'}
+                                            size={35}
+                                            style={{ marginBottom: -3 }}
+                                            color={theme.primaryIsDark ? '#fff' : '#000'}
+                                            onPress={() => {}}
+                                        />
+                                        <Ionicons.Button
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'stretch',
+                                            }}
+                                            name={'thumbs-down'}
+                                            size={35}
+                                            style={{ marginBottom: -3 }}
+                                            color={theme.primaryIsDark ? '#fff' : '#000'}
+                                            onPress={() => {}}
+                                        />
+                                        <Ionicons.Button
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'stretch',
+                                            }}
+                                            name={'dots-three-horizontal'}
+                                            size={35}
+                                            style={{ marginBottom: -3 }}
+                                            color={theme.primaryIsDark ? '#fff' : '#000'}
+                                            onPress={() => {}}
+                                        />
+                                    </View>
+                                )
+                            },
+                            headerBackTitleVisible: false,
+                        }}
                     />
                 </>
             )}
