@@ -24,7 +24,7 @@ const ArticleActionsScreen = (props) => {
 
     useEffect(() => {
         if (articles && articles[articleId]) setArticle(articles[articleId])
-    }, [articleId])
+    }, [articleId, articles])
 
     const _shareArticle = () => {
         //log share to analytics
@@ -38,15 +38,17 @@ const ArticleActionsScreen = (props) => {
         })
     }
 
+    console.log('article', article)
+
     const _saveRemoveToggle = () => {
         if (article.saved) {
             removeSavedArticle(article.id, activeDomain.id)
+            setArticle({ ...article, saved: false })
         } else {
             saveArticle(article, activeDomain.id)
+            setArticle({ ...article, saved: true })
         }
     }
-
-    // saveArticle(article, activeDomain.id)
 
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>

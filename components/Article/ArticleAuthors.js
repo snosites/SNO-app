@@ -145,6 +145,7 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
         console.log('no term IDs for article authors', article)
         return null
     }
+    return null
 }
 
 export default ArticleAuthors
