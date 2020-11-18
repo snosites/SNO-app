@@ -1,7 +1,8 @@
 import { DefaultTheme } from 'react-native-paper'
+import { DefaultTheme as navigationDefaultTheme } from '@react-navigation/native'
+
 import Color from 'color'
 import Constants from 'expo-constants'
-
 import { getReleaseChannel } from './config'
 
 const version = getReleaseChannel()
@@ -40,6 +41,14 @@ let accentIsDark = accentColor.isDark()
 
 export default palette
 
+export const defaultNavigationTheme = {
+    ...navigationDefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        primary: defaultAccentColor,
+    },
+}
+
 export const defaultColorTheme = {
     ...DefaultTheme,
     roundness: 2,
@@ -54,4 +63,5 @@ export const defaultColorTheme = {
     accentIsDark,
     homeScreenCategoryTitleIsDark: accentIsDark,
     extraColors: palette,
+    navigationTheme: defaultNavigationTheme,
 }

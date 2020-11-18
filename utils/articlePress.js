@@ -38,8 +38,10 @@ export const handleArticlePress = (article, activeDomain, scrollToTop = false) =
 handleRegularArticle = async (article, scrollToTop) => {
     Haptics.selectionAsync()
     // NavigationService.navigate('FullArticle', { scrollToTop })
-    navigate('ArticleNavigator', { screen: 'Article', params: {}, comments: article.comments })
+    navigate('ArticleNavigator', { articleId: article.id })
     // check if there is a slideshow
+
+    return
     if (
         article.custom_fields.featureimage &&
         article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'

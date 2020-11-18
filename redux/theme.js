@@ -1,4 +1,4 @@
-import { defaultColorTheme } from '../constants/Colors'
+import { defaultColorTheme, defaultNavigationTheme } from '../constants/Colors'
 import Color from 'color'
 
 export const types = {
@@ -21,6 +21,13 @@ export default function theme(state = defaultColorTheme, action) {
             if (action.theme.darkMode.toLowerCase() == 'dark') {
                 darkMode = true
             }
+            const navigationTheme = {
+                ...defaultNavigationTheme,
+                colors: {
+                    ...defaultNavigationTheme.colors,
+                    primary: action.theme.accent || defaultColorTheme.colors.accent,
+                },
+            }
             return {
                 ...defaultColorTheme,
                 dark: darkMode,
@@ -34,6 +41,7 @@ export default function theme(state = defaultColorTheme, action) {
                 primaryIsDark,
                 accentIsDark,
                 homeScreenCategoryTitleIsDark: homeCategoryColorIsDark,
+                navigationTheme,
             }
         default:
             return state

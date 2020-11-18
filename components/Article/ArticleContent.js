@@ -12,18 +12,21 @@ import {
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import * as Haptics from 'expo-haptics'
+
 import * as WebBrowser from 'expo-web-browser'
-import { WebView } from 'react-native-webview'
+import { slideshowRenderer, relatedRenderer, adBlockRenderer } from '../../utils/Renderers'
 
-import TouchableItem from '../constants/TouchableItem'
-import Slideshow from './Slideshow'
-import { slideshowRenderer, relatedRenderer, adBlockRenderer } from '../utils/Renderers'
+import { handleArticlePress } from '../../utils/articlePress'
+import { asyncFetchArticle } from '../../utils/sagaHelpers'
 
-import { handleArticlePress } from '../utils/articlePress'
-import { asyncFetchArticle } from '../utils/sagaHelpers'
+import AdBlock from '../../components/AdBlock'
 
-import AdBlock from '../components/AdBlock'
+import FeaturedMedia from './FeaturedMedia'
+import ArticleAuthors from './ArticleAuthors'
+
+import { Html5Entities } from 'html-entities'
+
+const entities = new Html5Entities()
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -72,235 +75,16 @@ export default (props) => {
         setLoadingLink(false)
     }
 
-    _renderDate = (date) => {
-        if (Moment().isAfter(Moment(date).add(7, 'days'))) {
-            return (
-                <Text
-                    style={{
-                        fontSize: 15,
-                        color: '#9e9e9e',
-                    }}
-                >
-                    {Moment(date).format('MMM D, YYYY')}
-                </Text>
-            )
-        } else {
-            return (
-                <Text
-                    style={{
-                        fontSize: 15,
-                        color: '#9e9e9e',
-                    }}
-                >
-                    {String(Moment(date).fromNow())}
-                </Text>
-            )
-        }
-    }
-
-    _handleProfilePress = (writerId) => {
-        Haptics.selectionAsync()
-        navigation.navigate('Profile', {
-            writerTermId: writerId,
-        })
-    }
-
-    _renderArticleAuthor = () => {
-        if (article.custom_fields.terms && article.custom_fields.terms[0]) {
-            let writers = article.custom_fields.terms
-            //if arr of writers dont include job title
-            if (writers.length > 1) {
-                return writers.map((writer, i) => {
-                    if (i === writers.length - 2) {
-                        return (
-                            <TouchableItem
-                                key={i}
-                                onPress={() => _handleProfilePress(writer.term_id)}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {`${writer.name} & `}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    } else if (i === writers.length - 1) {
-                        return (
-                            <TouchableItem
-                                key={i}
-                                onPress={() => _handleProfilePress(writer.term_id)}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {writer.name}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    } else {
-                        return (
-                            <TouchableItem
-                                key={i}
-                                onPress={() => _handleProfilePress(writer.term_id)}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {`${writer.name}, `}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    }
-                })
-            }
-            // if writer has a jobtitle include it
-            if (article.custom_fields.jobtitle) {
-                return (
-                    <TouchableItem
-                        onPress={() => _handleProfilePress(article.custom_fields.terms[0].term_id)}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 17,
-                                textAlign: 'center',
-                                paddingTop: 20,
-                                color: theme.colors.accent,
-                            }}
-                        >
-                            {`${article.custom_fields.terms[0].name} | ${article.custom_fields.jobtitle[0]}`}
-                        </Text>
-                    </TouchableItem>
-                )
-            }
-            // otherwise just display writer
-            else {
-                return (
-                    <TouchableItem
-                        onPress={() => _handleProfilePress(article.custom_fields.terms[0].term_id)}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 17,
-                                textAlign: 'center',
-                                paddingTop: 20,
-                                color: theme.colors.accent,
-                            }}
-                        >
-                            {`${article.custom_fields.terms[0].name}`}
-                        </Text>
-                    </TouchableItem>
-                )
-            }
-        } else if (article.custom_fields.writer && article.custom_fields.writer[0]) {
-            let writers = article.custom_fields.writer
-            //if arr of writers dont include job title
-            if (writers.length > 1) {
-                return writers.map((writer, i) => {
-                    if (i === writers.length - 2) {
-                        return (
-                            <TouchableItem key={i} onPress={() => _handleProfilePress(null)}>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {`${writer} & `}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    } else if (i === writers.length - 1) {
-                        return (
-                            <TouchableItem key={i} onPress={() => _handleProfilePress(null)}>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {writer}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    } else {
-                        return (
-                            <TouchableItem key={i} onPress={() => _handleProfilePress(null)}>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        textAlign: 'center',
-                                        paddingTop: 20,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {`${writer}, `}
-                                </Text>
-                            </TouchableItem>
-                        )
-                    }
-                })
-            }
-            // if writer has a jobtitle include it
-            if (article.custom_fields.jobtitle) {
-                return (
-                    <TouchableItem onPress={() => _handleProfilePress(null)}>
-                        <Text
-                            style={{
-                                fontSize: 17,
-                                textAlign: 'center',
-                                paddingTop: 20,
-                                color: theme.colors.accent,
-                            }}
-                        >
-                            {`${article.custom_fields.writer[0]} | ${article.custom_fields.jobtitle[0]}`}
-                        </Text>
-                    </TouchableItem>
-                )
-            }
-            // otherwise just display writer
-            else {
-                return (
-                    <TouchableItem onPress={() => _handleProfilePress()}>
-                        <Text
-                            style={{
-                                fontSize: 17,
-                                textAlign: 'center',
-                                paddingTop: 20,
-                                color: theme.colors.accent,
-                            }}
-                        >
-                            {`${article.custom_fields.writer[0]}`}
-                        </Text>
-                    </TouchableItem>
-                )
-            }
-        } else {
-            return null
-        }
+    const _renderDate = (date) => {
+        if (Moment().isAfter(Moment(date).add(7, 'days'))) return Moment(date).format('MMM D, YYYY')
+        return String(Moment(date).fromNow())
     }
 
     return (
         <View>
-            <View style={styles.featuredMediaContainer}>{_renderFeaturedMedia()}</View>
+            <View style={styles.featuredMediaContainer}>
+                <FeaturedMedia article={article} />
+            </View>
             <View
                 style={{
                     paddingHorizontal: 20,
@@ -308,40 +92,28 @@ export default (props) => {
                     alignItems: 'center',
                 }}
             >
-                <HTML
-                    html={article.title.rendered}
-                    baseFontStyle={{ fontSize: 30 }}
-                    allowedStyles={[]}
-                    customWrapper={(text) => {
-                        return <Text>{text}</Text>
+                <Text
+                    style={{
+                        fontSize: 30,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        paddingVertical: 10,
+                        color: theme.dark ? 'white' : 'black',
                     }}
-                    tagsStyles={{
-                        rawtext: {
-                            fontSize: 30,
-                            fontWeight: 'bold',
+                >
+                    {entities.decode(article.title.rendered)}
+                </Text>
+                {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ? (
+                    <Text
+                        style={{
+                            fontSize: 22,
                             textAlign: 'center',
                             paddingVertical: 10,
                             color: theme.dark ? 'white' : 'black',
-                        },
-                    }}
-                />
-                {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ? (
-                    <HTML
-                        html={article.custom_fields.sno_deck[0]}
-                        baseFontStyle={{ fontSize: 22 }}
-                        allowedStyles={[]}
-                        customWrapper={(text) => {
-                            return <Text>{text}</Text>
                         }}
-                        tagsStyles={{
-                            rawtext: {
-                                fontSize: 22,
-                                textAlign: 'center',
-                                paddingVertical: 10,
-                                color: theme.dark ? 'white' : 'black',
-                            },
-                        }}
-                    />
+                    >
+                        {entities.decode(article.custom_fields.sno_deck[0])}
+                    </Text>
                 ) : null}
             </View>
             <View
@@ -352,7 +124,7 @@ export default (props) => {
                     flexWrap: 'wrap',
                 }}
             >
-                {_renderArticleAuthor()}
+                <ArticleAuthors article={article} />
             </View>
             <View
                 style={{
@@ -361,7 +133,14 @@ export default (props) => {
                     paddingTop: 10,
                 }}
             >
-                {_renderDate(article.date)}
+                <Text
+                    style={{
+                        fontSize: 15,
+                        color: '#9e9e9e',
+                    }}
+                >
+                    {_renderDate(article.date)}
+                </Text>
             </View>
             {ad && adPosition === 'beginning' ? <AdBlock image={ad} /> : null}
             {article.content.rendered ? (

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, useWindowDimensions, Image, ImageBackground } from 'react-native'
+import { View, useWindowDimensions, Image, ImageBackground, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
 import Searchbar from '../components/SearchBar'
-import { Entypo } from '@expo/vector-icons'
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons'
 
 import ErrorScreen from '../screens/ErrorScreen'
+import UserInfoModal from '../screens/UserInfoModal'
 import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/TabNavigatorContainer'
 
@@ -14,6 +15,7 @@ import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
 
 import { getReleaseChannel } from '../constants/config'
+import TestScreen from '../screens/TestScreen'
 
 const version = getReleaseChannel()
 
@@ -125,53 +127,65 @@ export default (props) => {
                     <Stack.Screen
                         name='Tabs'
                         component={TabNavigatorContainer}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name='UserInfoModal'
+                        component={UserInfoModal}
                         // options={{ headerShown: false }}
                     />
                     <Stack.Screen
-                        name='Article'
+                        name='ArticleNavigator'
                         component={ArticleNavigator}
-                        options={{
+                        options={({ route, navigation }) => ({
+                            headerTitle: null,
                             headerRight: () => {
                                 return (
-                                    <View>
-                                        <Ionicons.Button
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <MaterialCommunityIcons.Button
                                             style={{
                                                 justifyContent: 'center',
                                                 alignItems: 'stretch',
                                             }}
-                                            name={'thumbs-up'}
-                                            size={35}
+                                            name={'thumb-up'}
+                                            // name={'thumb-up-outline'}
+                                            backgroundColor={'transparant'}
+                                            size={25}
                                             style={{ marginBottom: -3 }}
-                                            color={theme.primaryIsDark ? '#fff' : '#000'}
+                                            color={theme.colors.accent}
                                             onPress={() => {}}
                                         />
-                                        <Ionicons.Button
+                                        <MaterialCommunityIcons.Button
                                             style={{
                                                 justifyContent: 'center',
                                                 alignItems: 'stretch',
                                             }}
-                                            name={'thumbs-down'}
-                                            size={35}
+                                            name={'thumb-down'}
+                                            backgroundColor={'transparant'}
+                                            size={25}
                                             style={{ marginBottom: -3 }}
-                                            color={theme.primaryIsDark ? '#fff' : '#000'}
+                                            color={theme.colors.accent}
                                             onPress={() => {}}
                                         />
-                                        <Ionicons.Button
+                                        <MaterialCommunityIcons.Button
                                             style={{
                                                 justifyContent: 'center',
                                                 alignItems: 'stretch',
                                             }}
-                                            name={'dots-three-horizontal'}
-                                            size={35}
+                                            name={'dots-horizontal'}
+                                            backgroundColor={'transparant'}
+                                            size={25}
                                             style={{ marginBottom: -3 }}
-                                            color={theme.primaryIsDark ? '#fff' : '#000'}
-                                            onPress={() => {}}
+                                            color={theme.colors.accent}
+                                            onPress={() => {
+                                                navigation.navigate('ArticleActions')
+                                            }}
                                         />
                                     </View>
                                 )
                             },
                             headerBackTitleVisible: false,
-                        }}
+                        })}
                     />
                 </>
             )}

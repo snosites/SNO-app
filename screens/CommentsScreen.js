@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
     StyleSheet,
     Text,
@@ -14,11 +14,6 @@ import {
     Keyboard,
     ActivityIndicator,
 } from 'react-native'
-import { connect } from 'react-redux'
-
-import { actions as articleActions } from '../redux/articles'
-import { actions as userActions } from '../redux/user'
-import { getActiveDomain } from '../redux/domains'
 
 import Moment from 'moment'
 import Color from 'color'
@@ -29,48 +24,19 @@ import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-pape
 
 import { HeaderBackButton } from 'react-navigation'
 
-class CommentsScreen extends React.Component {
-    static navigationOptions = ({ navigation, navigation: { state }, screenProps }) => {
-        let primaryColor = Color(screenProps.theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        return {
-            headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
-            headerLeft: (
-                <HeaderBackButton
-                    tintColor={isDark ? 'white' : 'black'}
-                    onPress={() => {
-                        navigation.popToTop()
-                    }}
-                />
-            ),
-        }
-    }
+const CommentScreen = (props) => {
+    const { navigation, route, userInfo, saveUserInfo, theme, setCommentPosted } = props
 
-    state = {
-        commentInput: '',
-        modalVisible: false,
-        username: '',
-        email: '',
-        commentSent: false,
-    }
+    const [ commentInput, setCommentInput ] = useState('')
+    const [username, setUsername] = useState(userInfo.username)
+    const [email, setEmail] = useState(userInfo.email)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [commentSent, setCommentSent] = useState(false)
 
-    componentDidMount() {
-        this.setState({
-            username: this.props.userInfo.username,
-            email: this.props.userInfo.email,
-        })
-    }
+    let comments = route.params && route.params.comments ? route.params.comments : []
 
-    render() {
-        const { navigation, userInfo, saveUserInfo, theme, setCommentPosted } = this.props
-        const { modalVisible, username, email, commentInput } = this.state
-        let comments = navigation.getParam('comments', null)
-
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-
-        return (
-            <View style={{ flex: 1 }}>
+    return (
+        <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView
                     contentContainerStyle={{ flex: 1 }}
                     style={{ flex: 1 }}
@@ -135,76 +101,7 @@ class CommentsScreen extends React.Component {
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-                <Modal
-                    animationType='slide'
-                    transparent={false}
-                    visible={modalVisible}
-                    onDismiss={this._hideModal}
-                >
-                    <SafeAreaView
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            padding: 20,
-                            backgroundColor: '#f6f6f6',
-                        }}
-                    >
-                        <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
-                            You need to enter some information before you can post comments. You
-                            will only have to do this once.
-                        </Text>
-                        <View style={{ flex: 1, alignItems: 'center' }}>
-                            <PaperTextInput
-                                label='Username'
-                                theme={{ roundness: 10 }}
-                                style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
-                                placeholder='This is what will display publicly'
-                                mode='outlined'
-                                value={username}
-                                onChangeText={(text) => this.setState({ username: text })}
-                            />
-                            <PaperTextInput
-                                label='Email'
-                                placeholder='We need this for verification purposes'
-                                keyboardType='email-address'
-                                style={{ width: 300, borderRadius: 10 }}
-                                theme={{ roundness: 10 }}
-                                mode='outlined'
-                                value={email}
-                                onChangeText={(text) => this.setState({ email: text })}
-                            />
-                            <View style={{ flexDirection: 'row' }}>
-                                <Button
-                                    mode='contained'
-                                    theme={{ roundness: 10 }}
-                                    style={{
-                                        paddingHorizontal: 20,
-                                        margin: 20,
-                                        backgroundColor: '#f44336',
-                                        fontSize: 20,
-                                    }}
-                                    onPress={this._hideModal}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    mode='contained'
-                                    theme={{ roundness: 10 }}
-                                    style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
-                                    onPress={() => {
-                                        saveUserInfo({
-                                            username,
-                                            email,
-                                        })
-                                        this._hideModal()
-                                    }}
-                                >
-                                    Save
-                                </Button>
-                            </View>
-                        </View>
-                    </SafeAreaView>
-                </Modal>
+                
                 <Snackbar
                     visible={userInfo.commentPosted}
                     onDismiss={() => {
@@ -229,6 +126,28 @@ class CommentsScreen extends React.Component {
                         : 'There was an error posting your comment.  Please try again.'}
                 </Snackbar>
             </View>
+    )
+}
+
+class CommentsScreen extends React.Component {
+    
+
+    state = {
+        commentInput: '',
+        modalVisible: false,
+        username: '',
+        email: '',
+        commentSent: false,
+    }
+
+    render() {
+        
+
+        let primaryColor = Color(theme.colors.primary)
+        let isDark = primaryColor.isDark()
+
+        return (
+            
         )
     }
 
@@ -319,19 +238,3 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
     },
 })
-
-const mapStateToProps = (state) => {
-    return {
-        theme: state.theme,
-        activeDomain: getActiveDomain(state),
-        userInfo: state.user,
-    }
-}
-
-const mapDispatchToProps = (dispatch) => ({
-    addComment: (payload) => dispatch(articleActions.addComment(payload)),
-    setCommentPosted: (payload) => dispatch(userActions.setCommentPosted(payload)),
-    saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(CommentsScreen)

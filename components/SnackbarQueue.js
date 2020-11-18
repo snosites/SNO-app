@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, SafeAreaView } from 'react-native'
+import { View, Text } from 'react-native'
 import { Snackbar } from 'react-native-paper'
 
 import { connect } from 'react-redux'
@@ -29,20 +29,18 @@ const SnackbarQueue = (props) => {
     }
 
     return (
-        <SafeAreaView>
-            <Snackbar
-                visible={visible}
-                style={{ position: 'absolute', bottom: 80, left: 0, right: 0 }}
-                duration={4000}
-                onDismiss={removeSnackbarMessage}
-                action={{
-                    label: 'Dismiss',
-                    onPress: () => setVisible(false),
-                }}
-            >
-                {message}
-            </Snackbar>
-        </SafeAreaView>
+        <Snackbar
+            visible={visible}
+            style={{ position: 'absolute', bottom: 80, left: 0, right: 0 }}
+            duration={4000}
+            onDismiss={removeSnackbarMessage}
+            action={{
+                label: 'Dismiss',
+                onPress: () => setVisible(false),
+            }}
+        >
+            {message}
+        </Snackbar>
     )
 }
 

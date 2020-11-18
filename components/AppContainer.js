@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { View, ActivityIndicator } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import { connect } from 'react-redux'
 
-import { types as globalTypes, actions as globalActions } from '../redux/global'
+import { View, ActivityIndicator, Text } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 
 import * as RootNavigation from '../utils/RootNavigation'
+
+import { connect } from 'react-redux'
+import { types as globalTypes, actions as globalActions } from '../redux/global'
+
+import { Provider as PaperProvider } from 'react-native-paper'
+
+import ErrorBoundary from '../screens/ErrorBoundary'
 
 import AuthStack from '../navigation/AuthStack'
 import MainStackContainer from '../containers/MainStackContainer'
@@ -16,9 +21,8 @@ import NotificationAlertContainer from '../containers/NotificationAlertContainer
 
 import * as SplashScreen from 'expo-splash-screen'
 
-import { Provider as PaperProvider } from 'react-native-paper'
-
 import * as Linking from 'expo-linking'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 // const prefix = Linking.makeUrl('/')
 
@@ -30,6 +34,7 @@ async function hideSplashScreen() {
 
 const AppContainer = (props) => {
     const {
+        theme,
         user,
         initializeUser,
         initializeUserLoading,
@@ -40,8 +45,6 @@ const AppContainer = (props) => {
         setDeepLinkArticle,
         fromDeepLink,
         setFromDeepLink,
-        theme,
-        homeScreenMode,
         initialized,
     } = props
 
@@ -91,20 +94,26 @@ const AppContainer = (props) => {
         )
     }
     return (
-        <PaperProvider theme={theme}>
-            <View style={{ flex: 1 }}>
-                <StatusBar style={theme.primaryIsDark ? 'light' : 'dark'} />
-                {!activeDomain.id ? <AuthStack /> : <MainStackContainer />}
+        <NavigationContainer
+            theme={theme.navigationTheme}
+            ref={RootNavigation.navigationRef}
+            onReady={() => {
+                RootNavigation.isReadyRef.current = true
+            }}
+        >
+            <PaperProvider theme={theme}>
+                <ErrorBoundary navigation={RootNavigation}>
+                    <StatusBar barStyle={theme.primaryIsDark ? 'light-content' : 'dark-content'} />
+                    {!activeDomain.id ? <AuthStack /> : <MainStackContainer />}
+                </ErrorBoundary>
                 <SnackbarQueue />
-                {/* <NotificationAlertContainer />s */}
-            </View>
-        </PaperProvider>
+            </PaperProvider>
+        </NavigationContainer>
     )
 }
 
 const mapStateToProps = (state) => ({
     theme: state.theme,
-    homeScreenMode: state.global.homeScreenMode,
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -4,7 +4,8 @@ import { StatusBar } from 'expo-status-bar'
 import * as Amplitude from 'expo-analytics-amplitude'
 import LottieView from 'lottie-react-native'
 import { connect } from 'react-redux'
-import { NavigationEvents, SafeAreaView } from 'react-navigation'
+import { NavigationEvents } from 'react-navigation'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { actions as savedArticleActions } from '../redux/savedArticles'
 import { getActiveDomain } from '../redux/domains'
@@ -14,11 +15,14 @@ import { actions as adActions, getStoryAds } from '../redux/ads'
 import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
 
 import ArticleBodyContent from '../views/ArticleBodyContent'
+import ArticleContent from '../components/Article/ArticleContent'
 
 import layout from '../constants/Layout'
 
 const ArticleScreen = (props) => {
-    const { route, navigation, theme, activeDomain } = props
+    const { route, navigation, theme, activeDomain, article } = props
+
+    console.log('rpute', route, navigation)
 
     const [expandCaption, setExpandCaption] = useState(false)
     const [loadingLink, setLoadingLink] = useState(false)
@@ -26,22 +30,24 @@ const ArticleScreen = (props) => {
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
 
-    let article = route.params && route.params.article ? route.params.article : null
-    let articleChapters =
-        route.params && route.params.articleChapters ? route.params.articleChapters : []
+    let article = null
+    // // let articleId = route.params && route.params.articleId ? route.params.articleId : null
+    // let articleChapters =
+    //     route.params && route.params.articleChapters ? route.params.articleChapters : []
 
+    console.log('in article', articleId)
     const _handleCaptionClick = () => {
         setExpandCaption(!expandCaption)
     }
 
     if (!article) {
         return (
-            <View
+            <SafeAreaView
                 style={{
                     flex: 1,
-                    backgroundColor: '#fff',
                     alignContent: 'center',
                     justifyContent: 'center',
+                    backgroundColor: theme.colors.surface,
                 }}
             >
                 <LottieView
@@ -51,9 +57,18 @@ const ArticleScreen = (props) => {
                     autoPlay={true}
                     source={require('../assets/lottiefiles/article-loading-animation')}
                 />
-            </View>
+            </SafeAreaView>
         )
     }
+
+    return (
+        <View style={{ flex: 1 }}>
+            <ArticleContent article={article} />
+            {articleChapters.map((article) => (
+                <ArticleContent key={article.id} article={article} />
+            ))}
+        </View>
+    )
 
     return (
         <View style={{ flex: 1 }}>

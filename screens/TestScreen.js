@@ -1,10 +1,19 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default ({ route }) => {
     return (
-        <View style={{ flex: 1, backgroundColor: 'grey' }}>
-            <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>Test Screen</Text>
-        </View>
+        <SafeAreaView
+            style={{
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                backgroundColor: 'orange',
+            }}
+        >
+            <Text>This is top text.</Text>
+            <Text>This is bottom text.</Text>
+        </SafeAreaView>
     )
 }
