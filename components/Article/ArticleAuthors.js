@@ -19,10 +19,10 @@ import { WebView } from 'react-native-webview'
 import TouchableItem from '../../constants/TouchableItem'
 
 const ArticleAuthors = ({ article, navigation, theme }) => {
-    _handleProfilePress = (writerId) => {
+    const _handleProfilePress = (writerId) => {
         Haptics.selectionAsync()
-        navigation.navigate('Profile', {
-            writerTermId: writerId,
+        navigation.navigate('ProfileModal', {
+            profileId: writerId,
         })
     }
 

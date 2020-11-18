@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, View, Modal } from 'react-native'
+import { Text, View, Modal, TouchableOpacity } from 'react-native'
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import { Ionicons } from '@expo/vector-icons'
-import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
+import { Feather } from '@expo/vector-icons'
+import { Button, Snackbar } from 'react-native-paper'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -12,7 +12,122 @@ const ArticleActionsScreen = (props) => {
     const { navigation, theme } = props
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <View style={{ height: 300, backgroundColor: theme.colors.surface }}></View>
+            <View
+                style={{
+                    height: 250,
+                    backgroundColor: theme.colors.surface,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 15,
+                }}
+            >
+                <TouchableOpacity
+                    onPress={() => {}}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 8 }}
+                >
+                    <Feather
+                        style={{
+                            paddingRight: 15,
+                            marginBottom: -3,
+                        }}
+                        name={'share'}
+                        size={18}
+                        // style={{ marginBottom: -3 }}
+                        color={theme.colors.text}
+                    />
+                    <Text
+                        style={{
+                            fontFamily: 'openSansBold',
+                            fontSize: 15,
+                            color: theme.colors.text,
+                        }}
+                    >
+                        Share
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {}}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                >
+                    <Feather
+                        style={{
+                            paddingRight: 15,
+                            marginBottom: -3,
+                        }}
+                        name={'archive'}
+                        size={18}
+                        color={theme.colors.text}
+                    />
+                    <Text
+                        style={{
+                            fontFamily: 'openSansBold',
+                            fontSize: 15,
+                            color: theme.colors.text,
+                        }}
+                    >
+                        Save
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {}}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                >
+                    <Feather
+                        style={{
+                            paddingRight: 15,
+                            marginBottom: -3,
+                        }}
+                        name={'copy'}
+                        size={18}
+                        color={theme.colors.text}
+                    />
+                    <Text
+                        style={{
+                            fontFamily: 'openSansBold',
+                            fontSize: 15,
+                            color: theme.colors.text,
+                        }}
+                    >
+                        Copy text
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {}}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                >
+                    <Feather
+                        style={{
+                            paddingRight: 15,
+                            marginBottom: -3,
+                        }}
+                        name={'user-plus'}
+                        size={18}
+                        color={theme.colors.text}
+                    />
+                    <Text
+                        style={{
+                            fontFamily: 'openSansBold',
+                            fontSize: 15,
+                            color: theme.colors.text,
+                        }}
+                    >
+                        Follow authors
+                    </Text>
+                </TouchableOpacity>
+                <Button
+                    mode='contained'
+                    theme={{ roundness: 10 }}
+                    style={{
+                        backgroundColor: theme.extraColors.gray,
+                        fontSize: 18,
+                        marginTop: 'auto',
+                        marginBottom: 10,
+                    }}
+                    onPress={() => navigation.goBack()}
+                >
+                    Close
+                </Button>
+            </View>
         </View>
     )
     return (

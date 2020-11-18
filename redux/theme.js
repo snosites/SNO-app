@@ -10,8 +10,12 @@ export default function theme(state = defaultColorTheme, action) {
         case types.SAVE_THEME:
             let primaryColor = Color(action.theme.primary || defaultColorTheme.colors.primary)
             let primaryIsDark = primaryColor.isDark()
+
             let accentColor = Color(action.theme.accent || defaultColorTheme.colors.accent)
+            let accentColorLightened = Color(accentColor).lighten(0.8).string()
+            let accentWhitened = Color(accentColor).whiten(0.7).opaquer(0.2).string()
             let accentIsDark = accentColor.isDark()
+
             let homeCategoryColor = Color(
                 action.theme.homeCategoryColor || defaultColorTheme.colors.homeScreenCategoryTitle
             )
@@ -37,6 +41,8 @@ export default function theme(state = defaultColorTheme, action) {
                     primary: action.theme.primary || defaultColorTheme.colors.primary,
                     accent: action.theme.accent || defaultColorTheme.colors.accent,
                     homeScreenCategoryTitle: homeCategoryColor,
+                    accentLightened: accentColorLightened,
+                    accentWhitened,
                 },
                 primaryIsDark,
                 accentIsDark,

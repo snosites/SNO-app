@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     StyleSheet,
     Text,
@@ -40,20 +40,11 @@ const MEDIASIZE = viewportHeight * 0.35
 const MEDIAWIDTH = viewportWidth * 0.9
 
 export default (props) => {
-    const {
-        navigation,
-        theme,
-        article,
-        ad,
-        snoAd,
-        adPosition,
-        handleCaptionClick,
-        activeDomain,
-        setLoadingLink,
-        expandCaption,
-    } = props
+    const { navigation, theme, article, ad, snoAd, adPosition, activeDomain } = props
 
-    _viewLink = async (href) => {
+    const [loadingLink, setLoadingLink] = useState(false)
+
+    const _viewLink = async (href) => {
         setLoadingLink(true)
 
         if (href.includes(activeDomain.url)) {
@@ -81,9 +72,9 @@ export default (props) => {
     }
 
     return (
-        <View>
+        <ScrollView>
             <View style={styles.featuredMediaContainer}>
-                <FeaturedMedia article={article} />
+                <FeaturedMedia navigation={navigation} article={article} theme={theme} />
             </View>
             <View
                 style={{
@@ -97,7 +88,7 @@ export default (props) => {
                         fontSize: 30,
                         fontWeight: 'bold',
                         textAlign: 'center',
-                        paddingVertical: 10,
+                        paddingTop: 10,
                         color: theme.dark ? 'white' : 'black',
                     }}
                 >
@@ -124,7 +115,7 @@ export default (props) => {
                     flexWrap: 'wrap',
                 }}
             >
-                <ArticleAuthors article={article} theme={theme} />
+                <ArticleAuthors navigation={navigation} article={article} theme={theme} />
             </View>
             <View
                 style={{
@@ -145,83 +136,66 @@ export default (props) => {
             {ad && adPosition === 'beginning' ? <AdBlock image={ad} /> : null}
             {article.content.rendered ? (
                 <View style={styles.articleContents}>
-                    <ScrollView>
-                        <HTML
-                            html={article.content.rendered}
-                            imagesMaxWidth={viewportWidth}
-                            ignoredStyles={['height', 'width', 'display', 'font-family']}
-                            allowedStyles={[]}
-                            imagesInitialDimensions={{
+                    <HTML
+                        html={article.content.rendered}
+                        imagesMaxWidth={viewportWidth}
+                        ignoredStyles={['height', 'width', 'display', 'font-family']}
+                        allowedStyles={[]}
+                        imagesInitialDimensions={{
+                            width: viewportWidth,
+                        }}
+                        textSelectable={true}
+                        onLinkPress={(e, href) => {
+                            _viewLink(href)
+                        }}
+                        alterChildren={(node) => {
+                            if (node.name === 'iframe') {
+                                delete node.attribs.width
+                                delete node.attribs.height
+                            }
+                            return node.children
+                        }}
+                        tagsStyles={{
+                            p: {
+                                fontSize: 18,
+                                marginBottom: 15,
+                            },
+                            img: {
+                                marginLeft: -20,
+                                // height: MEDIASIZE,
                                 width: viewportWidth,
-                            }}
-                            textSelectable={true}
-                            onLinkPress={(e, href) => {
-                                _viewLink(href)
-                            }}
-                            alterChildren={(node) => {
-                                if (node.name === 'iframe') {
-                                    delete node.attribs.width
-                                    delete node.attribs.height
-                                }
-                                return node.children
-                            }}
-                            tagsStyles={{
-                                p: {
-                                    fontSize: 18,
-                                    marginBottom: 15,
-                                },
-                                img: {
-                                    marginLeft: -20,
-                                    // height: MEDIASIZE,
-                                    width: viewportWidth,
-                                    resizeMode: 'cover',
-                                },
-                                iframe: {
-                                    marginLeft: -20,
-                                    height: MEDIASIZE,
-                                    width: viewportWidth,
-                                },
-                                a: {
-                                    fontSize: 18,
-                                },
-                            }}
-                            classesStyles={{
-                                pullquote: {
-                                    backgroundColor: '#eeeeee',
-                                    borderRadius: 8,
-                                    padding: 10,
-                                    marginBottom: 15,
-                                },
-                                largequote: { fontSize: 21 },
-                                pullquotetext: { textAlign: 'left', fontSize: 21 },
-                                quotespeaker: { textAlign: 'left', fontSize: 14 },
-                                photowrap: {
-                                    display: 'none',
-                                },
-                                'wp-caption-text': {
-                                    fontSize: 14,
-                                    color: '#757575',
-                                },
-                            }}
-                            onParsed={(dom, RNElements) => {
-                                if (snoAd) {
-                                    console.log('rendering ad block for sno ad')
-                                    const ad = {
-                                        wrapper: null,
-                                        tagName: 'adBlock',
-                                        attribs: {},
-                                        parent: false,
-                                        parentTag: false,
-                                        nodeIndex: Math.floor(RNElements.length / 2),
-                                    }
-                                    // // Insert the component
-                                    RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
-
-                                    return RNElements
-                                }
-                                if (!ad || !adPosition || adPosition !== 'middle') return RNElements
-
-                                // Find the index of the first paragraph
+                                resizeMode: 'cover',
+                            },
+                            iframe: {
+                                marginLeft: -20,
+                                height: MEDIASIZE,
+                                width: viewportWidth,
+                            },
+                            a: {
+                                fontSize: 18,
+                            },
+                        }}
+                        classesStyles={{
+                            pullquote: {
+                                backgroundColor: '#eeeeee',
+                                borderRadius: 8,
+                                padding: 10,
+                                marginBottom: 15,
+                            },
+                            largequote: { fontSize: 21 },
+                            pullquotetext: { textAlign: 'left', fontSize: 21 },
+                            quotespeaker: { textAlign: 'left', fontSize: 14 },
+                            photowrap: {
+                                display: 'none',
+                            },
+                            'wp-caption-text': {
+                                fontSize: 14,
+                                color: '#757575',
+                            },
+                        }}
+                        onParsed={(dom, RNElements) => {
+                            if (snoAd) {
+                                console.log('rendering ad block for sno ad')
                                 const ad = {
                                     wrapper: null,
                                     tagName: 'adBlock',
@@ -234,22 +208,37 @@ export default (props) => {
                                 RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
 
                                 return RNElements
-                            }}
-                            renderers={{
-                                snsgallery: slideshowRenderer,
-                                snsrelated: relatedRenderer,
-                                adBlock: adBlockRenderer,
-                            }}
-                            renderersProps={{
-                                adImage: ad,
-                                snoAdImage: snoAd,
-                            }}
-                        />
-                    </ScrollView>
+                            }
+                            if (!ad || !adPosition || adPosition !== 'middle') return RNElements
+
+                            // Find the index of the first paragraph
+                            const ad = {
+                                wrapper: null,
+                                tagName: 'adBlock',
+                                attribs: {},
+                                parent: false,
+                                parentTag: false,
+                                nodeIndex: Math.floor(RNElements.length / 2),
+                            }
+                            // // Insert the component
+                            RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
+
+                            return RNElements
+                        }}
+                        renderers={{
+                            snsgallery: slideshowRenderer,
+                            snsrelated: relatedRenderer,
+                            adBlock: adBlockRenderer,
+                        }}
+                        renderersProps={{
+                            adImage: ad,
+                            snoAdImage: snoAd,
+                        }}
+                    />
                 </View>
             ) : null}
             {ad && adPosition === 'end' ? <AdBlock image={ad} /> : null}
-        </View>
+        </ScrollView>
     )
 }
 

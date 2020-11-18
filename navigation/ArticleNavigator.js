@@ -5,9 +5,9 @@ import { connect } from 'react-redux'
 
 import ArticleScreenContainer from '../containers/ArticleScreenContainer'
 import ArticleActionsContainer from '../containers/ArticleActionsScreenContainer'
-import TestScreen from '../screens/TestScreen'
+import ProfileModalContainer from '../containers/ProfileModalScreenContainer'
 
-import ArticleActionsScreen from '../screens/ArticleActionsScreen'
+import TestScreen from '../screens/TestScreen'
 
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
@@ -75,6 +75,11 @@ const ArticleNavigator = ({ route }) => {
                 <Stack.Screen
                     name='ArticleActions'
                     component={ArticleActionsContainer}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name='ProfileModal'
+                    component={ProfileModalContainer}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

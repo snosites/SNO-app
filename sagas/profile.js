@@ -1,7 +1,8 @@
 import uniqBy from 'lodash/uniqBy'
-import { put, call, takeLatest, all } from 'redux-saga/effects'
+import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 
 import { types as profileTypes, actions as profileActions } from '../redux/profiles'
+import { getActiveDomain } from '../redux/domains'
 
 import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
 
@@ -16,6 +17,22 @@ function* fetchProfiles(action) {
         yield put(profileActions.receiveProfiles(profiles))
     } catch (err) {
         console.log('error fetching profiles in saga', err)
+        Sentry.captureException(err)
+    }
+}
+
+function* fetchProfile(action) {
+    const { profileId } = action
+    try {
+        const domain = yield select(getActiveDomain)
+
+        yield put(profileActions.fetchProfileRequest())
+
+        const profile = yield call(domainApiService.fetchProfile, domain.url, profileId)
+        yield put(profileActions.fetchProfileSuccess(profile))
+    } catch (err) {
+        console.log('error fetching profile in saga', err)
+        yield put(profileActions.fetchProfileError('error fetching profile'))
         Sentry.captureException(err)
     }
 }
@@ -89,6 +106,7 @@ function* fetchProfileArticles(action) {
 function* profilesSaga() {
     yield all([
         takeLatest(profileTypes.FETCH_PROFILES, fetchProfiles),
+        takeLatest(profileTypes.FETCH_PROFILE, fetchProfile),
         takeLatest(profileTypes.FETCH_PROFILE_ARTICLES, fetchProfileArticles),
     ])
 }

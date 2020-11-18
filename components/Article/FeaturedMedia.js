@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     StyleSheet,
     Text,
@@ -8,6 +8,7 @@ import {
     ScrollView,
     Platform,
     ActivityIndicator,
+    TouchableWithoutFeedback,
 } from 'react-native'
 
 import Moment from 'moment'
@@ -19,12 +20,26 @@ import { WebView } from 'react-native-webview'
 import TouchableItem from '../../constants/TouchableItem'
 import Slideshow from '../../views/Slideshow'
 
+import { Html5Entities } from 'html-entities'
+import theme from '../../redux/theme'
+
+const entities = new Html5Entities()
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
 const MEDIASIZE = viewportHeight * 0.35
 const MEDIAWIDTH = viewportWidth * 0.9
 
-const FeaturedMedia = ({ article }) => {
+const FeaturedMedia = ({ navigation, article, theme }) => {
+    const [expandCaption, setExpandCaption] = useState(false)
+
+    const _handleProfilePress = (writerId) => {
+        Haptics.selectionAsync()
+        navigation.navigate('ProfileModal', {
+            profileId: writerId,
+        })
+    }
+
     if (article.slideshow && article.slideshow.length) {
         return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
     }
@@ -113,14 +128,14 @@ const FeaturedMedia = ({ article }) => {
                         {article.featuredImage.caption ? (
                             <HTML
                                 html={article.featuredImage.caption}
-                                baseFontStyle={{ fontSize: 12 }}
+                                baseFontStyle={{ fontSize: 14 }}
                                 allowedStyles={[]}
                                 customWrapper={(text) => {
                                     return (
                                         <Text
                                             ellipsizeMode='tail'
                                             numberOfLines={expandCaption ? null : 2}
-                                            onPress={handleCaptionClick}
+                                            onPress={() => setExpandCaption(!expandCaption)}
                                         >
                                             {text}
                                         </Text>
@@ -128,7 +143,7 @@ const FeaturedMedia = ({ article }) => {
                                 }}
                                 tagsStyles={{
                                     rawtext: {
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         color: 'white',
                                     },
                                 }}
@@ -140,7 +155,7 @@ const FeaturedMedia = ({ article }) => {
                                     _handleProfilePress(article.featuredImage.photographerTermId)
                                 }}
                             >
-                                <Text style={{ color: '#bdbdbd' }}>
+                                <Text style={{ color: theme.colors.accent }}>
                                     {article.featuredImage.photographer[0]}
                                 </Text>
                             </TouchableItem>
@@ -156,7 +171,7 @@ const FeaturedMedia = ({ article }) => {
 
 const styles = StyleSheet.create({
     featuredMediaContainer: {
-        flex: 0,
+        // flex: 0,
         height: MEDIASIZE,
         backgroundColor: 'black',
     },

@@ -58,6 +58,8 @@ export const defaultColorTheme = {
         accent: defaultAccentColor,
         background: '#dddddd',
         homeScreenCategoryTitle: defaultAccentColor,
+        accentLightened: accentColor.lighten(0.8),
+        accentWhitened: accentColor.whiten(0.7).opaquer(0.2),
     },
     primaryIsDark,
     accentIsDark,

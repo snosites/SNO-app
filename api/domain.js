@@ -289,6 +289,38 @@ const domainApiService = {
             throw err
         }
     },
+    fetchProfile: async (domainUrl, profileTermId) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/get_profile?autherTermId=${profileTermId}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch profile api', err, err.response)
+            throw err
+        }
+    },
+    // fetchProfile: async (domainUrl, profileId) => {
+    //     try {
+    //         const response = await axios.get(
+    //             `https://${domainUrl}/wp-json/wp/v2/staff_profile/${profileId}`,
+    //             {
+    //                 headers: {
+    //                     'Cache-Control': 'no-cache',
+    //                 },
+    //             }
+    //         )
+    //         return response.data
+    //     } catch (err) {
+    //         console.log('error in fetch profile api', err, err.response)
+    //         throw err
+    //     }
+    // },
     addComment: async (domainUrl, postObj) => {
         try {
             const response = await axios.post(

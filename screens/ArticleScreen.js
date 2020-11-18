@@ -39,6 +39,7 @@ const ArticleScreen = (props) => {
     //     route.params && route.params.articleChapters ? route.params.articleChapters : []
 
     console.log('in article', articles, articleId, article)
+
     const _handleCaptionClick = () => {
         setExpandCaption(!expandCaption)
     }
@@ -65,8 +66,8 @@ const ArticleScreen = (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <ArticleContent article={article} theme={theme} />
+        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <ArticleContent navigation={navigation} article={article} theme={theme} />
             {articleChapters.map((article) => (
                 <ArticleContent key={article.id} article={article} />
             ))}

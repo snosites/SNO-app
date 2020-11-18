@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, useWindowDimensions, Image, ImageBackground, Text } from 'react-native'
+import {
+    View,
+    useWindowDimensions,
+    Image,
+    ImageBackground,
+    Text,
+    TouchableOpacity,
+} from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
@@ -142,45 +149,56 @@ export default (props) => {
                             headerRight: () => {
                                 return (
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <MaterialCommunityIcons.Button
-                                            style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'stretch',
-                                            }}
-                                            name={'thumb-up'}
-                                            // name={'thumb-up-outline'}
-                                            backgroundColor={'transparant'}
-                                            size={25}
-                                            style={{ marginBottom: -3 }}
-                                            color={theme.colors.accent}
+                                        <TouchableOpacity
                                             onPress={() => {}}
-                                        />
-                                        <MaterialCommunityIcons.Button
                                             style={{
                                                 justifyContent: 'center',
                                                 alignItems: 'stretch',
+                                                padding: 10,
                                             }}
-                                            name={'thumb-down'}
-                                            backgroundColor={'transparant'}
-                                            size={25}
-                                            style={{ marginBottom: -3 }}
-                                            color={theme.colors.accent}
+                                        >
+                                            <MaterialCommunityIcons
+                                                name={'thumb-up-outline'}
+                                                // name={'thumb-up-outline'}
+                                                size={25}
+                                                style={{ marginBottom: -3 }}
+                                                color={theme.colors.accent}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                             onPress={() => {}}
-                                        />
-                                        <MaterialCommunityIcons.Button
                                             style={{
                                                 justifyContent: 'center',
                                                 alignItems: 'stretch',
+                                                padding: 10,
                                             }}
-                                            name={'dots-horizontal'}
-                                            backgroundColor={'transparant'}
-                                            size={25}
-                                            style={{ marginBottom: -3 }}
-                                            color={theme.colors.accent}
+                                        >
+                                            <MaterialCommunityIcons
+                                                name={'thumb-down-outline'}
+                                                backgroundColor={'transparant'}
+                                                size={25}
+                                                style={{ marginBottom: -3 }}
+                                                color={theme.colors.accent}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                             onPress={() => {
                                                 navigation.navigate('ArticleActions')
                                             }}
-                                        />
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'stretch',
+                                                padding: 10,
+                                            }}
+                                        >
+                                            <MaterialCommunityIcons
+                                                name={'dots-horizontal'}
+                                                backgroundColor={'transparant'}
+                                                size={25}
+                                                style={{ marginBottom: -3 }}
+                                                color={theme.colors.accent}
+                                            />
+                                        </TouchableOpacity>
                                     </View>
                                 )
                             },
