@@ -124,7 +124,7 @@ export default (props) => {
                     flexWrap: 'wrap',
                 }}
             >
-                <ArticleAuthors article={article} />
+                <ArticleAuthors article={article} theme={theme} />
             </View>
             <View
                 style={{

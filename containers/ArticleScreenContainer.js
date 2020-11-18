@@ -21,6 +21,7 @@ const startupLoadingSelector = createLoadingSelector([globalTypes.STARTUP])
 const mapStateToProps = (state) => ({
     theme: state.theme,
     activeDomain: getActiveDomain(state),
+    articles: state.entities.articles,
 })
 
 const mapDispatchToProps = (dispatch) => ({

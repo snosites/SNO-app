@@ -13,7 +13,7 @@ export const types = {
     //comments
     UPDATE_COMMENTS: 'UPDATE_COMMENTS',
     REFETCH_COMMENTS: 'REFETCH_COMMENTS',
-    ADD_COMMENT: 'ADD_COMMENT'
+    ADD_COMMENT: 'ADD_COMMENT',
 }
 
 // ARTICLES REDUCERS //
@@ -43,7 +43,7 @@ function articles(
         refreshing: false,
         page: 1,
         items: [],
-        error: ''
+        error: '',
     },
     action
 ) {
@@ -51,18 +51,18 @@ function articles(
         case types.INVALIDATE_ARTICLES:
             return Object.assign({}, state, {
                 didInvalidate: true,
-                page: 1
+                page: 1,
             })
         case types.REQUEST_ARTICLES:
             return Object.assign({}, state, {
                 isFetching: true,
-                error: ''
+                error: '',
             })
         case types.FETCH_ARTICLES_FAILURE:
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: false,
-                error: action.error
+                error: action.error,
             })
         case types.RECEIVE_ARTICLES:
             let updatedPage = 'max'
@@ -81,7 +81,7 @@ function articles(
                 didInvalidate: false,
                 items: newItems,
                 lastUpdated: action.receivedAt,
-                page: updatedPage
+                page: updatedPage,
             })
         default:
             return state
@@ -96,7 +96,7 @@ export default function articlesByCategory(state = {}, action) {
         case types.FETCH_ARTICLES_FAILURE:
             return {
                 ...state,
-                [action.category]: articles(state[action.category], action)
+                [action.category]: articles(state[action.category], action),
             }
         default:
             return state
@@ -107,31 +107,31 @@ export const actions = {
     selectCategory(category) {
         return {
             type: types.SELECT_CATEGORY,
-            category
+            category,
         }
     },
     invalidateArticles(category) {
         return {
             type: types.INVALIDATE_ARTICLES,
-            category
+            category,
         }
     },
     fetchArticlesIfNeeded(payload) {
         return {
             type: types.FETCH_ARTICLES_IF_NEEDED,
-            payload
+            payload,
         }
     },
     fetchMoreArticlesIfNeeded(payload) {
         return {
             type: types.FETCH_MORE_ARTICLES_IF_NEEDED,
-            payload
+            payload,
         }
     },
     requestArticles(category) {
         return {
             type: types.REQUEST_ARTICLES,
-            category
+            category,
         }
     },
     receiveArticles(category, response) {
@@ -139,7 +139,7 @@ export const actions = {
             type: types.RECEIVE_ARTICLES,
             category,
             response,
-            receivedAt: Date.now()
+            receivedAt: Date.now(),
         }
     },
     fetchArticlesFailure(category, error) {
@@ -147,27 +147,31 @@ export const actions = {
             type: types.FETCH_ARTICLES_FAILURE,
             category,
             error,
-            recievedAt: Date.now()
+            recievedAt: Date.now(),
         }
     },
     //comments
     updateComments(payload) {
         return {
             type: types.UPDATE_COMMENTS,
-            payload
+            payload,
         }
     },
     refetchComments(domain, articleId) {
         return {
             type: types.REFETCH_COMMENTS,
             domain,
-            articleId
+            articleId,
         }
     },
     addComment(payload) {
         return {
             type: types.ADD_COMMENT,
-            payload
+            payload,
         }
-    }
+    },
+}
+
+export const getArticle = (state, articleId) => {
+    return state.entities[articleId]
 }

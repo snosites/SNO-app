@@ -19,6 +19,11 @@ import { WebView } from 'react-native-webview'
 import TouchableItem from '../../constants/TouchableItem'
 import Slideshow from '../../views/Slideshow'
 
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
+
+const MEDIASIZE = viewportHeight * 0.35
+const MEDIAWIDTH = viewportWidth * 0.9
+
 const FeaturedMedia = ({ article }) => {
     if (article.slideshow && article.slideshow.length) {
         return <Slideshow accentColor={theme.colors.accent} images={article.slideshow} />
@@ -148,5 +153,26 @@ const FeaturedMedia = ({ article }) => {
         return null
     }
 }
+
+const styles = StyleSheet.create({
+    featuredMediaContainer: {
+        flex: 0,
+        height: MEDIASIZE,
+        backgroundColor: 'black',
+    },
+    featuredImage: {
+        width: viewportWidth,
+        height: MEDIASIZE,
+        resizeMode: 'contain',
+    },
+    imageInfoContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+    },
+    imageInfo: {
+        backgroundColor: 'rgba(0,0,0,0.55)',
+        padding: 10,
+    },
+})
 
 export default FeaturedMedia
