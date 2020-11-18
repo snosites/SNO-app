@@ -2,6 +2,7 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects'
 
 import { types as savedArticleTypes, actions as savedArticleActions } from '../redux/savedArticles'
 import { types as domainTypes, actions as domainActions } from '../redux/domains'
+import { types as userTypes } from '../redux/user'
 import {
     types as snackbarQueueTypes,
     actions as snackbarQueueActions,
@@ -17,13 +18,17 @@ function* addToQueue(message) {
 
 function* snackbarQueue() {
     yield all([
-        takeLatest(savedArticleTypes.SAVE_ARTICLE, addToQueue, 'Article Added To Saved List'),
+        takeLatest(savedArticleTypes.SAVE_ARTICLE, addToQueue, 'Article added to saved list'),
         takeLatest(
             savedArticleTypes.REMOVE_SAVED_ARTICLE,
             addToQueue,
-            'Article Removed From Saved List'
+            'Article removed from saved list'
         ),
-        takeLatest(domainTypes.DELETE_DOMAIN, addToQueue, 'Organization Removed'),
+        takeLatest(domainTypes.DELETE_DOMAIN, addToQueue, 'Organization removed'),
+        takeLatest(userTypes.SUBSCRIBE_SUCCESS, addToQueue, 'Followed writer'),
+        takeLatest(userTypes.UNSUBSCRIBE_SUCCESS, addToQueue, 'Unfollowed writer'),
+        takeLatest(userTypes.SUBSCRIBE_ERROR, addToQueue, 'Error following writer'),
+        takeLatest(userTypes.UNSUBSCRIBE_ERROR, addToQueue, 'Error unfollowing writer'),
     ])
 }
 

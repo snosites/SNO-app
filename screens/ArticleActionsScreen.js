@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, View, Modal, TouchableOpacity } from 'react-native'
+import { Text, View, Modal, TouchableOpacity, Share } from 'react-native'
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
@@ -7,9 +7,47 @@ import { Feather } from '@expo/vector-icons'
 import { Button, Snackbar } from 'react-native-paper'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
+import * as Amplitude from 'expo-analytics-amplitude'
 
 const ArticleActionsScreen = (props) => {
-    const { navigation, theme } = props
+    const {
+        activeDomain,
+        navigation,
+        theme,
+        articleId,
+        articles,
+        saveArticle,
+        removeSavedArticle,
+    } = props
+
+    const [article, setArticle] = useState(null)
+
+    useEffect(() => {
+        if (articles && articles[articleId]) setArticle(articles[articleId])
+    }, [articleId])
+
+    const _shareArticle = () => {
+        //log share to analytics
+        Amplitude.logEventWithProperties('social share', {
+            storyId: article.id,
+        })
+        Share.share({
+            title: article.title.rendered,
+            message: article.title.rendered,
+            url: article.link,
+        })
+    }
+
+    const _saveRemoveToggle = () => {
+        if (article.saved) {
+            removeSavedArticle(article.id, activeDomain.id)
+        } else {
+            saveArticle(article, activeDomain.id)
+        }
+    }
+
+    // saveArticle(article, activeDomain.id)
+
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             <View
@@ -22,7 +60,7 @@ const ArticleActionsScreen = (props) => {
                 }}
             >
                 <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={_shareArticle}
                     style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 8 }}
                 >
                     <Feather
@@ -46,7 +84,7 @@ const ArticleActionsScreen = (props) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={_saveRemoveToggle}
                     style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
                 >
                     <Feather
@@ -65,7 +103,7 @@ const ArticleActionsScreen = (props) => {
                             color: theme.colors.text,
                         }}
                     >
-                        Save
+                        {article && article.saved ? 'Unsave' : 'Save'}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -91,10 +129,7 @@ const ArticleActionsScreen = (props) => {
                         Copy text
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => {}}
-                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-                >
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}>
                     <Feather
                         style={{
                             paddingRight: 15,
@@ -104,16 +139,27 @@ const ArticleActionsScreen = (props) => {
                         size={18}
                         color={theme.colors.text}
                     />
-                    <Text
-                        style={{
-                            fontFamily: 'openSansBold',
-                            fontSize: 15,
-                            color: theme.colors.text,
-                        }}
-                    >
-                        Follow authors
-                    </Text>
-                </TouchableOpacity>
+                    <View style={{}}>
+                        <Text
+                            style={{
+                                fontFamily: 'openSansBold',
+                                fontSize: 15,
+                                color: theme.colors.text,
+                            }}
+                        >
+                            Follow authors
+                        </Text>
+                        <Text
+                            style={{
+                                fontFamily: 'openSans',
+                                fontSize: 12,
+                                color: theme.extraColors.gray,
+                            }}
+                        >
+                            Click on author names to follow them
+                        </Text>
+                    </View>
+                </View>
                 <Button
                     mode='contained'
                     theme={{ roundness: 10 }}

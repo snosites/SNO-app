@@ -27,21 +27,41 @@ const ProfileModalScreen = (props) => {
     const {
         route,
         navigation,
+        activeDomain,
         theme,
         fetchProfile,
         profile,
         profileIsLoading,
         profileError,
+        subscribe,
+        subscribeLoading,
+        unsubscribe,
+        unsubscribeLoading,
+        writerSubscriptions,
     } = props
+
+    const [subscribed, setSubscribed] = useState(false)
 
     useEffect(() => {
         if (route.params?.profileId) {
-            console.log('route.params.profileId', route.params.profileId, route)
             fetchProfile(route.params.profileId)
         }
     }, [route.params?.profileId])
 
-    console.log('profile modal', profile, route)
+    useEffect(() => {
+        if (route.params?.profileId && writerSubscriptions) {
+            const { profileName, profileId } = route.params
+            const foundSub = writerSubscriptions.find(
+                (writerObj) =>
+                    writerObj.writer_id === profileId &&
+                    writerObj.organization_id === activeDomain.id
+            )
+            if (foundSub) setSubscribed(foundSub.id)
+            else setSubscribed(false)
+        }
+    }, [route.params?.profileId, writerSubscriptions, activeDomain])
+
+    console.log('profile modal', writerSubscriptions)
 
     if (profileIsLoading) {
         return (
@@ -408,86 +428,38 @@ const ProfileModalScreen = (props) => {
                                 marginTop: 'auto',
                                 marginBottom: 10,
                             }}
-                            onPress={() => navigation.goBack()}
+                            loading={subscribeLoading || unsubscribeLoading}
+                            onPress={() => {
+                                if (route.params?.profileId && route.params?.profileName) {
+                                    if (!subscribed) {
+                                        subscribe({
+                                            subscriptionType: 'writers',
+                                            ids: [
+                                                {
+                                                    id: route.params.profileId,
+                                                    name: route.params.profileName,
+                                                },
+                                            ],
+                                            domainId: activeDomain.id,
+                                        })
+                                    } else {
+                                        unsubscribe({
+                                            subscriptionType: 'writers',
+                                            ids: [subscribed],
+                                            domainId: activeDomain.id,
+                                        })
+                                    }
+                                } else {
+                                    console.log('no data', route)
+                                }
+                            }}
                         >
-                            Follow
+                            {subscribed ? 'Unfollow' : 'Follow'}
                         </Button>
                     </View>
                 </View>
             </View>
         </View>
-    )
-    return (
-        <Modal
-            animationType='slide'
-            transparent={false}
-            visible={modalVisible}
-            onDismiss={this._hideModal}
-        >
-            <SafeAreaView
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    padding: 20,
-                    backgroundColor: '#f6f6f6',
-                }}
-            >
-                <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
-                    You need to enter some information before you can post comments. You will only
-                    have to do this once.
-                </Text>
-                <View style={{ flex: 1, alignItems: 'center' }}>
-                    <PaperTextInput
-                        label='Username'
-                        theme={{ roundness: 10 }}
-                        style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
-                        placeholder='This is what will display publicly'
-                        mode='outlined'
-                        value={username}
-                        onChangeText={(text) => this.setState({ username: text })}
-                    />
-                    <PaperTextInput
-                        label='Email'
-                        placeholder='We need this for verification purposes'
-                        keyboardType='email-address'
-                        style={{ width: 300, borderRadius: 10 }}
-                        theme={{ roundness: 10 }}
-                        mode='outlined'
-                        value={email}
-                        onChangeText={(text) => this.setState({ email: text })}
-                    />
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button
-                            mode='contained'
-                            theme={{ roundness: 10 }}
-                            style={{
-                                paddingHorizontal: 20,
-                                margin: 20,
-                                backgroundColor: '#f44336',
-                                fontSize: 20,
-                            }}
-                            onPress={this._hideModal}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            mode='contained'
-                            theme={{ roundness: 10 }}
-                            style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
-                            onPress={() => {
-                                saveUserInfo({
-                                    username,
-                                    email,
-                                })
-                                this._hideModal()
-                            }}
-                        >
-                            Save
-                        </Button>
-                    </View>
-                </View>
-            </SafeAreaView>
-        </Modal>
     )
 }
 
