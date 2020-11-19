@@ -1,9 +1,10 @@
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { connect } from 'react-redux'
 
 import ArticleScreenContainer from '../containers/ArticleScreenContainer'
+import CommentsScreenContainer from '../containers/CommentsScreenContainer'
 import ArticleActionsContainer from '../containers/ArticleActionsScreenContainer'
 import ProfileModalContainer from '../containers/ProfileModalScreenContainer'
 
@@ -14,16 +15,19 @@ const Stack = createStackNavigator()
 
 export const ArticleIdContext = createContext(null)
 
-const ArticleTabs = ({ route, navigation, enableComments }) => {
+const ArticleTabs = ({ route, navigation, enableComments, theme }) => {
     if (enableComments) {
         return (
             <Tab.Navigator
                 initialRouteName='Article'
                 backBehavior='order'
-                tabBarOptions={{ indicatorStyle: { backgroundColor: theme.colors.primary } }}
+                style={{ backgroundColor: theme.navigationTheme.colors.background }}
+                tabBarOptions={{
+                    indicatorStyle: { backgroundColor: theme.colors.accent, height: 3 },
+                }}
             >
                 <Tab.Screen name='Article' component={ArticleScreenContainer} />
-                <Tab.Screen name='Comments' component={TestScreen} />
+                <Tab.Screen name='Comments' component={CommentsScreenContainer} />
             </Tab.Navigator>
         )
     }
@@ -37,12 +41,19 @@ const mapStateToProps = (state) => ({
 
 const ConnectedArticleTabs = connect(mapStateToProps)(ArticleTabs)
 
-const ArticleNavigator = ({ route }) => {
-    // const comments = route && route.params && route.params.comments ? route.params.comments : []
-    const articleId = route.params && route.params.articleId ? route.params.articleId : null
+const ArticleNavigator = ({ articles, route }) => {
+    const articleId = route.params?.articleId
+
+    const [article, setArticle] = useState({})
+
+    useEffect(() => {
+        if (articleId) {
+            if (articles && articles[articleId]) setArticle(articles[articleId])
+        }
+    }, [articleId])
 
     return (
-        <ArticleIdContext.Provider value={articleId}>
+        <ArticleIdContext.Provider value={article}>
             <Stack.Navigator
                 mode={'modal'}
                 screenOptions={{
@@ -87,4 +98,8 @@ const ArticleNavigator = ({ route }) => {
     )
 }
 
-export default connect(mapStateToProps)(ArticleNavigator)
+const mapStateToNavProps = (state) => ({
+    articles: state.entities.articles,
+})
+
+export default connect(mapStateToNavProps)(ArticleNavigator)

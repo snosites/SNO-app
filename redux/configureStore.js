@@ -58,7 +58,6 @@ const migrations = {
                 email: prevState.userInfo.email ? prevState.userInfo.email : '',
                 subscribeAll: false,
                 user: {},
-                commentPosted: false,
                 writerSubscriptions: [],
                 fromPush: false,
             }

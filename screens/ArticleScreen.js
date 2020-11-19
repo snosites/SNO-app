@@ -20,31 +20,21 @@ import ArticleContent from '../components/Article/ArticleContent'
 import layout from '../constants/Layout'
 
 const ArticleScreen = (props) => {
-    const { route, navigation, theme, activeDomain, articles, articleId } = props
+    const { route, navigation, theme, activeDomain, article } = props
 
     const [expandCaption, setExpandCaption] = useState(false)
     const [loadingLink, setLoadingLink] = useState(false)
-    const [article, setArticle] = useState(null)
+    // const [article, setArticle] = useState(null)
     const [articleChapters, setArticleChapters] = useState([])
 
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
 
-    useEffect(() => {
-        if (articles && articles[articleId]) setArticle(articles[articleId])
-    }, [articleId])
-
-    // // let articleId = route.params && route.params.articleId ? route.params.articleId : null
-    // let articleChapters =
-    //     route.params && route.params.articleChapters ? route.params.articleChapters : []
-
-    console.log('in article', articles, articleId, article)
-
     const _handleCaptionClick = () => {
         setExpandCaption(!expandCaption)
     }
 
-    if (!article) {
+    if (!article.id) {
         return (
             <SafeAreaView
                 style={{

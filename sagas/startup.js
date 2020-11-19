@@ -95,18 +95,16 @@ function* startup(action) {
         //get domains custom options
         yield call(getCustomOptions, domain)
 
-        // yield call(getHomeScreenArticles)
-
-        let mainCategory = menu[0].object_id
+        let activeCategory = menu[0].object_id
 
         yield put(
             articleActions.fetchArticlesIfNeeded({
                 domain: domain.url,
-                category: mainCategory,
+                category: activeCategory,
             })
         )
 
-        yield put(globalActions.setActiveCategory(mainCategory))
+        yield put(globalActions.setActiveCategory(activeCategory))
 
         yield put(savedArticleActions.initializeSaved(domain.id))
 
@@ -211,7 +209,8 @@ function* getCustomOptions(domain) {
 
         yield fork(fetchAds, domain, results.ads)
 
-        if (results.legacy_home === 'categories') {
+        // always fetch
+        if (true || results.legacy_home === 'categories') {
             const results = yield call(domainApiService.getHomeScreenCategories, domain.url)
 
             const homeScreenCategories = [

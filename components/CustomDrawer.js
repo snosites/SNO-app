@@ -28,23 +28,6 @@ function CustomDrawerContent(props) {
         setActiveCategory,
     } = props
 
-    useEffect(() => {
-        navigation.openDrawer()
-    }, [])
-
-    const [searchTerm, setSearchTerm] = useState('')
-    // const [activeMenuIndex, setActiveMenuIndex] = useState(0)
-
-    _searchArticles = () => {
-        invalidateSearchArticles()
-        fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
-        // navigation.navigate('Search', {
-        //     searchTerm,
-        // })
-        // navigation.closeDrawer()
-        setSearchTerm('')
-    }
-
     _handleMenuPress = (item, index) => {
         navigation.closeDrawer()
         if (item.object === 'category') {
@@ -58,41 +41,40 @@ function CustomDrawerContent(props) {
             //     menuTitle: item.title,
             //     categoryId: item.object_id,
             // })
-            navigation.navigate('List', {
-                categoryId: item.object_id,
-            })
+            setActiveCategory(item.object_id)
+            // navigation.navigate('ListStack')
 
             // setActiveMenuIndex(index)
-            setActiveCategory(item.object_id)
         } else if (item.object === 'page') {
-            if (item.template === 'snostaff.php') {
-                // log to analytics
-                Amplitude.logEventWithProperties('click page', {
-                    pageType: 'staff',
-                })
+            // if (item.template === 'snostaff.php') {
+            //     // log to analytics
+            //     Amplitude.logEventWithProperties('click page', {
+            //         pageType: 'staff',
+            //     })
 
-                navigation.navigate('Staff', {
-                    menuTitle: item.title,
-                    activeYears: item.active_years,
-                    customDisplay: item.customStaffDisplay,
-                    staffDisplay: item.staffDisplay,
-                })
-                setActiveCategory(item.object_id)
-            } else if (!item.template) {
-                // default template
-                console.log('page default template')
-                // TODO: add default page
+            //     navigation.navigate('Staff', {
+            //         menuTitle: item.title,
+            //         activeYears: item.active_years,
+            //         customDisplay: item.customStaffDisplay,
+            //         staffDisplay: item.staffDisplay,
+            //     })
+            //     setActiveCategory(item.object_id)
+            // } else if (!item.template) {
+            //     // default template
+            //     console.log('page default template')
+            //     // TODO: add default page
 
-                // navigation.navigate('DefaultPage', {
-                //     menuTitle: item.title,
-                //     pageId: item.object_id,
-                // })
-                setActiveCategory(item.object_id)
-            } else {
-                // redirect to page not found screen later
-                console.log('page not found')
-                return
-            }
+            //     // navigation.navigate('DefaultPage', {
+            //     //     menuTitle: item.title,
+            //     //     pageId: item.object_id,
+            //     // })
+            //     setActiveCategory(item.object_id)
+            // } else {
+            //     // redirect to page not found screen later
+            //     console.log('page not found')
+            //     return
+            // }
+            console.log('page', item)
         }
     }
 

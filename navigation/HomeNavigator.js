@@ -20,7 +20,10 @@ const TabHomeNavigator = ({ theme }) => {
         <Tab.Navigator
             initialRouteName='Home'
             backBehavior='order'
-            tabBarOptions={{ indicatorStyle: { backgroundColor: theme.colors.primary } }}
+            style={{ backgroundColor: theme.navigationTheme.colors.background }}
+            tabBarOptions={{
+                indicatorStyle: { backgroundColor: theme.colors.primary },
+            }}
         >
             <Tab.Screen name='Home' component={HomeScreenContainer} />
             <Tab.Screen name='Recent' component={RecentScreenContainer} />
@@ -67,6 +70,11 @@ const HomeStack = (props) => {
                 component={ConnectedTabHomeNavigator}
                 // options={{ title: 'Recent Stories' }}
             />
+            {/* <Stack.Screen
+                name='HomeTabs'
+                component={ConnectedTabHomeNavigator}
+                // options={{ title: 'Recent Stories' }}
+            /> */}
         </Stack.Navigator>
     )
 }

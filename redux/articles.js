@@ -14,6 +14,9 @@ export const types = {
     UPDATE_COMMENTS: 'UPDATE_COMMENTS',
     REFETCH_COMMENTS: 'REFETCH_COMMENTS',
     ADD_COMMENT: 'ADD_COMMENT',
+    ADD_COMMENT_REQUEST: 'ADD_COMMENT_REQUEST',
+    ADD_COMMENT_SUCCESS: 'ADD_COMMENT_SUCCESS',
+    ADD_COMMENT_ERROR: 'ADD_COMMENT_ERROR',
 }
 
 // ARTICLES REDUCERS //
@@ -168,6 +171,22 @@ export const actions = {
         return {
             type: types.ADD_COMMENT,
             payload,
+        }
+    },
+    addCommentRequest() {
+        return {
+            type: types.ADD_COMMENT_REQUEST,
+        }
+    },
+    addCommentSuccess() {
+        return {
+            type: types.ADD_COMMENT_SUCCESS,
+        }
+    },
+    addCommentError(error) {
+        return {
+            type: types.ADD_COMMENT_ERROR,
+            error,
         }
     },
 }

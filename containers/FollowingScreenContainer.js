@@ -3,14 +3,17 @@ import { connect } from 'react-redux'
 import FollowingScreen from '../screens/FollowingScreen'
 
 import { actions as domainActions, getActiveDomain } from '../redux/domains'
-import { types as userTypes, actions as userActions } from '../redux/user'
 import { actions as globalActions } from '../redux/global'
+import { actions as profileActions, types as ProfileTypes } from '../redux/profiles'
+import { types as userTypes, actions as userActions, getWriterSubscriptions } from '../redux/user'
+
 import { createLoadingSelector } from '../redux/loading'
 import { createErrorMessageSelector } from '../redux/errors'
 
-const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
-const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])
+const profileLoadingSelector = createLoadingSelector([ProfileTypes.FETCH_PROFILE])
+const profileErrorSelector = createErrorMessageSelector([ProfileTypes.FETCH_PROFILE])
 
+const subscribeLoadingSelector = createLoadingSelector([userTypes.SUBSCRIBE])
 const unsubscribeLoadingSelector = createLoadingSelector([userTypes.UNSUBSCRIBE])
 
 const mapStateToProps = (state) => {
@@ -18,10 +21,9 @@ const mapStateToProps = (state) => {
         theme: state.theme,
         domains: state.domains,
         userInfo: state.user,
-        global: state.global,
         activeDomain: getActiveDomain(state),
-        errors: deleteUserErrorSelector(state),
-        isLoading: deleteUserLoadingSelector(state),
+        writerSubscriptions: getWriterSubscriptions(state),
+        subscribeLoading: subscribeLoadingSelector(state),
         unsubscribeLoading: unsubscribeLoadingSelector(state),
     }
 }
@@ -29,13 +31,12 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
-        setInitialized: (payload) => dispatch(globalActions.setInitialized(payload)),
-        deleteUser: () => dispatch(userActions.deleteUser()),
         saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
         deleteDomain: (domainId) => dispatch(domainActions.deleteDomain(domainId)),
+        removeSchoolSub: (url) => dispatch(globalActions.removeSchoolSub(url)),
+        fetchProfile: (profileId) => dispatch(profileActions.fetchProfile(profileId)),
         subscribe: (payload) => dispatch(userActions.subscribe(payload)),
         unsubscribe: (payload) => dispatch(userActions.unsubscribe(payload)),
-        removeSchoolSub: (url) => dispatch(globalActions.removeSchoolSub(url)),
     }
 }
 

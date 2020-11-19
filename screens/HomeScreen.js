@@ -108,7 +108,6 @@ const HomeScreen = (props) => {
             <SafeAreaView
                 style={{
                     flex: 1,
-                    marginTop: 20,
                 }}
             >
                 <LottieView
@@ -117,7 +116,7 @@ const HomeScreen = (props) => {
                     speed={0.8}
                     loop={true}
                     autoPlay={true}
-                    source={require('../assets/lottiefiles/multi-article-loading')}
+                    source={require('../assets/lottiefiles/fading-article-loader')}
                 />
             </SafeAreaView>
         )
@@ -126,10 +125,8 @@ const HomeScreen = (props) => {
         return <ErrorView onRefresh={_handleRefresh} />
     }
 
-    console.log('home screen data', homeScreenData)
-
     return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
             {homeScreenData.map((item, i) => {
                 return (
                     <LinearGradient
@@ -146,6 +143,7 @@ const HomeScreen = (props) => {
                                 fontFamily: 'openSansExtraBold',
                                 fontSize: 32,
                                 color: theme.colors.accent,
+                                paddingVertical: 10,
                             }}
                         >
                             {entities.decode(item.title)}
@@ -153,6 +151,7 @@ const HomeScreen = (props) => {
                         <View style={{ marginLeft: -10 }}>
                             {item.data.map((story, i) => (
                                 <ArticleListItem
+                                    key={story.id}
                                     article={story}
                                     storyListStyle={homeScreenListStyle}
                                     index={i}
@@ -161,6 +160,7 @@ const HomeScreen = (props) => {
                         </View>
                         <View
                             style={{
+                                marginTop: 10,
                                 flexDirection: 'row',
                                 justifyContent: 'flex-end',
                                 alignItems: 'center',

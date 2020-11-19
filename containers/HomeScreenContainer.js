@@ -65,13 +65,20 @@ const mapStateToProps = (state) => {
         menus: state.global.menuItems,
         global: state.global,
         homeScreenData: homeScreenData,
-        articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
-            if (state.articlesByCategory[categoryId]) {
-                return state.articlesByCategory[categoryId].isFetching
-            } else {
-                return false
-            }
-        }, false),
+        articlesLoading: homeScreenCategories.some(
+            (categoryId) =>
+                state.articlesByCategory[categoryId] &&
+                state.articlesByCategory[categoryId].isFetching
+        ),
+        // articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
+        //     if (state.articlesByCategory[categoryId]) {
+        //         console.log('loading', categoryId, state.articlesByCategory[categoryId].isFetching)
+        //         return state.articlesByCategory[categoryId].isFetching
+        //     } else {
+        //         console.log('loading cant find', categoryId)
+        //         return true
+        //     }
+        // }, false),
     }
 }
 

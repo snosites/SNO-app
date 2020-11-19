@@ -2,6 +2,7 @@ import { all, put, call, takeLatest, select } from 'redux-saga/effects'
 
 import { types as savedArticleTypes, actions as savedArticleActions } from '../redux/savedArticles'
 import { types as domainTypes, actions as domainActions } from '../redux/domains'
+import { types as articleTypes, actions as articleActions } from '../redux/articles'
 import { types as userTypes } from '../redux/user'
 import {
     types as snackbarQueueTypes,
@@ -29,6 +30,16 @@ function* snackbarQueue() {
         takeLatest(userTypes.UNSUBSCRIBE_SUCCESS, addToQueue, 'Unfollowed writer'),
         takeLatest(userTypes.SUBSCRIBE_ERROR, addToQueue, 'Error following writer'),
         takeLatest(userTypes.UNSUBSCRIBE_ERROR, addToQueue, 'Error unfollowing writer'),
+        takeLatest(
+            articleTypes.ADD_COMMENT_SUCCESS,
+            addToQueue,
+            'Success!  Your comment is awaiting review.'
+        ),
+        takeLatest(
+            articleTypes.ADD_COMMENT_ERROR,
+            addToQueue,
+            'There was an error submitting your comment.  Please try again.'
+        ),
     ])
 }
 

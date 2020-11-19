@@ -96,26 +96,7 @@ const ListScreen = (props) => {
         }
     }
 
-    if (!categoryId) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    marginTop: 20,
-                }}
-            >
-                <LottieView
-                    ref={animationRef}
-                    style={StyleSheet.absoluteFill}
-                    speed={0.8}
-                    loop={true}
-                    autoPlay={true}
-                    source={require('../assets/lottiefiles/multi-article-loading')}
-                />
-            </View>
-        )
-    }
-    if (articlesByCategory.length === 0 && category.isFetching) {
+    if (!categoryId || (!articlesByCategory.length && category.isFetching)) {
         return (
             <View
                 style={{
@@ -135,7 +116,7 @@ const ListScreen = (props) => {
         )
     }
     if (category.error) {
-        return <ErrorView onRefresh={_handleRefresh} />
+        return <ErrorView theme={theme} onRefresh={_handleRefresh} />
     }
 
     return (

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text } from 'react-native'
 import { Snackbar } from 'react-native-paper'
 
 import { connect } from 'react-redux'
 
 import { actions as snackbarQueueActions } from '../redux/snackbarQueue'
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 const SnackbarQueue = (props) => {
     const { snackbarQueue, removeMessage } = props
     const [visible, setVisible] = useState(false)
     const [message, setMessage] = useState(null)
+
+    const insets = useSafeAreaInsets()
 
     useEffect(() => {
         if (snackbarQueue.length) {
@@ -31,7 +34,13 @@ const SnackbarQueue = (props) => {
     return (
         <Snackbar
             visible={visible}
-            style={{ position: 'absolute', bottom: 80, left: 0, right: 0 }}
+            style={{
+                position: 'absolute',
+                bottom: insets.bottom,
+                left: 0,
+                right: 0,
+                borderRadius: 10,
+            }}
             duration={4000}
             onDismiss={removeSnackbarMessage}
             action={{

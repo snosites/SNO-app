@@ -61,8 +61,6 @@ const ProfileModalScreen = (props) => {
         }
     }, [route.params?.profileId, writerSubscriptions, activeDomain])
 
-    console.log('profile modal', writerSubscriptions)
-
     if (profileIsLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>

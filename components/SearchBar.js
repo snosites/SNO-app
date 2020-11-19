@@ -14,14 +14,26 @@ const Searchbar = (props) => {
         activeDomain,
         invalidateSearchArticles,
         fetchSearchArticlesIfNeeded,
+        authors = false,
     } = props
 
     const [searchTerm, setSearchTerm] = useState('')
 
     const _search = () => {
+        if (authors) _searchAuthors()
+        else _searchArticles()
+    }
+
+    const _searchArticles = () => {
         invalidateSearchArticles()
         fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
         setSearchTerm('')
+    }
+
+    const _searchAuthors = () => {
+        // invalidateSearchArticles()
+        // fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
+        // setSearchTerm('')
     }
 
     return (

@@ -14,9 +14,10 @@ import Searchbar from '../components/SearchBar'
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons'
 
 import ErrorScreen from '../screens/ErrorScreen'
-import UserInfoModal from '../screens/UserInfoModal'
+
 import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/TabNavigatorContainer'
+import UserInfoModalContainer from '../containers/UserInfoModalContainer'
 
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
@@ -126,7 +127,7 @@ export default (props) => {
                                 ? 'Sorry, this school is currently unavailable'
                                 : startupError === 'school not in DB'
                                 ? 'Sorry, this school did not renew its Student News Source subscription'
-                                : null,
+                                : 'There was an error.  x77',
                     }}
                 />
             ) : (
@@ -138,8 +139,12 @@ export default (props) => {
                     />
                     <Stack.Screen
                         name='UserInfoModal'
-                        component={UserInfoModal}
-                        // options={{ headerShown: false }}
+                        component={UserInfoModalContainer}
+                        options={{
+                            headerShown: false,
+                            cardStyle: { backgroundColor: 'transparent' },
+                            cardOverlayEnabled: true,
+                        }}
                     />
                     <Stack.Screen
                         name='ArticleNavigator'

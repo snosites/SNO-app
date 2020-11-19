@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 import LottieView from 'lottie-react-native'
 import { Button } from 'react-native-paper'
 
-const ErrorView = ({ onRefresh }) => {
+const ErrorView = ({ theme, onRefresh }) => {
     const animationRef = useRef(null)
 
     return (

@@ -11,7 +11,7 @@ import { ArticleIdContext } from '../navigation/ArticleNavigator'
 
 const ArticleScreenConsumer = (props) => (
     <ArticleIdContext.Consumer>
-        {(value) => <ArticleScreen {...props} articleId={value} />}
+        {(value) => <ArticleScreen {...props} article={value} />}
     </ArticleIdContext.Consumer>
 )
 
@@ -21,11 +21,6 @@ const startupLoadingSelector = createLoadingSelector([globalTypes.STARTUP])
 const mapStateToProps = (state) => ({
     theme: state.theme,
     activeDomain: getActiveDomain(state),
-    articles: state.entities.articles,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-    startup: (domain) => dispatch(globalActions.startup(domain)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ArticleScreenConsumer)
+export default connect(mapStateToProps)(ArticleScreenConsumer)

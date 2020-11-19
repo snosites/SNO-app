@@ -14,18 +14,21 @@ const articleListSchema = new schema.Array(articleSchema)
 
 function* addComment(action) {
     const { domain, articleId, username, email, comment } = action.payload
+
     let objToSend = {
         author_email: email,
         author_name: username,
         content: comment,
         post: articleId,
     }
+
     try {
+        yield put(articleActions.addCommentRequest())
         yield call(domainApiService.addComment, domain, objToSend)
-        yield put(userActions.setCommentPosted('posted'))
+        yield put(articleActions.addCommentSuccess())
     } catch (err) {
         console.log('error adding comment in saga', err)
-        yield put(userActions.setCommentPosted('error'))
+        yield put(articleActions.addCommentError('error in saga'))
     }
 }
 
