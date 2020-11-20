@@ -44,6 +44,11 @@ const ProfileModalScreen = (props) => {
 
     useEffect(() => {
         if (route.params?.profileId) {
+            if (
+                profile.post_terms &&
+                profile.post_terms.some((term) => term.term_id == route.params.profileId)
+            )
+                return
             fetchProfile(route.params.profileId)
         }
     }, [route.params?.profileId])
