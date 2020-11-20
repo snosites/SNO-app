@@ -47,7 +47,12 @@ const ProfileArticleListItem = (props) => {
 
     return (
         <TouchableOpacity
-            style={{ flexDirection: 'row', flex: 1, padding: 10, backgroundColor: background }}
+            style={{
+                flexDirection: 'row',
+                flex: 1,
+                padding: 10,
+                backgroundColor: background,
+            }}
             onPress={onPress}
         >
             {featuredImageUri && (
@@ -70,8 +75,8 @@ const ProfileArticleListItem = (props) => {
                 </Text>
                 <Text
                     style={{
-                        fontFamily: 'ralewayBold',
-                        fontSize: 17,
+                        fontFamily: 'raleway',
+                        fontSize: 16,
                         color: grayText,
                     }}
                 >
@@ -82,6 +87,7 @@ const ProfileArticleListItem = (props) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         paddingTop: 5,
+                        marginTop: 'auto',
                     }}
                 >
                     <MaterialIcons
@@ -91,8 +97,8 @@ const ProfileArticleListItem = (props) => {
                     />
                     <Text
                         style={{
-                            fontFamily: 'ralewayThin',
-                            fontSize: 14,
+                            fontFamily: 'ralewayBold',
+                            fontSize: 16,
                             color: accent,
                             paddingLeft: 3,
                         }}
@@ -101,7 +107,12 @@ const ProfileArticleListItem = (props) => {
                     </Text>
                 </View>
             </View>
-            <Feather style={{ marginLeft: 20 }} name='chevron-right' size={32} color={accent} />
+            <Feather
+                style={{ marginLeft: 20, alignSelf: 'center' }}
+                name='chevron-right'
+                size={32}
+                color={accent}
+            />
         </TouchableOpacity>
     )
 }

@@ -142,7 +142,9 @@ export default (props) => {
                         name='FullProfile'
                         component={ProfileScreenContainer}
                         options={{
-                            headerShown: false,
+                            headerTitle: null,
+                            headerBackTitleVisible: false,
+                            // headerShown: false,
                         }}
                     />
                     <Stack.Screen
