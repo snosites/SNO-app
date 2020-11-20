@@ -13,10 +13,12 @@ import DrawerIcon from './DrawerIcon'
 import { connect } from 'react-redux'
 
 import * as Amplitude from 'expo-analytics-amplitude'
+import theme from '../redux/theme'
 
 const CustomDrawerContent = (props) => {
     const {
         navigation,
+        theme,
         fetchArticlesIfNeeded,
         menus,
         activeDomain,
@@ -33,44 +35,36 @@ const CustomDrawerContent = (props) => {
             })
 
             fetchArticlesIfNeeded(activeDomain.url, item.object_id)
-            // navigation.navigate('List', {
-            //     menuTitle: item.title,
-            //     categoryId: item.object_id,
-            // })
+
+            navigation.navigate('List')
             setActiveCategory(item.object_id)
-            // navigation.navigate('ListStack')
-
-            // setActiveMenuIndex(index)
         } else if (item.object === 'page') {
-            // if (item.template === 'snostaff.php') {
-            //     // log to analytics
-            //     Amplitude.logEventWithProperties('click page', {
-            //         pageType: 'staff',
-            //     })
+            if (item.template === 'snostaff.php') {
+                // log to analytics
+                Amplitude.logEventWithProperties('click page', {
+                    pageType: 'staff',
+                })
 
-            //     navigation.navigate('Staff', {
-            //         menuTitle: item.title,
-            //         activeYears: item.active_years,
-            //         customDisplay: item.customStaffDisplay,
-            //         staffDisplay: item.staffDisplay,
-            //     })
-            //     setActiveCategory(item.object_id)
-            // } else if (!item.template) {
-            //     // default template
-            //     console.log('page default template')
-            //     // TODO: add default page
+                navigation.navigate('Staff', {
+                    title: item.title,
+                    activeYears: item.active_years,
+                    customDisplay: item.customStaffDisplay,
+                    staffDisplay: item.staffDisplay,
+                })
+                setActiveCategory(item.object_id)
+            } else {
+                console.log('item', item)
+                navigation.navigate('DefaultPage', {
+                    pageId: item.object_id,
+                })
 
-            //     // navigation.navigate('DefaultPage', {
-            //     //     menuTitle: item.title,
-            //     //     pageId: item.object_id,
-            //     // })
-            //     setActiveCategory(item.object_id)
-            // } else {
-            //     // redirect to page not found screen later
-            //     console.log('page not found')
-            //     return
-            // }
-            console.log('page', item)
+                // navigation.navigate('DefaultPage', {
+                //     menuTitle: item.title,
+                //     pageId: item.object_id,
+                // })
+                setActiveCategory(item.object_id)
+                return
+            }
         }
     }
 
@@ -92,7 +86,7 @@ const CustomDrawerContent = (props) => {
                     {activeDomain.publication}
                 </Text>
             )}
-            <Drawer.Section title='Categories' style={{ paddingTop: 10 }}>
+            <Drawer.Section style={{ paddingTop: 10 }}>
                 {menus.map((item, index) => {
                     return (
                         <DrawerItem
@@ -113,7 +107,7 @@ const CustomDrawerContent = (props) => {
                             }}
                             onPress={() => _handleMenuPress(item, index)}
                             focused={global.activeCategory == item.object_id}
-                            activeTintColor={'green'}
+                            activeTintColor={theme.colors.accent}
                             icon={({ focused, color, size }) => (
                                 <DrawerIcon
                                     color={color}
@@ -134,6 +128,7 @@ const mapStateToProps = (state) => ({
     activeDomain: getActiveDomain(state),
     menus: state.global.menuItems,
     global: state.global,
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -195,6 +195,22 @@ const domainApiService = {
             throw err
         }
     },
+    fetchCategories: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/categories?per_page=30&hide_empty=true`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch categories api', err, err.response)
+            throw err
+        }
+    },
     fetchChildCategories: async (options) => {
         const { domainUrl, parentCategoryId } = options
         try {
@@ -247,6 +263,15 @@ const domainApiService = {
             return response.data
         } catch (err) {
             console.log('error in fetch article api', err, err.response)
+            throw err
+        }
+    },
+    fetchPage: async (domainUrl, pageId) => {
+        try {
+            const response = await axios.get(`https://${domainUrl}/wp-json/wp/v2/pages/${pageId}`)
+            return response.data
+        } catch (err) {
+            console.log('error in fetch page api', err, err.response)
             throw err
         }
     },

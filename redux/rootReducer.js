@@ -10,6 +10,7 @@ import articlesByCategory, { entities } from './articles'
 import savedArticlesBySchool from './savedArticles'
 import searchArticles from './search'
 import profiles from './profiles'
+import pages from './pages'
 import recentArticles from './recent'
 import ads from './ads'
 import snackbarQueue from './snackbarQueue'
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
     savedArticlesBySchool,
     searchArticles,
     profiles,
+    pages,
     recentArticles,
     ads,
     snackbarQueue,
@@ -36,14 +38,19 @@ const rootReducer = (state, action) => {
     if (action.type === 'SET_ACTIVE_DOMAIN') {
         state = {
             ...state,
+            // FIX LATER MAYBE?? global might cause bug
+            global: undefined,
             articlesByCategory: undefined,
             recentArticles: undefined,
             searchArticles: undefined,
             profiles: undefined,
+            pages: undefined,
             entities: undefined,
             ads: undefined,
             errors: {},
             loading: {},
+            ads: undefined,
+            snackbarQueue: undefined,
         }
     }
     if (action.type === 'PURGE_USER_STATE') {

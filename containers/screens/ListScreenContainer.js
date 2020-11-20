@@ -14,6 +14,9 @@ const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     const listAds = getListAds(state)
 
+    // const menuCategoryItem = state.global.menuItems.find((item) => item.object_id == categoryId)
+    // console.log('category', menuCategoryItem)
+
     if (!categoryId || !state.articlesByCategory[categoryId]) {
         return {
             theme: state.theme,

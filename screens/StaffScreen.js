@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react'
 import {
     ScrollView,
     StyleSheet,
@@ -29,6 +29,14 @@ const StaffScreen = (props) => {
     let customDisplay =
         route.params && route.params.customDisplay ? route.params.customDisplay : null
     let staffDisplay = route.params && route.params.staffDisplay ? route.params.staffDisplay : null
+
+    useEffect(() => {
+        if (route.params.title) {
+            navigation.setOptions({
+                title: route.params.title,
+            })
+        }
+    }, [navigation, route.params?.title])
 
     useEffect(() => {
         _playAnimation()

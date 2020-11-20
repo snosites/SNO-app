@@ -105,7 +105,7 @@ const HomeScreen = (props) => {
                     speed={0.8}
                     loop={true}
                     autoPlay={true}
-                    source={require('../assets/lottiefiles/fading-article-loader')}
+                    source={require('../assets/lottiefiles/wavy')}
                 />
             </SafeAreaView>
         )

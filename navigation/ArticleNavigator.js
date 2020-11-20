@@ -1,5 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import { Animated } from 'react-native'
+import {
+    createStackNavigator,
+    CardStyleInterpolators,
+    TransitionSpecs,
+    TransitionPresets,
+} from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
 import { connect } from 'react-redux'
@@ -12,6 +18,8 @@ import ProfileModalContainer from '../containers/screens/ProfileModalScreenConta
 
 import { asyncFetchArticle } from '../utils/sagaHelpers'
 import { getActiveDomain } from '../redux/domains'
+
+const { add, multiply } = Animated
 
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
@@ -83,21 +91,21 @@ const ArticleNavigator = ({
                     headerShown: false,
                     cardStyle: { backgroundColor: 'transparent' },
                     cardOverlayEnabled: true,
-                    cardStyleInterpolator: ({ current: { progress } }) => ({
-                        cardStyle: {
-                            opacity: progress.interpolate({
-                                inputRange: [0, 0.5, 0.9, 1],
-                                outputRange: [0, 0.25, 0.7, 1],
-                            }),
-                        },
-                        overlayStyle: {
-                            opacity: progress.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 0.5],
-                                extrapolate: 'clamp',
-                            }),
-                        },
-                    }),
+                    // cardStyleInterpolator: ({ current: { progress } }) => ({
+                    //     cardStyle: {
+                    //         opacity: progress.interpolate({
+                    //             inputRange: [0, 0.5, 0.9, 1],
+                    //             outputRange: [0, 0.25, 0.7, 1],
+                    //         }),
+                    //     },
+                    //     overlayStyle: {
+                    //         opacity: progress.interpolate({
+                    //             inputRange: [0, 1],
+                    //             outputRange: [0, 0.5],
+                    //             extrapolate: 'clamp',
+                    //         }),
+                    //     },
+                    // }),
                 }}
                 initialRouteName='ArticleTabs'
             >
@@ -109,12 +117,84 @@ const ArticleNavigator = ({
                 <Stack.Screen
                     name='ArticleActions'
                     component={ArticleActionsContainer}
-                    options={{ headerShown: false }}
+                    options={{
+                        headerShown: false,
+                        cardOverlayEnabled: true,
+                        cardStyleInterpolator: ({
+                            current: { progress },
+                            inverted,
+                            layouts: { screen },
+                        }) => {
+                            const translateY = multiply(
+                                progress.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [screen.height, 0],
+                                    extrapolate: 'clamp',
+                                }),
+                                inverted
+                            )
+                            return {
+                                cardStyle: {
+                                    transform: [
+                                        // Translation for the animation of the current card
+                                        { translateY },
+                                    ],
+                                    opacity: progress.interpolate({
+                                        inputRange: [0, 0.5, 0.9, 1],
+                                        outputRange: [0, 0.25, 0.7, 1],
+                                    }),
+                                },
+                                overlayStyle: {
+                                    opacity: progress.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0, 0.5],
+                                        extrapolate: 'clamp',
+                                    }),
+                                },
+                            }
+                        },
+                    }}
                 />
                 <Stack.Screen
                     name='ProfileModal'
                     component={ProfileModalContainer}
-                    options={{ headerShown: false }}
+                    options={{
+                        headerShown: false,
+                        cardOverlayEnabled: true,
+                        cardStyleInterpolator: ({
+                            current: { progress },
+                            inverted,
+                            layouts: { screen },
+                        }) => {
+                            const translateY = multiply(
+                                progress.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [screen.height, 0],
+                                    extrapolate: 'clamp',
+                                }),
+                                inverted
+                            )
+                            return {
+                                cardStyle: {
+                                    transform: [
+                                        // Translation for the animation of the current card
+                                        { translateY },
+                                    ],
+                                    opacity: progress.interpolate({
+                                        inputRange: [0, 0.5, 0.9, 1],
+                                        outputRange: [0, 0.25, 0.7, 1],
+                                    }),
+                                },
+                                overlayStyle: {
+                                    opacity: progress.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0, 0.5],
+                                        extrapolate: 'clamp',
+                                    }),
+                                },
+                            }
+                        },
+                    }}
                 />
             </Stack.Navigator>
         </ArticleContext.Provider>

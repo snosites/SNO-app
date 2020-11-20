@@ -19,18 +19,25 @@ import { Feather, MaterialIcons } from '@expo/vector-icons'
 import HTML from 'react-native-render-html'
 import { NavigationEvents } from 'react-navigation'
 
-import { Divider, Colors, Chip } from 'react-native-paper'
-
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ProfileArticleListItem from '../components/listItems/ProfileArticleListItem'
+
+import { asyncFetchArticle } from '../utils/sagaHelpers'
 
 import { Html5Entities } from 'html-entities'
 
 const entities = new Html5Entities()
 
 const ProfileScreen = (props) => {
-    const { route, navigation, theme, profile, activeDomain } = props
-    console.log('profile', profile)
+    const {
+        route,
+        navigation,
+        theme,
+        profile,
+        activeDomain,
+        articles,
+        asyncFetchArticleError,
+    } = props
 
     const profileTermId =
         profile.post_terms && profile.post_terms[0] ? profile.post_terms[0].term_id : null
@@ -40,6 +47,21 @@ const ProfileScreen = (props) => {
         const match = terms.some((term) => term.term_id == profileTermId)
         if (match) return 'story'
         else return 'media'
+    }
+
+    const profileArticlePress = async (articleId) => {
+        if (articles && articles[articleId]) {
+            handleArticlePress(articles[articleId], activeDomain)
+        } else {
+            try {
+                const article = await asyncFetchArticle(activeDomain.url, articleId)
+                handleArticlePress(article, activeDomain)
+            } catch (e) {
+                console.log('e', e)
+                asyncFetchArticleError()
+                navigation.pop()
+            }
+        }
     }
 
     return (
@@ -154,9 +176,7 @@ const ProfileScreen = (props) => {
                         date={item.date}
                         excerpt={item.post_excerpt}
                         featuredImageUri={item.featuredImage}
-                        onPress={() => {
-                            handleArticlePress(item, activeDomain)
-                        }}
+                        onPress={() => profileArticlePress(item.ID)}
                         mediaType={getMediaType(item.customFields?.terms)}
                     />
                 )}

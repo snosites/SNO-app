@@ -77,7 +77,7 @@ class ErrorBoundary extends React.Component {
                                             eventId: null,
                                             submitting: false,
                                         })
-                                        navigation.navigate('Auth')
+                                        navigation.goBack()
                                     }}
                                 >
                                     Go To Home Screen

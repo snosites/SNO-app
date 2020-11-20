@@ -59,11 +59,7 @@ export default (props) => {
                     },
                 }}
             />
-            <Tab.Screen
-                name='ListDrawer'
-                component={ListNavigator}
-                options={{ title: 'Categories' }}
-            />
+            <Tab.Screen name='ListDrawer' component={ListNavigator} options={{ title: 'Topics' }} />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen
                 name='Following'

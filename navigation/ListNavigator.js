@@ -1,12 +1,15 @@
 import React, { useLayoutEffect } from 'react'
 import { Image, TouchableOpacity } from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 
 import { connect } from 'react-redux'
 
 import CustomDrawer from '../components/CustomDrawer'
+
 import ListScreenContainer from '../containers/screens/ListScreenContainer'
+import StaffScreenContainer from '../containers/screens/StaffScreenContainer'
+import DefaultPageScreenContainer from '../containers/screens/DefaultPageScreenContainer'
 
 import { Ionicons } from '@expo/vector-icons'
 
@@ -75,6 +78,20 @@ const ListStack = (props) => {
                 name='List'
                 component={ListScreenContainer}
                 options={{ title: entities.decode(activeCategoryTitle) }}
+            />
+            <Stack.Screen
+                name='Staff'
+                component={StaffScreenContainer}
+                options={{
+                    title: 'Staff',
+                }}
+            />
+            <Stack.Screen
+                name='DefaultPage'
+                component={DefaultPageScreenContainer}
+                options={{
+                    title: 'Page',
+                }}
             />
         </Stack.Navigator>
     )

@@ -6,6 +6,7 @@ import startupSaga from './startup'
 import articleSaga from './article'
 import searchSaga from './search'
 import profileSaga from './profile'
+import pageSaga from './page'
 import recentSaga from './recent'
 import snackbarQueueSaga from './snackbarQueue'
 
@@ -17,6 +18,7 @@ export default function* rootSaga() {
         articleSaga(),
         searchSaga(),
         profileSaga(),
+        pageSaga(),
         recentSaga(),
         snackbarQueueSaga(),
     ])

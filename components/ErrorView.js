@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 import LottieView from 'lottie-react-native'
 import { Button } from 'react-native-paper'
 
-const ErrorView = ({ theme, onRefresh }) => {
+const ErrorView = ({ theme, onRefresh = () => {} }) => {
     const animationRef = useRef(null)
 
     return (
@@ -42,7 +42,7 @@ const ErrorView = ({ theme, onRefresh }) => {
                 style={{ padding: 5 }}
                 onPress={onRefresh}
             >
-                Reload
+                Refresh
             </Button>
         </View>
     )

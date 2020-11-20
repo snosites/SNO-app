@@ -22,7 +22,7 @@ const ArticleScreen = (props) => {
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
 
-    const _viewLink = async (href, article) => {
+    const _viewLink = async (href) => {
         setLoadingLink(true)
 
         if (href.includes(activeDomain.url)) {
