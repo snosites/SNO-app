@@ -6,10 +6,9 @@ import TabBarIcon from '../components/TabBarIcon'
 
 import HomeNavigator from './HomeNavigator'
 import ListNavigator from './ListNavigator'
-import SavedStack from '../navigation/SavedStack'
-import RecentStack from '../navigation/RecentStack'
 import FollowingStack from './FollowingStack'
-import SettingsStackContainer from '../containers/SettingsStackContainer'
+import SettingsStackContainer from '../containers/screens/SettingsStackContainer'
+
 import SportcenterStack from '../navigation/SportcenterStack'
 
 const Tab = createBottomTabNavigator()
@@ -48,7 +47,11 @@ export default (props) => {
             }}
         >
             <Tab.Screen name='HomeTab' component={HomeNavigator} options={{ title: 'Home' }} />
-            <Tab.Screen name='ListDrawer' component={ListNavigator} options={{ title: 'List' }} />
+            <Tab.Screen
+                name='ListDrawer'
+                component={ListNavigator}
+                options={{ title: 'Categories' }}
+            />
             {/* <Tab.Screen name='Saved' component={SavedStack} /> */}
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen name='Following' component={FollowingStack} />

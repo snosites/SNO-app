@@ -1,16 +1,12 @@
 import React, { useEffect, useRef } from 'react'
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import LottieView from 'lottie-react-native'
-import * as Device from 'expo-device'
 
-import { Snackbar } from 'react-native-paper'
-
-import { SafeAreaView } from 'react-navigation'
-import ArticleListContent from '../views/ArticleListContent'
-import TabletArticleListContent from '../views/TabletArticleListContent'
-
-// const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 import { useIsTablet } from '../utils/helpers'
+
+import ListItemRenderer from '../components/listItems/ListItemRenderer'
+
+import { handleArticlePress } from '../utils/articlePress'
 
 const RecentScreen = (props) => {
     const {
@@ -22,8 +18,6 @@ const RecentScreen = (props) => {
         global,
         fetchRecentArticlesIfNeeded,
         invalidateRecentArticles,
-        saveArticle,
-        removeSavedArticle,
     } = props
     const isTablet = useIsTablet()
 
@@ -34,10 +28,6 @@ const RecentScreen = (props) => {
         _playAnimation()
         fetchRecentArticlesIfNeeded(activeDomain.url)
     }, [])
-
-    const _saveRef = (ref) => {
-        flatListRef = ref
-    }
 
     const _playAnimation = () => {
         if (animationRef && animationRef.current) {
@@ -51,17 +41,9 @@ const RecentScreen = (props) => {
         fetchRecentArticlesIfNeeded(activeDomain.url)
     }
 
-    const _saveRemoveToggle = (article) => {
-        if (article.saved) {
-            removeSavedArticle(article.id, activeDomain.id)
-        } else {
-            saveArticle(article, activeDomain.id)
-        }
-    }
-
     if (!recent.items.length && recent.isFetching) {
         return (
-            <SafeAreaView
+            <View
                 style={{
                     flex: 1,
                     marginTop: 20,
@@ -75,7 +57,7 @@ const RecentScreen = (props) => {
                     autoPlay={true}
                     source={require('../assets/lottiefiles/multi-article-loading')}
                 />
-            </SafeAreaView>
+            </View>
         )
     }
     if (recent.error) {
@@ -106,37 +88,61 @@ const RecentScreen = (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            {isTablet ? (
-                <TabletArticleListContent
-                    articleList={recentArticles}
-                    isFetching={recent.isFetching}
-                    isRefreshing={recent.didInvalidate}
-                    loadMore={() => fetchMoreRecentArticlesIfNeeded(activeDomain.url)}
-                    handleRefresh={_handleRefresh}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    enableComments={global.enableComments}
-                    theme={theme}
-                    navigation={navigation}
-                    onIconPress={_saveRemoveToggle}
-                />
-            ) : (
-                <ArticleListContent
-                    articleList={recentArticles}
-                    isFetching={recent.isFetching}
-                    isRefreshing={recent.didInvalidate}
-                    loadMore={() => fetchMoreRecentArticlesIfNeeded(activeDomain.url)}
-                    handleRefresh={_handleRefresh}
-                    enableComments={global.enableComments}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    onIconPress={_saveRemoveToggle}
-                    storyListStyle={global.storyListStyle}
-                />
-            )}
+        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <FlatList
+                Style={{ flex: 1 }}
+                contentContainerStyle={{ padding: 10 }}
+                data={recentArticles}
+                keyExtractor={(item) => item.id.toString()}
+                ref={flatListRef}
+                onEndReachedThreshold={0.2}
+                onEndReached={() => fetchMoreRecentArticlesIfNeeded(activeDomain.url)}
+                onRefresh={_handleRefresh}
+                refreshing={(recentArticles.didInvalidate && recentArticles.isFetching) || false}
+                ListFooterComponent={() => {
+                    if (!recentArticles.isFetching) {
+                        return null
+                    }
+                    return (
+                        <View
+                            style={{
+                                flex: 1,
+                                padding: 10,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <ActivityIndicator />
+                        </View>
+                    )
+                }}
+                renderItem={({ item, index, separators }) => (
+                    <ListItemRenderer
+                        theme={theme}
+                        item={item}
+                        index={index}
+                        separators={separators}
+                        onPress={() => handleArticlePress(item, activeDomain)}
+                        listStyle={'mix'}
+                    />
+                )}
+                ItemSeparatorComponent={() => (
+                    <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
+                )}
+                ListEmptyComponent={() => (
+                    <View style={{ flex: 1 }}>
+                        <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: 19,
+                                padding: 20,
+                                fontFamily: 'openSansBold',
+                            }}
+                        >
+                            No recent articles
+                        </Text>
+                    </View>
+                )}
+            />
         </View>
     )
 }

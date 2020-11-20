@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, TouchableOpacity } from 'react-native'
+import { Image } from 'react-native'
 
 import { connect } from 'react-redux'
 
@@ -8,9 +8,11 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 import Searchbar from '../components/SearchBar'
 
-import HomeScreenContainer from '../containers/HomeScreenContainer'
-import RecentScreenContainer from '../containers/RecentScreenContainer'
-import SavedScreenContainer from '../containers/SavedScreenContainer'
+import HomeScreenContainer from '../containers/screens/HomeScreenContainer'
+import RecentScreenContainer from '../containers/screens/RecentScreenContainer'
+import SavedScreenContainer from '../containers/screens/SavedScreenContainer'
+
+import SearchScreenContainer from '../containers/screens/SearchScreenContainer'
 
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
@@ -20,14 +22,16 @@ const TabHomeNavigator = ({ theme }) => {
         <Tab.Navigator
             initialRouteName='Home'
             backBehavior='order'
-            style={{ backgroundColor: theme.navigationTheme.colors.background }}
+            style={{
+                backgroundColor: theme.navigationTheme.colors.surface,
+            }}
             tabBarOptions={{
                 indicatorStyle: { backgroundColor: theme.colors.primary },
             }}
         >
+            <Tab.Screen name='Saved' component={SavedScreenContainer} />
             <Tab.Screen name='Home' component={HomeScreenContainer} />
             <Tab.Screen name='Recent' component={RecentScreenContainer} />
-            <Tab.Screen name='Saved' component={SavedScreenContainer} />
         </Tab.Navigator>
     )
 }
@@ -44,7 +48,7 @@ const HomeStack = (props) => {
 
     return (
         <Stack.Navigator
-            screenOptions={{
+            screenOptions={({ navigation }) => ({
                 headerStyle: {
                     backgroundColor: theme.colors.primary,
                 },
@@ -61,20 +65,22 @@ const HomeStack = (props) => {
                     }
                     return null
                 },
-                headerTitle: () => <Searchbar placeholder='Search Stories' />,
+                headerTitle: () => (
+                    <Searchbar navigation={navigation} placeholder='Search Stories' />
+                ),
                 headerTitleAlign: 'center',
-            }}
+            })}
         >
             <Stack.Screen
                 name='HomeTabs'
                 component={ConnectedTabHomeNavigator}
                 // options={{ title: 'Recent Stories' }}
             />
-            {/* <Stack.Screen
-                name='HomeTabs'
-                component={ConnectedTabHomeNavigator}
+            <Stack.Screen
+                name='Search'
+                component={SearchScreenContainer}
                 // options={{ title: 'Recent Stories' }}
-            /> */}
+            />
         </Stack.Navigator>
     )
 }

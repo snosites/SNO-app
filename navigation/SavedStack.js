@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 
-import SavedScreenContainer from '../containers/SavedScreenContainer'
+import SavedScreenContainer from '../containers/screens/SavedScreenContainer'
 
 const Stack = createStackNavigator()
 

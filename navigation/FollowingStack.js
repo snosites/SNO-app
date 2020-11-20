@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { connect } from 'react-redux'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import FollowingScreenContainer from '../containers/FollowingScreenContainer'
+import FollowingScreenContainer from '../containers/screens/FollowingScreenContainer'
 
 import Searchbar from '../components/SearchBar'
 

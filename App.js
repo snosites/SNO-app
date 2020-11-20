@@ -42,6 +42,11 @@ export default App = () => {
                 openSansBold: require('./assets/fonts/OpenSans-Bold.ttf'),
                 openSansExtraBold: require('./assets/fonts/OpenSans-ExtraBold.ttf'),
                 openSansItalic: require('./assets/fonts/OpenSans-Italic.ttf'),
+                raleway: require('./assets/fonts/Raleway-Regular.ttf'),
+                ralewayThin: require('./assets/fonts/Raleway-Thin.ttf'),
+                ralewayLight: require('./assets/fonts/Raleway-Light.ttf'),
+                ralewayBold: require('./assets/fonts/Raleway-Bold.ttf'),
+                ralewayExtraBold: require('./assets/fonts/Raleway-ExtraBold.ttf'),
             }),
         ])
     }

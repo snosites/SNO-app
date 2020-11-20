@@ -1,232 +1,138 @@
-import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
-import Color from 'color'
-import { connect } from 'react-redux'
+import React, { useEffect, useState, useRef } from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 
-import Animation from '../views/Animation'
+import LottieView from 'lottie-react-native'
 
-import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons'
-import { Snackbar } from 'react-native-paper'
+import ListItemRenderer from '../components/listItems/ListItemRenderer'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { actions as articleActions } from '../redux/articles'
-import { actions as searchActions } from '../redux/search'
-import { getActiveDomain } from '../redux/domains'
+import { handleArticlePress } from '../utils/articlePress'
 
-import ArticleListContent from '../views/ArticleListContent'
+import { useIsTablet } from '../utils/helpers'
 
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
+import ErrorView from '../components/ErrorView'
 
-// header icon native look component
-const IoniconsHeaderButton = (passMeFurther) => (
-    <HeaderButton
-        {...passMeFurther}
-        IconComponent={Ionicons}
-        iconSize={30}
-        color={Colors.tintColor}
-    />
-)
+const SearchScreen = (props) => {
+    const {
+        navigation,
+        route,
+        searchArticles,
+        search,
+        theme,
+        activeDomain,
+        fetchSearchArticlesIfNeeded,
+        fetchMoreSearchArticlesIfNeeded,
+        invalidateSearchArticles,
+    } = props
 
-class SearchScreen extends React.Component {
-    static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps
-        const logo = navigation.getParam('headerLogo', null)
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        return {
-            title: 'Search Results',
-            headerRight: (
-                <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                    <Item
-                        title='menu'
-                        iconName='ios-menu'
-                        buttonStyle={{ color: isDark ? 'white' : 'black' }}
-                        onPress={() => {
-                            navigation.openDrawer()
-                        }}
-                    />
-                </HeaderButtons>
-            ),
-            headerLeft: logo && (
-                <Image
-                    source={{ uri: logo }}
-                    style={{ width: 60, height: 35, borderRadius: 7, marginLeft: 10 }}
-                    resizeMode='contain'
-                />
-            ),
-            headerBackTitle: null,
-            headerTitleAlign: 'center',
+    const isTablet = useIsTablet()
+
+    const animationRef = useRef(null)
+    const flatListRef = useRef(null)
+
+    useEffect(() => {
+        _playAnimation()
+    }, [])
+
+    const _playAnimation = () => {
+        if (animationRef && animationRef.current) {
+            animationRef.current.reset()
+            animationRef.current.play()
         }
-    }
-
-    state = {
-        snackbarSavedVisible: false,
-        snackbarRemovedVisible: false,
-    }
-
-    componentDidMount() {
-        const { menus, navigation } = this.props
-        if (this.animation) {
-            this._playAnimation()
-        }
-        navigation.setParams({
-            headerLogo: menus.headerSmall,
-        })
-    }
-
-    render() {
-        const { navigation, searchArticles, search, theme, activeDomain } = this.props
-        const { snackbarSavedVisible, snackbarRemovedVisible } = this.state
-
-        if (search.didInvalidate === true && search.isFetching) {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
-                        style={{
-                            width: 400,
-                            height: 400,
-                        }}
-                        source={require('../assets/lottiefiles/search-processing')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
-                    />
-                </View>
-            )
-        }
-        if (search.error) {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Animation
-                        style={{
-                            width: 200,
-                            height: 200,
-                        }}
-                        source={require('../assets/lottiefiles/broken-stick-error')}
-                        saveRef={this._saveAnimationRef}
-                        speed={1}
-                    />
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: 17,
-                            padding: 30,
-                        }}
-                    >
-                        Sorry, something went wrong.
-                    </Text>
-                </View>
-            )
-        }
-        if (search.items.length == 0) {
-            return (
-                <View style={{ flex: 1 }}>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: 17,
-                            padding: 20,
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        No results. Try searching again.
-                    </Text>
-                </View>
-            )
-        }
-        return (
-            <View style={{ flex: 1 }}>
-                <ArticleListContent
-                    articleList={searchArticles}
-                    isFetching={search.isFetching}
-                    loadMore={this._loadMore}
-                    saveRef={this._saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    onIconPress={this._saveRemoveToggle}
-                />
-                <Snackbar
-                    visible={snackbarSavedVisible}
-                    style={styles.snackbar}
-                    duration={3000}
-                    onDismiss={() => this.setState({ snackbarSavedVisible: false })}
-                    action={{
-                        label: 'Dismiss',
-                        onPress: () => {
-                            this.setState({ snackbarSavedVisible: false })
-                        },
-                    }}
-                >
-                    Article Added To Saved List
-                </Snackbar>
-                <Snackbar
-                    visible={snackbarRemovedVisible}
-                    style={styles.snackbar}
-                    duration={3000}
-                    onDismiss={() => this.setState({ snackbarRemovedVisible: false })}
-                    action={{
-                        label: 'Dismiss',
-                        onPress: () => {
-                            this.setState({ snackbarRemovedVisible: false })
-                        },
-                    }}
-                >
-                    Article Removed From Saved List
-                </Snackbar>
-            </View>
-        )
-    }
-
-    _saveRef = (ref) => {
-        this.flatListRef = ref
-    }
-
-    _saveAnimationRef = (ref) => {
-        this.animation = ref
     }
 
     _scrollToTop = () => {
-        this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
     }
 
-    _saveRemoveToggle = (article) => {
-        if (article.saved) {
-            this._handleArticleRemove(article.id)
-        } else {
-            this._handleArticleSave(article)
+    const _handleRefresh = () => {
+        if (route.params?.searchTerm) {
+            invalidateSearchArticles()
+            fetchSearchArticlesIfNeeded(activeDomain.url, route.params.searchTerm)
         }
     }
 
-    _handleArticleSave = (article) => {
-        const { activeDomain, saveArticle } = this.props
-        saveArticle(article, activeDomain.id)
-        this.setState({
-            snackbarSavedVisible: true,
-        })
-    }
-
-    _handleArticleRemove = (articleId) => {
-        const { activeDomain, removeSavedArticle } = this.props
-        removeSavedArticle(articleId, activeDomain.id)
-        this.setState({
-            snackbarRemovedVisible: true,
-        })
-    }
-
-    _loadMore = () => {
-        if (!this.onEndReachedCalledDuringMomentum) {
-            const { activeDomain, navigation, fetchMoreSearchArticlesIfNeeded } = this.props
-            const searchTerm = navigation.getParam('searchTerm', '')
-            fetchMoreSearchArticlesIfNeeded(activeDomain.url, searchTerm)
-            this.onEndReachedCalledDuringMomentum = true
+    const _loadMore = () => {
+        if (route.params?.searchTerm) {
+            fetchMoreSearchArticlesIfNeeded(activeDomain.url, route.params.searchTerm)
         }
     }
 
-    _playAnimation = () => {
-        this.animation.reset()
-        this.animation.play()
+    if (search.didInvalidate && search.isFetching) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <LottieView
+                    ref={animationRef}
+                    style={StyleSheet.absoluteFill}
+                    speed={0.8}
+                    loop={true}
+                    autoPlay={true}
+                    source={require('../assets/lottiefiles/search-processing')}
+                />
+            </View>
+        )
     }
+    if (search.error) {
+        return <ErrorView theme={theme} onRefresh={_handleRefresh} />
+    }
+
+    return (
+        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <FlatList
+                Style={{ flex: 1 }}
+                contentContainerStyle={{ padding: 10 }}
+                data={searchArticles}
+                keyExtractor={(item) => item.id.toString()}
+                ref={flatListRef}
+                onEndReachedThreshold={0.2}
+                onEndReached={_loadMore}
+                onRefresh={_handleRefresh}
+                refreshing={search.didInvalidate && search.isFetching}
+                ListFooterComponent={() => {
+                    if (!search.isFetching) {
+                        return null
+                    }
+                    return (
+                        <View
+                            style={{
+                                flex: 1,
+                                padding: 10,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <ActivityIndicator />
+                        </View>
+                    )
+                }}
+                renderItem={({ item, index, separators }) => (
+                    <ListItemRenderer
+                        theme={theme}
+                        item={item}
+                        index={index}
+                        separators={separators}
+                        onPress={() => handleArticlePress(item, activeDomain)}
+                        listStyle={'alternating'}
+                    />
+                )}
+                ItemSeparatorComponent={() => (
+                    <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
+                )}
+                ListEmptyComponent={() => (
+                    <View style={{ flex: 1 }}>
+                        <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: 19,
+                                padding: 20,
+                                fontFamily: 'openSansBold',
+                            }}
+                        >
+                            No search results for that term.
+                        </Text>
+                    </View>
+                )}
+            />
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -246,34 +152,4 @@ const styles = StyleSheet.create({
     },
 })
 
-const mapStateToProps = (state) => {
-    const activeDomain = getActiveDomain(state)
-    return {
-        theme: state.theme,
-        activeDomain,
-        search: state.searchArticles,
-        menus: state.global.menuItems,
-        searchArticles: state.searchArticles.items.map((articleId) => {
-            const found = state.savedArticlesBySchool[activeDomain.id].find((savedArticle) => {
-                return savedArticle.id === articleId
-            })
-            if (found) {
-                state.entities.articles[articleId].saved = true
-            } else {
-                state.entities.articles[articleId].saved = false
-            }
-            return state.entities.articles[articleId]
-        }),
-    }
-}
-
-const mapDispatchToProps = (dispatch) => ({
-    saveArticle: (article, domainId) =>
-        dispatch(savedArticleActions.saveArticle(article, domainId)),
-    removeSavedArticle: (articleId, domainId) =>
-        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
-    fetchMoreSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
-        dispatch(searchActions.fetchMoreSearchArticlesIfNeeded(domainUrl, searchTerm)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SearchScreen)
+export default SearchScreen

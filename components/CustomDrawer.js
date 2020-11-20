@@ -6,11 +6,9 @@ import HTML from 'react-native-render-html'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer'
 
 import { actions as articlesActions } from '../redux/articles'
-import { actions as searchActions } from '../redux/search'
 import { getActiveDomain } from '../redux/domains'
 import { actions as globalActions } from '../redux/global'
 
-import { SafeAreaView } from 'react-navigation'
 import DrawerIcon from './DrawerIcon'
 import { connect } from 'react-redux'
 
@@ -19,8 +17,6 @@ import * as Amplitude from 'expo-analytics-amplitude'
 function CustomDrawerContent(props) {
     const {
         navigation,
-        invalidateSearchArticles,
-        fetchSearchArticlesIfNeeded,
         fetchArticlesIfNeeded,
         menus,
         activeDomain,
@@ -134,62 +130,9 @@ function CustomDrawerContent(props) {
     )
 }
 
-// class CustomDrawerComponent extends React.Component {
-//     state = {
-//         activeMenuIndex: 0,
-//         searchTerm: '',
-//     }
-
-//     render() {
-//         const { menus, activeDomain, globals, setActiveCategory } = this.props
-//         return (
-//             <View style={styles.rootContainer}>
-//                 <SafeAreaView
-//                     style={styles.rootContainer}
-//                     forceInset={{ top: 'always', horizontal: 'never' }}
-//                 >
-//                     <ScrollView style={styles.container}></ScrollView>
-//                 </SafeAreaView>
-//             </View>
-//         )
-//     }
-// }
-
-const styles = StyleSheet.create({
-    rootContainer: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: Colors.surface,
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    icon: {
-        marginHorizontal: 16,
-        width: 40,
-        alignItems: 'center',
-    },
-    inactiveIcon: {
-        /*
-         * Icons have 0.54 opacity according to guidelines
-         * 100/87 * 54 ~= 62
-         */
-        opacity: 0.62,
-    },
-    label: {
-        margin: 16,
-        fontWeight: 'bold',
-        fontSize: 21,
-    },
-})
-
 const mapStateToProps = (state) => ({
     activeDomain: getActiveDomain(state),
     menus: state.global.menuItems,
-    articlesByCategory: state.articlesByCategory,
     global: state.global,
 })
 
@@ -201,9 +144,6 @@ const mapDispatchToProps = (dispatch) => ({
                 category,
             })
         ),
-    fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
-        dispatch(searchActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
-    invalidateSearchArticles: () => dispatch(searchActions.invalidateSearchArticles()),
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
 })
 

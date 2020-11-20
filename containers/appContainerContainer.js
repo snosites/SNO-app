@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import AppContainer from '../components/AppContainer'
 
-// import { types as userTypes } from '../redux/user'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { createErrorMessageSelector } from '../redux/errors'
 import { getActiveDomain } from '../redux/domains'

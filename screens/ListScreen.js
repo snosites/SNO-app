@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { View, Text, StyleSheet, Platform } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
 
 import { useIsTablet } from '../utils/helpers'
 import LottieView from 'lottie-react-native'
 
-import { Snackbar, Button } from 'react-native-paper'
-
-import ArticleListContent from '../views/ArticleListContent'
-import TabletArticleListContent from '../views/TabletArticleListContent'
 import ErrorView from '../components/ErrorView'
+import ListItemRenderer from '../components/listItems/ListItemRenderer'
+
+import { handleArticlePress } from '../utils/articlePress'
 
 const ListScreen = (props) => {
     const {
@@ -25,15 +24,16 @@ const ListScreen = (props) => {
         invalidateArticles,
         fetchArticlesIfNeeded,
         fetchMoreArticlesIfNeeded,
-        saveArticle,
-        removeSavedArticle,
     } = props
+
+    const { storyListStyle } = global
 
     const isTablet = useIsTablet()
     const [ad, setAd] = useState(null)
 
     const animationRef = useRef(null)
     const flatListRef = useRef(null)
+    const momentumScrolling = useRef(false)
 
     useEffect(() => {
         _playAnimation()
@@ -47,25 +47,25 @@ const ListScreen = (props) => {
         }
     }, [listAds])
 
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            if (ad && ad.id) {
-                console.log('sending ad analytic')
-                sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-            }
-        })
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         if (ad && ad.id) {
+    //             console.log('sending ad analytic')
+    //             sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+    //         }
+    //     })
 
-        return unsubscribe
-    }, [navigation])
+    //     return unsubscribe
+    // }, [navigation])
 
-    _playAnimation = () => {
+    const _playAnimation = () => {
         if (animationRef && animationRef.current) {
             animationRef.current.reset()
             animationRef.current.play()
         }
     }
 
-    _handleRefresh = () => {
+    const _handleRefresh = () => {
         invalidateArticles(category.categoryId)
         fetchArticlesIfNeeded({
             domain: activeDomain.url,
@@ -73,27 +73,15 @@ const ListScreen = (props) => {
         })
     }
 
-    _loadMore = () => {
+    const _loadMore = () => {
         fetchMoreArticlesIfNeeded({
             domain: activeDomain.url,
             category: category.categoryId,
         })
     }
 
-    _scrollToTop = () => {
-        flatListRef.scrollToOffset({ animated: true, offset: 0 })
-    }
-
-    _saveRef = (ref) => {
-        flatListRef = ref
-    }
-
-    const _saveRemoveToggle = (article) => {
-        if (article.saved) {
-            removeSavedArticle(article.id, activeDomain.id)
-        } else {
-            saveArticle(article, activeDomain.id)
-        }
+    const _scrollToTop = () => {
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
     }
 
     if (!categoryId || (!articlesByCategory.length && category.isFetching)) {
@@ -120,41 +108,61 @@ const ListScreen = (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            {isTablet ? (
-                <TabletArticleListContent
-                    articleList={articlesByCategory}
-                    isFetching={category.isFetching}
-                    isRefreshing={category.didInvalidate || false}
-                    loadMore={_loadMore}
-                    handleRefresh={_handleRefresh}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    enableComments={global.enableComments}
-                    navigation={navigation}
-                    onIconPress={_saveRemoveToggle}
-                    listAds={listAds}
-                    ad={ad}
-                />
-            ) : (
-                <ArticleListContent
-                    articleList={articlesByCategory}
-                    isFetching={category.isFetching}
-                    isRefreshing={category.didInvalidate || false}
-                    loadMore={_loadMore}
-                    handleRefresh={_handleRefresh}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    enableComments={global.enableComments}
-                    navigation={navigation}
-                    onIconPress={_saveRemoveToggle}
-                    storyListStyle={global.storyListStyle}
-                    listAds={listAds}
-                    ad={ad}
-                />
-            )}
+        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <FlatList
+                Style={{ flex: 1 }}
+                contentContainerStyle={{ padding: 10 }}
+                data={articlesByCategory}
+                keyExtractor={(item) => item.id.toString()}
+                ref={flatListRef}
+                onEndReachedThreshold={0.2}
+                onEndReached={_loadMore}
+                onRefresh={_handleRefresh}
+                refreshing={category.didInvalidate && category.isFetching}
+                ListFooterComponent={() => {
+                    if (!category.isFetching) {
+                        return null
+                    }
+                    return (
+                        <View
+                            style={{
+                                flex: 1,
+                                padding: 10,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <ActivityIndicator />
+                        </View>
+                    )
+                }}
+                renderItem={({ item, index, separators }) => (
+                    <ListItemRenderer
+                        theme={theme}
+                        item={item}
+                        index={index}
+                        separators={separators}
+                        onPress={() => handleArticlePress(item, activeDomain)}
+                        listStyle={storyListStyle}
+                    />
+                )}
+                ItemSeparatorComponent={() => (
+                    <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
+                )}
+                ListEmptyComponent={() => (
+                    <View>
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 18,
+                                textAlign: 'center',
+                                padding: 20,
+                            }}
+                        >
+                            There are no items to display in this category
+                        </Text>
+                    </View>
+                )}
+            />
         </View>
     )
 }

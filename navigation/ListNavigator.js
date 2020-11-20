@@ -6,7 +6,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { connect } from 'react-redux'
 
 import CustomDrawer from '../components/CustomDrawer'
-import ListScreenContainer from '../containers/ListScreenContainer'
+import ListScreenContainer from '../containers/screens/ListScreenContainer'
 
 import { Ionicons } from '@expo/vector-icons'
 

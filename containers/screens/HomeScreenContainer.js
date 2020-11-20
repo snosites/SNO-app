@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import HomeScreen from '../screens/HomeScreen'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
 import { actions as articlesActions } from '../redux/articles'
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { actions as adActions, getHomeAds } from '../redux/ads'
@@ -70,23 +69,10 @@ const mapStateToProps = (state) => {
                 state.articlesByCategory[categoryId] &&
                 state.articlesByCategory[categoryId].isFetching
         ),
-        // articlesLoading: homeScreenCategories.reduce((accum, categoryId) => {
-        //     if (state.articlesByCategory[categoryId]) {
-        //         console.log('loading', categoryId, state.articlesByCategory[categoryId].isFetching)
-        //         return state.articlesByCategory[categoryId].isFetching
-        //     } else {
-        //         console.log('loading cant find', categoryId)
-        //         return true
-        //     }
-        // }, false),
     }
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    saveArticle: (article, domainId) =>
-        dispatch(savedArticleActions.saveArticle(article, domainId)),
-    removeSavedArticle: (articleId, domainId) =>
-        dispatch(savedArticleActions.removeSavedArticle(articleId, domainId)),
     refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
     invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),

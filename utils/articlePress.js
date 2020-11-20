@@ -38,7 +38,7 @@ export const handleArticlePress = (article, activeDomain, scrollToTop = false) =
 handleRegularArticle = async (article, scrollToTop) => {
     Haptics.selectionAsync()
     // NavigationService.navigate('FullArticle', { scrollToTop })
-    navigate('ArticleNavigator', { articleId: article.id })
+    push('ArticleNavigator', { articleId: article.id })
     // check if there is a slideshow
 
     return

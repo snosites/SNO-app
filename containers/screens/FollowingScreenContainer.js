@@ -1,14 +1,18 @@
 import { connect } from 'react-redux'
 
-import FollowingScreen from '../screens/FollowingScreen'
+import FollowingScreen from '../../screens/FollowingScreen'
 
-import { actions as domainActions, getActiveDomain } from '../redux/domains'
-import { actions as globalActions } from '../redux/global'
-import { actions as profileActions, types as ProfileTypes } from '../redux/profiles'
-import { types as userTypes, actions as userActions, getWriterSubscriptions } from '../redux/user'
+import { actions as domainActions, getActiveDomain } from '../../redux/domains'
+import { actions as globalActions } from '../../redux/global'
+import { actions as profileActions, types as ProfileTypes } from '../../redux/profiles'
+import {
+    types as userTypes,
+    actions as userActions,
+    getWriterSubscriptions,
+} from '../../redux/user'
 
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 const profileLoadingSelector = createLoadingSelector([ProfileTypes.FETCH_PROFILE])
 const profileErrorSelector = createErrorMessageSelector([ProfileTypes.FETCH_PROFILE])

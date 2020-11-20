@@ -1,13 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import ArticleScreen from '../screens/ArticleScreen'
+import ArticleScreen from '../../screens/ArticleScreen'
 
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { getActiveDomain } from '../redux/domains'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { getActiveDomain } from '../../redux/domains'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
-import { ArticleIdContext } from '../navigation/ArticleNavigator'
+import { ArticleIdContext } from '../../navigation/ArticleNavigator'
 
 const ArticleScreenConsumer = (props) => (
     <ArticleIdContext.Consumer>

@@ -40,7 +40,7 @@ let accentColor = Color(defaultAccentColor)
 let accentIsDark = accentColor.isDark()
 
 export default palette
-
+console.log('navigationDefaultTheme', navigationDefaultTheme)
 export const defaultNavigationTheme = {
     ...navigationDefaultTheme,
     colors: {
@@ -56,10 +56,12 @@ export const defaultColorTheme = {
         ...DefaultTheme.colors,
         primary: defaultPrimaryColor,
         accent: defaultAccentColor,
-        background: '#dddddd',
+        background: defaultNavigationTheme.colors.background,
+        // background: '#dddddd',
         homeScreenCategoryTitle: defaultAccentColor,
         accentLightened: accentColor.lighten(0.8),
         accentWhitened: accentColor.whiten(0.7).opaquer(0.2),
+        grayText: '#9e9e9e',
     },
     primaryIsDark,
     accentIsDark,

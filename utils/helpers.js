@@ -18,3 +18,18 @@ export const useIsTablet = () => {
 
     return isTablet
 }
+
+export const getWritersString = (writers) => {
+    let str = ''
+
+    for (let i = 0; i < writers.length; i++) {
+        if (i === writers.length - 2) {
+            str += `${writers[i]} & `
+        } else if (i === writers.length - 1) {
+            str += `${writers[i]}`
+        } else {
+            str += `${writers[i]}, `
+        }
+    }
+    return str
+}

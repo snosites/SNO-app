@@ -94,7 +94,7 @@ const CommentScreen = (props) => {
                 </View>
             ),
         })
-    }, [navigation])
+    }, [navigation, comments])
 
     // options={{tabBarLabel:  ({ focused, color }) => {
 

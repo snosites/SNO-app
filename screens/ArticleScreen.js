@@ -3,35 +3,45 @@ import { ScrollView, StyleSheet, Share, View, TouchableOpacity, Text } from 'rea
 import { StatusBar } from 'expo-status-bar'
 import * as Amplitude from 'expo-analytics-amplitude'
 import LottieView from 'lottie-react-native'
-import { connect } from 'react-redux'
 import { NavigationEvents } from 'react-navigation'
+
+import * as WebBrowser from 'expo-web-browser'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { getActiveDomain } from '../redux/domains'
-import { actions as userActions, getPushToken, getWriterSubscriptions } from '../redux/user'
-import { actions as adActions, getStoryAds } from '../redux/ads'
-
-import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
-
-import ArticleBodyContent from '../views/ArticleBodyContent'
 import ArticleContent from '../components/Article/ArticleContent'
 
-import layout from '../constants/Layout'
+import { asyncFetchArticle } from '../../utils/sagaHelpers'
+import { handleArticlePress } from '../utils/articlePress'
 
 const ArticleScreen = (props) => {
     const { route, navigation, theme, activeDomain, article } = props
 
-    const [expandCaption, setExpandCaption] = useState(false)
     const [loadingLink, setLoadingLink] = useState(false)
-    // const [article, setArticle] = useState(null)
     const [articleChapters, setArticleChapters] = useState([])
 
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
 
-    const _handleCaptionClick = () => {
-        setExpandCaption(!expandCaption)
+    const _viewLink = async (href, article) => {
+        setLoadingLink(true)
+
+        if (href.includes(activeDomain.url)) {
+            const matchPattern = `${activeDomain.url}\/([0-9]+)`
+
+            const matches = new RegExp(matchPattern).exec(href)
+
+            if (matches && matches[1]) {
+                const article = await asyncFetchArticle(activeDomain.url, Number(matches[1]))
+
+                handleArticlePress(article, activeDomain)
+            } else {
+                await WebBrowser.openBrowserAsync(href)
+            }
+        } else {
+            await WebBrowser.openBrowserAsync(href)
+        }
+
+        setLoadingLink(false)
     }
 
     if (!article.id) {
@@ -56,121 +66,23 @@ const ArticleScreen = (props) => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
-            <ArticleContent navigation={navigation} article={article} theme={theme} />
+        <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <ArticleContent
+                navigation={navigation}
+                article={article}
+                theme={theme}
+                onLinkPress={() => _viewLink()}
+            />
             {articleChapters.map((article) => (
-                <ArticleContent key={article.id} article={article} />
-            ))}
-        </View>
-    )
-
-    return (
-        <View style={{ flex: 1 }}>
-            <ScrollView ref={scrollViewRef}>
-                {/* <NavigationEvents
-                    onDidFocus={() => {
-                        this.setState({
-                            showPortal: true,
-                        })
-                        if (ad && ad.id) {
-                            sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-                        }
-                        if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
-                            fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
-                        }
-                    }}
-                    onWillBlur={() => {
-                        // StatusBar.setStatusBarHidden(true)
-                        this.setState({
-                            showPortal: false,
-                            expandCaption: false,
-                        })
-                    }}
-                /> */}
-                <ArticleBodyContent
+                <ArticleContent
+                    key={article.id}
                     navigation={navigation}
                     article={article}
                     theme={theme}
-                    handleCaptionClick={_handleCaptionClick}
-                    expandCaption={expandCaption}
-                    activeDomain={activeDomain}
-                    setLoadingLink={(state) => setLoadingLink(state)}
-                    // ad={ad}
-                    // adPosition={storyAds ? storyAds.displayLocation : null}
-                    // snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
                 />
-                {articleChapters.map((article) => (
-                    <ArticleBodyContent
-                        key={article.id}
-                        navigation={navigation}
-                        article={article}
-                        theme={theme}
-                        handleCaptionClick={this._handleCaptionClick}
-                        expandCaption={this.state.expandCaption}
-                        activeDomain={activeDomain}
-                        setLoadingLink={(state) => this.setState({ loadingLink: state })}
-                    />
-                ))}
-
-                {/* {this.state.showPortal && (
-                    <Portal>
-                        <SafeAreaView style={{ flex: 1, justifyContent: 'flex-end' }}>
-                            <Snackbar
-                                visible={snackbarSavedVisible}
-                                style={styles.snackbar}
-                                duration={3000}
-                                onDismiss={() => this.setState({ snackbarSavedVisible: false })}
-                                action={{
-                                    label: 'Dismiss',
-                                    onPress: () => {
-                                        this.setState({ snackbarSavedVisible: false })
-                                    },
-                                }}
-                            >
-                                Article Added To Saved List
-                            </Snackbar>
-                            <FAB.Group
-                                style={{
-                                    flex: 1,
-                                    position: 'relative',
-                                    paddingBottom: snackbarSavedVisible ? 100 : 50,
-                                }}
-                                open={this.state.fabOpen}
-                                icon={this.state.fabOpen ? 'close' : 'plus'}
-                                actions={this._renderFabActions(article)}
-                                onStateChange={({ open }) =>
-                                    this.setState({
-                                        fabOpen: open,
-                                    })
-                                }
-                                onPress={() => {
-                                    if (this.state.open) {
-                                        // do something if the speed dial is open
-                                    }
-                                }}
-                            />
-                        </SafeAreaView>
-                    </Portal> */}
-                {/* )} */}
-            </ScrollView>
-        </View>
+            ))}
+        </ScrollView>
     )
 }
-
-const styles = StyleSheet.create({
-    storyContainer: {
-        flex: 1,
-    },
-    animationContainer: {
-        width: 400,
-        height: 400,
-    },
-    snackbar: {
-        position: 'absolute',
-        bottom: 50,
-        left: 0,
-        right: 0,
-    },
-})
 
 export default ArticleScreen

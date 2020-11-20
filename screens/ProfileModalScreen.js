@@ -70,6 +70,7 @@ const ProfileModalScreen = (props) => {
                         backgroundColor: theme.colors.surface,
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
+                        overflow: 'hidden',
                     }}
                 >
                     <LinearGradient
@@ -123,6 +124,7 @@ const ProfileModalScreen = (props) => {
                         backgroundColor: theme.colors.surface,
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
+                        overflow: 'hidden',
                     }}
                 >
                     <LinearGradient
@@ -204,6 +206,7 @@ const ProfileModalScreen = (props) => {
                         backgroundColor: theme.colors.surface,
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
+                        overflow: 'hidden',
                     }}
                 >
                     <LinearGradient
@@ -278,182 +281,198 @@ const ProfileModalScreen = (props) => {
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             <View
-                style={{
-                    height: 325,
-                    backgroundColor: theme.colors.surface,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                    overflow: 'hidden',
-                }}
+            // style={{
+            //     shadowColor: '#fff',
+            //     shadowOffset: {
+            //         width: 2,
+            //         height: 10,
+            //     },
+            //     shadowOpacity: 0.92,
+            //     shadowRadius: 15.46,
+
+            //     elevation: 9,
+            // }}
             >
-                <LinearGradient
-                    colors={[theme.colors.accent, theme.colors.accentLightened]}
-                    style={{
-                        height: 100,
-                    }}
-                >
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: theme.colors.accentLightened,
-                            width: 34,
-                            height: 34,
-                            borderRadius: 17,
-                            margin: 10,
-                        }}
-                    >
-                        <Feather
-                            style={{
-                                marginBottom: -3,
-                            }}
-                            name={'x'}
-                            size={20}
-                            color={theme.accentIsDark ? 'white' : 'black'}
-                        />
-                    </TouchableOpacity>
-                    <View
-                        style={{
-                            position: 'absolute',
-                            top: 15,
-                            left: viewportWidth / 2 - 35,
-                            width: 70,
-                            height: 70,
-                            borderRadius: 35,
-                            backgroundColor: theme.extraColors.lightGray,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <Image
-                            style={{ width: 70, height: 70 }}
-                            resizeMode='contain'
-                            source={
-                                profile.post_thumbnail
-                                    ? { uri: profile.post_thumbnail }
-                                    : require('../assets/images/anon.png')
-                            }
-                        />
-                    </View>
-                </LinearGradient>
                 <View
                     style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        padding: 10,
+                        height: 325,
                         backgroundColor: theme.colors.surface,
+                        borderTopLeftRadius: 10,
+                        borderTopRightRadius: 10,
+                        overflow: 'hidden',
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() => {}}
-                        style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}
+                    <LinearGradient
+                        colors={[theme.colors.accent, theme.colors.accentLightened]}
+                        style={{
+                            height: 100,
+                        }}
                     >
-                        <Text
+                        <TouchableOpacity
+                            onPress={() => navigation.goBack()}
                             style={{
-                                fontFamily: 'openSansBold',
-                                fontSize: 18,
-                                color: theme.colors.text,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: theme.colors.accentLightened,
+                                width: 34,
+                                height: 34,
+                                borderRadius: 17,
+                                margin: 10,
                             }}
                         >
-                            {entities.decode(profile.post_title)}
-                        </Text>
-                        <Feather
+                            <Feather
+                                style={{
+                                    marginBottom: -3,
+                                }}
+                                name={'x'}
+                                size={20}
+                                color={theme.accentIsDark ? 'white' : 'black'}
+                            />
+                        </TouchableOpacity>
+                        <View
                             style={{
-                                marginBottom: -3,
+                                position: 'absolute',
+                                top: 15,
+                                left: viewportWidth / 2 - 35,
+                                width: 70,
+                                height: 70,
+                                borderRadius: 35,
+                                backgroundColor: theme.extraColors.lightGray,
+                                overflow: 'hidden',
                             }}
-                            name={'chevron-right'}
-                            size={18}
-                            color={theme.colors.text}
-                        />
-                    </TouchableOpacity>
-                    <Text
-                        style={{
-                            fontFamily: 'openSans',
-                            fontSize: 16,
-                            color: theme.extraColors.gray,
-                            marginBottom: 10,
-                        }}
-                    >
-                        {entities.decode(profile.post_excerpt)}
-                    </Text>
-                    <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={{
-                            fontFamily: 'openSans',
-                            fontSize: 14,
-                            color: theme.colors.text,
-                        }}
-                    >
-                        {entities.decode(profile.post_content)}
-                    </Text>
+                        >
+                            <Image
+                                style={{ width: 70, height: 70 }}
+                                resizeMode='contain'
+                                source={
+                                    profile.post_thumbnail
+                                        ? { uri: profile.post_thumbnail }
+                                        : require('../assets/images/anon.png')
+                                }
+                            />
+                        </View>
+                    </LinearGradient>
                     <View
                         style={{
-                            flexDirection: 'row',
-                            padding: 20,
+                            flex: 1,
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            alignSelf: 'stretch',
+                            padding: 10,
+                            backgroundColor: theme.colors.surface,
                         }}
                     >
-                        <View style={{ alignItems: 'flex-start' }}>
+                        <TouchableOpacity
+                            onPress={() => {}}
+                            style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}
+                        >
                             <Text
                                 style={{
                                     fontFamily: 'openSansBold',
                                     fontSize: 18,
-                                    color: theme.colors.primary,
-                                }}
-                            >
-                                {profile.articles.length > 300 ? '300+' : profile.articles.length}
-                            </Text>
-                            <Text
-                                style={{
-                                    fontFamily: 'openSansBold',
-                                    fontSize: 14,
                                     color: theme.colors.text,
                                 }}
                             >
-                                Total Media Items
+                                {entities.decode(profile.post_title)}
                             </Text>
-                        </View>
-                        <Button
-                            mode='contained'
-                            theme={{ roundness: 10 }}
-                            dark={theme.primaryIsDark}
+                            <Feather
+                                style={{
+                                    marginBottom: -3,
+                                }}
+                                name={'chevron-right'}
+                                size={18}
+                                color={theme.colors.text}
+                            />
+                        </TouchableOpacity>
+                        <Text
                             style={{
-                                backgroundColor: theme.colors.primary,
-                                fontSize: 18,
-                                marginTop: 'auto',
+                                fontFamily: 'openSans',
+                                fontSize: 16,
+                                color: theme.extraColors.gray,
                                 marginBottom: 10,
                             }}
-                            loading={subscribeLoading || unsubscribeLoading}
-                            onPress={() => {
-                                if (route.params?.profileId && route.params?.profileName) {
-                                    if (!subscribed) {
-                                        subscribe({
-                                            subscriptionType: 'writers',
-                                            ids: [
-                                                {
-                                                    id: route.params.profileId,
-                                                    name: route.params.profileName,
-                                                },
-                                            ],
-                                            domainId: activeDomain.id,
-                                        })
-                                    } else {
-                                        unsubscribe({
-                                            subscriptionType: 'writers',
-                                            ids: [subscribed],
-                                            domainId: activeDomain.id,
-                                        })
-                                    }
-                                } else {
-                                    console.log('no data', route)
-                                }
+                        >
+                            {entities.decode(profile.post_excerpt)}
+                        </Text>
+                        <Text
+                            numberOfLines={2}
+                            ellipsizeMode='tail'
+                            style={{
+                                fontFamily: 'openSans',
+                                fontSize: 14,
+                                color: theme.colors.text,
                             }}
                         >
-                            {subscribed ? 'Unfollow' : 'Follow'}
-                        </Button>
+                            {entities.decode(profile.post_content)}
+                        </Text>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                padding: 20,
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                alignSelf: 'stretch',
+                            }}
+                        >
+                            <View style={{ alignItems: 'flex-start' }}>
+                                <Text
+                                    style={{
+                                        fontFamily: 'openSansBold',
+                                        fontSize: 18,
+                                        color: theme.colors.primary,
+                                    }}
+                                >
+                                    {profile.articles.length > 300
+                                        ? '300+'
+                                        : profile.articles.length}
+                                </Text>
+                                <Text
+                                    style={{
+                                        fontFamily: 'openSansBold',
+                                        fontSize: 14,
+                                        color: theme.colors.text,
+                                    }}
+                                >
+                                    Total Media Items
+                                </Text>
+                            </View>
+                            <Button
+                                mode='contained'
+                                theme={{ roundness: 10 }}
+                                dark={theme.primaryIsDark}
+                                style={{
+                                    backgroundColor: theme.colors.primary,
+                                    fontSize: 18,
+                                    marginTop: 'auto',
+                                    marginBottom: 10,
+                                }}
+                                loading={subscribeLoading || unsubscribeLoading}
+                                onPress={() => {
+                                    if (route.params?.profileId && route.params?.profileName) {
+                                        if (!subscribed) {
+                                            subscribe({
+                                                subscriptionType: 'writers',
+                                                ids: [
+                                                    {
+                                                        id: route.params.profileId,
+                                                        name: route.params.profileName,
+                                                    },
+                                                ],
+                                                domainId: activeDomain.id,
+                                            })
+                                        } else {
+                                            unsubscribe({
+                                                subscriptionType: 'writers',
+                                                ids: [subscribed],
+                                                domainId: activeDomain.id,
+                                            })
+                                        }
+                                    } else {
+                                        console.log('no data', route)
+                                    }
+                                }}
+                            >
+                                {subscribed ? 'Unfollow' : 'Follow'}
+                            </Button>
+                        </View>
                     </View>
                 </View>
             </View>

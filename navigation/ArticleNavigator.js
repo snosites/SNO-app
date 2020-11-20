@@ -3,12 +3,10 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { connect } from 'react-redux'
 
-import ArticleScreenContainer from '../containers/ArticleScreenContainer'
-import CommentsScreenContainer from '../containers/CommentsScreenContainer'
-import ArticleActionsContainer from '../containers/ArticleActionsScreenContainer'
-import ProfileModalContainer from '../containers/ProfileModalScreenContainer'
-
-import TestScreen from '../screens/TestScreen'
+import ArticleScreenContainer from '../containers/screens/ArticleScreenContainer'
+import CommentsScreenContainer from '../containers/screens/CommentsScreenContainer'
+import ArticleActionsContainer from '../containers/screens/ArticleActionsScreenContainer'
+import ProfileModalContainer from '../containers/screens/ProfileModalScreenContainer'
 
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
@@ -21,7 +19,9 @@ const ArticleTabs = ({ route, navigation, enableComments, theme }) => {
             <Tab.Navigator
                 initialRouteName='Article'
                 backBehavior='order'
-                style={{ backgroundColor: theme.navigationTheme.colors.background }}
+                style={{
+                    backgroundColor: theme.navigationTheme.colors.background,
+                }}
                 tabBarOptions={{
                     indicatorStyle: { backgroundColor: theme.colors.accent, height: 3 },
                 }}

@@ -21,10 +21,6 @@ import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-pape
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Html5Entities } from 'html-entities'
-
-const entities = new Html5Entities()
-
 const CommentItem = (props) => {
     const { comment } = props
 

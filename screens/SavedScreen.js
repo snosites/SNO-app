@@ -1,88 +1,60 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
-import { connect } from 'react-redux'
-import LottieView from 'lottie-react-native'
-import * as Device from 'expo-device'
+import { View, Text, Image, FlatList } from 'react-native'
 
 import { useIsTablet } from '../utils/helpers'
 
-import ArticleListContent from '../views/ArticleListContent'
-import TabletArticleListContent from '../views/TabletArticleListContent'
+import ListItemRenderer from '../components/listItems/ListItemRenderer'
+
+import { handleArticlePress } from '../utils/articlePress'
 
 const SavedScreen = (props) => {
-    const { savedArticles, activeDomain, theme, navigation, global, removeSavedArticle } = props
+    const { savedArticles, activeDomain, theme, navigation, global } = props
     const isTablet = useIsTablet()
 
     const flatListRef = useRef(null)
 
-    const _saveRef = (ref) => {
-        flatListRef = ref
-    }
+    // _scrollToTop = () => {
+    //     this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
+    // }
 
-    if (!savedArticles.length) {
-        return (
-            <View style={{ flex: 1, alignItems: 'center' }}>
-                <Text
-                    style={{
-                        fontSize: 18,
-                        textAlign: 'center',
-                        padding: 20,
-                        fontFamily: 'openSansBold',
-                    }}
-                >
-                    You don't have any saved articles for this school yet
-                </Text>
-            </View>
-        )
-    }
     return (
-        <View style={{ flex: 1 }}>
-            {isTablet ? (
-                <TabletArticleListContent
-                    articleList={savedArticles}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    enableComments={global.enableComments}
-                    onIconPress={(article) => removeSavedArticle(article.id, activeDomain.id)}
-                    deleteIcon={true}
-                    onPress={() => {}}
-                />
-            ) : (
-                <ArticleListContent
-                    articleList={savedArticles}
-                    saveRef={_saveRef}
-                    activeDomain={activeDomain}
-                    theme={theme}
-                    navigation={navigation}
-                    enableComments={global.enableComments}
-                    onIconPress={(article) => removeSavedArticle(article.id, activeDomain.id)}
-                    deleteIcon={true}
-                    storyListStyle={global.storyListStyle}
-                    onPress={() => {}}
-                />
-            )}
+        <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <FlatList
+                Style={{ flex: 1 }}
+                contentContainerStyle={{ padding: 10 }}
+                data={savedArticles}
+                keyExtractor={(item) => item.id.toString()}
+                ref={flatListRef}
+                renderItem={({ item, index, separators }) => (
+                    <ListItemRenderer
+                        theme={theme}
+                        item={item}
+                        index={index}
+                        separators={separators}
+                        onPress={() => handleArticlePress(item, activeDomain)}
+                        listStyle={'small'}
+                    />
+                )}
+                ItemSeparatorComponent={() => (
+                    <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
+                )}
+                ListEmptyComponent={() => (
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+                        <Text
+                            style={{
+                                fontSize: 18,
+                                textAlign: 'center',
+                                padding: 20,
+                                fontFamily: 'openSansBold',
+                            }}
+                        >
+                            You don't have any saved articles for this school
+                        </Text>
+                    </View>
+                )}
+            />
         </View>
     )
 }
-
-// componentDidUpdate() {
-//         if (this.animation) {
-//             this._playAnimation()
-//         }
-//         const { navigation } = this.props
-//         if (navigation.state.params && navigation.state.params.scrollToTop) {
-//             if (this.flatListRef) {
-//                 // scroll list to top
-//                 this._scrollToTop()
-//             }
-//             navigation.setParams({ scrollToTop: false })
-//         }
-//     }
-
-// _scrollToTop = () => {
-//     this.flatListRef.scrollToOffset({ animated: true, offset: 0 })
-// }
 
 export default SavedScreen

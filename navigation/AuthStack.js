@@ -2,9 +2,9 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import WelcomeScreen from '../screens/setup/WelcomeScreen'
-import SelectScreenContainer from '../containers/SelectScreenContainer'
+import SelectScreenContainer from '../containers/screens/SelectScreenContainer'
 import DeepSelectScreen from '../screens/setup/DeepSelect'
-import LocationSelectContainer from '../containers/LocationSelectContainer'
+import LocationSelectContainer from '../containers/screens/LocationSelectContainer'
 
 const AuthStack = createStackNavigator()
 

@@ -10,35 +10,25 @@ import {
 import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
-import Searchbar from '../components/SearchBar'
-import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons'
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 
 import ErrorScreen from '../screens/ErrorScreen'
 
 import ArticleNavigator from '../navigation/ArticleNavigator'
-import TabNavigatorContainer from '../containers/TabNavigatorContainer'
-import UserInfoModalContainer from '../containers/UserInfoModalContainer'
+import TabNavigatorContainer from '../containers/navigators/TabNavigatorContainer'
+import UserInfoModalContainer from '../containers/screens/UserInfoModalContainer'
 
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
 
 import { getReleaseChannel } from '../constants/config'
-import TestScreen from '../screens/TestScreen'
 
 const version = getReleaseChannel()
 
 const Stack = createStackNavigator()
 
 export default (props) => {
-    const {
-        theme,
-        headerLogo,
-        activeDomain,
-        startup,
-        splashScreen,
-        startupError,
-        initialized,
-    } = props
+    const { theme, activeDomain, startup, splashScreen, startupError, initialized } = props
 
     const animationRef = useRef(null)
     const window = useWindowDimensions()
@@ -54,7 +44,7 @@ export default (props) => {
         if (!initialized && activeDomain.id) startup(activeDomain)
     }, [initialized])
 
-    if (!initialized) {
+    if (true || !initialized) {
         if (splashScreen) {
             return (
                 <View style={{ flex: 1 }}>
@@ -162,25 +152,8 @@ export default (props) => {
                                                 padding: 10,
                                             }}
                                         >
-                                            <MaterialCommunityIcons
-                                                name={'thumb-up-outline'}
-                                                // name={'thumb-up-outline'}
-                                                size={25}
-                                                style={{ marginBottom: -3 }}
-                                                color={theme.colors.accent}
-                                            />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() => {}}
-                                            style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'stretch',
-                                                padding: 10,
-                                            }}
-                                        >
-                                            <MaterialCommunityIcons
-                                                name={'thumb-down-outline'}
-                                                backgroundColor={'transparant'}
+                                            <AntDesign
+                                                name={'like2'}
                                                 size={25}
                                                 style={{ marginBottom: -3 }}
                                                 color={theme.colors.accent}

@@ -9,6 +9,7 @@ import { actions as searchActions } from '../redux/search'
 
 const Searchbar = (props) => {
     const {
+        navigation,
         placeholder,
         theme,
         activeDomain,
@@ -25,9 +26,10 @@ const Searchbar = (props) => {
     }
 
     const _searchArticles = () => {
+        navigation.navigate('Search', { searchTerm })
         invalidateSearchArticles()
         fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
-        setSearchTerm('')
+        // setSearchTerm('')
     }
 
     const _searchAuthors = () => {

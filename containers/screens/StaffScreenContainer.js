@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 
-import StaffScreen from '../screens/StaffScreen'
+import StaffScreen from '../../screens/StaffScreen'
 
-import { actions as profileActions } from '../redux/profiles'
-import { getActiveDomain } from '../redux/domains'
+import { actions as profileActions } from '../../redux/profiles'
+import { getActiveDomain } from '../../redux/domains'
 
 const mapStateToProps = (state) => {
     return {
