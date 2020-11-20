@@ -21,16 +21,10 @@ export default (props) => {
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName
 
-                    if (route.name === 'HomeTab') {
-                        iconName = Platform.OS === 'ios' ? `ios-home` : 'md-home'
-                    } else if (route.name === 'ListDrawer') {
+                    if (route.name === 'ListDrawer') {
                         iconName = 'md-list'
-                    } else if (route.name === 'Saved') {
-                        iconName = Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
                     } else if (route.name === 'SportsCenter') {
                         iconName = Platform.OS === 'ios' ? 'ios-basketball' : 'md-basketball'
-                    } else if (route.name === 'Following') {
-                        iconName = 'ios-apps'
                     } else if (route.name === 'Settings') {
                         iconName = Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'
                     }
@@ -46,14 +40,49 @@ export default (props) => {
                 },
             }}
         >
-            <Tab.Screen name='HomeTab' component={HomeNavigator} options={{ title: 'Home' }} />
+            <Tab.Screen
+                name='HomeTab'
+                component={HomeNavigator}
+                options={{
+                    title: 'Home',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <TabBarIcon
+                                focused={focused}
+                                color={color}
+                                name={Platform.OS === 'ios' ? `ios-home` : 'md-home'}
+                                size={size}
+                                badge={'dot'}
+                                tabColor={theme.navigationTheme.colors.background}
+                            />
+                        )
+                    },
+                }}
+            />
             <Tab.Screen
                 name='ListDrawer'
                 component={ListNavigator}
                 options={{ title: 'Categories' }}
             />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
-            <Tab.Screen name='Following' component={FollowingStack} />
+            <Tab.Screen
+                name='Following'
+                component={FollowingStack}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <TabBarIcon
+                                focused={focused}
+                                color={color}
+                                name='ios-apps'
+                                size={size}
+                                badge='dot'
+                                tabColor={theme.navigationTheme.colors.background}
+                            />
+                        )
+                    },
+                }}
+            />
             <Tab.Screen name='Settings' component={SettingsStackContainer} />
         </Tab.Navigator>
     )

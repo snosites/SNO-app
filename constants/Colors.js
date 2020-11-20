@@ -46,6 +46,7 @@ export const defaultNavigationTheme = {
     colors: {
         ...DefaultTheme.colors,
         primary: defaultAccentColor,
+        notification: '#b51010',
     },
 }
 

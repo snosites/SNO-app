@@ -9,7 +9,7 @@ const mapStateToProps = (state) => {
     return {
         activeDomain: getActiveDomain(state),
         theme: state.theme,
-        profiles: state.profiles,
+        profile: state.profiles.single,
     }
 }
 

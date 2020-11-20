@@ -61,6 +61,10 @@ const ProfileModalScreen = (props) => {
         }
     }, [route.params?.profileId, writerSubscriptions, activeDomain])
 
+    const _viewFullProfile = () => {
+        navigation.push('FullProfile')
+    }
+
     if (profileIsLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -280,19 +284,7 @@ const ProfileModalScreen = (props) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <View
-            // style={{
-            //     shadowColor: '#fff',
-            //     shadowOffset: {
-            //         width: 2,
-            //         height: 10,
-            //     },
-            //     shadowOpacity: 0.92,
-            //     shadowRadius: 15.46,
-
-            //     elevation: 9,
-            // }}
-            >
+            <View>
                 <View
                     style={{
                         height: 325,
@@ -361,7 +353,9 @@ const ProfileModalScreen = (props) => {
                         }}
                     >
                         <TouchableOpacity
-                            onPress={() => {}}
+                            onPress={() => {
+                                navigation.push('FullProfile')
+                            }}
                             style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}
                         >
                             <Text

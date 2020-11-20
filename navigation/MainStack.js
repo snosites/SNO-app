@@ -17,6 +17,7 @@ import ErrorScreen from '../screens/ErrorScreen'
 import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/navigators/TabNavigatorContainer'
 import UserInfoModalContainer from '../containers/screens/UserInfoModalContainer'
+import ProfileScreenContainer from '../containers/screens/ProfileScreenContainer'
 
 // same animation but different colors
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
@@ -135,6 +136,13 @@ export default (props) => {
                             headerShown: false,
                             cardStyle: { backgroundColor: 'transparent' },
                             cardOverlayEnabled: true,
+                        }}
+                    />
+                    <Stack.Screen
+                        name='FullProfile'
+                        component={ProfileScreenContainer}
+                        options={{
+                            headerShown: false,
                         }}
                     />
                     <Stack.Screen
