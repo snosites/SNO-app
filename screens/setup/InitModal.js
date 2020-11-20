@@ -60,7 +60,7 @@ const initModal = (props) => {
                         <View style={styles.textContainer}>
                             <Text
                                 style={{
-                                    fontFamily: 'openSans',
+                                    fontFamily: 'raleway',
                                     fontSize: 30,
                                     paddingBottom: 10,
                                     textAlign: 'center',
@@ -69,14 +69,14 @@ const initModal = (props) => {
                                 Success!
                             </Text>
                             <Text
-                                style={{ fontFamily: 'openSans', fontSize: 17, paddingBottom: 30 }}
+                                style={{ fontFamily: 'raleway', fontSize: 17, paddingBottom: 30 }}
                             >
                                 Your selected school has been saved. If you ever want to change this
                                 you can find it in your settings.
                             </Text>
                             <Text
                                 style={{
-                                    fontFamily: 'openSans',
+                                    fontFamily: 'raleway',
                                     fontSize: 17,
                                     textAlign: 'center',
                                 }}
@@ -94,7 +94,7 @@ const initModal = (props) => {
                                 <Text
                                     style={{
                                         fontSize: 19,
-                                        fontFamily: 'openSansBold',
+                                        fontFamily: 'ralewayBold',
                                         paddingRight: 10,
                                     }}
                                 >

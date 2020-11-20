@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 
-import RecentScreen from '../screens/RecentScreen'
+import RecentScreen from '../../screens/RecentScreen'
 
-import { getActiveDomain } from '../redux/domains'
-import { actions as recentActions } from '../redux/recent'
-import { actions as savedArticleActions } from '../redux/savedArticles'
+import { getActiveDomain } from '../../redux/domains'
+import { actions as recentActions } from '../../redux/recent'
+import { actions as savedArticleActions } from '../../redux/savedArticles'
 
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)

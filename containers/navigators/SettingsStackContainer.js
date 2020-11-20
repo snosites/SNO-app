@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import SettingsStack from '../navigation/SettingsStack'
+import SettingsStack from '../../navigation/SettingsStack'
 
 const mapStateToProps = (state) => ({
     theme: state.theme,

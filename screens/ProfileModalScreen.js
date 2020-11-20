@@ -183,7 +183,7 @@ const ProfileModalScreen = (props) => {
                     >
                         <Text
                             style={{
-                                fontFamily: 'openSansBold',
+                                fontFamily: 'ralewayBold',
                                 fontSize: 18,
                                 color: theme.colors.text,
                                 textAlign: 'center',
@@ -265,7 +265,7 @@ const ProfileModalScreen = (props) => {
                     >
                         <Text
                             style={{
-                                fontFamily: 'openSansBold',
+                                fontFamily: 'ralewayBold',
                                 fontSize: 18,
                                 color: theme.colors.text,
                             }}
@@ -366,7 +366,7 @@ const ProfileModalScreen = (props) => {
                         >
                             <Text
                                 style={{
-                                    fontFamily: 'openSansBold',
+                                    fontFamily: 'ralewayBold',
                                     fontSize: 18,
                                     color: theme.colors.text,
                                 }}
@@ -384,7 +384,7 @@ const ProfileModalScreen = (props) => {
                         </TouchableOpacity>
                         <Text
                             style={{
-                                fontFamily: 'openSans',
+                                fontFamily: 'raleway',
                                 fontSize: 16,
                                 color: theme.extraColors.gray,
                                 marginBottom: 10,
@@ -396,7 +396,7 @@ const ProfileModalScreen = (props) => {
                             numberOfLines={2}
                             ellipsizeMode='tail'
                             style={{
-                                fontFamily: 'openSans',
+                                fontFamily: 'raleway',
                                 fontSize: 14,
                                 color: theme.colors.text,
                             }}
@@ -415,7 +415,7 @@ const ProfileModalScreen = (props) => {
                             <View style={{ alignItems: 'flex-start' }}>
                                 <Text
                                     style={{
-                                        fontFamily: 'openSansBold',
+                                        fontFamily: 'ralewayBold',
                                         fontSize: 18,
                                         color: theme.colors.primary,
                                     }}
@@ -426,7 +426,7 @@ const ProfileModalScreen = (props) => {
                                 </Text>
                                 <Text
                                     style={{
-                                        fontFamily: 'openSansBold',
+                                        fontFamily: 'ralewayBold',
                                         fontSize: 14,
                                         color: theme.colors.text,
                                     }}

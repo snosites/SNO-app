@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import ArticleContent from '../components/Article/ArticleContent'
 
-import { asyncFetchArticle } from '../../utils/sagaHelpers'
+import { asyncFetchArticle } from '../utils/sagaHelpers'
 import { handleArticlePress } from '../utils/articlePress'
 
 const ArticleScreen = (props) => {

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import TabNavigator from '../navigation/TabNavigator'
+import TabNavigator from '../../navigation/TabNavigator'
 
 const mapStateToProps = (state) => ({
     theme: state.theme,

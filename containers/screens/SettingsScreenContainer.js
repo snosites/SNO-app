@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
 
-import SettingsScreen from '../screens/SettingsScreen'
+import SettingsScreen from '../../screens/SettingsScreen'
 
-import { actions as domainActions, getActiveDomain } from '../redux/domains'
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { actions as globalActions } from '../redux/global'
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { actions as domainActions, getActiveDomain } from '../../redux/domains'
+import { types as userTypes, actions as userActions } from '../../redux/user'
+import { actions as globalActions } from '../../redux/global'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
 const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])

@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+
 import ArticleScreen from '../../screens/ArticleScreen'
 
 import { types as globalTypes, actions as globalActions } from '../../redux/global'
@@ -7,12 +8,12 @@ import { getActiveDomain } from '../../redux/domains'
 import { createLoadingSelector } from '../../redux/loading'
 import { createErrorMessageSelector } from '../../redux/errors'
 
-import { ArticleIdContext } from '../../navigation/ArticleNavigator'
+import { ArticleContext } from '../../navigation/ArticleNavigator'
 
 const ArticleScreenConsumer = (props) => (
-    <ArticleIdContext.Consumer>
+    <ArticleContext.Consumer>
         {(value) => <ArticleScreen {...props} article={value} />}
-    </ArticleIdContext.Consumer>
+    </ArticleContext.Consumer>
 )
 
 const startupErrorSelector = createErrorMessageSelector([globalTypes.STARTUP])

@@ -40,6 +40,11 @@ function* snackbarQueue() {
             addToQueue,
             'There was an error submitting your comment.  Please try again.'
         ),
+        takeLatest(
+            articleTypes.ASYNC_FETCH_ARTICLE_ERROR,
+            addToQueue,
+            'There was an error fetching that article.  Please try again later.'
+        ),
     ])
 }
 

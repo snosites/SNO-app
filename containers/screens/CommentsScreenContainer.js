@@ -4,20 +4,18 @@ import { connect } from 'react-redux'
 import CommentsScreen from '../../screens/CommentsScreen'
 
 import { types as articleTypes, actions as articleActions } from '../../redux/articles'
-import { actions as userActions } from '../../redux/user'
 import { getActiveDomain } from '../../redux/domains'
 
-import { ArticleIdContext } from '../../navigation/ArticleNavigator'
+import { ArticleContext } from '../../navigation/ArticleNavigator'
 
 import { createLoadingSelector } from '../../redux/loading'
-import { createErrorMessageSelector } from '../../redux/errors'
 
 const commentLoadingSelector = createLoadingSelector([articleTypes.ADD_COMMENT])
 
 const CommentsScreenConsumer = (props) => (
-    <ArticleIdContext.Consumer>
+    <ArticleContext.Consumer>
         {(value) => <CommentsScreen {...props} article={value} />}
-    </ArticleIdContext.Consumer>
+    </ArticleContext.Consumer>
 )
 
 const mapStateToProps = (state) => {

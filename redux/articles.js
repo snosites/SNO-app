@@ -17,6 +17,7 @@ export const types = {
     ADD_COMMENT_REQUEST: 'ADD_COMMENT_REQUEST',
     ADD_COMMENT_SUCCESS: 'ADD_COMMENT_SUCCESS',
     ADD_COMMENT_ERROR: 'ADD_COMMENT_ERROR',
+    ASYNC_FETCH_ARTICLE_ERROR: 'ASYNC_FETCH_ARTICLE_ERROR',
 }
 
 // ARTICLES REDUCERS //
@@ -186,6 +187,12 @@ export const actions = {
     addCommentError(error) {
         return {
             type: types.ADD_COMMENT_ERROR,
+            error,
+        }
+    },
+    asyncFetchArticleError(error) {
+        return {
+            type: types.ASYNC_FETCH_ARTICLE_ERROR,
             error,
         }
     },

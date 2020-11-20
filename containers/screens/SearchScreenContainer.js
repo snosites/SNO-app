@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 
-import SearchScreen from '../screens/SearchScreen'
+import SearchScreen from '../../screens/SearchScreen'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { actions as searchActions } from '../redux/search'
-import { getActiveDomain } from '../redux/domains'
+import { actions as savedArticleActions } from '../../redux/savedArticles'
+import { actions as searchActions } from '../../redux/search'
+import { getActiveDomain } from '../../redux/domains'
 
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)

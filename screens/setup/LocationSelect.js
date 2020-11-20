@@ -188,7 +188,7 @@ const LocationSelectScreen = (props) => {
             <View style={{ padding: 20 }}>
                 <Text
                     style={{
-                        fontFamily: 'openSansBold',
+                        fontFamily: 'ralewayBold',
                         textAlign: 'center',
                         fontSize: 18,
                         // fontWeight: 'bold',
@@ -198,7 +198,7 @@ const LocationSelectScreen = (props) => {
                 </Text>
                 <Text
                     style={{
-                        fontFamily: 'openSansBold',
+                        fontFamily: 'ralewayBold',
                         textAlign: 'center',
                         fontSize: 18,
                     }}

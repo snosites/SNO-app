@@ -18,6 +18,7 @@ import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/navigators/TabNavigatorContainer'
 import UserInfoModalContainer from '../containers/screens/UserInfoModalContainer'
 
+// same animation but different colors
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
 import cnsAnimation from '../assets/lottiefiles/cns-splash-loading'
 
@@ -44,7 +45,7 @@ export default (props) => {
         if (!initialized && activeDomain.id) startup(activeDomain)
     }, [initialized])
 
-    if (true || !initialized) {
+    if (!initialized) {
         if (splashScreen) {
             return (
                 <View style={{ flex: 1 }}>

@@ -49,7 +49,7 @@ const UserInfoModal = (props) => {
                         top: -30,
                     }}
                 ></View> */}
-                    <Text style={{ fontFamily: 'openSansLight', fontSize: 14, marginBottom: 10 }}>
+                    <Text style={{ fontFamily: 'ralewayLight', fontSize: 14, marginBottom: 10 }}>
                         Enter a username and email
                     </Text>
                     <View>

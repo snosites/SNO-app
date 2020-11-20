@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
 
-import UserInfoModal from '../screens/UserInfoModal'
+import UserInfoModal from '../../screens/UserInfoModal'
 
-import { types as userTypes, actions as userActions } from '../redux/user'
-import { getActiveDomain } from '../redux/domains'
+import { types as userTypes, actions as userActions } from '../../redux/user'
+import { getActiveDomain } from '../../redux/domains'
 
-import { createLoadingSelector } from '../redux/loading'
-import { createErrorMessageSelector } from '../redux/errors'
+import { createLoadingSelector } from '../../redux/loading'
+import { createErrorMessageSelector } from '../../redux/errors'
 
 const mapStateToProps = (state) => {
     return {

@@ -1,17 +1,22 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+
 import { connect } from 'react-redux'
+import { actions as articleActions } from '../redux/articles'
 
 import ArticleScreenContainer from '../containers/screens/ArticleScreenContainer'
 import CommentsScreenContainer from '../containers/screens/CommentsScreenContainer'
 import ArticleActionsContainer from '../containers/screens/ArticleActionsScreenContainer'
 import ProfileModalContainer from '../containers/screens/ProfileModalScreenContainer'
 
+import { asyncFetchArticle } from '../utils/sagaHelpers'
+import { getActiveDomain } from '../redux/domains'
+
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
 
-export const ArticleIdContext = createContext(null)
+export const ArticleContext = createContext(null)
 
 const ArticleTabs = ({ route, navigation, enableComments, theme }) => {
     if (enableComments) {
@@ -41,7 +46,13 @@ const mapStateToProps = (state) => ({
 
 const ConnectedArticleTabs = connect(mapStateToProps)(ArticleTabs)
 
-const ArticleNavigator = ({ articles, route }) => {
+const ArticleNavigator = ({
+    navigation,
+    route,
+    activeDomain,
+    articles,
+    asyncFetchArticleError,
+}) => {
     const articleId = route.params?.articleId
 
     const [article, setArticle] = useState({})
@@ -49,11 +60,23 @@ const ArticleNavigator = ({ articles, route }) => {
     useEffect(() => {
         if (articleId) {
             if (articles && articles[articleId]) setArticle(articles[articleId])
+            else _asyncFetchArticle(articleId)
         }
     }, [articleId])
 
+    const _asyncFetchArticle = async (articleId) => {
+        setArticle({})
+        try {
+            const article = await asyncFetchArticle(activeDomain.url, articleId)
+            setArticle(article)
+        } catch (e) {
+            asyncFetchArticleError()
+            navigation.pop()
+        }
+    }
+
     return (
-        <ArticleIdContext.Provider value={article}>
+        <ArticleContext.Provider value={article}>
             <Stack.Navigator
                 mode={'modal'}
                 screenOptions={{
@@ -94,12 +117,17 @@ const ArticleNavigator = ({ articles, route }) => {
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
-        </ArticleIdContext.Provider>
+        </ArticleContext.Provider>
     )
 }
 
 const mapStateToNavProps = (state) => ({
     articles: state.entities.articles,
+    activeDomain: getActiveDomain(state),
 })
 
-export default connect(mapStateToNavProps)(ArticleNavigator)
+const mapDispatchToProps = (dispatch) => ({
+    asyncFetchArticleError: () => dispatch(articleActions.asyncFetchArticleError()),
+})
+
+export default connect(mapStateToNavProps, mapDispatchToProps)(ArticleNavigator)

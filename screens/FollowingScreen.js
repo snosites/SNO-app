@@ -101,13 +101,13 @@ const FollowingScreen = (props) => {
                 title='Categories'
                 description='New content that gets posted to these categories'
                 titleStyle={{
-                    fontFamily: 'openSansExtraBold',
+                    fontFamily: 'ralewayExtraBold',
                     fontSize: 28,
                     color: theme.colors.primary,
                     // paddingBottom: 10,
                 }}
                 descriptionStyle={{
-                    fontFamily: 'openSansLight',
+                    fontFamily: 'ralewayLight',
                     fontSize: 14,
                     color: theme.colors.text,
                     paddingBottom: 10,
@@ -172,12 +172,12 @@ const FollowingScreen = (props) => {
                 title='Authors'
                 description='New content that gets posted by these authors'
                 titleStyle={{
-                    fontFamily: 'openSansExtraBold',
+                    fontFamily: 'ralewayExtraBold',
                     fontSize: 28,
                     color: theme.colors.primary,
                 }}
                 descriptionStyle={{
-                    fontFamily: 'openSansLight',
+                    fontFamily: 'ralewayLight',
                     fontSize: 14,
                     color: theme.colors.text,
                     paddingBottom: 10,

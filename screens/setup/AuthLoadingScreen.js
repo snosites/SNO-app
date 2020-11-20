@@ -9,9 +9,6 @@ import { createErrorMessageSelector } from '../../redux/errors'
 
 import { actions as domainActions, getActiveDomain } from '../../redux/domains'
 
-import { handleArticlePress } from '../../utils/articlePress'
-import { asyncFetchArticle } from '../../utils/sagaHelpers'
-
 import { Button } from 'react-native-paper'
 
 import { connect } from 'react-redux'

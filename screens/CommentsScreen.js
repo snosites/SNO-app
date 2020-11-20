@@ -32,7 +32,7 @@ const CommentScreen = (props) => {
     useEffect(() => {})
 
     useEffect(() => {
-        setComments(article.comments)
+        if (article.comments) setComments(article.comments)
     }, [article.comments])
 
     const _addComment = () => {
@@ -107,6 +107,20 @@ const CommentScreen = (props) => {
                 data={comments}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <CommentItem key={item.id} comment={item} />}
+                ListEmptyComponent={() => (
+                    <View>
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 18,
+                                textAlign: 'center',
+                                paddingHorizontal: 20,
+                            }}
+                        >
+                            There are no comments for this article yet
+                        </Text>
+                    </View>
+                )}
             />
             <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={140} enabled>
                 <View style={styles.commentContainer}>

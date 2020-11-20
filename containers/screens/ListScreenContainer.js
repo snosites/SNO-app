@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
 
-import { actions as savedArticleActions } from '../redux/savedArticles'
-import { actions as articlesActions } from '../redux/articles'
-import { actions as adActions, getListAds } from '../redux/ads'
+import { actions as savedArticleActions } from '../../redux/savedArticles'
+import { actions as articlesActions } from '../../redux/articles'
+import { actions as adActions, getListAds } from '../../redux/ads'
 
-import { getActiveDomain } from '../redux/domains'
+import { getActiveDomain } from '../../redux/domains'
 
-import ListScreen from '../screens/ListScreen'
+import ListScreen from '../../screens/ListScreen'
 
 const mapStateToProps = (state) => {
     // gets category ID from navigation params or defaults to first item in the list

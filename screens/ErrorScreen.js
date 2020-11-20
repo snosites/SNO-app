@@ -9,7 +9,7 @@ import { actions as domainActions } from '../redux/domains'
 const ErrorScreen = (props) => {
     const { route, navigation, domains, setActiveDomain } = props
 
-    const errorMessage = route.params.errorMessage
+    const errorMessage = route.params?.errorMessage
 
     const [modalVisible, setModalVisible] = useState(false)
 
@@ -27,8 +27,6 @@ const ErrorScreen = (props) => {
                 index: 0,
                 routes: [{ name: 'Main' }],
             })
-
-            // navigation.navigate('AuthLoading')
         } catch (error) {
             console.log('error selecting school from error page')
             setModalVisible(false)
@@ -49,7 +47,7 @@ const ErrorScreen = (props) => {
                     padding: 20,
                     paddingVertical: 50,
                     fontSize: 20,
-                    fontFamily: 'openSansBold',
+                    fontFamily: 'ralewayBold',
                 }}
             >
                 {errorMessage}
@@ -67,7 +65,7 @@ const ErrorScreen = (props) => {
             >
                 Select a New School
             </Button>
-            <Text style={{ fontFamily: 'openSansBold', textAlign: 'center', paddingBottom: 20 }}>
+            <Text style={{ fontFamily: 'ralewayBold', textAlign: 'center', paddingBottom: 20 }}>
                 Or
             </Text>
             <Button

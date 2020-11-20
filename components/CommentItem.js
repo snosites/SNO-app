@@ -41,7 +41,7 @@ const CommentItem = (props) => {
                     />
                 ) : null}
                 <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
-                    <Text style={{ fontSize: 20, fontFamily: 'openSansBold' }}>
+                    <Text style={{ fontSize: 20, fontFamily: 'ralewayBold' }}>
                         {comment.author_name}
                     </Text>
                     <Text style={{ color: 'grey' }}>{String(Moment(comment.date).fromNow())}</Text>

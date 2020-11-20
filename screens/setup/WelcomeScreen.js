@@ -239,13 +239,13 @@ const styles = StyleSheet.create({
         width: 300,
     },
     getStartedText: {
-        fontFamily: 'openSans',
+        fontFamily: 'raleway',
         fontSize: 19,
         textAlign: 'center',
         marginBottom: 20,
     },
     locationContainerText: {
-        fontFamily: 'openSans',
+        fontFamily: 'raleway',
         fontSize: 19,
         textAlign: 'center',
         marginBottom: 20,

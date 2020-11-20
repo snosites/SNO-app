@@ -135,7 +135,7 @@ const RecentScreen = (props) => {
                                 textAlign: 'center',
                                 fontSize: 19,
                                 padding: 20,
-                                fontFamily: 'openSansBold',
+                                fontFamily: 'ralewayBold',
                             }}
                         >
                             No recent articles

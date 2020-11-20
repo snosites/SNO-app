@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
-import HomeScreen from '../screens/HomeScreen'
+import HomeScreen from '../../screens/HomeScreen'
 
-import { actions as articlesActions } from '../redux/articles'
-import { types as globalTypes, actions as globalActions } from '../redux/global'
-import { actions as adActions, getHomeAds } from '../redux/ads'
+import { actions as articlesActions } from '../../redux/articles'
+import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { actions as adActions, getHomeAds } from '../../redux/ads'
 
-import { getActiveDomain } from '../redux/domains'
+import { getActiveDomain } from '../../redux/domains'
 
 const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)

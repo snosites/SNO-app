@@ -1,44 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React from 'react'
 import { Text, View, Modal, TouchableOpacity, Share } from 'react-native'
 
-import Moment from 'moment'
-import HTML from 'react-native-render-html'
 import { Feather } from '@expo/vector-icons'
-import { Button, Snackbar } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Amplitude from 'expo-analytics-amplitude'
 
+import { Html5Entities } from 'html-entities'
+
+const entities = new Html5Entities()
+
 const ArticleActionsScreen = (props) => {
-    const {
-        activeDomain,
-        navigation,
-        theme,
-        articleId,
-        articles,
-        saveArticle,
-        removeSavedArticle,
-    } = props
-
-    const [article, setArticle] = useState(null)
-
-    useEffect(() => {
-        if (articles && articles[articleId]) setArticle(articles[articleId])
-    }, [articleId, articles])
+    const { activeDomain, navigation, theme, saveArticle, removeSavedArticle, article } = props
 
     const _shareArticle = () => {
-        //log share to analytics
+        //log share to old analytics
         Amplitude.logEventWithProperties('social share', {
             storyId: article.id,
         })
         Share.share({
-            title: article.title.rendered,
-            message: article.title.rendered,
+            title: entities.decode(article.title.rendered),
+            message: entities.decode(article.title.rendered),
             url: article.link,
         })
     }
-
-    console.log('article', article)
 
     const _saveRemoveToggle = () => {
         if (article.saved) {
@@ -72,7 +58,6 @@ const ArticleActionsScreen = (props) => {
                         }}
                         name={'share'}
                         size={18}
-                        // style={{ marginBottom: -3 }}
                         color={theme.colors.text}
                     />
                     <Text
@@ -108,6 +93,7 @@ const ArticleActionsScreen = (props) => {
                         {article && article.saved ? 'Unsave' : 'Save'}
                     </Text>
                 </TouchableOpacity>
+                {/* TODO: copy text */}
                 <TouchableOpacity
                     onPress={() => {}}
                     style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
@@ -141,7 +127,7 @@ const ArticleActionsScreen = (props) => {
                         size={18}
                         color={theme.colors.text}
                     />
-                    <View style={{}}>
+                    <View>
                         <Text
                             style={{
                                 fontFamily: 'openSansBold',
@@ -177,78 +163,6 @@ const ArticleActionsScreen = (props) => {
                 </Button>
             </View>
         </View>
-    )
-    return (
-        <Modal
-            animationType='slide'
-            transparent={false}
-            visible={modalVisible}
-            onDismiss={this._hideModal}
-        >
-            <SafeAreaView
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    padding: 20,
-                    backgroundColor: '#f6f6f6',
-                }}
-            >
-                <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
-                    You need to enter some information before you can post comments. You will only
-                    have to do this once.
-                </Text>
-                <View style={{ flex: 1, alignItems: 'center' }}>
-                    <PaperTextInput
-                        label='Username'
-                        theme={{ roundness: 10 }}
-                        style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
-                        placeholder='This is what will display publicly'
-                        mode='outlined'
-                        value={username}
-                        onChangeText={(text) => this.setState({ username: text })}
-                    />
-                    <PaperTextInput
-                        label='Email'
-                        placeholder='We need this for verification purposes'
-                        keyboardType='email-address'
-                        style={{ width: 300, borderRadius: 10 }}
-                        theme={{ roundness: 10 }}
-                        mode='outlined'
-                        value={email}
-                        onChangeText={(text) => this.setState({ email: text })}
-                    />
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button
-                            mode='contained'
-                            theme={{ roundness: 10 }}
-                            style={{
-                                paddingHorizontal: 20,
-                                margin: 20,
-                                backgroundColor: '#f44336',
-                                fontSize: 20,
-                            }}
-                            onPress={this._hideModal}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            mode='contained'
-                            theme={{ roundness: 10 }}
-                            style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
-                            onPress={() => {
-                                saveUserInfo({
-                                    username,
-                                    email,
-                                })
-                                this._hideModal()
-                            }}
-                        >
-                            Save
-                        </Button>
-                    </View>
-                </View>
-            </SafeAreaView>
-        </Modal>
     )
 }
 

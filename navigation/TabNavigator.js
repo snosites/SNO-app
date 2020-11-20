@@ -7,7 +7,7 @@ import TabBarIcon from '../components/TabBarIcon'
 import HomeNavigator from './HomeNavigator'
 import ListNavigator from './ListNavigator'
 import FollowingStack from './FollowingStack'
-import SettingsStackContainer from '../containers/screens/SettingsStackContainer'
+import SettingsStackContainer from '../containers/navigators/SettingsStackContainer'
 
 import SportcenterStack from '../navigation/SportcenterStack'
 
@@ -42,7 +42,7 @@ export default (props) => {
             tabBarOptions={{
                 activeTintColor: theme.colors.primary,
                 labelStyle: {
-                    fontFamily: 'openSansLight',
+                    fontFamily: 'ralewayLight',
                 },
             }}
         >
@@ -52,7 +52,6 @@ export default (props) => {
                 component={ListNavigator}
                 options={{ title: 'Categories' }}
             />
-            {/* <Tab.Screen name='Saved' component={SavedStack} /> */}
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen name='Following' component={FollowingStack} />
             <Tab.Screen name='Settings' component={SettingsStackContainer} />

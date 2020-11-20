@@ -45,7 +45,7 @@ const SavedScreen = (props) => {
                                 fontSize: 18,
                                 textAlign: 'center',
                                 padding: 20,
-                                fontFamily: 'openSansBold',
+                                fontFamily: 'ralewayBold',
                             }}
                         >
                             You don't have any saved articles for this school

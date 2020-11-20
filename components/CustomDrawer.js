@@ -14,7 +14,7 @@ import { connect } from 'react-redux'
 
 import * as Amplitude from 'expo-analytics-amplitude'
 
-function CustomDrawerContent(props) {
+const CustomDrawerContent = (props) => {
     const {
         navigation,
         fetchArticlesIfNeeded,
@@ -24,7 +24,7 @@ function CustomDrawerContent(props) {
         setActiveCategory,
     } = props
 
-    _handleMenuPress = (item, index) => {
+    const _handleMenuPress = (item, index) => {
         navigation.closeDrawer()
         if (item.object === 'category') {
             // log category press to analytics
@@ -87,7 +87,7 @@ function CustomDrawerContent(props) {
                 <Text
                     numberOfLines={2}
                     ellipsizeMode='tail'
-                    style={{ fontSize: 20, fontFamily: 'openSansBold', padding: 20 }}
+                    style={{ fontSize: 20, fontFamily: 'ralewayBold', padding: 20 }}
                 >
                     {activeDomain.publication}
                 </Text>

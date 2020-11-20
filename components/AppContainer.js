@@ -15,7 +15,7 @@ import { Provider as PaperProvider } from 'react-native-paper'
 import ErrorBoundary from '../screens/ErrorBoundary'
 
 import AuthStack from '../navigation/AuthStack'
-import MainStackContainer from '../containers/MainStackContainer'
+import MainStackContainer from '../containers/navigators/MainStackContainer'
 import SnackbarQueue from './SnackbarQueue'
 import NotificationAlertContainer from '../containers/NotificationAlertContainer'
 

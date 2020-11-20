@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet, Share, View, TouchableOpacity, Text, useWindowD
 
 import { FAB, Portal, Snackbar, Dialog, Button, Checkbox } from 'react-native-paper'
 
-import ArticleBodyContent from '../views/ArticleBodyContent'
 
 const FollowAuthors = (props) => {
     const { visible, onDismiss, authors } = props

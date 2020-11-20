@@ -123,7 +123,7 @@ const SearchScreen = (props) => {
                                 textAlign: 'center',
                                 fontSize: 19,
                                 padding: 20,
-                                fontFamily: 'openSansBold',
+                                fontFamily: 'ralewayBold',
                             }}
                         >
                             No search results for that term.
