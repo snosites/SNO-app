@@ -1,16 +1,15 @@
 import union from 'lodash/union'
 
 export const types = {
-    // search articles
-    INVALIDATE_SEARCH_ARTICLES: 'INVALIDATE_SEARCH_ARTICLES',
-    FETCH_SEARCH_ARTICLES_IF_NEEDED: 'FETCH_SEARCH_ARTICLES_IF_NEEDED',
-    FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED: 'FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED',
-    REQUEST_SEARCH_ARTICLES: 'REQUEST_SEARCH_ARTICLES',
-    RECEIVE_SEARCH_ARTICLES: 'RECEIVE_SEARCH_ARTICLES',
-    FETCH_SEARCH_ARTICLES_FAILURE: 'FETCH_SEARCH_ARTICLES_FAILURE',
+    INVALIDATE_SEARCH_AUTHORS: 'INVALIDATE_SEARCH_AUTHORS',
+    FETCH_SEARCH_AUTHORS_IF_NEEDED: 'FETCH_SEARCH_AUTHORS_IF_NEEDED',
+    FETCH_MORE_SEARCH_AUTHORS_IF_NEEDED: 'FETCH_MORE_SEARCH_AUTHORS_IF_NEEDED',
+    REQUEST_SEARCH_AUTHORS: 'REQUEST_SEARCH_AUTHORS',
+    RECEIVE_SEARCH_AUTHORS: 'RECEIVE_SEARCH_AUTHORS',
+    FETCH_SEARCH_AUTHORS_FAILURE: 'FETCH_SEARCH_AUTHORS_FAILURE',
 }
 
-export default function searchArticles(
+export default function searchAuthors(
     state = {
         isFetching: false,
         didInvalidate: false,
@@ -21,32 +20,32 @@ export default function searchArticles(
     action
 ) {
     switch (action.type) {
-        case types.INVALIDATE_SEARCH_ARTICLES:
+        case types.INVALIDATE_SEARCH_AUTHORS:
             return Object.assign({}, state, {
                 didInvalidate: true,
                 page: 1,
             })
-        case types.REQUEST_SEARCH_ARTICLES:
+        case types.REQUEST_SEARCH_AUTHORS:
             return Object.assign({}, state, {
                 isFetching: true,
                 error: '',
             })
-        case types.FETCH_SEARCH_ARTICLES_FAILURE:
+        case types.FETCH_SEARCH_AUTHORS_FAILURE:
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: false,
                 error: action.error,
             })
-        case types.RECEIVE_SEARCH_ARTICLES:
+        case types.RECEIVE_SEARCH_AUTHORS:
             let updatedPage = 'max'
             let newItems = []
-            if (action.response.result.length == 10) {
+            if (action.response.length == 10) {
                 updatedPage = state.page + 1
             }
             if (state.didInvalidate) {
-                newItems = action.response.result
+                newItems = action.response
             } else if (!state.didInvalidate) {
-                newItems = union(state.items, action.response.result)
+                newItems = union(state.items, action.response)
             }
             return Object.assign({}, state, {
                 isFetching: false,
@@ -61,40 +60,40 @@ export default function searchArticles(
 }
 
 export const actions = {
-    invalidateSearchArticles() {
+    invalidateSearchAuthors() {
         return {
-            type: types.INVALIDATE_SEARCH_ARTICLES,
+            type: types.INVALIDATE_SEARCH_AUTHORS,
         }
     },
-    fetchSearchArticlesIfNeeded(domain, searchTerm) {
+    fetchSearchAuthorsIfNeeded(domain, searchTerm) {
         return {
-            type: types.FETCH_SEARCH_ARTICLES_IF_NEEDED,
+            type: types.FETCH_SEARCH_AUTHORS_IF_NEEDED,
             domain,
             searchTerm,
         }
     },
-    fetchMoreSearchArticlesIfNeeded(domain, searchTerm) {
+    fetchMoreSearchAuthorsIfNeeded(domain, searchTerm) {
         return {
-            type: types.FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED,
+            type: types.FETCH_MORE_SEARCH_AUTHORS_IF_NEEDED,
             domain,
             searchTerm,
         }
     },
-    requestSearchArticles() {
+    requestSearchAuthors() {
         return {
-            type: types.REQUEST_SEARCH_ARTICLES,
+            type: types.REQUEST_SEARCH_AUTHORS,
         }
     },
-    receiveSearchArticles(response) {
+    receiveSearchAuthors(response) {
         return {
-            type: types.RECEIVE_SEARCH_ARTICLES,
+            type: types.RECEIVE_SEARCH_AUTHORS,
             response,
             receivedAt: Date.now(),
         }
     },
-    fetchSearchArticlesFailure(error) {
+    fetchSearchAuthorsFailure(error) {
         return {
-            type: types.FETCH_SEARCH_ARTICLES_FAILURE,
+            type: types.FETCH_SEARCH_AUTHORS_FAILURE,
             error,
             recievedAt: Date.now(),
         }

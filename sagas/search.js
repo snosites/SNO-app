@@ -6,7 +6,6 @@ import domainApiService from '../api/domain'
 
 import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
 
-
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
@@ -18,11 +17,11 @@ function* fetchSearchArticles(action) {
         const stories = yield call(domainApiService.searchArticles, {
             domainUrl: domain,
             searchTerm,
-            page
+            page,
         })
 
         yield all(
-            stories.map(story => {
+            stories.map((story) => {
                 if (story._links['wp:featuredmedia']) {
                     return call(
                         asyncFetchFeaturedImage,
@@ -35,7 +34,7 @@ function* fetchSearchArticles(action) {
             })
         )
         yield all(
-            stories.map(story => {
+            stories.map((story) => {
                 return call(asyncFetchComments, domain, story)
             })
         )
@@ -67,7 +66,7 @@ function shouldFetchMoreSearchArticles(articles) {
     }
 }
 
-const getSearchArticleState = state => state.searchArticles
+const getSearchArticleState = (state) => state.searchArticles
 
 function* fetchSearchArticlesIfNeeded(action) {
     const { domain, searchTerm } = action
@@ -76,7 +75,7 @@ function* fetchSearchArticlesIfNeeded(action) {
         yield call(fetchSearchArticles, {
             domain,
             searchTerm,
-            page: 1
+            page: 1,
         })
     }
 }
@@ -88,7 +87,7 @@ function* fetchMoreSearchArticlesIfNeeded(action) {
         yield call(fetchSearchArticles, {
             domain,
             searchTerm,
-            page: searchArticles.page
+            page: searchArticles.page,
         })
     }
 }
@@ -96,7 +95,10 @@ function* fetchMoreSearchArticlesIfNeeded(action) {
 function* searchArticleSaga() {
     yield all([
         takeLatest(searchTypes.FETCH_SEARCH_ARTICLES_IF_NEEDED, fetchSearchArticlesIfNeeded),
-        takeLatest(searchTypes.FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED, fetchMoreSearchArticlesIfNeeded)
+        takeLatest(
+            searchTypes.FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED,
+            fetchMoreSearchArticlesIfNeeded
+        ),
     ])
 }
 

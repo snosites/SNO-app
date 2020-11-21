@@ -33,7 +33,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
         //if arr of writers dont include job title
         if (writers.length > 1) {
             return writers.map((writer, i) => {
-                console.log('writer', writer)
                 if (i === writers.length - 2) {
                     return (
                         <TouchableItem

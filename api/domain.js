@@ -287,6 +287,18 @@ const domainApiService = {
             throw err
         }
     },
+    searchAuthors: async (options) => {
+        const { domainUrl, searchTerm, page } = options
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/staff_profile?search=${searchTerm}&page=${page}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in search authors api', err, err.response)
+            throw err
+        }
+    },
     fetchProfileArticles: async (domainUrl, writerTermId) => {
         try {
             const response = await axios.get(

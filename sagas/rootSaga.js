@@ -5,6 +5,7 @@ import globalSaga from './global'
 import startupSaga from './startup'
 import articleSaga from './article'
 import searchSaga from './search'
+import searchAuthorsSaga from './searchAuthors'
 import profileSaga from './profile'
 import pageSaga from './page'
 import recentSaga from './recent'
@@ -18,6 +19,7 @@ export default function* rootSaga() {
         articleSaga(),
         searchSaga(),
         profileSaga(),
+        searchAuthorsSaga(),
         pageSaga(),
         recentSaga(),
         snackbarQueueSaga(),

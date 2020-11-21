@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import FollowingScreenContainer from '../containers/screens/FollowingScreenContainer'
+import SearchAuthorsScreenContainer from '../containers/screens/SearchAuthorsScreenContainer'
 
 import Searchbar from '../components/SearchBar'
 
@@ -14,7 +15,7 @@ const FollowingStack = (props) => {
 
     return (
         <Stack.Navigator
-            screenOptions={{
+            screenOptions={({ navigation }) => ({
                 headerStyle: {
                     backgroundColor: theme.colors.primary,
                 },
@@ -33,10 +34,21 @@ const FollowingStack = (props) => {
                 },
                 headerBackTitleVisible: false,
                 headerTitleAlign: 'center',
-                headerTitle: () => <Searchbar placeholder='Search Authors' />,
-            }}
+                headerTitle: () => (
+                    <Searchbar
+                        navigation={navigation}
+                        placeholder='Search Authors'
+                        authors={true}
+                    />
+                ),
+            })}
         >
             <Stack.Screen name='Following' component={FollowingScreenContainer} />
+            <Stack.Screen
+                name='SearchAuthors'
+                component={SearchAuthorsScreenContainer}
+                // options={{ title: 'Recent Stories' }}
+            />
         </Stack.Navigator>
     )
 }

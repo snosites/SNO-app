@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import { getActiveDomain } from '../redux/domains'
 import { actions as searchActions } from '../redux/search'
+import { actions as searchAuthorActions } from '../redux/searchAuthors'
 
 const Searchbar = (props) => {
     const {
@@ -15,6 +16,8 @@ const Searchbar = (props) => {
         activeDomain,
         invalidateSearchArticles,
         fetchSearchArticlesIfNeeded,
+        fetchSearchAuthorsIfNeeded,
+        invalidateSearchAuthors,
         authors = false,
     } = props
 
@@ -27,14 +30,17 @@ const Searchbar = (props) => {
 
     const _searchArticles = () => {
         navigation.navigate('Search', { searchTerm })
+
         invalidateSearchArticles()
         fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
         // setSearchTerm('')
     }
 
     const _searchAuthors = () => {
-        // invalidateSearchArticles()
-        // fetchSearchArticlesIfNeeded(activeDomain.url, searchTerm)
+        navigation.navigate('SearchAuthors', { searchTerm })
+
+        invalidateSearchAuthors()
+        fetchSearchAuthorsIfNeeded(activeDomain.url, searchTerm)
         // setSearchTerm('')
     }
 
@@ -70,6 +76,9 @@ const mapDispatchToProps = (dispatch) => ({
     fetchSearchArticlesIfNeeded: (domainUrl, searchTerm) =>
         dispatch(searchActions.fetchSearchArticlesIfNeeded(domainUrl, searchTerm)),
     invalidateSearchArticles: () => dispatch(searchActions.invalidateSearchArticles()),
+    fetchSearchAuthorsIfNeeded: (domainUrl, searchTerm) =>
+        dispatch(searchAuthorActions.fetchSearchAuthorsIfNeeded(domainUrl, searchTerm)),
+    invalidateSearchAuthors: () => dispatch(searchAuthorActions.invalidateSearchAuthors()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Searchbar)

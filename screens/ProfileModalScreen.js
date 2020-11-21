@@ -67,10 +67,6 @@ const ProfileModalScreen = (props) => {
         }
     }, [route.params?.profileId, writerSubscriptions, activeDomain])
 
-    const _viewFullProfile = () => {
-        navigation.push('FullProfile')
-    }
-
     if (profileIsLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>

@@ -52,7 +52,7 @@ export default (props) => {
                                 color={color}
                                 name={Platform.OS === 'ios' ? `ios-home` : 'md-home'}
                                 size={size}
-                                badge={'dot'}
+                                // badge={'dot'}
                                 tabColor={theme.navigationTheme.colors.background}
                             />
                         )
@@ -72,7 +72,7 @@ export default (props) => {
                                 color={color}
                                 name='ios-apps'
                                 size={size}
-                                badge='dot'
+                                // badge='dot'
                                 tabColor={theme.navigationTheme.colors.background}
                             />
                         )

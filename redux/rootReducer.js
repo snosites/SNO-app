@@ -9,6 +9,7 @@ import global from './global'
 import articlesByCategory, { entities } from './articles'
 import savedArticlesBySchool from './savedArticles'
 import searchArticles from './search'
+import searchAuthors from './searchAuthors'
 import profiles from './profiles'
 import pages from './pages'
 import recentArticles from './recent'
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
     entities,
     savedArticlesBySchool,
     searchArticles,
+    searchAuthors,
     profiles,
     pages,
     recentArticles,
@@ -43,6 +45,7 @@ const rootReducer = (state, action) => {
             articlesByCategory: undefined,
             recentArticles: undefined,
             searchArticles: undefined,
+            searchAuthors: undefines,
             profiles: undefined,
             pages: undefined,
             entities: undefined,

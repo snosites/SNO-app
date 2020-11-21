@@ -185,7 +185,6 @@ const FollowingScreen = (props) => {
                 // left={(props) => <List.Icon {...props} icon='category' />}
             >
                 {writerSubscriptions.map((writer) => {
-                    console.log('writer', writer)
                     return (
                         <List.Item
                             key={writer.id}
