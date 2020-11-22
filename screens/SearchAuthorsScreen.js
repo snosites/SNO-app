@@ -122,10 +122,12 @@ const SearchAuthorsScreen = (props) => {
                     <List.Item
                         onPress={() => {
                             if (item.custom_fields?.terms) {
-                                // navigation.navigate('ProfileModal', {
-                                //     profileId: item.custom_fields.terms[0].term_id,
-                                //     profileName: item.custom_fields.terms[0].name,
-                                // })
+                                navigation.navigate('ProfileModal', {
+                                    profileId: item.custom_fields.terms[0].term_id,
+                                    profileName: item.custom_fields.terms[0].name,
+                                })
+                            } else {
+                                console.log('no terms')
                             }
                         }}
                         title={entities.decode(item.title?.rendered)}

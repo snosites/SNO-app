@@ -45,7 +45,7 @@ const rootReducer = (state, action) => {
             articlesByCategory: undefined,
             recentArticles: undefined,
             searchArticles: undefined,
-            searchAuthors: undefines,
+            searchAuthors: undefined,
             profiles: undefined,
             pages: undefined,
             entities: undefined,

@@ -27,7 +27,7 @@ import {
     Portal,
 } from 'react-native-paper'
 
-const ActiveDomainIcon = ({ color }) => <List.Icon icon={`star`} color={color} />
+import { Feather } from '@expo/vector-icons'
 
 const SettingsScreen = (props) => {
     const {
@@ -35,9 +35,7 @@ const SettingsScreen = (props) => {
         userInfo,
         domains,
         theme,
-        errors,
         deleteUser,
-        saveUserInfo,
         isLoading,
         subscribe,
         unsubscribe,
@@ -47,12 +45,10 @@ const SettingsScreen = (props) => {
         setActiveDomain,
         setInitialized,
     } = props
-    const [username, setUsername] = useState(userInfo.username)
-    const [email, setEmail] = useState(userInfo.email)
-    const [editingUsername, setEditingUsername] = useState(false)
-    const [editingEmail, setEditingEmail] = useState(false)
+
+    const [switchOn, setSwitchOn] = useState(false)
+
     const [dialog, setDialog] = useState(false)
-    const [showDeviceId, setShowDeviceId] = useState(false)
     const [notifications, setNotifications] = useState(
         domains.reduce((map, domain) => {
             map[domain.id] = domain.notificationCategories.reduce(function (map, notification) {
@@ -62,11 +58,6 @@ const SettingsScreen = (props) => {
             return map
         }, {})
     )
-
-    const _handleUserInfoEdit = (userPref) => {
-        if (userPref === 'username') setEditingUsername(true)
-        if (userPref === 'email') setEditingEmail(true)
-    }
 
     const _handleDeleteOrg = (domain) => {
         Haptics.selectionAsync()
@@ -97,6 +88,7 @@ const SettingsScreen = (props) => {
                 setActiveDomain(found.id)
                 setInitialized(false)
             } else {
+                setActiveDomain(null)
                 setInitialized(false)
             }
         }
@@ -144,74 +136,38 @@ const SettingsScreen = (props) => {
         )
     }
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+            style={{
+                flex: 1,
+                backgroundColor: theme.colors.surface,
+            }}
+        >
             <View style={{ flex: 1 }}>
                 <List.Section>
-                    <List.Subheader>User Preferences</List.Subheader>
-                    {editingUsername ? (
-                        <TextInput
-                            style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
-                            onBlur={() => {
-                                saveUserInfo({
-                                    username: username,
-                                    email: email,
-                                })
-                                setEditingUsername(false)
-                            }}
-                            autoFocus={true}
-                            returnKeyType='done'
-                            value={username}
-                            onChangeText={(text) => setUsername(text)}
-                        />
-                    ) : (
-                        <List.Item
-                            title={userInfo.username || 'Not Set'}
-                            description={'Username'}
-                            style={styles.inactiveItem}
-                            right={() => {
-                                return (
-                                    <IconButton
-                                        icon='plus'
-                                        color={Colors.grey300}
-                                        size={28}
-                                        onPress={() => _handleUserInfoEdit('username')}
-                                    />
-                                )
-                            }}
-                        />
-                    )}
-                    {editingEmail ? (
-                        <TextInput
-                            style={{ height: 40, width: 250, fontSize: 15, paddingLeft: 60 }}
-                            onBlur={() => {
-                                saveUserInfo({
-                                    username: username,
-                                    email: email,
-                                })
-                                setEditingEmail(false)
-                            }}
-                            autoFocus={true}
-                            returnKeyType='done'
-                            value={email}
-                            onChangeText={(text) => setEmail(text)}
-                        />
-                    ) : (
-                        <List.Item
-                            title={userInfo.email || 'Not Set'}
-                            description={'email'}
-                            style={styles.inactiveItem}
-                            right={() => {
-                                return (
-                                    <IconButton
-                                        icon='plus'
-                                        color={Colors.grey300}
-                                        size={28}
-                                        onPress={() => _handleUserInfoEdit('email')}
-                                    />
-                                )
-                            }}
-                        />
-                    )}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <List.Subheader>User Preferences</List.Subheader>
+                        <IconButton
+                            style={{ marginRight: 20 }}
+                            icon='wrench'
+                            color={theme.colors.primary}
+                            size={20}
+                            onPress={() => navigation.push('UserInfoModal')}
+                        ></IconButton>
+                    </View>
+                    <List.Item
+                        title={userInfo.username || 'Not Set'}
+                        description={'Username'}
+                        style={{
+                            paddingLeft: 60,
+                        }}
+                    />
+                    <List.Item
+                        title={userInfo.email || 'Not Set'}
+                        description={'email'}
+                        style={{
+                            paddingLeft: 60,
+                        }}
+                    />
                 </List.Section>
                 <Divider />
                 <List.Section>
@@ -221,25 +177,21 @@ const SettingsScreen = (props) => {
                             <List.Item
                                 key={item.id}
                                 title={item.name}
-                                style={!item.active ? styles.inactiveItem : null}
+                                style={!item.active ? { paddingLeft: 60 } : null}
                                 description={item.active ? 'active' : null}
-                                left={() => {
-                                    if (item.active) {
-                                        return <ActiveDomainIcon color={theme.colors.accent} />
-                                    } else {
-                                        return null
-                                    }
-                                }}
-                                right={() => {
-                                    return (
-                                        <IconButton
-                                            icon='delete'
-                                            color={Colors.red700}
-                                            size={28}
-                                            onPress={() => _handleDeleteOrg(item)}
-                                        />
-                                    )
-                                }}
+                                left={() =>
+                                    item.active ? (
+                                        <List.Icon icon={`star`} color={theme.colors.accent} />
+                                    ) : null
+                                }
+                                right={() => (
+                                    <IconButton
+                                        icon='delete'
+                                        color={theme.extraColors.errorBackground}
+                                        size={28}
+                                        onPress={() => _handleDeleteOrg(item)}
+                                    />
+                                )}
                                 onPress={() => {
                                     Haptics.selectionAsync()
                                     setActiveDomain(item.id)
@@ -248,17 +200,18 @@ const SettingsScreen = (props) => {
                             />
                         )
                     })}
+                    <Button
+                        icon='plus'
+                        mode='text'
+                        contentStyle={{ padding: 10 }}
+                        onPress={() => {
+                            Haptics.selectionAsync()
+                            setActiveDomain(null)
+                        }}
+                    >
+                        Add New Organization
+                    </Button>
                 </List.Section>
-                <Divider />
-                <List.Item
-                    style={{ paddingVertical: 0 }}
-                    title='Add New Organization'
-                    left={() => <List.Icon icon={`plus`} />}
-                    onPress={() => {
-                        Haptics.selectionAsync()
-                        setActiveDomain(null)
-                    }}
-                />
                 <Divider />
                 <List.Section>
                     <List.Subheader>Push Notifications</List.Subheader>
@@ -413,6 +366,7 @@ const SettingsScreen = (props) => {
                     )}
                 </List.Section>
                 <Divider />
+                <List.Subheader>Extras</List.Subheader>
                 <List.Item
                     title='Privacy Policy'
                     style={{ paddingVertical: 10 }}
@@ -421,50 +375,63 @@ const SettingsScreen = (props) => {
                         WebBrowser.openBrowserAsync('https://snosites.com/privacy-policy/')
                     }
                 />
-                <View>
-                    <Button
-                        icon='delete-forever'
-                        mode='outlined'
-                        color={Colors.red700}
-                        style={{ padding: 10 }}
-                        onPress={() => {
-                            setDialog(true)
-                            setShowDeviceId(!showDeviceId)
+                <List.Item
+                    title='Terms of Service'
+                    style={{ paddingVertical: 10 }}
+                    left={(props) => <List.Icon {...props} icon='library-books' />}
+                    onPress={() =>
+                        WebBrowser.openBrowserAsync('https://snosites.com/terms-of-service/')
+                    }
+                />
+                <List.Item
+                    title={'Device ID'}
+                    description={Constants.installationId}
+                    descriptionStyle={{ fontSize: 12 }}
+                    style={{ paddingVertical: 10 }}
+                    left={(props) => <List.Icon {...props} icon='cellphone-information' />}
+                />
+                <List.Item
+                    title='Clear All Settings'
+                    titleStyle={{ color: theme.extraColors.errorBackground }}
+                    style={{ paddingVertical: 10 }}
+                    left={(props) => (
+                        <List.Icon
+                            {...props}
+                            icon='delete-forever'
+                            color={theme.extraColors.errorBackground}
+                        />
+                    )}
+                    onPress={() => {
+                        setDialog(true)
+                    }}
+                />
+                <Divider />
+                <View
+                    style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20 }}
+                >
+                    <Text
+                        style={{
+                            fontFamily: 'raleway',
+                            textAlign: 'center',
                         }}
                     >
-                        Clear All Settings
-                    </Button>
+                        The Source version: {Constants.manifest.version}
+                    </Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Switch
+                            value={switchOn}
+                            onValueChange={(value) => setSwitchOn(value)}
+                            color={theme.colors.primary}
+                        />
+                        <Feather
+                            style={{ marginLeft: 20, alignSelf: 'center' }}
+                            name={switchOn ? 'moon' : 'sun'}
+                            size={20}
+                            color={switchOn ? 'black' : '#ebbb0e'}
+                        />
+                    </View>
                 </View>
             </View>
-            {/* <Snackbar
-                visible={errors}
-                duration={3000}
-                style={{
-                    position: 'absolute',
-                    bottom: 100,
-                    left: 0,
-                    right: 0,
-                }}
-                onDismiss={() => {}}
-                action={{
-                    label: 'Dismiss',
-                    onPress: () => {},
-                }}
-            >
-                Sorry there was an error clearing your settings. Please try again later.
-            </Snackbar> */}
-            {showDeviceId && (
-                <Text
-                    style={{
-                        alignSelf: 'flex-end',
-                        marginTop: 'auto',
-                        fontSize: 9,
-                        color: Colors.grey400,
-                    }}
-                >
-                    {`${Constants.manifest.version} - ${Constants.installationId}`}
-                </Text>
-            )}
             <Portal>
                 {dialog
                     ? Alert.alert(
@@ -491,16 +458,5 @@ const SettingsScreen = (props) => {
         </ScrollView>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        // justifyContent: 'space-between',
-    },
-    inactiveItem: {
-        paddingLeft: 60,
-    },
-})
 
 export default SettingsScreen

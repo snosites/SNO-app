@@ -8,6 +8,8 @@ import {
 } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
+import { StatusBar } from 'expo-status-bar'
+
 import { connect } from 'react-redux'
 import { actions as articleActions } from '../redux/articles'
 
@@ -57,6 +59,7 @@ const ConnectedArticleTabs = connect(mapStateToProps)(ArticleTabs)
 const ArticleNavigator = ({
     navigation,
     route,
+    theme,
     activeDomain,
     articles,
     asyncFetchArticleError,
@@ -85,6 +88,7 @@ const ArticleNavigator = ({
 
     return (
         <ArticleContext.Provider value={article}>
+            <StatusBar style={theme.dark ? 'light' : 'dark'} />
             <Stack.Navigator
                 mode={'modal'}
                 screenOptions={{
@@ -155,53 +159,13 @@ const ArticleNavigator = ({
                         },
                     }}
                 />
-                <Stack.Screen
-                    name='ProfileModal'
-                    component={ProfileModalContainer}
-                    options={{
-                        headerShown: false,
-                        cardOverlayEnabled: true,
-                        cardStyleInterpolator: ({
-                            current: { progress },
-                            inverted,
-                            layouts: { screen },
-                        }) => {
-                            const translateY = multiply(
-                                progress.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [screen.height, 0],
-                                    extrapolate: 'clamp',
-                                }),
-                                inverted
-                            )
-                            return {
-                                cardStyle: {
-                                    transform: [
-                                        // Translation for the animation of the current card
-                                        { translateY },
-                                    ],
-                                    opacity: progress.interpolate({
-                                        inputRange: [0, 0.5, 0.9, 1],
-                                        outputRange: [0, 0.25, 0.7, 1],
-                                    }),
-                                },
-                                overlayStyle: {
-                                    opacity: progress.interpolate({
-                                        inputRange: [0, 1],
-                                        outputRange: [0, 0.5],
-                                        extrapolate: 'clamp',
-                                    }),
-                                },
-                            }
-                        },
-                    }}
-                />
             </Stack.Navigator>
         </ArticleContext.Provider>
     )
 }
 
 const mapStateToNavProps = (state) => ({
+    theme: state.theme,
     articles: state.entities.articles,
     activeDomain: getActiveDomain(state),
 })

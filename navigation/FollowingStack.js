@@ -15,6 +15,7 @@ const FollowingStack = (props) => {
 
     return (
         <Stack.Navigator
+            headerMode='float'
             screenOptions={({ navigation }) => ({
                 headerStyle: {
                     backgroundColor: theme.colors.primary,

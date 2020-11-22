@@ -9,7 +9,6 @@ import { createLoadingSelector } from '../../redux/loading'
 import { createErrorMessageSelector } from '../../redux/errors'
 
 const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
-const deleteUserErrorSelector = createErrorMessageSelector([userTypes.DELETE_USER])
 
 const unsubscribeLoadingSelector = createLoadingSelector([userTypes.UNSUBSCRIBE])
 
@@ -20,7 +19,6 @@ const mapStateToProps = (state) => {
         userInfo: state.user,
         global: state.global,
         activeDomain: getActiveDomain(state),
-        errors: deleteUserErrorSelector(state),
         isLoading: deleteUserLoadingSelector(state),
         unsubscribeLoading: unsubscribeLoadingSelector(state),
     }
@@ -31,7 +29,6 @@ const mapDispatchToProps = (dispatch) => {
         setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
         setInitialized: (payload) => dispatch(globalActions.setInitialized(payload)),
         deleteUser: () => dispatch(userActions.deleteUser()),
-        saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
         deleteDomain: (domainId) => dispatch(domainActions.deleteDomain(domainId)),
         subscribe: (payload) => dispatch(userActions.subscribe(payload)),
         unsubscribe: (payload) => dispatch(userActions.unsubscribe(payload)),

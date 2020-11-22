@@ -1,37 +1,18 @@
 import React, { useState } from 'react'
-import {
-    StyleSheet,
-    Text,
-    View,
-    ImageBackground,
-    Dimensions,
-    ScrollView,
-    Platform,
-    ActivityIndicator,
-    TouchableWithoutFeedback,
-} from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, useWindowDimensions } from 'react-native'
 
-import Moment from 'moment'
 import HTML from 'react-native-render-html'
 import * as Haptics from 'expo-haptics'
-import * as WebBrowser from 'expo-web-browser'
 import { WebView } from 'react-native-webview'
 
 import TouchableItem from '../../constants/TouchableItem'
 import Slideshow from '../../views/Slideshow'
 
-import { Html5Entities } from 'html-entities'
-import theme from '../../redux/theme'
-
-const entities = new Html5Entities()
-
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
-
-const MEDIASIZE = viewportHeight * 0.35
-const MEDIAWIDTH = viewportWidth * 0.9
-
 const FeaturedMedia = ({ navigation, article, theme }) => {
     const [expandCaption, setExpandCaption] = useState(false)
+
+    const MEDIA_HEIGHT = useWindowDimensions().height * 0.35
+    const MEDIA_WIDTH = useWindowDimensions().width
 
     const _handleProfilePress = (writerId) => {
         Haptics.selectionAsync()
@@ -120,21 +101,37 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
         return (
             <ImageBackground
                 source={{ uri: article.featuredImage.uri }}
-                style={styles.featuredImage}
+                style={{
+                    width: MEDIA_WIDTH,
+                    height: MEDIA_HEIGHT,
+                    resizeMode: 'contain',
+                }}
                 resizeMode='contain'
             >
-                <View style={styles.imageInfoContainer}>
-                    <View style={styles.imageInfo}>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                    }}
+                >
+                    <View
+                        style={{
+                            backgroundColor: theme.colors.background,
+                            padding: 10,
+                            borderTopLeftRadius: 10,
+                            borderTopRightRadius: 10,
+                        }}
+                    >
                         {article.featuredImage.caption ? (
                             <HTML
                                 html={article.featuredImage.caption}
-                                baseFontStyle={{ fontSize: 14 }}
+                                baseFontStyle={{ fontSize: 14, color: theme.colors.text }}
                                 allowedStyles={[]}
                                 customWrapper={(text) => {
                                     return (
                                         <Text
                                             ellipsizeMode='tail'
-                                            numberOfLines={expandCaption ? null : 2}
+                                            numberOfLines={expandCaption ? 15 : 2}
                                             onPress={() => setExpandCaption(!expandCaption)}
                                         >
                                             {text}
@@ -144,7 +141,7 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
                                 tagsStyles={{
                                     rawtext: {
                                         fontSize: 14,
-                                        color: 'white',
+                                        color: theme.colors.text,
                                     },
                                 }}
                             />
@@ -170,20 +167,6 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
 }
 
 const styles = StyleSheet.create({
-    featuredMediaContainer: {
-        // flex: 0,
-        height: MEDIASIZE,
-        backgroundColor: 'black',
-    },
-    featuredImage: {
-        width: viewportWidth,
-        height: MEDIASIZE,
-        resizeMode: 'contain',
-    },
-    imageInfoContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
-    },
     imageInfo: {
         backgroundColor: 'rgba(0,0,0,0.55)',
         padding: 10,

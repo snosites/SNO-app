@@ -136,12 +136,13 @@ function* deleteUser() {
             type: 'PURGE_USER_STATE',
         })
 
-        NavigationService.navigate('AuthLoading')
+        // TODO: navigate to home
+        // NavigationService.navigate('AuthLoading')
 
         yield put(userActions.deleteUserSuccess())
     } catch (err) {
         console.log('error deleting user in saga', err)
-        yield put(userActions.deleteUserError('delete user-saga error'))
+        yield put(userActions.deleteUserError('delete user saga error'))
         Sentry.captureException(err)
     }
 }

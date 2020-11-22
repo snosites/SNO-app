@@ -6,11 +6,12 @@ import {
     SafeAreaView,
     ActivityIndicator,
     KeyboardAvoidingView,
+    TouchableOpacity,
 } from 'react-native'
 
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, Feather } from '@expo/vector-icons'
 import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
 import theme from '../redux/theme'
 
@@ -32,42 +33,72 @@ const UserInfoModal = (props) => {
             <KeyboardAvoidingView behavior='padding' enabled>
                 <View
                     style={{
-                        height: 250,
+                        height: 300,
                         backgroundColor: theme.colors.background,
                         borderTopLeftRadius: 15,
                         borderTopRightRadius: 15,
                         padding: 15,
+                        alignItems: 'center',
                     }}
                 >
-                    {/* <View
-                    style={{
-                        height: 8,
-                        width: 50,
-                        borderRadius: 4,
-                        backgroundColor: theme.colors.background,
-                        position: 'absolute',
-                        top: -30,
-                    }}
-                ></View> */}
-                    <Text style={{ fontFamily: 'ralewayLight', fontSize: 14, marginBottom: 10 }}>
-                        Enter a username and email
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: theme.colors.primaryLightened,
+                            width: 34,
+                            height: 34,
+                            borderRadius: 17,
+                            alignSelf: 'flex-start',
+                        }}
+                    >
+                        <Feather
+                            style={{
+                                marginBottom: -3,
+                            }}
+                            name={'x'}
+                            size={20}
+                            color={theme.colors.primary}
+                        />
+                    </TouchableOpacity>
+                    <Text
+                        style={{
+                            fontFamily: 'raleway',
+                            fontSize: 18,
+                            marginBottom: 10,
+                            marginTop: -10,
+                            textAlign: 'center',
+                        }}
+                    >
+                        Edit Preferences
                     </Text>
                     <View>
                         <PaperTextInput
                             dense
                             label='Username'
                             theme={{ roundness: 10 }}
-                            style={{ width: 250, borderRadius: 5, marginBottom: 20 }}
-                            placeholder='This is what will display publicly'
+                            style={{ width: 250, borderRadius: 5 }}
+                            placeholder='Not set'
                             mode='outlined'
                             value={username}
                             onChangeText={(text) => setUsername(text)}
                             selectionColor={theme.colors.primary}
                         />
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 12,
+                                color: theme.colors.grayText,
+                                marginBottom: 10,
+                            }}
+                        >
+                            This is what will display publicly
+                        </Text>
                         <PaperTextInput
                             dense
                             label='Email'
-                            placeholder='We need this for comment submission'
+                            placeholder='Not set'
                             keyboardType='email-address'
                             style={{ width: 250, borderRadius: 10 }}
                             theme={{ roundness: 10 }}
@@ -76,6 +107,16 @@ const UserInfoModal = (props) => {
                             onChangeText={(text) => setEmail(text)}
                             selectionColor={theme.colors.primary}
                         />
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 12,
+                                color: theme.colors.grayText,
+                                marginBottom: 10,
+                            }}
+                        >
+                            We need this for comment submission
+                        </Text>
                     </View>
                     <Button
                         mode='contained'
@@ -86,6 +127,7 @@ const UserInfoModal = (props) => {
                             fontSize: 18,
                             marginTop: 'auto',
                             marginBottom: 10,
+                            width: 250,
                         }}
                         onPress={() => {
                             saveInfo()

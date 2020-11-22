@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ScrollView, StyleSheet, Share, View, TouchableOpacity, Text } from 'react-native'
+import {
+    ScrollView,
+    StyleSheet,
+    Share,
+    View,
+    TouchableOpacity,
+    Text,
+    ActivityIndicator,
+} from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import * as Amplitude from 'expo-analytics-amplitude'
 import LottieView from 'lottie-react-native'
@@ -31,9 +39,14 @@ const ArticleScreen = (props) => {
             const matches = new RegExp(matchPattern).exec(href)
 
             if (matches && matches[1]) {
-                const article = await asyncFetchArticle(activeDomain.url, Number(matches[1]))
+                try {
+                    const article = await asyncFetchArticle(activeDomain.url, Number(matches[1]))
 
-                handleArticlePress(article, activeDomain)
+                    handleArticlePress(article, activeDomain)
+                } catch (err) {
+                    setLoadingLink(false)
+                    await WebBrowser.openBrowserAsync(href)
+                }
             } else {
                 await WebBrowser.openBrowserAsync(href)
             }
@@ -66,22 +79,38 @@ const ArticleScreen = (props) => {
     }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
-            <ArticleContent
-                navigation={navigation}
-                article={article}
-                theme={theme}
-                onLinkPress={() => _viewLink()}
-            />
-            {articleChapters.map((article) => (
+        <>
+            <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
                 <ArticleContent
-                    key={article.id}
                     navigation={navigation}
                     article={article}
                     theme={theme}
+                    onLinkPress={(href) => _viewLink(href)}
                 />
-            ))}
-        </ScrollView>
+                {articleChapters.map((article) => (
+                    <ArticleContent
+                        key={article.id}
+                        navigation={navigation}
+                        article={article}
+                        theme={theme}
+                        onLinkPress={(href) => _viewLink(href)}
+                    />
+                ))}
+            </ScrollView>
+            {loadingLink && (
+                <View
+                    style={{
+                        backgroundColor: '#c7c7c7',
+                        opacity: 0.5,
+                        ...StyleSheet.absoluteFill,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <ActivityIndicator size='large' color={theme.colors.primary} />
+                </View>
+            )}
+        </>
     )
 }
 

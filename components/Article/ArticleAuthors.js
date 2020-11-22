@@ -18,14 +18,23 @@ import { WebView } from 'react-native-webview'
 
 import TouchableItem from '../../constants/TouchableItem'
 
+import { navigate } from '../../utils/RootNavigation'
+
 const ArticleAuthors = ({ article, navigation, theme }) => {
     console.log('article', article)
     const _handleProfilePress = (writerId, writerName) => {
         Haptics.selectionAsync()
-        navigation.navigate('ProfileModal', {
-            profileId: writerId,
-            profileName: writerName,
-        })
+        if (navigation) {
+            navigation.navigate('ProfileModal', {
+                profileId: writerId,
+                profileName: writerName,
+            })
+        } else {
+            navigate('ProfileModal', {
+                profileId: writerId,
+                profileName: writerName,
+            })
+        }
     }
 
     if (article.custom_fields.terms && article.custom_fields.terms[0]) {

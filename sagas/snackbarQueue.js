@@ -45,6 +45,16 @@ function* snackbarQueue() {
             addToQueue,
             'There was an error fetching that article.  Please try again later.'
         ),
+        takeLatest(
+            articleTypes.ASYNC_FETCH_ARTICLE_ERROR,
+            addToQueue,
+            'There was an error fetching that article.  Please try again later.'
+        ),
+        takeLatest(
+            userTypes.DELETE_USER_ERROR,
+            addToQueue,
+            'There was an error clearing your settings. Please try again later.'
+        ),
     ])
 }
 

@@ -22,7 +22,7 @@ Moment.updateLocale('en', {
 })
 
 const ArticleContent = (props) => {
-    const { navigation, theme, article, onLinkPress = () => {}, ad, snoAd, adPosition } = props
+    const { navigation, theme, article, onLinkPress = (href) => {}, ad, snoAd, adPosition } = props
 
     const viewportWidth = useWindowDimensions().width
 
@@ -36,7 +36,9 @@ const ArticleContent = (props) => {
 
     return (
         <View>
-            <View style={{ flex: 0, height: MEDIA_HEIGHT, backgroundColor: 'black' }}>
+            <View
+                style={{ flex: 0, height: MEDIA_HEIGHT, backgroundColor: theme.colors.background }}
+            >
                 <FeaturedMedia navigation={navigation} article={article} theme={theme} />
             </View>
             <View
@@ -195,6 +197,7 @@ const ArticleContent = (props) => {
                         renderersProps={{
                             adImage: ad,
                             snoAdImage: snoAd,
+                            backgroundColor: theme.colors.background,
                         }}
                     />
                 </View>

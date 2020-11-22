@@ -103,7 +103,7 @@ const AppContainer = (props) => {
         >
             <PaperProvider theme={theme}>
                 <ErrorBoundary navigation={RootNavigation}>
-                    <StatusBar barStyle={theme.primaryIsDark ? 'light-content' : 'dark-content'} />
+                    <StatusBar style={theme.primaryIsDark ? 'light' : 'dark'} />
                     {!activeDomain.id ? <AuthStack /> : <MainStackContainer />}
                 </ErrorBoundary>
                 <SnackbarQueue />

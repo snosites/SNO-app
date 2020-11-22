@@ -6,8 +6,14 @@ import {
     ImageBackground,
     Text,
     TouchableOpacity,
+    Animated,
 } from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack'
+import {
+    createStackNavigator,
+    CardStyleInterpolators,
+    TransitionSpecs,
+    TransitionPresets,
+} from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
@@ -18,6 +24,7 @@ import ArticleNavigator from '../navigation/ArticleNavigator'
 import TabNavigatorContainer from '../containers/navigators/TabNavigatorContainer'
 import UserInfoModalContainer from '../containers/screens/UserInfoModalContainer'
 import ProfileScreenContainer from '../containers/screens/ProfileScreenContainer'
+import ProfileModalContainer from '../containers/screens/ProfileModalScreenContainer'
 
 // same animation but different colors
 import snsAnimation from '../assets/lottiefiles/infinite-loading-bar'
@@ -28,6 +35,8 @@ import { getReleaseChannel } from '../constants/config'
 const version = getReleaseChannel()
 
 const Stack = createStackNavigator()
+
+const { add, multiply } = Animated
 
 export default (props) => {
     const { theme, activeDomain, startup, splashScreen, startupError, initialized } = props
@@ -136,6 +145,81 @@ export default (props) => {
                             headerShown: false,
                             cardStyle: { backgroundColor: 'transparent' },
                             cardOverlayEnabled: true,
+                            cardStyleInterpolator: ({
+                                current: { progress },
+                                inverted,
+                                layouts: { screen },
+                            }) => {
+                                const translateY = multiply(
+                                    progress.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [screen.height, 0],
+                                        extrapolate: 'clamp',
+                                    }),
+                                    inverted
+                                )
+                                return {
+                                    cardStyle: {
+                                        transform: [
+                                            // Translation for the animation of the current card
+                                            { translateY },
+                                        ],
+                                        opacity: progress.interpolate({
+                                            inputRange: [0, 0.5, 0.9, 1],
+                                            outputRange: [0, 0.25, 0.7, 1],
+                                        }),
+                                    },
+                                    overlayStyle: {
+                                        opacity: progress.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 0.5],
+                                            extrapolate: 'clamp',
+                                        }),
+                                    },
+                                }
+                            },
+                        }}
+                    />
+                    <Stack.Screen
+                        name='ProfileModal'
+                        component={ProfileModalContainer}
+                        options={{
+                            headerShown: false,
+                            cardStyle: { backgroundColor: 'transparent' },
+                            cardOverlayEnabled: true,
+                            cardStyleInterpolator: ({
+                                current: { progress },
+                                inverted,
+                                layouts: { screen },
+                            }) => {
+                                const translateY = multiply(
+                                    progress.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [screen.height, 0],
+                                        extrapolate: 'clamp',
+                                    }),
+                                    inverted
+                                )
+                                return {
+                                    cardStyle: {
+                                        transform: [
+                                            // Translation for the animation of the current card
+                                            { translateY },
+                                        ],
+                                        opacity: progress.interpolate({
+                                            inputRange: [0, 0.5, 0.9, 1],
+                                            outputRange: [0, 0.25, 0.7, 1],
+                                        }),
+                                    },
+                                    overlayStyle: {
+                                        opacity: progress.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 0.5],
+                                            extrapolate: 'clamp',
+                                        }),
+                                    },
+                                }
+                            },
                         }}
                     />
                     <Stack.Screen

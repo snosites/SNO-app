@@ -4,6 +4,7 @@ import { View, Dimensions } from 'react-native'
 import Slideshow from '../views/Slideshow'
 import RelatedStories from '../views/RelatedStories'
 import AdBlock from '../components/AdBlock'
+import theme from '../redux/theme'
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
 
@@ -25,6 +26,7 @@ export function slideshowRenderer(htmlAttribs, children, convertedCSSStyles, pas
 }
 
 export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
+    const backgroundColor = passProps.renderersProps?.backgroundColor
     if (!htmlAttribs['data-post-ids']) {
         return
     }
@@ -37,8 +39,7 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
                 width: viewportWidth,
                 marginLeft: -20,
                 marginVertical: 20,
-                // paddingHorizontal: 10,
-                backgroundColor: '#eeeeee',
+                backgroundColor: backgroundColor || '#eeeeee',
             }}
         >
             <RelatedStories relatedStoryIds={storyIdArr} />
