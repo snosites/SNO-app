@@ -81,7 +81,13 @@ const CustomDrawerContent = (props) => {
                 <Text
                     numberOfLines={2}
                     ellipsizeMode='tail'
-                    style={{ fontSize: 20, fontFamily: 'ralewayBold', padding: 20 }}
+                    style={{
+                        fontSize: 20,
+                        fontFamily: 'ralewayBold',
+                        padding: 20,
+                        color: theme.colors.text,
+                        textAlign: 'center',
+                    }}
                 >
                     {activeDomain.publication}
                 </Text>
@@ -97,7 +103,11 @@ const CustomDrawerContent = (props) => {
                                         html={item.title}
                                         customWrapper={(text) => {
                                             return (
-                                                <Text ellipsizeMode='tail' numberOfLines={1}>
+                                                <Text
+                                                    ellipsizeMode='tail'
+                                                    numberOfLines={1}
+                                                    style={{ color: theme.colors.text }}
+                                                >
                                                     {text}
                                                 </Text>
                                             )

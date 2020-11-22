@@ -147,7 +147,7 @@ const HomeScreen = (props) => {
                             style={{
                                 fontFamily: 'ralewayBold',
                                 fontSize: 15,
-                                color: theme.extraColors.darkGray,
+                                color: theme.colors.gray,
                             }}
                         >
                             More{' '}

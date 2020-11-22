@@ -2,22 +2,15 @@ import React from 'react'
 import { View, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-import Colors from '../constants/Colors'
-
 export default (props) => {
-    const { color, name, focused, size, badge = null, tabColor = 'white' } = props
+    const { color, name, size, badge = null, tabColor = 'white' } = props
 
     const badgeColor = '#b51010'
 
     if (badge === 'dot') {
         return (
             <View>
-                <Ionicons
-                    name={name}
-                    size={size}
-                    style={{ marginBottom: -3 }}
-                    color={focused ? color : Colors.tabIconDefault}
-                />
+                <Ionicons name={name} size={size} style={{ marginBottom: -3 }} color={color} />
                 <View
                     style={{
                         position: 'absolute',
@@ -47,12 +40,7 @@ export default (props) => {
     if (badge) {
         return (
             <View>
-                <Ionicons
-                    name={name}
-                    size={size}
-                    style={{ marginBottom: -3 }}
-                    color={focused ? color : Colors.tabIconDefault}
-                />
+                <Ionicons name={name} size={size} style={{ marginBottom: -3 }} color={color} />
                 <View
                     style={{
                         position: 'absolute',
@@ -92,12 +80,5 @@ export default (props) => {
             </View>
         )
     }
-    return (
-        <Ionicons
-            name={name}
-            size={size}
-            style={{ marginBottom: -3 }}
-            color={focused ? color : Colors.tabIconDefault}
-        />
-    )
+    return <Ionicons name={name} size={size} style={{ marginBottom: -3 }} color={color} />
 }

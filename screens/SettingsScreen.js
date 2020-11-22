@@ -1,31 +1,11 @@
-import React, { useLayoutEffect, useState } from 'react'
-import {
-    ScrollView,
-    StyleSheet,
-    View,
-    TextInput,
-    Text,
-    Image,
-    Alert,
-    ActivityIndicator,
-} from 'react-native'
+import React, { useState } from 'react'
+import { ScrollView, View, Text, Image, Alert, ActivityIndicator } from 'react-native'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
 import Constants from 'expo-constants'
 
-import HTML from 'react-native-render-html'
-
-import {
-    List,
-    Divider,
-    Switch,
-    IconButton,
-    Colors,
-    Snackbar,
-    Button,
-    Portal,
-} from 'react-native-paper'
+import { List, Divider, Switch, IconButton, Button, Portal } from 'react-native-paper'
 
 import { Feather } from '@expo/vector-icons'
 
@@ -44,9 +24,8 @@ const SettingsScreen = (props) => {
         removeSchoolSub,
         setActiveDomain,
         setInitialized,
+        toggleDarkMode,
     } = props
-
-    const [switchOn, setSwitchOn] = useState(false)
 
     const [dialog, setDialog] = useState(false)
     const [notifications, setNotifications] = useState(
@@ -187,7 +166,7 @@ const SettingsScreen = (props) => {
                                 right={() => (
                                     <IconButton
                                         icon='delete'
-                                        color={theme.extraColors.errorBackground}
+                                        color={theme.colors.red}
                                         size={28}
                                         onPress={() => _handleDeleteOrg(item)}
                                     />
@@ -211,159 +190,6 @@ const SettingsScreen = (props) => {
                     >
                         Add New Organization
                     </Button>
-                </List.Section>
-                <Divider />
-                <List.Section>
-                    <List.Subheader>Push Notifications</List.Subheader>
-                    {userInfo.user.push_token ? (
-                        domains.map((domain) => {
-                            const writerSubs = userInfo.writerSubscriptions.filter(
-                                (writer) => writer.organization_id === domain.id
-                            )
-                            return (
-                                <List.Accordion
-                                    key={domain.id}
-                                    title={domain.name}
-                                    left={(props) => <List.Icon {...props} icon='folder-open' />}
-                                >
-                                    <List.Subheader>Writer Notifications</List.Subheader>
-                                    {writerSubs.length > 0 ? (
-                                        writerSubs.map((writerObj) => {
-                                            return (
-                                                <List.Item
-                                                    key={writerObj.id}
-                                                    style={{
-                                                        paddingVertical: 0,
-                                                        paddingLeft: 60,
-                                                    }}
-                                                    title={writerObj.writer_name}
-                                                    right={() => {
-                                                        return unsubscribeLoading ? (
-                                                            <ActivityIndicator
-                                                                style={{ paddingRight: 10 }}
-                                                            />
-                                                        ) : (
-                                                            <IconButton
-                                                                icon='delete'
-                                                                color={Colors.red700}
-                                                                size={20}
-                                                                onPress={() =>
-                                                                    unsubscribe({
-                                                                        subscriptionType: 'writers',
-                                                                        ids: [writerObj.id],
-                                                                        domainId: domain.id,
-                                                                    })
-                                                                }
-                                                            />
-                                                        )
-                                                    }}
-                                                />
-                                            )
-                                        })
-                                    ) : (
-                                        <Text
-                                            style={{
-                                                fontSize: 18,
-                                                fontWeight: 'bold',
-                                                paddingBottom: 10,
-                                            }}
-                                        >
-                                            You aren't following any writers yet
-                                        </Text>
-                                    )}
-
-                                    <List.Subheader>Category Notifications</List.Subheader>
-                                    {domain.notificationCategories.map((item, i) => {
-                                        if (item.category_name == 'custom_push') {
-                                            return (
-                                                <List.Item
-                                                    key={item.id}
-                                                    style={{
-                                                        paddingVertical: 0,
-                                                        paddingLeft: 60,
-                                                    }}
-                                                    title='Alerts'
-                                                    right={() => {
-                                                        return (
-                                                            <Switch
-                                                                style={{ margin: 10 }}
-                                                                value={
-                                                                    notifications[domain.id][
-                                                                        item.id
-                                                                    ]
-                                                                }
-                                                                onValueChange={(value) => {
-                                                                    _toggleNotifications(
-                                                                        item.id,
-                                                                        value,
-                                                                        domain,
-                                                                        item
-                                                                    )
-                                                                }}
-                                                            />
-                                                        )
-                                                    }}
-                                                />
-                                            )
-                                        }
-                                        return (
-                                            <List.Item
-                                                key={item.id}
-                                                style={{ paddingVertical: 0, paddingLeft: 60 }}
-                                                title={
-                                                    <HTML
-                                                        html={item.category_name}
-                                                        customWrapper={(text) => {
-                                                            return (
-                                                                <Text
-                                                                    ellipsizeMode='tail'
-                                                                    numberOfLines={1}
-                                                                    style={{ fontSize: 16 }}
-                                                                >
-                                                                    {text}
-                                                                </Text>
-                                                            )
-                                                        }}
-                                                        baseFontStyle={{ fontSize: 16 }}
-                                                    />
-                                                }
-                                                right={() => {
-                                                    return (
-                                                        <Switch
-                                                            style={{ margin: 10 }}
-                                                            value={
-                                                                notifications[domain.id][item.id]
-                                                            }
-                                                            onValueChange={(value) => {
-                                                                _toggleNotifications(
-                                                                    item.id,
-                                                                    value,
-                                                                    domain,
-                                                                    item
-                                                                )
-                                                            }}
-                                                        />
-                                                    )
-                                                }}
-                                            />
-                                        )
-                                    })}
-                                </List.Accordion>
-                            )
-                        })
-                    ) : (
-                        <Text
-                            style={{
-                                textAlign: 'center',
-                                fontSize: 18,
-                                fontWeight: 'bold',
-                                paddingBottom: 10,
-                            }}
-                        >
-                            You have disabled push notifications for this app. Turn it in on your
-                            phone settings.
-                        </Text>
-                    )}
                 </List.Section>
                 <Divider />
                 <List.Subheader>Extras</List.Subheader>
@@ -392,14 +218,10 @@ const SettingsScreen = (props) => {
                 />
                 <List.Item
                     title='Clear All Settings'
-                    titleStyle={{ color: theme.extraColors.errorBackground }}
+                    titleStyle={{ color: theme.colors.red }}
                     style={{ paddingVertical: 10 }}
                     left={(props) => (
-                        <List.Icon
-                            {...props}
-                            icon='delete-forever'
-                            color={theme.extraColors.errorBackground}
-                        />
+                        <List.Icon {...props} icon='delete-forever' color={theme.colors.red} />
                     )}
                     onPress={() => {
                         setDialog(true)
@@ -407,27 +229,33 @@ const SettingsScreen = (props) => {
                 />
                 <Divider />
                 <View
-                    style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20 }}
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        padding: 20,
+                        alignItems: 'center',
+                    }}
                 >
                     <Text
                         style={{
                             fontFamily: 'raleway',
                             textAlign: 'center',
+                            color: theme.colors.text,
                         }}
                     >
                         The Source version: {Constants.manifest.version}
                     </Text>
                     <View style={{ flexDirection: 'row' }}>
                         <Switch
-                            value={switchOn}
-                            onValueChange={(value) => setSwitchOn(value)}
+                            value={theme.dark}
+                            onValueChange={(value) => toggleDarkMode(value)}
                             color={theme.colors.primary}
                         />
                         <Feather
                             style={{ marginLeft: 20, alignSelf: 'center' }}
-                            name={switchOn ? 'moon' : 'sun'}
-                            size={20}
-                            color={switchOn ? 'black' : '#ebbb0e'}
+                            name={theme.dark ? 'moon' : 'sun'}
+                            size={23}
+                            color={theme.dark ? 'white' : '#ebbb0e'}
                         />
                     </View>
                 </View>

@@ -168,7 +168,7 @@ const ProfileModalScreen = (props) => {
                                 width: 70,
                                 height: 70,
                                 borderRadius: 35,
-                                backgroundColor: theme.extraColors.lightGray,
+                                backgroundColor: theme.colors.lightGray,
                                 overflow: 'hidden',
                             }}
                         >
@@ -250,7 +250,7 @@ const ProfileModalScreen = (props) => {
                                 width: 70,
                                 height: 70,
                                 borderRadius: 35,
-                                backgroundColor: theme.extraColors.lightGray,
+                                backgroundColor: theme.colors.lightGray,
                                 overflow: 'hidden',
                             }}
                         >
@@ -331,7 +331,7 @@ const ProfileModalScreen = (props) => {
                                 width: 70,
                                 height: 70,
                                 borderRadius: 35,
-                                backgroundColor: theme.extraColors.lightGray,
+                                backgroundColor: theme.colors.lightGray,
                                 overflow: 'hidden',
                             }}
                         >
@@ -382,7 +382,7 @@ const ProfileModalScreen = (props) => {
                             style={{
                                 fontFamily: 'raleway',
                                 fontSize: 16,
-                                color: theme.extraColors.gray,
+                                color: theme.colors.gray,
                                 marginBottom: 10,
                             }}
                         >

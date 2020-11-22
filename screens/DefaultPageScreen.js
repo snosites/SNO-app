@@ -7,9 +7,6 @@ import * as WebBrowser from 'expo-web-browser'
 import { NavigationEvents } from 'react-navigation'
 
 import LottieView from 'lottie-react-native'
-import { Colors as PaperColors, Card, Button } from 'react-native-paper'
-import Colors from '../constants/Colors'
-import { Ionicons } from '@expo/vector-icons'
 
 import ErrorView from '../components/ErrorView'
 

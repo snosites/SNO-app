@@ -22,9 +22,7 @@ import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-pape
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const CommentItem = (props) => {
-    const { comment } = props
-
-    console.log('comment', comment)
+    const { comment, theme } = props
 
     return (
         <View style={styles.container}>
@@ -41,10 +39,18 @@ const CommentItem = (props) => {
                     />
                 ) : null}
                 <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
-                    <Text style={{ fontSize: 20, fontFamily: 'ralewayBold' }}>
+                    <Text
+                        style={{
+                            fontSize: 20,
+                            fontFamily: 'ralewayBold',
+                            color: theme.colors.text,
+                        }}
+                    >
                         {comment.author_name}
                     </Text>
-                    <Text style={{ color: 'grey' }}>{String(Moment(comment.date).fromNow())}</Text>
+                    <Text style={{ color: theme.colors.gray }}>
+                        {String(Moment(comment.date).fromNow())}
+                    </Text>
                 </View>
             </View>
             <View style={styles.textCommentContainer}>
@@ -53,6 +59,12 @@ const CommentItem = (props) => {
                     textSelectable={true}
                     ignoredStyles={['height', 'width', 'display', 'font-family']}
                     allowedStyles={[]}
+                    baseFontStyle={{ color: theme.colors.text }}
+                    tagsStyles={{
+                        rawtext: {
+                            color: theme.colors.text,
+                        },
+                    }}
                 />
             </View>
         </View>

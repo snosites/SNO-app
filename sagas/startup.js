@@ -178,7 +178,6 @@ function* getCustomOptions(domain) {
         yield put(globalActions.receiveHeaderLogo(results.header_logo))
         yield put(
             themeActions.saveTheme({
-                darkMode: results.theme,
                 primary: results.primary_color,
                 accent: results.accent_color,
                 homeCategoryColor: results.home_category_color,
@@ -233,14 +232,7 @@ function* getCustomOptions(domain) {
         }
     } catch (err) {
         console.log('error in get custom domain options saga', err)
-        // default options for theme
-        yield put(
-            themeActions.saveTheme({
-                theme: 'light',
-                primary: '',
-                accent: '',
-            })
-        )
+
         yield put(globalActions.receiveHeader(''))
         yield put(globalActions.receiveHeaderLogo(''))
         yield put(globalActions.receiveCommentsOption(false))

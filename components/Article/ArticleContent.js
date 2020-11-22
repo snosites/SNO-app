@@ -124,6 +124,7 @@ const ArticleContent = (props) => {
                             p: {
                                 fontSize: 18,
                                 marginBottom: 15,
+                                color: theme.colors.text,
                             },
                             img: {
                                 marginLeft: -20,
@@ -137,6 +138,7 @@ const ArticleContent = (props) => {
                             },
                             a: {
                                 fontSize: 18,
+                                color: theme.colors.accent,
                             },
                         }}
                         classesStyles={{
@@ -146,9 +148,17 @@ const ArticleContent = (props) => {
                                 padding: 10,
                                 marginBottom: 15,
                             },
-                            largequote: { fontSize: 21 },
-                            pullquotetext: { textAlign: 'left', fontSize: 21 },
-                            quotespeaker: { textAlign: 'left', fontSize: 14 },
+                            largequote: { fontSize: 21, color: theme.colors.text },
+                            pullquotetext: {
+                                textAlign: 'left',
+                                fontSize: 21,
+                                color: theme.colors.text,
+                            },
+                            quotespeaker: {
+                                textAlign: 'left',
+                                fontSize: 14,
+                                color: theme.colors.text,
+                            },
                             photowrap: {
                                 display: 'none',
                             },

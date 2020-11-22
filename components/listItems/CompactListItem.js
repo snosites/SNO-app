@@ -27,7 +27,7 @@ const CompactListItem = (props) => {
         imageRight = false,
     } = props
 
-    const { accent, background, text, grayText } = theme.colors
+    const { accent, surface, background, text, grayText } = theme.colors
 
     const writersString = getWritersString(writers)
 

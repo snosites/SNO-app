@@ -19,7 +19,7 @@ import HTML from 'react-native-render-html'
 import { Ionicons } from '@expo/vector-icons'
 import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
 
-import CommentItem from '../components/CommentItem'
+import CommentItem from '../components/listItems/CommentItem'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -53,7 +53,7 @@ const CommentScreen = (props) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            tabBarLabel: ({ focused }) => (
+            tabBarLabel: ({ focused, color }) => (
                 <View>
                     <Text
                         style={{
@@ -62,6 +62,7 @@ const CommentScreen = (props) => {
                             fontSize: 13,
                             margin: 4,
                             backgroundColor: 'transparent',
+                            color,
                         }}
                     >
                         Comments
@@ -96,17 +97,15 @@ const CommentScreen = (props) => {
         })
     }, [navigation, comments])
 
-    // options={{tabBarLabel:  ({ focused, color }) => {
-
-    //                 } }}
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <FlatList
                 Style={{ flex: 1 }}
                 data={comments}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <CommentItem key={item.id} comment={item} />}
+                renderItem={({ item }) => (
+                    <CommentItem key={item.id} comment={item} theme={theme} />
+                )}
                 ListEmptyComponent={() => (
                     <View>
                         <Text
@@ -115,6 +114,7 @@ const CommentScreen = (props) => {
                                 fontSize: 18,
                                 textAlign: 'center',
                                 paddingHorizontal: 20,
+                                color: theme.colors.text,
                             }}
                         >
                             There are no comments for this article yet
@@ -123,7 +123,9 @@ const CommentScreen = (props) => {
                 )}
             />
             <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={140} enabled>
-                <View style={styles.commentContainer}>
+                <View
+                    style={[styles.commentContainer, { backgroundColor: theme.colors.background }]}
+                >
                     <Ionicons
                         name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'}
                         size={25}
@@ -131,8 +133,9 @@ const CommentScreen = (props) => {
                         style={{ paddingRight: 20 }}
                     />
                     <TextInput
-                        style={{ flex: 1, fontSize: 16 }}
+                        style={{ flex: 1, fontSize: 16, color: theme.colors.text }}
                         placeholder='Write a comment'
+                        placeholderTextColor={theme.colors.text}
                         onSubmitEditing={_addComment}
                         returnKeyType='send'
                         value={commentInput}
@@ -155,6 +158,7 @@ const CommentScreen = (props) => {
                                     name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'}
                                     size={25}
                                     color={theme.primaryIsDark ? 'white' : 'black'}
+                                    style={{ marginBottom: -3 }}
                                 />
                             )}
                         </TouchableOpacity>
@@ -176,7 +180,6 @@ const styles = StyleSheet.create({
         left: 0,
         borderWidth: 1,
         borderColor: '#e0e0e0',
-        backgroundColor: 'white',
         zIndex: 5,
         borderRadius: 30,
         overflow: 'hidden',

@@ -6,7 +6,7 @@ import { actions as domainActions, getActiveDomain } from '../../redux/domains'
 import { types as userTypes, actions as userActions } from '../../redux/user'
 import { actions as globalActions } from '../../redux/global'
 import { createLoadingSelector } from '../../redux/loading'
-import { createErrorMessageSelector } from '../../redux/errors'
+import { actions as themeActions } from '../../redux/theme'
 
 const deleteUserLoadingSelector = createLoadingSelector([userTypes.DELETE_USER])
 
@@ -33,6 +33,7 @@ const mapDispatchToProps = (dispatch) => {
         subscribe: (payload) => dispatch(userActions.subscribe(payload)),
         unsubscribe: (payload) => dispatch(userActions.unsubscribe(payload)),
         removeSchoolSub: (url) => dispatch(globalActions.removeSchoolSub(url)),
+        toggleDarkMode: (darkMode) => dispatch(themeActions.toggleDarkMode(darkMode)),
     }
 }
 

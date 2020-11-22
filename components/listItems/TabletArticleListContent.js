@@ -18,7 +18,6 @@ import { handleArticlePress } from '../../utils/articlePress'
 import { FontAwesome } from '@expo/vector-icons'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Badge } from 'react-native-paper'
-import Colors from '../../constants/Colors'
 
 const screenWidth = Dimensions.get('window').width
 

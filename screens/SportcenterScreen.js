@@ -15,7 +15,7 @@ import { NavigationEvents } from 'react-navigation'
 
 import LottieView from 'lottie-react-native'
 import { DataTable, Card, Button, Modal, Portal, RadioButton } from 'react-native-paper'
-import Colors from '../constants/Colors'
+
 import { Ionicons } from '@expo/vector-icons'
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 import moment from 'moment'
@@ -141,7 +141,7 @@ class SportcenterScreen extends React.Component {
                             fontSize: 14,
                             textAlign: 'center',
                             paddingBottom: 10,
-                            color: Colors.gray,
+                            color: theme.colors.gray,
                         }}
                     >
                         Select a sport to view the full schedule and toggle between other options

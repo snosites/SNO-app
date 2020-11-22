@@ -13,7 +13,6 @@ import Moment from 'moment'
 import HTML from 'react-native-render-html'
 import { Ionicons, Feather } from '@expo/vector-icons'
 import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
-import theme from '../redux/theme'
 
 const UserInfoModal = (props) => {
     const { navigation, theme, userInfo, saveUserInfo } = props
@@ -69,6 +68,7 @@ const UserInfoModal = (props) => {
                             marginBottom: 10,
                             marginTop: -10,
                             textAlign: 'center',
+                            color: theme.colors.text,
                         }}
                     >
                         Edit Preferences

@@ -98,6 +98,7 @@ const ProfileScreen = (props) => {
                                     fontFamily: 'ralewayBold',
                                     textAlign: 'center',
                                     letterSpacing: 1,
+                                    color: theme.colors.text,
                                 }}
                             >
                                 {entities.decode(
@@ -126,16 +127,24 @@ const ProfileScreen = (props) => {
                                     tagsStyles={{
                                         p: {
                                             fontSize: 18,
+                                            color: theme.colors.text,
                                         },
                                         rawtext: {
                                             fontSize: 18,
+                                            color: theme.colors.text,
                                         },
                                     }}
                                     allowedStyles={[]}
                                 />
                             ) : (
                                 <View style={{ height: 150 }}>
-                                    <Text style={{ fontSize: 18, textAlign: 'center' }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            textAlign: 'center',
+                                            color: theme.colors.text,
+                                        }}
+                                    >
                                         No Profile Content
                                     </Text>
                                 </View>

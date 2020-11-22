@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Text, View, Modal, TouchableOpacity, Share } from 'react-native'
 
 import { Feather } from '@expo/vector-icons'
@@ -29,10 +29,10 @@ const ArticleActionsScreen = (props) => {
     const _saveRemoveToggle = () => {
         if (article.saved) {
             removeSavedArticle(article.id, activeDomain.id)
-            setArticle({ ...article, saved: false })
+            navigation.goBack()
         } else {
             saveArticle(article, activeDomain.id)
-            setArticle({ ...article, saved: true })
+            navigation.goBack()
         }
     }
 
@@ -94,7 +94,7 @@ const ArticleActionsScreen = (props) => {
                     </Text>
                 </TouchableOpacity>
                 {/* TODO: copy text */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => {}}
                     style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
                 >
@@ -116,7 +116,7 @@ const ArticleActionsScreen = (props) => {
                     >
                         Copy text
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}>
                     <Feather
                         style={{
@@ -141,7 +141,7 @@ const ArticleActionsScreen = (props) => {
                             style={{
                                 fontFamily: 'openSans',
                                 fontSize: 12,
-                                color: theme.extraColors.gray,
+                                color: theme.colors.gray,
                             }}
                         >
                             Click on author names to follow them
@@ -152,7 +152,7 @@ const ArticleActionsScreen = (props) => {
                     mode='contained'
                     theme={{ roundness: 10 }}
                     style={{
-                        backgroundColor: theme.extraColors.gray,
+                        backgroundColor: theme.colors.gray,
                         fontSize: 18,
                         marginTop: 'auto',
                         marginBottom: 10,

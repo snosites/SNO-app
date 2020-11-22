@@ -29,14 +29,20 @@ export default (props) => {
                         iconName = Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'
                     }
                     return (
-                        <TabBarIcon focused={focused} color={color} name={iconName} size={size} />
+                        <TabBarIcon
+                            color={color}
+                            name={iconName}
+                            size={size}
+                            tabColor={theme.navigationTheme.colors.background}
+                        />
                     )
                 },
             })}
             tabBarOptions={{
                 activeTintColor: theme.colors.primary,
+                inactiveTintColor: theme.colors.defaultTabIcon,
                 labelStyle: {
-                    fontFamily: 'ralewayLight',
+                    fontFamily: 'raleway',
                 },
             }}
         >
@@ -48,7 +54,6 @@ export default (props) => {
                     tabBarIcon: ({ focused, color, size }) => {
                         return (
                             <TabBarIcon
-                                focused={focused}
                                 color={color}
                                 name={Platform.OS === 'ios' ? `ios-home` : 'md-home'}
                                 size={size}
@@ -68,7 +73,6 @@ export default (props) => {
                     tabBarIcon: ({ focused, color, size }) => {
                         return (
                             <TabBarIcon
-                                focused={focused}
                                 color={color}
                                 name='ios-apps'
                                 size={size}

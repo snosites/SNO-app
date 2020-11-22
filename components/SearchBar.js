@@ -55,11 +55,11 @@ const Searchbar = (props) => {
                     padding: 5,
                 }}
                 inputStyle={{ color: 'white', fontSize: 16 }}
-                iconColor={theme.extraColors.lightGray}
+                iconColor={theme.colors.lightGray}
                 placeholder={placeholder}
                 onIconPress={_search}
                 onSubmitEditing={_search}
-                theme={{ colors: { placeholder: theme.extraColors.lightGray } }}
+                theme={{ colors: { placeholder: theme.colors.lightGray } }}
                 onChangeText={(text) => setSearchTerm(text)}
                 value={searchTerm}
             />

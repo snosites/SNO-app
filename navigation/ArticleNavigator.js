@@ -34,9 +34,11 @@ const ArticleTabs = ({ route, navigation, enableComments, theme }) => {
             <Tab.Navigator
                 initialRouteName='Article'
                 backBehavior='order'
-                style={{
-                    backgroundColor: theme.navigationTheme.colors.background,
-                }}
+                style={
+                    {
+                        // backgroundColor: theme.colors.surface,
+                    }
+                }
                 tabBarOptions={{
                     indicatorStyle: { backgroundColor: theme.colors.accent, height: 3 },
                 }}
@@ -61,16 +63,19 @@ const ArticleNavigator = ({
     route,
     theme,
     activeDomain,
-    articles,
     asyncFetchArticleError,
+    cachedArticle,
+    articleSaved,
 }) => {
     const articleId = route.params?.articleId
 
     const [article, setArticle] = useState({})
 
+    console.log('cachedArticle', cachedArticle, articleSaved)
+
     useEffect(() => {
         if (articleId) {
-            if (articles && articles[articleId]) setArticle(articles[articleId])
+            if (cachedArticle) setArticle(cachedArticle)
             else _asyncFetchArticle(articleId)
         }
     }, [articleId])
@@ -164,11 +169,31 @@ const ArticleNavigator = ({
     )
 }
 
-const mapStateToNavProps = (state) => ({
-    theme: state.theme,
-    articles: state.entities.articles,
-    activeDomain: getActiveDomain(state),
-})
+const mapStateToNavProps = (state, ownProps) => {
+    const articleId = ownProps.route?.params?.articleId
+    const activeDomain = getActiveDomain(state)
+
+    const savedArticlesForSchool = state.savedArticlesBySchool[activeDomain.id]
+    let savedArticle = false
+
+    let article = {}
+    if (articleId) {
+        article = state.entities.articles[articleId]
+    }
+    if (article.id && savedArticlesForSchool) {
+        const saved = savedArticlesForSchool.find((savedArticle) => savedArticle.id == article.id)
+        if (saved) {
+            article.saved = true
+            savedArticle = true
+        }
+    }
+    return {
+        activeDomain,
+        theme: state.theme,
+        cachedArticle: article,
+        articleSaved: savedArticle,
+    }
+}
 
 const mapDispatchToProps = (dispatch) => ({
     asyncFetchArticleError: () => dispatch(articleActions.asyncFetchArticleError()),
