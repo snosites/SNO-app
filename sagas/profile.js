@@ -29,7 +29,11 @@ function* fetchProfile(action) {
         yield put(profileActions.fetchProfileRequest())
 
         const profile = yield call(domainApiService.fetchProfile, domain.url, profileId)
-        yield put(profileActions.fetchProfileSuccess(profile))
+        if (profile && profile.ID) {
+            yield put(profileActions.fetchProfileSuccess(profile))
+        } else {
+            yield put(profileActions.fetchProfileSuccess(null))
+        }
     } catch (err) {
         console.log('error fetching profile in saga', err)
         yield put(profileActions.fetchProfileError('error fetching profile'))

@@ -337,7 +337,7 @@ const ProfileModalScreen = (props) => {
                         >
                             <Image
                                 style={{ width: 70, height: 70 }}
-                                resizeMode='contain'
+                                resizeMode='cover'
                                 source={
                                     profile.post_thumbnail
                                         ? { uri: profile.post_thumbnail }
@@ -416,7 +416,7 @@ const ProfileModalScreen = (props) => {
                                         color: theme.colors.primary,
                                     }}
                                 >
-                                    {profile.articles.length > 300
+                                    {profile.articles?.length > 300
                                         ? '300+'
                                         : profile.articles.length}
                                 </Text>

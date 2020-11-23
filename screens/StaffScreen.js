@@ -14,7 +14,7 @@ import Color from 'color'
 import { NavigationEvents } from 'react-navigation'
 
 import LottieView from 'lottie-react-native'
-import { Colors as PaperColors, Card, Button } from 'react-native-paper'
+import { Card, Button } from 'react-native-paper'
 
 const StaffScreen = (props) => {
     const { route, navigation, activeDomain, global, profiles, theme, fetchProfiles } = props
@@ -99,10 +99,19 @@ const StaffScreen = (props) => {
         }
     }
 
-    const _handleProfileClick = (id) => {
-        navigation.navigate('Profile', {
-            writerId: id,
-        })
+    const _handleProfileClick = (profile) => {
+        console.log('profile', profile)
+        if (profile.customFields?.terms) {
+            navigation.push('ProfileModal', {
+                profileId: profile.customFields.terms[0].term_id,
+                profileName: profile.post_title,
+            })
+        } else {
+            navigation.push('ProfileModal', {
+                profileId: null,
+                profileName: profile.post_title,
+            })
+        }
     }
 
     const _renderItem = ({ item, index }) => {
@@ -116,8 +125,7 @@ const StaffScreen = (props) => {
                         ? [
                               styles.yearContainer,
                               {
-                                  backgroundColor: theme.colors.accent,
-                                  color: theme.accentIsDark ? 'white' : 'dark',
+                                  color: theme.colors.text,
                               },
                           ]
                         : styles.yearContainer
@@ -132,8 +140,8 @@ const StaffScreen = (props) => {
                     <Text
                         style={
                             selectedIndex === index
-                                ? [{ fontSize: 18 }, { color: isDark ? 'white' : 'black' }]
-                                : { fontSize: 18 }
+                                ? { fontSize: 18, color: theme.colors.accent, fontWeight: 'bold' }
+                                : { fontSize: 18, color: theme.colors.text }
                         }
                     >
                         {item}
@@ -192,57 +200,51 @@ const StaffScreen = (props) => {
                     >
                         Staff Profiles
                     </Text>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            flexWrap: 'wrap',
-                        }}
-                    >
+                    <View>
                         {profiles.items.map((profile) => {
                             return (
                                 <View
                                     key={profile.ID}
-                                    style={{ padding: 20, alignItems: 'center', width: 175 }}
+                                    style={{
+                                        padding: 10,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
                                 >
-                                    {profile.featuredImage ? (
-                                        <Image
-                                            source={{ uri: profile.featuredImage }}
-                                            style={{
-                                                width: 150,
-                                                height: 150,
-                                                borderRadius: 75,
-                                            }}
-                                        />
-                                    ) : (
-                                        <Image
-                                            source={require('../assets/images/anon.png')}
-                                            style={{
-                                                width: 150,
-                                                height: 150,
-                                                borderRadius: 75,
-                                            }}
-                                        />
-                                    )}
-                                    <Text
+                                    <Image
+                                        source={
+                                            profile.featuredImage
+                                                ? { uri: profile.featuredImage }
+                                                : require('../assets/images/anon.png')
+                                        }
                                         style={{
-                                            textAlign: 'center',
-                                            fontSize: 25,
-                                            paddingTop: 10,
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: 25,
                                         }}
-                                        numberOfLines={2}
-                                        ellipsizeMode='tail'
-                                    >
-                                        {profile.post_title}
-                                    </Text>
-                                    <Text style={{ fontSize: 18, color: 'grey' }}>
-                                        {profile.post_excerpt}
-                                    </Text>
+                                    />
+                                    <View style={{ flex: 1, marginLeft: 20 }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 25,
+                                                paddingTop: 10,
+                                                color: theme.colors.text,
+                                            }}
+                                            numberOfLines={2}
+                                            ellipsizeMode='tail'
+                                        >
+                                            {profile.post_title}
+                                        </Text>
+                                        <Text style={{ fontSize: 18, color: theme.colors.gray }}>
+                                            {profile.post_excerpt}
+                                        </Text>
+                                    </View>
+
                                     <Button
                                         mode='contained'
                                         color={theme.colors.accent}
                                         style={{ borderRadius: 4, margin: 5 }}
-                                        onPress={() => _handleProfileClick(profile.ID)}
+                                        onPress={() => _handleProfileClick(profile)}
                                     >
                                         View
                                     </Button>
