@@ -234,49 +234,50 @@ export default (props) => {
                     <Stack.Screen
                         name='ArticleNavigator'
                         component={ArticleNavigator}
-                        options={({ route, navigation }) => ({
-                            headerTitle: null,
-                            headerRight: () => {
-                                return (
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <TouchableOpacity
-                                            onPress={() => {}}
-                                            style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'stretch',
-                                                padding: 10,
-                                            }}
-                                        >
-                                            <AntDesign
-                                                name={'like2'}
-                                                size={25}
-                                                style={{ marginBottom: -3 }}
-                                                color={theme.colors.accent}
-                                            />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                navigation.navigate('ArticleActions')
-                                            }}
-                                            style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'stretch',
-                                                padding: 10,
-                                            }}
-                                        >
-                                            <MaterialCommunityIcons
-                                                name={'dots-horizontal'}
-                                                backgroundColor={'transparant'}
-                                                size={25}
-                                                style={{ marginBottom: -3 }}
-                                                color={theme.colors.accent}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            },
-                            headerBackTitleVisible: false,
-                        })}
+                        options={{ headerShown: false }}
+                        // options={({ route, navigation }) => ({
+                        //     headerTitle: null,
+                        //     headerRight: () => {
+                        //         return (
+                        //             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        //                 <TouchableOpacity
+                        //                     onPress={() => {}}
+                        //                     style={{
+                        //                         justifyContent: 'center',
+                        //                         alignItems: 'stretch',
+                        //                         padding: 10,
+                        //                     }}
+                        //                 >
+                        //                     <AntDesign
+                        //                         name={'like2'}
+                        //                         size={25}
+                        //                         style={{ marginBottom: -3 }}
+                        //                         color={theme.colors.accent}
+                        //                     />
+                        //                 </TouchableOpacity>
+                        //                 <TouchableOpacity
+                        //                     onPress={() => {
+                        //                         navigation.navigate('ArticleActions')
+                        //                     }}
+                        //                     style={{
+                        //                         justifyContent: 'center',
+                        //                         alignItems: 'stretch',
+                        //                         padding: 10,
+                        //                     }}
+                        //                 >
+                        //                     <MaterialCommunityIcons
+                        //                         name={'dots-horizontal'}
+                        //                         backgroundColor={'transparant'}
+                        //                         size={25}
+                        //                         style={{ marginBottom: -3 }}
+                        //                         color={theme.colors.accent}
+                        //                     />
+                        //                 </TouchableOpacity>
+                        //             </View>
+                        //         )
+                        //     },
+                        //     headerBackTitleVisible: false,
+                        // })}
                     />
                 </>
             )}

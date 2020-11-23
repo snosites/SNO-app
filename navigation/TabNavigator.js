@@ -64,7 +64,24 @@ export default (props) => {
                     },
                 }}
             />
-            <Tab.Screen name='ListDrawer' component={ListNavigator} options={{ title: 'Topics' }} />
+            <Tab.Screen
+                name='ListDrawer'
+                component={ListNavigator}
+                options={{
+                    title: 'Sections',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <TabBarIcon
+                                color={color}
+                                name={Platform.OS === 'ios' ? `md-list` : 'md-list'}
+                                size={size}
+                                // badge={'dot'}
+                                tabColor={theme.navigationTheme.colors.background}
+                            />
+                        )
+                    },
+                }}
+            />
             {sportCenterEnabled && <Tab.Screen name='SportsCenter' component={SportcenterStack} />}
             <Tab.Screen
                 name='Following'

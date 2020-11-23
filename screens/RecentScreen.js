@@ -17,6 +17,7 @@ const RecentScreen = (props) => {
         activeDomain,
         global,
         fetchRecentArticlesIfNeeded,
+        fetchMoreRecentArticlesIfNeeded,
         invalidateRecentArticles,
     } = props
     const isTablet = useIsTablet()

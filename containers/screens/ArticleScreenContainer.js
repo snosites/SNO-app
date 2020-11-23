@@ -16,12 +16,10 @@ const ArticleScreenConsumer = (props) => (
     </ArticleContext.Consumer>
 )
 
-const startupErrorSelector = createErrorMessageSelector([globalTypes.STARTUP])
-const startupLoadingSelector = createLoadingSelector([globalTypes.STARTUP])
-
 const mapStateToProps = (state) => ({
     theme: state.theme,
     activeDomain: getActiveDomain(state),
+    enableComments: state.global.enableComments,
 })
 
 export default connect(mapStateToProps)(ArticleScreenConsumer)

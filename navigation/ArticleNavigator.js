@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { Animated } from 'react-native'
+import { Animated, View, TouchableOpacity } from 'react-native'
 import {
     createStackNavigator,
     CardStyleInterpolators,
@@ -18,6 +18,8 @@ import CommentsScreenContainer from '../containers/screens/CommentsScreenContain
 import ArticleActionsContainer from '../containers/screens/ArticleActionsScreenContainer'
 import ProfileModalContainer from '../containers/screens/ProfileModalScreenContainer'
 
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
+
 import { asyncFetchArticle } from '../utils/sagaHelpers'
 import { getActiveDomain } from '../redux/domains'
 
@@ -27,6 +29,7 @@ const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
 
 export const ArticleContext = createContext(null)
+export const ArticleHeaderContext = createContext(() => {})
 
 const ArticleTabs = ({ route, navigation, enableComments, theme }) => {
     if (enableComments) {
@@ -71,8 +74,6 @@ const ArticleNavigator = ({
 
     const [article, setArticle] = useState({})
 
-    console.log('cachedArticle', cachedArticle, articleSaved)
-
     useEffect(() => {
         if (articleId) {
             if (cachedArticle) setArticle(cachedArticle)
@@ -98,6 +99,7 @@ const ArticleNavigator = ({
                 mode={'modal'}
                 screenOptions={{
                     headerShown: false,
+                    headerBackTitleVisible: false,
                     cardStyle: { backgroundColor: 'transparent' },
                     cardOverlayEnabled: true,
                     // cardStyleInterpolator: ({ current: { progress } }) => ({
@@ -121,13 +123,55 @@ const ArticleNavigator = ({
                 <Stack.Screen
                     name='ArticleTabs'
                     component={ConnectedArticleTabs}
-                    options={{ headerShown: false }}
+                    options={({ route, navigation }) => ({
+                        headerShown: true,
+                        title: null,
+                        headerRight: () => {
+                            return (
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <TouchableOpacity
+                                        onPress={() => {}}
+                                        style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'stretch',
+                                            padding: 10,
+                                        }}
+                                    >
+                                        <AntDesign
+                                            name={'like2'}
+                                            size={25}
+                                            style={{ marginBottom: -3 }}
+                                            color={theme.colors.accent}
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            navigation.push('ArticleActions')
+                                        }}
+                                        style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'stretch',
+                                            padding: 10,
+                                        }}
+                                    >
+                                        <MaterialCommunityIcons
+                                            name={'dots-horizontal'}
+                                            backgroundColor={'transparant'}
+                                            size={25}
+                                            style={{ marginBottom: -3 }}
+                                            color={theme.colors.accent}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        },
+                        headerBackTitleVisible: false,
+                    })}
                 />
                 <Stack.Screen
                     name='ArticleActions'
                     component={ArticleActionsContainer}
                     options={{
-                        headerShown: false,
                         cardOverlayEnabled: true,
                         cardStyleInterpolator: ({
                             current: { progress },
@@ -180,7 +224,7 @@ const mapStateToNavProps = (state, ownProps) => {
     if (articleId) {
         article = state.entities.articles[articleId]
     }
-    if (article.id && savedArticlesForSchool) {
+    if (article && article.id && savedArticlesForSchool) {
         const saved = savedArticlesForSchool.find((savedArticle) => savedArticle.id == article.id)
         if (saved) {
             article.saved = true

@@ -21,14 +21,61 @@ import ArticleContent from '../components/Article/ArticleContent'
 import { asyncFetchArticle } from '../utils/sagaHelpers'
 import { handleArticlePress } from '../utils/articlePress'
 
+import { Html5Entities } from 'html-entities'
+
+const entities = new Html5Entities()
+
 const ArticleScreen = (props) => {
-    const { route, navigation, theme, activeDomain, article } = props
+    const { navigation, theme, activeDomain, article, enableComments } = props
 
     const [loadingLink, setLoadingLink] = useState(false)
     const [articleChapters, setArticleChapters] = useState([])
+    const [titleYOffset, setTitleYOffset] = useState(null)
 
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
+
+    const _onLayout = (e) => {
+        if (e.nativeEvent?.layout) {
+            const { y, height } = e.nativeEvent.layout
+            setTitleYOffset(y + height - 10)
+        }
+    }
+
+    const _onScroll = ({ nativeEvent: { contentOffset } }) => {
+        const articleTitle = entities.decode(article.title?.rendered)
+
+        if (!articleTitle) return
+
+        if (contentOffset.y > titleYOffset) {
+            if (enableComments) {
+                if (navigation.dangerouslyGetParent()) {
+                    navigation.dangerouslyGetParent().setOptions({
+                        title: articleTitle,
+                    })
+                }
+            } else {
+                navigation.setOptions({
+                    title: articleTitle,
+                })
+            }
+        }
+        if (contentOffset.y < titleYOffset) {
+            if (enableComments) {
+                if (navigation.dangerouslyGetParent()) {
+                    navigation.dangerouslyGetParent().setOptions({
+                        title: '',
+                    })
+                }
+            } else {
+                navigation.setOptions({
+                    title: '',
+                })
+            }
+        }
+    }
+
+    // useEffect()
 
     const _viewLink = async (href) => {
         setLoadingLink(true)
@@ -80,12 +127,17 @@ const ArticleScreen = (props) => {
 
     return (
         <>
-            <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+            <ScrollView
+                style={{ flex: 1, backgroundColor: theme.colors.surface }}
+                scrollEventThrottle={16}
+                onScroll={(e) => _onScroll(e)}
+            >
                 <ArticleContent
                     navigation={navigation}
                     article={article}
                     theme={theme}
                     onLinkPress={(href) => _viewLink(href)}
+                    onLayout={_onLayout}
                 />
                 {articleChapters.map((article) => (
                     <ArticleContent

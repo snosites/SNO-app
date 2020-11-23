@@ -22,7 +22,16 @@ Moment.updateLocale('en', {
 })
 
 const ArticleContent = (props) => {
-    const { navigation, theme, article, onLinkPress = (href) => {}, ad, snoAd, adPosition } = props
+    const {
+        navigation,
+        theme,
+        article,
+        onLayout = () => {},
+        onLinkPress = (href) => {},
+        ad,
+        snoAd,
+        adPosition,
+    } = props
 
     const viewportWidth = useWindowDimensions().width
 
@@ -47,6 +56,7 @@ const ArticleContent = (props) => {
                     paddingTop: 10,
                     alignItems: 'center',
                 }}
+                onLayout={(e) => onLayout(e)}
             >
                 <Text
                     style={{
@@ -57,7 +67,7 @@ const ArticleContent = (props) => {
                         color: theme.colors.text,
                     }}
                 >
-                    {entities.decode(article.title.rendered)}
+                    {entities.decode(article.title?.rendered)}
                 </Text>
                 {article.custom_fields.sno_deck && article.custom_fields.sno_deck[0] ? (
                     <Text

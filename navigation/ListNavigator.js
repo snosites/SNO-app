@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Image, TouchableOpacity } from 'react-native'
 import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
@@ -30,7 +30,23 @@ const getActiveCategoryTitle = (menus, categoryId) => {
 }
 
 const ListStack = (props) => {
-    const { theme, headerLogo, activeCategoryTitle, navigation } = props
+    const { theme, headerLogo, activeCategoryTitle, navigation, route } = props
+
+    useEffect(() => {
+        const unsubscribe = navigation.dangerouslyGetParent()?.addListener('tabPress', (e) => {
+            // Prevent default behavior
+            // e.preventDefault()
+            if (navigation.isFocused()) {
+                navigation.openDrawer()
+            }
+        })
+
+        return unsubscribe
+    }, [navigation])
+
+    useEffect(() => {
+        navigation.openDrawer()
+    }, [])
 
     return (
         <Stack.Navigator
