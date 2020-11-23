@@ -51,12 +51,38 @@ const ArticleScreen = (props) => {
             if (enableComments) {
                 if (navigation.dangerouslyGetParent()) {
                     navigation.dangerouslyGetParent().setOptions({
-                        title: articleTitle,
+                        headerTitle: ({ style }) => (
+                            <Text
+                                style={{
+                                    ...style,
+                                    marginHorizontal: 50,
+                                    fontSize: 16,
+                                    fontFamily: 'ralewayBold',
+                                }}
+                                ellipsizeMode={'middle'}
+                                numberOfLines={1}
+                            >
+                                {articleTitle}
+                            </Text>
+                        ),
                     })
                 }
             } else {
                 navigation.setOptions({
-                    title: articleTitle,
+                    headerTitle: ({ style }) => (
+                        <Text
+                            style={{
+                                ...style,
+                                marginHorizontal: 50,
+                                fontSize: 16,
+                                fontFamily: 'ralewayBold',
+                            }}
+                            ellipsizeMode={'middle'}
+                            numberOfLines={1}
+                        >
+                            {articleTitle}
+                        </Text>
+                    ),
                 })
             }
         }
@@ -64,12 +90,12 @@ const ArticleScreen = (props) => {
             if (enableComments) {
                 if (navigation.dangerouslyGetParent()) {
                     navigation.dangerouslyGetParent().setOptions({
-                        title: '',
+                        headerTitle: '',
                     })
                 }
             } else {
                 navigation.setOptions({
-                    title: '',
+                    headerTitle: '',
                 })
             }
         }

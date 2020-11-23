@@ -102,6 +102,7 @@ const ArticleNavigator = ({
                     headerBackTitleVisible: false,
                     cardStyle: { backgroundColor: 'transparent' },
                     cardOverlayEnabled: true,
+                    headerTitleAlign: true,
                     // cardStyleInterpolator: ({ current: { progress } }) => ({
                     //     cardStyle: {
                     //         opacity: progress.interpolate({

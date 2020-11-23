@@ -36,6 +36,7 @@ const CustomDrawerContent = (props) => {
 
             fetchArticlesIfNeeded(activeDomain.url, item.object_id)
 
+            //TODO: scroll back to top with category switch
             navigation.navigate('List')
             setActiveCategory(item.object_id)
         } else if (item.object === 'page') {
