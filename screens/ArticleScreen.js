@@ -26,7 +26,18 @@ import { Html5Entities } from 'html-entities'
 const entities = new Html5Entities()
 
 const ArticleScreen = (props) => {
-    const { navigation, article, theme, activeDomain, enableComments, storyAds } = props
+    const {
+        navigation,
+        article,
+        theme,
+        activeDomain,
+        enableComments,
+        storyAds,
+        sendAdAnalytic,
+        fetchSnoAdImage,
+    } = props
+
+    const [ad, setAd] = useState(null)
 
     const [loadingLink, setLoadingLink] = useState(false)
     const [articleChapters, setArticleChapters] = useState([])
@@ -37,7 +48,31 @@ const ArticleScreen = (props) => {
 
     useEffect(() => {
         console.log('storyAds', storyAds)
+        if (storyAds.images?.length && !storyAds.snoAds) {
+            setAd(storyAds.images[Math.floor(Math.random() * storyAds.images.length)])
+        } else {
+            setAd(null)
+        }
     }, [storyAds])
+
+    // useeffect
+    // if (storyAds && storyAds.images && !storyAds.snoAds) {
+    //         this.setState({
+    //             ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
+    //         })
+    //     }
+
+    // on focus
+    // if (ad && ad.id) {
+    //                             sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+    //                         }
+    //                         if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
+    //                             fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
+    //                         }
+
+    //  ad={ad}
+    //                     adPosition={storyAds ? storyAds.displayLocation : null}
+    //                     snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
 
     const _onLayout = (e) => {
         if (e.nativeEvent?.layout) {

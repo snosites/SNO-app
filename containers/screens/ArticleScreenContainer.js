@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import ArticleScreen from '../../screens/ArticleScreen'
 
-import { getStoryAds } from '../../redux/ads'
+import { actions as adActions, getStoryAds } from '../../redux/ads'
 import { getActiveDomain } from '../../redux/domains'
 
 import { ArticleContext } from '../../navigation/ArticleNavigator'
@@ -21,4 +21,13 @@ const mapStateToProps = (state) => ({
     storyAds: getStoryAds(state),
 })
 
-export default connect(mapStateToProps)(ArticleScreenConsumer)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        sendAdAnalytic: (url, imageId, field) =>
+            dispatch(adActions.sendAdAnalytic(url, imageId, field)),
+        fetchSnoAdImage: (adSpotId, fallbackUrl) =>
+            dispatch(adActions.fetchSnoAdImage(adSpotId, fallbackUrl)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ArticleScreenConsumer)
