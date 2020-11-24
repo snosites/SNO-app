@@ -55,6 +55,26 @@ const ArticleScreen = (props) => {
         }
     }, [storyAds])
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (ad && ad.id) {
+                sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+            }
+            if (storyAds.snoAds?.ad_spot_id) {
+                setAd(null)
+                fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
+            }
+        })
+        return unsubscribe
+    }, [navigation])
+
+    //  useEffect(() => {
+    //      const unsubscribe = navigation.addListener('blur', () => {
+    //          console.log('blurred')
+    //      })
+    //      return unsubscribe
+    //  }, [navigation])
+
     // useeffect
     // if (storyAds && storyAds.images && !storyAds.snoAds) {
     //         this.setState({
@@ -69,10 +89,6 @@ const ArticleScreen = (props) => {
     //                         if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
     //                             fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
     //                         }
-
-    //  ad={ad}
-    //                     adPosition={storyAds ? storyAds.displayLocation : null}
-    //                     snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
 
     const _onLayout = (e) => {
         if (e.nativeEvent?.layout) {
@@ -203,6 +219,9 @@ const ArticleScreen = (props) => {
                     theme={theme}
                     onLinkPress={(href) => _viewLink(href)}
                     onLayout={_onLayout}
+                    ad={ad}
+                    snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
+                    adPosition={storyAds.displayLocation}
                 />
                 {articleChapters.map((article) => (
                     <ArticleContent

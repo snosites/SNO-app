@@ -108,7 +108,9 @@ const ArticleContent = (props) => {
                     {_renderDate(article.date)}
                 </Text>
             </View>
-            {ad && adPosition === 'beginning' ? <AdBlock image={ad} /> : null}
+            {ad && adPosition === 'beginning' ? (
+                <AdBlock image={ad} themeIsDark={theme.dark} />
+            ) : null}
             {article.content.rendered ? (
                 <View style={{ padding: 20 }}>
                     <HTML
@@ -178,6 +180,7 @@ const ArticleContent = (props) => {
                             },
                         }}
                         onParsed={(dom, RNElements) => {
+                            // snoAd is always in the middle
                             if (snoAd) {
                                 console.log('rendering ad block for sno ad')
                                 const ad = {
@@ -218,11 +221,12 @@ const ArticleContent = (props) => {
                             adImage: ad,
                             snoAdImage: snoAd,
                             backgroundColor: theme.colors.background,
+                            themeIsDark: theme.dark,
                         }}
                     />
                 </View>
             ) : null}
-            {ad && adPosition === 'end' ? <AdBlock image={ad} /> : null}
+            {ad && adPosition === 'end' ? <AdBlock image={ad} themeIsDark={theme.dark} /> : null}
         </View>
     )
 }

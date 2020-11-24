@@ -6,10 +6,7 @@ import RelatedStories from '../views/RelatedStories'
 import AdBlock from '../components/AdBlock'
 import theme from '../redux/theme'
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window')
-
-const MEDIASIZE = viewportHeight * 0.35
-const MEDIAWIDTH = viewportWidth * 0.9
+const { width: viewportWidth } = Dimensions.get('window')
 
 export function slideshowRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
     if (!htmlAttribs['data-photo-ids']) {
@@ -37,7 +34,7 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
             key={passProps.key}
             style={{
                 width: viewportWidth,
-                marginLeft: -20,
+                marginLeft: -10,
                 marginVertical: 20,
                 backgroundColor: backgroundColor || '#eeeeee',
             }}
@@ -48,8 +45,9 @@ export function relatedRenderer(htmlAttribs, children, convertedCSSStyles, passP
 }
 
 export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passProps = {}) {
-    const adImage = passProps.renderersProps.adImage
-    const snoAdImage = passProps.renderersProps.snoAdImage
+    const adImage = passProps.renderersProps?.adImage
+    const snoAdImage = passProps.renderersProps?.snoAdImage
+    const themeIsDark = passProps.renderersProps?.themeIsDark
     if (!passProps.renderersProps || (!adImage && !snoAdImage)) return
 
     return (
@@ -57,13 +55,13 @@ export function adBlockRenderer(htmlAttribs, children, convertedCSSStyles, passP
             key={passProps.key}
             style={{
                 width: viewportWidth,
-                position: 'relative',
-                left: -20,
-                overflow: 'visible',
+                marginLeft: -10,
+                marginVertical: 20,
             }}
         >
             <AdBlock
-                style={{ marginVertical: 20 }}
+                themeIsDark={themeIsDark}
+                style={{}}
                 snoAd={snoAdImage ? true : false}
                 image={
                     snoAdImage

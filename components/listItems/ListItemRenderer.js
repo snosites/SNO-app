@@ -9,7 +9,7 @@ import LargeListItem from './LargeListItem'
 import AdBlock from '../AdBlock'
 
 const ListItemRenderer = (props) => {
-    const { item, theme, index, seperators, onPress = () => {}, listStyle, ad } = props
+    const { item, theme, index, seperators, onPress = () => {}, listStyle, ad, themeIsDark } = props
 
     const getListItemComponent = () => {
         switch (listStyle) {
@@ -95,7 +95,9 @@ const ListItemRenderer = (props) => {
     return (
         <View>
             {getListItemComponent()}
-            {ad ? <AdBlock image={ad} style={{ marginBottom: 0 }} /> : null}
+            {ad ? (
+                <AdBlock image={ad} themeIsDark={theme.dark} style={{ marginBottom: 0 }} />
+            ) : null}
         </View>
     )
 }

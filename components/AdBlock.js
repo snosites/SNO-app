@@ -15,16 +15,19 @@ const AdBlock = ({
     activeDomain,
     sendAdAnalytic,
     sendSnoAdAnalytic,
-    snoAd = null,
+    themeIsDark = false,
+    snoAd = false,
 }) => {
     const AD_CONTAINER_WIDTH = useWindowDimensions().width
+
+    const backgroundColor = themeIsDark ? '#212121' : '#e0e0e0'
 
     return (
         <TouchableOpacity
             style={{
                 flex: 1,
                 alignItems: 'center',
-                backgroundColor: '#e0e0e0',
+                backgroundColor,
                 marginVertical: 10,
                 ...style,
                 width: AD_CONTAINER_WIDTH,

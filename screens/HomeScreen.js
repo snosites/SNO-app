@@ -194,7 +194,9 @@ const HomeScreen = (props) => {
                                 marginHorizontal: 30,
                             }}
                         />
-                        {shouldShowAdImage(sectionIndex) && <AdBlock image={ad} />}
+                        {shouldShowAdImage(sectionIndex) && (
+                            <AdBlock image={ad} themeIsDark={theme.dark} />
+                        )}
                     </View>
                 )
             }}

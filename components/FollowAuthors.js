@@ -148,8 +148,6 @@ const mapDispatchToProps = (dispatch) => ({
     subscribe: (payload) => dispatch(userActions.subscribe(payload)),
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),
-    fetchSnoAdImage: (adSpotId, fallbackUrl) =>
-        dispatch(adActions.fetchSnoAdImage(adSpotId, fallbackUrl)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FullArticleScreen)
