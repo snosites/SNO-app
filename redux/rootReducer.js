@@ -8,6 +8,7 @@ import loading from './loading'
 import global from './global'
 import articlesByCategory, { entities } from './articles'
 import savedArticlesBySchool from './savedArticles'
+import likedArticlesBySchool from './likedArticles'
 import searchArticles from './search'
 import searchAuthors from './searchAuthors'
 import profiles from './profiles'
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
     articlesByCategory,
     entities,
     savedArticlesBySchool,
+    likedArticlesBySchool,
     searchArticles,
     searchAuthors,
     profiles,

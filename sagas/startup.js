@@ -7,6 +7,7 @@ import { actions as userActions, getApiToken, getSubscribeAll, getFromPush } fro
 import { actions as themeActions } from '../redux/theme'
 import { actions as articleActions } from '../redux/articles'
 import { actions as savedArticleActions } from '../redux/savedArticles'
+import { actions as likedArticleActions } from '../redux/likedArticles'
 import { getActiveDomain, getSavedDomains } from '../redux/domains'
 
 import { fetchMenu } from '../sagas/menu'
@@ -107,6 +108,7 @@ function* startup(action) {
         yield put(globalActions.setActiveCategory(activeCategory))
 
         yield put(savedArticleActions.initializeSaved(domain.id))
+        yield put(likedArticleActions.initializeLiked(domain.id))
 
         // throw new Error()
 
@@ -184,6 +186,10 @@ function* getCustomOptions(domain) {
                 homeCategoryColor: results.home_category_color,
             })
         )
+        const themeIsDark = yield select((state) => state.theme.dark)
+        if (themeIsDark) {
+            yield put(themeActions.toggleDarkMode(true))
+        }
         yield put(globalActions.receiveCommentsOption(results.comments === 'Enable' ? true : false))
         yield put(
             globalActions.receiveStoryListStyle(

@@ -6,6 +6,7 @@ import createSagaMiddleWare from 'redux-saga'
 import logger from 'redux-logger'
 
 import rootReducer from './rootReducer'
+import themeReducer from './theme'
 import rootSaga from '../sagas/rootSaga'
 
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
@@ -80,11 +81,26 @@ const persistConfig = {
     version: 7,
     storage,
     migrate: createMigrate(migrations, { debug: true }),
-    whitelist: ['domains', 'savedArticlesBySchool', 'user'],
+    whitelist: ['domains', 'user', 'savedArticlesBySchool', 'likedArticlesBySchool'],
     debug: true,
     timeout: 10000,
     stateReconciler: autoMergeLevel2,
 }
+
+// const themePersistConfig = {
+//     key: 'theme',
+//     version: 7,
+//     storage,
+//     whitelist: ['dark'],
+//     debug: true,
+//     timeout: 10000,
+//     stateReconciler: autoMergeLevel2,
+// }
+
+// const newRootReducer = combineReducers({
+//     auth: persistReducer(authPersistConfig, authReducer),
+//     other: otherReducer,
+// })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

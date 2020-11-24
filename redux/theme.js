@@ -2,6 +2,10 @@ import Color from 'color'
 
 import { defaultColorTheme, defaultNavigationTheme, darkNavigationTheme } from '../constants/Colors'
 
+import { persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1'
+
 const black = '#000000'
 const white = '#ffffff'
 
@@ -10,7 +14,17 @@ export const types = {
     TOGGLE_DARK_MODE: 'TOGGLE_DARK_MODE',
 }
 
-export default function theme(state = defaultColorTheme, action) {
+const themePersistConfig = {
+    key: 'theme',
+    version: 7,
+    storage,
+    whitelist: ['dark'],
+    debug: true,
+    timeout: 10000,
+    stateReconciler: autoMergeLevel1,
+}
+
+function theme(state = defaultColorTheme, action) {
     switch (action.type) {
         case types.SAVE_THEME:
             let primaryColor = Color(action.theme.primary || state.colors.primary)
@@ -117,6 +131,8 @@ export default function theme(state = defaultColorTheme, action) {
             return state
     }
 }
+
+export default persistReducer(themePersistConfig, theme)
 
 export const actions = {
     saveTheme: (theme) => ({ type: types.SAVE_THEME, theme }),

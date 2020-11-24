@@ -1,17 +1,13 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { Animated, View, TouchableOpacity } from 'react-native'
-import {
-    createStackNavigator,
-    CardStyleInterpolators,
-    TransitionSpecs,
-    TransitionPresets,
-} from '@react-navigation/stack'
+import { createStackNavigator } from '@react-navigation/stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
 import { StatusBar } from 'expo-status-bar'
 
 import { connect } from 'react-redux'
 import { actions as articleActions } from '../redux/articles'
+import { types as likedArticleTypes, actions as likedArticleActions } from '../redux/likedArticles'
 
 import ArticleScreenContainer from '../containers/screens/ArticleScreenContainer'
 import CommentsScreenContainer from '../containers/screens/CommentsScreenContainer'
@@ -69,6 +65,9 @@ const ArticleNavigator = ({
     asyncFetchArticleError,
     cachedArticle,
     articleSaved,
+    likeArticle,
+    removeLikedArticle,
+    articleLiked,
 }) => {
     const articleId = route.params?.articleId
 
@@ -139,10 +138,15 @@ const ArticleNavigator = ({
                                         }}
                                     >
                                         <AntDesign
-                                            name={'like2'}
+                                            name={articleLiked ? 'like1' : 'like2'}
                                             size={25}
                                             style={{ marginBottom: -3 }}
                                             color={theme.colors.accent}
+                                            onPress={() =>
+                                                articleLiked
+                                                    ? removeLikedArticle(articleId, activeDomain.id)
+                                                    : likeArticle(articleId, activeDomain.id)
+                                            }
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity
@@ -219,7 +223,9 @@ const mapStateToNavProps = (state, ownProps) => {
     const activeDomain = getActiveDomain(state)
 
     const savedArticlesForSchool = state.savedArticlesBySchool[activeDomain.id]
+    const likedArticlesForSchool = state.likedArticlesBySchool[activeDomain.id]
     let savedArticle = false
+    let likedArticle = false
 
     let article = {}
     if (articleId) {
@@ -232,16 +238,28 @@ const mapStateToNavProps = (state, ownProps) => {
             savedArticle = true
         }
     }
+    if (article && article.id && likedArticlesForSchool) {
+        const liked = likedArticlesForSchool.find((likedArticleId) => likedArticleId == article.id)
+        if (liked) {
+            article.liked = true
+            likedArticle = true
+        }
+    }
     return {
         activeDomain,
         theme: state.theme,
         cachedArticle: article,
         articleSaved: savedArticle,
+        articleLiked: likedArticle,
     }
 }
 
 const mapDispatchToProps = (dispatch) => ({
     asyncFetchArticleError: () => dispatch(articleActions.asyncFetchArticleError()),
+    likeArticle: (articleId, schoolId) =>
+        dispatch(likedArticleActions.likeArticle(articleId, schoolId)),
+    removeLikedArticle: (articleId, schoolId) =>
+        dispatch(likedArticleActions.removeLikedArticle(articleId, schoolId)),
 })
 
 export default connect(mapStateToNavProps, mapDispatchToProps)(ArticleNavigator)

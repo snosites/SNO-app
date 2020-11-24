@@ -1,6 +1,7 @@
 import { all, put, call, takeLatest, select } from 'redux-saga/effects'
 
 import { types as savedArticleTypes, actions as savedArticleActions } from '../redux/savedArticles'
+import { types as likedArticleTypes } from '../redux/likedArticles'
 import { types as domainTypes, actions as domainActions } from '../redux/domains'
 import { types as articleTypes, actions as articleActions } from '../redux/articles'
 import { types as userTypes } from '../redux/user'
@@ -25,6 +26,8 @@ function* snackbarQueue() {
             addToQueue,
             'Article removed from saved list'
         ),
+        takeLatest(likedArticleTypes.LIKE_ARTICLE, addToQueue, 'Article liked'),
+        takeLatest(likedArticleTypes.REMOVE_LIKED_ARTICLE, addToQueue, 'Article unliked'),
         takeLatest(domainTypes.DELETE_DOMAIN, addToQueue, 'Organization removed'),
         takeLatest(userTypes.SUBSCRIBE_SUCCESS, addToQueue, 'Followed writer'),
         takeLatest(userTypes.UNSUBSCRIBE_SUCCESS, addToQueue, 'Unfollowed writer'),
