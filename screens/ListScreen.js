@@ -36,27 +36,39 @@ const ListScreen = (props) => {
     const momentumScrolling = useRef(false)
 
     useEffect(() => {
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+    }, [categoryId])
+
+    useEffect(() => {
         _playAnimation()
 
-        if (listAds && listAds.images && listAds.images.length) {
-            const activeAdImage = listAds.images[Math.floor(Math.random() * listAds.images.length)]
-            if (activeAdImage.id) {
-                setAd(activeAdImage)
-                sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')
+        if (listAds.images?.length) {
+            const randomAdImage = listAds.images[Math.floor(Math.random() * listAds.images.length)]
+
+            if (randomAdImage.id) {
+                setAd(randomAdImage)
+                sendAdAnalytic(activeDomain.url, randomAdImage.id, 'ad_views')
             }
+        } else {
+            setAd(null)
         }
     }, [listAds])
 
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         if (ad && ad.id) {
-    //             console.log('sending ad analytic')
-    //             sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-    //         }
-    //     })
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (ad && ad.id && articlesByCategory.length) {
+                sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
+            }
+        })
 
-    //     return unsubscribe
-    // }, [navigation])
+        return unsubscribe
+    }, [navigation])
+
+    const shouldShowAd = (itemIndex) => {
+        if (!listAds.displayLocation || !itemIndex) return false
+
+        return itemIndex % Number(listAds.displayLocation) === 0
+    }
 
     const _playAnimation = () => {
         if (animationRef && animationRef.current) {
@@ -131,20 +143,24 @@ const ListScreen = (props) => {
                                 alignItems: 'center',
                             }}
                         >
-                            <ActivityIndicator />
+                            <ActivityIndicator color={theme.colors.text} />
                         </View>
                     )
                 }}
-                renderItem={({ item, index, separators }) => (
-                    <ListItemRenderer
-                        theme={theme}
-                        item={item}
-                        index={index}
-                        separators={separators}
-                        onPress={() => handleArticlePress(item, activeDomain)}
-                        listStyle={storyListStyle}
-                    />
-                )}
+                renderItem={({ item, index, separators }) => {
+                    const shouldShow = shouldShowAd(index)
+                    return (
+                        <ListItemRenderer
+                            theme={theme}
+                            item={item}
+                            index={index}
+                            separators={separators}
+                            onPress={() => handleArticlePress(item, activeDomain)}
+                            listStyle={storyListStyle}
+                            ad={shouldShow ? ad : null}
+                        />
+                    )
+                }}
                 ItemSeparatorComponent={() => (
                     <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
                 )}
@@ -156,6 +172,7 @@ const ListScreen = (props) => {
                                 fontSize: 18,
                                 textAlign: 'center',
                                 padding: 20,
+                                color: theme.colors.text,
                             }}
                         >
                             There are no items to display in this category

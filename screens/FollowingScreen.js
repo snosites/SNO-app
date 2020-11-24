@@ -87,14 +87,12 @@ const FollowingScreen = (props) => {
         }
     }
 
-    console.log('user info', userInfo, activeDomain)
     return (
         <ScrollView style={{ padding: 15 }} contentContainerStyle={{ paddingBottom: 80 }}>
             {domains.map((domain) => {
                 const writerSubs = userInfo.writerSubscriptions.filter(
                     (writer) => writer.organization_id === domain.id
                 )
-                console.log('writer subs', writerSubs)
                 return
             })}
             <List.Accordion

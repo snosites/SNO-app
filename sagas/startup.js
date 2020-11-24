@@ -156,6 +156,7 @@ function* getHomeScreenArticles() {
                         articleActions.fetchArticlesIfNeeded({
                             domain: domain.url,
                             category: category,
+                            force: true,
                         })
                     )
                 })
@@ -299,6 +300,7 @@ function* initializeDeepLinkUser({ params: { schoolId } }) {
 }
 
 function* fetchAds(domain, adOptions) {
+    console.log('fetch ads', adOptions)
     try {
         yield all(
             Object.keys(adOptions).map((adName) => {

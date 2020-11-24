@@ -42,6 +42,7 @@ const mapStateToProps = (state) => {
             title: category ? category.title : '',
             id: categoryId,
             data: matchedArticles,
+            sectionIndex: i + 1,
         })
     }
 
@@ -74,7 +75,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
-    invalidateArticles: (categoryId) => dispatch(articlesActions.invalidateArticles(categoryId)),
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),

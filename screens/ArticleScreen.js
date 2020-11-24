@@ -58,6 +58,7 @@ const ArticleScreen = (props) => {
                                     marginHorizontal: 50,
                                     fontSize: 16,
                                     fontFamily: 'ralewayBold',
+                                    color: theme.colors.text,
                                 }}
                                 ellipsizeMode={'middle'}
                                 numberOfLines={1}
@@ -76,6 +77,7 @@ const ArticleScreen = (props) => {
                                 marginHorizontal: 50,
                                 fontSize: 16,
                                 fontFamily: 'ralewayBold',
+                                color: theme.colors.text,
                             }}
                             ellipsizeMode={'middle'}
                             numberOfLines={1}

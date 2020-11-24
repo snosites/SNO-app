@@ -27,7 +27,9 @@ const ErrorView = ({ theme, onRefresh = () => {} }) => {
                     source={require('../assets/lottiefiles/broken-stick-error')}
                 />
             </View>
-            <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
+            <Text
+                style={{ textAlign: 'center', fontSize: 17, padding: 30, color: theme.colors.text }}
+            >
                 Sorry, something went wrong. If you are the site owner, please submit a support
                 request.
             </Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, TouchableOpacity, Image } from 'react-native'
+import { Text, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
@@ -17,6 +17,8 @@ const AdBlock = ({
     sendSnoAdAnalytic,
     snoAd = null,
 }) => {
+    const AD_CONTAINER_WIDTH = useWindowDimensions().width
+
     return (
         <TouchableOpacity
             style={{
@@ -25,6 +27,8 @@ const AdBlock = ({
                 backgroundColor: '#e0e0e0',
                 marginVertical: 10,
                 ...style,
+                width: AD_CONTAINER_WIDTH,
+                marginLeft: -10,
             }}
             onPress={async () => {
                 if (!snoAd) {
@@ -55,6 +59,7 @@ const AdBlock = ({
                 style={{
                     width: 250,
                     height: 300,
+                    margin: 10,
                 }}
                 resizeMode='contain'
                 source={{

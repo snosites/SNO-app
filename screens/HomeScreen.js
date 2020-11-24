@@ -13,9 +13,9 @@ import {
 import LottieView from 'lottie-react-native'
 import { AntDesign } from '@expo/vector-icons'
 
-import AdBlock from '../components/AdBlock'
 import ErrorView from '../components/ErrorView'
 import ListItemRenderer from '../components/listItems/ListItemRenderer'
+import AdBlock from '../components/AdBlock'
 
 import { useIsTablet } from '../utils/helpers'
 
@@ -36,9 +36,10 @@ const HomeScreen = (props) => {
         articlesLoading,
         setActiveCategory,
         homeScreenData,
+        refreshHomeScreen,
     } = props
 
-    const { homeScreenListStyle, enableComments } = global
+    const { homeScreenListStyle } = global
 
     const [ad, setAd] = useState(null)
     const isTablet = useIsTablet()
@@ -49,47 +50,54 @@ const HomeScreen = (props) => {
     useEffect(() => {
         _playAnimation()
 
-        if (homeAds && homeAds.images && homeAds.images.length) {
-            const activeAdImage = homeAds.images[Math.floor(Math.random() * homeAds.images.length)]
-            setAd(activeAdImage)
-            sendAdAnalytic(activeDomain.url, activeAdImage.id, 'ad_views')
+        if (homeAds.images?.length) {
+            const randomAdImage = homeAds.images[Math.floor(Math.random() * homeAds.images.length)]
+
+            if (randomAdImage.id) {
+                setAd(randomAdImage)
+                sendAdAnalytic(activeDomain.url, randomAdImage.id, 'ad_views')
+            }
+        } else {
+            setAd(null)
         }
     }, [homeAds])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            if (ad && ad.id) {
-                console.log('sending ad analytic')
+            if (ad && ad.id && homeScreenData?.length) {
                 sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
             }
         })
         return unsubscribe
     }, [navigation])
 
-    _playAnimation = () => {
+    useEffect(() => {
+        if (navigation.dangerouslyGetParent()?.dangerouslyGetParent()) {
+            const unsubscribe = navigation
+                .dangerouslyGetParent()
+                .dangerouslyGetParent()
+                .addListener('tabPress', () => {
+                    const isFocused = navigation.dangerouslyGetParent().isFocused()
+                    if (isFocused) _scrollToTop()
+                })
+            return unsubscribe
+        }
+    }, [navigation])
+
+    const shouldShowAdImage = (sectionIndex) => homeAds.displayLocation?.includes(sectionIndex)
+
+    const _playAnimation = () => {
         if (animationRef && animationRef.current) {
             animationRef.current.reset()
             animationRef.current.play()
         }
     }
 
-    // _handleRefresh = () => {
-    //     invalidateArticles(category.categoryId)
-    //     fetchArticlesIfNeeded({
-    //         domain: activeDomain.url,
-    //         category: category.categoryId,
-    //     })
-    // }
-
-    // _loadMore = () => {
-    //     fetchMoreArticlesIfNeeded({
-    //         domain: activeDomain.url,
-    //         category: category.categoryId,
-    //     })
-    // }
-
-    _scrollToTop = () => {
-        flatListRef.scrollToOffset({ animated: true, offset: 0 })
+    const _scrollToTop = () => {
+        flatListRef.current?.scrollToLocation({
+            sectionIndex: 0,
+            itemIndex: 0,
+        })
     }
 
     if (articlesLoading) {
@@ -111,7 +119,7 @@ const HomeScreen = (props) => {
         )
     }
     if (!homeScreenData.length) {
-        return <ErrorView onRefresh={_handleRefresh} />
+        return <ErrorView theme={theme} onRefresh={refreshHomeScreen} />
     }
 
     return (
@@ -133,60 +141,63 @@ const HomeScreen = (props) => {
                     {entities.decode(title)}
                 </Text>
             )}
-            renderSectionFooter={({ section: { title, id } }) => (
-                <View>
-                    <View
-                        style={{
-                            marginTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
+            renderSectionFooter={({ section: { title, id, sectionIndex } }) => {
+                return (
+                    <View>
+                        <View
                             style={{
-                                fontFamily: 'ralewayBold',
-                                fontSize: 15,
-                                color: theme.colors.gray,
+                                marginTop: 20,
+                                flexDirection: 'row',
+                                justifyContent: 'flex-end',
+                                alignItems: 'center',
                             }}
                         >
-                            More{' '}
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setActiveCategory(id)
-                                navigation.navigate('ListDrawer')
+                            <Text
+                                style={{
+                                    fontFamily: 'ralewayBold',
+                                    fontSize: 15,
+                                    color: theme.colors.gray,
+                                }}
+                            >
+                                More{' '}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setActiveCategory(id)
+                                    navigation.navigate('ListDrawer')
+                                }}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text
+                                        style={{
+                                            fontFamily: 'ralewayBold',
+                                            fontSize: 15,
+                                            color: theme.colors.accent,
+                                        }}
+                                    >
+                                        {entities.decode(title)}
+                                    </Text>
+                                    <AntDesign
+                                        name={'caretright'}
+                                        size={12}
+                                        style={{ marginBottom: -3, marginLeft: -2 }}
+                                        color={theme.colors.accent}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        <View
+                            style={{
+                                marginTop: 20,
+                                height: 1,
+                                backgroundColor: theme.colors.accent,
+                                marginHorizontal: 30,
                             }}
-                        >
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text
-                                    style={{
-                                        fontFamily: 'ralewayBold',
-                                        fontSize: 15,
-                                        color: theme.colors.accent,
-                                    }}
-                                >
-                                    {entities.decode(title)}
-                                </Text>
-                                <AntDesign
-                                    name={'caretright'}
-                                    size={12}
-                                    style={{ marginBottom: -3, marginLeft: -2 }}
-                                    color={theme.colors.accent}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                        />
+                        {shouldShowAdImage(sectionIndex) && <AdBlock image={ad} />}
                     </View>
-                    <View
-                        style={{
-                            marginTop: 20,
-                            height: 1,
-                            backgroundColor: theme.colors.accent,
-                            marginHorizontal: 30,
-                        }}
-                    />
-                </View>
-            )}
+                )
+            }}
             stickySectionHeadersEnabled={false}
             renderItem={({ item, index, separators }) => (
                 <ListItemRenderer

@@ -105,10 +105,10 @@ function shouldFetchMoreArticles(articles) {
 const getArticlesByCategory = (state) => state.articlesByCategory
 
 function* fetchArticlesIfNeeded(action) {
-    const { domain, category } = action.payload
+    const { domain, category, force = false } = action.payload
     const articlesByCategory = yield select(getArticlesByCategory)
     const articles = articlesByCategory[category]
-    if (shouldFetchArticles(articles)) {
+    if (force || shouldFetchArticles(articles)) {
         yield call(fetchArticles, {
             domain,
             category,

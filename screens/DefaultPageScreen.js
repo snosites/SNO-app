@@ -80,7 +80,7 @@ const DefaultPageScreen = (props) => {
         )
     }
     if (error) {
-        return <ErrorView onRefresh={() => navigation.goBack()} />
+        return <ErrorView theme={theme} onRefresh={() => navigation.goBack()} />
     }
 
     return (
