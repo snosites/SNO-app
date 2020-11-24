@@ -3,10 +3,8 @@ import { connect } from 'react-redux'
 
 import ArticleScreen from '../../screens/ArticleScreen'
 
-import { types as globalTypes, actions as globalActions } from '../../redux/global'
+import { getStoryAds } from '../../redux/ads'
 import { getActiveDomain } from '../../redux/domains'
-import { createLoadingSelector } from '../../redux/loading'
-import { createErrorMessageSelector } from '../../redux/errors'
 
 import { ArticleContext } from '../../navigation/ArticleNavigator'
 
@@ -20,6 +18,7 @@ const mapStateToProps = (state) => ({
     theme: state.theme,
     activeDomain: getActiveDomain(state),
     enableComments: state.global.enableComments,
+    storyAds: getStoryAds(state),
 })
 
 export default connect(mapStateToProps)(ArticleScreenConsumer)

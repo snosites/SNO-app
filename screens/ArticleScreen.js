@@ -26,7 +26,7 @@ import { Html5Entities } from 'html-entities'
 const entities = new Html5Entities()
 
 const ArticleScreen = (props) => {
-    const { navigation, theme, activeDomain, article, enableComments } = props
+    const { navigation, article, theme, activeDomain, enableComments, storyAds } = props
 
     const [loadingLink, setLoadingLink] = useState(false)
     const [articleChapters, setArticleChapters] = useState([])
@@ -34,6 +34,10 @@ const ArticleScreen = (props) => {
 
     const animationRef = useRef(null)
     const scrollViewRef = useRef(null)
+
+    useEffect(() => {
+        console.log('storyAds', storyAds)
+    }, [storyAds])
 
     const _onLayout = (e) => {
         if (e.nativeEvent?.layout) {
@@ -102,8 +106,6 @@ const ArticleScreen = (props) => {
             }
         }
     }
-
-    // useEffect()
 
     const _viewLink = async (href) => {
         setLoadingLink(true)

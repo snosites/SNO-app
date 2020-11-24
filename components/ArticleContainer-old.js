@@ -7,14 +7,17 @@ import { actions as adActions, getStoryAds } from '../redux/ads'
 
 import ArticleScreen from '../screens/ArticleScreen'
 
-const mapStateToProps = (state) => ({
-    theme: state.theme,
-    activeDomain: getActiveDomain(state),
-    pushToken: getPushToken(state),
-    writerSubscriptions: getWriterSubscriptions(state),
-    enableComments: state.global.enableComments,
-    storyAds: getStoryAds(state),
-})
+const mapStateToProps = (state) => {
+    console.log('get', getStoryAds(state))
+    return {
+        theme: state.theme,
+        activeDomain: getActiveDomain(state),
+        pushToken: getPushToken(state),
+        writerSubscriptions: getWriterSubscriptions(state),
+        enableComments: state.global.enableComments,
+        storyAds: getStoryAds(state),
+    }
+}
 
 const mapDispatchToProps = (dispatch) => ({
     saveArticle: (article, domainId) =>
