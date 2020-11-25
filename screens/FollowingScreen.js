@@ -1,14 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
-import {
-    ScrollView,
-    StyleSheet,
-    View,
-    TextInput,
-    Text,
-    Image,
-    Alert,
-    ActivityIndicator,
-} from 'react-native'
+import { ScrollView, StyleSheet, View, TextInput, Text, Image, Alert, Platform } from 'react-native'
+
+import * as Linking from 'expo-linking'
+import * as IntentLauncher from 'expo-intent-launcher'
+import * as Permissions from 'expo-permissions'
 import * as Amplitude from 'expo-analytics-amplitude'
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
@@ -29,6 +24,7 @@ import {
 
 import { Html5Entities } from 'html-entities'
 import theme from '../redux/theme'
+import user from '../redux/user'
 
 const entities = new Html5Entities()
 
@@ -87,14 +83,74 @@ const FollowingScreen = (props) => {
         }
     }
 
+    const handleTurnNotificationsOn = async () => {
+        if (Platform.OS === 'ios') {
+            //ios
+            const bundleIdentifier = Constants.manifest.ios.bundleIdentifier
+            const settingsUrl = `app-settings://notification/${bundleIdentifier}`
+            const canOpenSettingsUrl = await Linking.canOpenURL(settingsUrl)
+            if (canOpenSettingsUrl) {
+                try {
+                    const x = await Linking.openURL(settingsUrl)
+                    console.log('x', x)
+                } catch (err) {
+                    console.error('An error occurred opening settings', err)
+                }
+            } else {
+                Linking.openURL('app-settings:').catch((err) =>
+                    console.error('An error occurred opening general settings', err)
+                )
+            }
+        } else {
+            //android
+            const pkg = Constants.manifest.releaseChannel
+                ? Constants.manifest.android.package // When published, considered as using standalone build
+                : 'host.exp.exponent'
+
+            IntentLauncher.startActivityAsync(IntentLauncher.ACTION_APP_NOTIFICATION_SETTINGS, {
+                data: 'package:' + pkg,
+            })
+        }
+    }
+
     return (
         <ScrollView style={{ padding: 15 }} contentContainerStyle={{ paddingBottom: 80 }}>
-            {domains.map((domain) => {
-                const writerSubs = userInfo.writerSubscriptions.filter(
-                    (writer) => writer.organization_id === domain.id
-                )
-                return
-            })}
+            {!user.user?.push_token ? (
+                <View
+                    style={{
+                        padding: 10,
+                        backgroundColor: theme.colors.surface,
+                        borderRadius: 8,
+                        shadowColor: theme.colors.text,
+                        shadowOffset: {
+                            width: 0,
+                            height: 7,
+                        },
+                        shadowOpacity: 0.51,
+                        shadowRadius: 8.11,
+                        elevation: 10,
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text style={{ color: theme.colors.text, fontFamily: 'raleway', fontSize: 14 }}>
+                        You currently do not allow push notifications for this app. You won't
+                        recieve notifications.
+                    </Text>
+                    <Button
+                        mode='contained'
+                        theme={{ roundness: 8 }}
+                        style={{
+                            backgroundColor: theme.colors.accent,
+                            marginTop: 10,
+                        }}
+                        compact={true}
+                        onPress={handleTurnNotificationsOn}
+                        labelStyle={{ fontSize: 12 }}
+                    >
+                        Turn on notifications
+                    </Button>
+                </View>
+            ) : null}
             <List.Accordion
                 title='Categories'
                 description='New content that gets posted to these categories'

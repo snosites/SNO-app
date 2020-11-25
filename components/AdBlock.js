@@ -7,8 +7,6 @@ import { connect } from 'react-redux'
 import { getActiveDomain } from '../redux/domains'
 import { actions as adActions } from '../redux/ads'
 
-import * as Linking from 'expo-linking'
-
 const AdBlock = ({
     image,
     style,

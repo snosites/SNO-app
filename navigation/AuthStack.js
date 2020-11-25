@@ -1,24 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
+
+import { connect } from 'react-redux'
+import { actions as themeActions } from '../redux/theme'
 
 import WelcomeScreen from '../screens/setup/WelcomeScreen'
 import SelectScreenContainer from '../containers/screens/SelectScreenContainer'
-import DeepSelectScreen from '../screens/setup/DeepSelect'
 import LocationSelectContainer from '../containers/screens/LocationSelectContainer'
 
-const AuthStack = createStackNavigator()
+const Stack = createStackNavigator()
 
-export default () => {
+const AuthStack = ({ theme, toggleDarkMode }) => {
+    useEffect(() => {
+        if (theme.dark) {
+            toggleDarkMode(true)
+        } else {
+            toggleDarkMode(false)
+        }
+    }, [theme.dark])
     return (
-        <AuthStack.Navigator>
-            <AuthStack.Screen
+        <Stack.Navigator>
+            <Stack.Screen
                 name='Welcome'
                 component={WelcomeScreen}
                 options={{
                     headerShown: false,
                 }}
             />
-            <AuthStack.Screen
+            <Stack.Screen
                 name='Select'
                 component={SelectScreenContainer}
                 options={{
@@ -26,8 +35,7 @@ export default () => {
                     headerBackTitleVisible: false,
                 }}
             />
-            <AuthStack.Screen name='DeepSelect' component={DeepSelectScreen} />
-            <AuthStack.Screen
+            <Stack.Screen
                 name='LocationSelect'
                 component={LocationSelectContainer}
                 initialParams={{
@@ -38,6 +46,16 @@ export default () => {
                     headerBackTitleVisible: false,
                 }}
             />
-        </AuthStack.Navigator>
+        </Stack.Navigator>
     )
 }
+
+const mapStateToProps = (state) => ({
+    theme: state.theme,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    toggleDarkMode: (darkMode) => dispatch(themeActions.toggleDarkMode(darkMode)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthStack)

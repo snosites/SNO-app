@@ -15,6 +15,14 @@ import { setupSentry } from '../sentry-utils'
 import createSentryMiddleware from 'redux-sentry-middleware'
 import * as Sentry from 'sentry-expo'
 
+import * as Amplitude from 'expo-analytics-amplitude'
+import { getAmplitudeKey } from '../constants/config'
+
+const amplitudeKey = getAmplitudeKey()
+
+// set based on app version
+Amplitude.initialize(amplitudeKey)
+
 setupSentry()
 
 const sagaMiddleware = createSagaMiddleWare()

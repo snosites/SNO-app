@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Color from 'color'
 import {
     View,
     FlatList,
@@ -9,16 +10,20 @@ import {
     TouchableOpacity,
     Platform,
 } from 'react-native'
+import { connect } from 'react-redux'
 import Moment from 'moment'
+
 import HTML from 'react-native-render-html'
 
 import { getActiveDomain } from '../redux/domains'
 import { handleArticlePress } from '../utils/articlePress'
 import { asyncFetchArticle } from '../utils/sagaHelpers'
 
-import { connect } from 'react-redux'
-
 import ArticleAuthors from '../components/Article/ArticleAuthors'
+
+import { Html5Entities } from 'html-entities'
+
+const entities = new Html5Entities()
 
 Moment.updateLocale('en', {
     relativeTime: {
@@ -31,7 +36,7 @@ const RelatedStoriesWidget = ({ relatedStoryIds, activeDomain, theme }) => {
     const [error, setError] = useState('')
 
     useEffect(() => {
-        if (relatedStoryIds) {
+        if (relatedStoryIds?.length) {
             _fetchRelatedStories(relatedStoryIds)
         }
     }, [relatedStoryIds])
@@ -57,12 +62,22 @@ const RelatedStoriesWidget = ({ relatedStoryIds, activeDomain, theme }) => {
 
     const _renderRelatedStories = () => {
         if (error) {
-            return <Text style={{ textAlign: 'center' }}>Error loading related stories</Text>
+            return (
+                <Text style={{ textAlign: 'center', color: theme.colors.text }}>
+                    Error loading related stories
+                </Text>
+            )
         } else if (relatedStoryIds && !stories.length) {
             return <ActivityIndicator />
         } else {
             return (
-                <View style={{ flex: 1 }}>
+                <View
+                    style={{
+                        flex: 1,
+                        marginLeft: -20,
+                        backgroundColor: Color(theme.colors.text).grayscale().alpha(0.05),
+                    }}
+                >
                     {stories.map((story) => {
                         return (
                             <TouchableOpacity
@@ -74,8 +89,7 @@ const RelatedStoriesWidget = ({ relatedStoryIds, activeDomain, theme }) => {
                                     style={{
                                         flexDirection: 'row',
                                         flex: 1,
-                                        marginHorizontal: 10,
-                                        marginVertical: 10,
+                                        margin: 10,
                                         padding: 10,
                                     }}
                                 >
@@ -85,6 +99,7 @@ const RelatedStoriesWidget = ({ relatedStoryIds, activeDomain, theme }) => {
                                             style={{
                                                 width: 95,
                                                 height: 60,
+                                                marginRight: 10,
                                                 borderRadius: 8,
                                             }}
                                         />
@@ -92,50 +107,30 @@ const RelatedStoriesWidget = ({ relatedStoryIds, activeDomain, theme }) => {
                                     <View
                                         style={{
                                             flex: 1,
-                                            marginLeft: 10,
                                             justifyContent: 'space-between',
                                         }}
                                     >
-                                        <HTML
-                                            html={story.title?.rendered || ''}
-                                            baseFontStyle={{ fontSize: 16 }}
-                                            customWrapper={(text) => {
-                                                return (
-                                                    <Text ellipsizeMode='tail' numberOfLines={2}>
-                                                        {text}
-                                                    </Text>
-                                                )
-                                            }}
-                                            tagsStyles={{
-                                                rawtext: {
-                                                    fontSize: 16,
-                                                    fontWeight: 'bold',
-                                                    color: theme.colors.text,
-                                                },
-                                            }}
-                                        />
-                                        <ArticleAuthors article={story} theme={theme} />
-                                        {/* <Text
-                                            ellipsizeMode='tail'
-                                            numberOfLines={1}
+                                        <Text
                                             style={{
-                                                color: theme.colors.accent,
-                                                fontSize: 14,
+                                                fontSize: 16,
+                                                fontWeight: 'bold',
+                                                color: theme.colors.text,
                                             }}
+                                            ellipsizeMode='tail'
+                                            numberOfLines={2}
                                         >
-                                            <ArticleAuthors
-                                                navigation={navigation}
-                                                article={article}
-                                                theme={theme}
-                                            />
-                                            {article.custom_fields.writer
-                                                ? this._renderWriters(article.custom_fields.writer)
-                                                : ''}
-                                        </Text> */}
+                                            {entities.decode(story.title?.rendered || '')}
+                                        </Text>
                                         <View
                                             style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
+                                                alignItems: 'flex-start',
+                                            }}
+                                        >
+                                            <ArticleAuthors article={story} theme={theme} />
+                                        </View>
+                                        <View
+                                            style={{
+                                                marginTop: 10,
                                                 justifyContent: 'space-between',
                                             }}
                                         >

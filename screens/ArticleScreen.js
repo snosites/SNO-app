@@ -47,7 +47,6 @@ const ArticleScreen = (props) => {
     const scrollViewRef = useRef(null)
 
     useEffect(() => {
-        console.log('storyAds', storyAds)
         if (storyAds.images?.length && !storyAds.snoAds) {
             setAd(storyAds.images[Math.floor(Math.random() * storyAds.images.length)])
         } else {

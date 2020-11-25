@@ -1,11 +1,11 @@
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
 
-import NotificationAlert from '../components/NotificationAlert'
+// import NotificationAlert from '../components/NotificationAlert'
 
-import { actions as domainActions, getActiveDomain } from '../redux/domains'
-import { actions as userActions } from '../redux/user'
-import { createLoadingSelector } from '../redux/loading'
-import { types as globalTypes, actions as globalActions } from '../redux/global'
+// import { actions as domainActions, getActiveDomain } from '../redux/domains'
+// import { actions as userActions } from '../redux/user'
+// import { createLoadingSelector } from '../redux/loading'
+// import { types as globalTypes, actions as globalActions } from '../redux/global'
 
 // const initializingStartupSelector = createLoadingSelector([globalTypes.STARTUP])
 // const initializingUserSelector = createLoadingSelector([globalTypes.INITIALIZE_USER])

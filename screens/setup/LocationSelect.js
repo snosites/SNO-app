@@ -30,6 +30,7 @@ const LocationSelectScreen = (props) => {
     const {
         route,
         navigation,
+        theme,
         availableDomains,
         domains,
         fetchAvailableDomains,
@@ -175,6 +176,7 @@ const LocationSelectScreen = (props) => {
                         fontSize: 19,
                         fontWeight: 'bold',
                         textAlign: 'center',
+                        color: theme.colors.text,
                     }}
                 >
                     Sorry, no schools are available
@@ -191,6 +193,7 @@ const LocationSelectScreen = (props) => {
                         fontFamily: 'ralewayBold',
                         textAlign: 'center',
                         fontSize: 18,
+                        color: theme.colors.text,
                         // fontWeight: 'bold',
                     }}
                 >
@@ -201,6 +204,7 @@ const LocationSelectScreen = (props) => {
                         fontFamily: 'ralewayBold',
                         textAlign: 'center',
                         fontSize: 18,
+                        color: theme.colors.text,
                     }}
                 >
                     of {cityLocation.city}, {cityLocation.region}

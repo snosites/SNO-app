@@ -1,28 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Text, TouchableOpacity, Alert } from 'react-native'
 import * as Notifications from 'expo-notifications'
-import * as Amplitude from 'expo-analytics-amplitude'
-
-import * as WebBrowser from 'expo-web-browser'
 
 import * as Linking from 'expo-linking'
-
-// import NavigationService from '../utils/NavigationService-old'
-
-import { handleArticlePress } from '../utils/articlePress'
-import { asyncFetchArticle } from '../utils/sagaHelpers'
 import FadeInView from '../views/FadeInView'
 
-import { Portal } from 'react-native-paper'
 import Moment from 'moment'
-
-import * as Sentry from 'sentry-expo'
-
-import { getAmplitudeKey } from '../constants/config'
-
-//set config based on version
-const amplitudeKey = getAmplitudeKey()
-Amplitude.initialize(amplitudeKey)
 
 Notifications.setNotificationHandler({
     handleNotification: async (notification) => {
@@ -68,7 +51,7 @@ const NotificationAlert = (props) => {
             // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
             responseListener.current = Notifications.addNotificationResponseReceivedListener(
                 (response) => {
-                    console.log('notification repsonse recieved listener', response)
+                    console.log('notification response recieved listener', response)
                 }
             )
 

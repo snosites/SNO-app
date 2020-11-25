@@ -33,6 +33,11 @@ const ArticleContent = (props) => {
         adPosition,
     } = props
 
+    console.log(
+        'navigation',
+        navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetState()
+    )
+
     const viewportWidth = useWindowDimensions().width
 
     const MEDIAWIDTH = viewportWidth * 0.9
@@ -88,6 +93,7 @@ const ArticleContent = (props) => {
                     justifyContent: 'center',
                     alignItems: 'flex-start',
                     flexWrap: 'wrap',
+                    paddingTop: 20,
                 }}
             >
                 <ArticleAuthors navigation={navigation} article={article} theme={theme} />
@@ -182,7 +188,6 @@ const ArticleContent = (props) => {
                         onParsed={(dom, RNElements) => {
                             // snoAd is always in the middle
                             if (snoAd) {
-                                console.log('rendering ad block for sno ad')
                                 const ad = {
                                     wrapper: null,
                                     tagName: 'adBlock',

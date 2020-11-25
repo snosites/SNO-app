@@ -27,6 +27,7 @@ const RecentScreen = (props) => {
 
     useEffect(() => {
         _playAnimation()
+        invalidateRecentArticles()
         fetchRecentArticlesIfNeeded(activeDomain.url)
     }, [])
 

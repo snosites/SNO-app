@@ -21,8 +21,6 @@ let primaryIsDark = primaryColor.isDark()
 let accentColor = Color(defaultAccentColor)
 let accentIsDark = accentColor.isDark()
 
-// console.log('navigationDefaultTheme', navigationDefaultTheme)
-
 export const defaultNavigationTheme = {
     dark: false,
     colors: {
@@ -64,6 +62,7 @@ export const defaultColorTheme = {
         red: '#c20c12',
         gray: '#888888',
         lightGray: '#D0D0D0',
+        orange: Color('#f59714').alpha(0.5).string(),
     },
     primaryIsDark,
     accentIsDark,

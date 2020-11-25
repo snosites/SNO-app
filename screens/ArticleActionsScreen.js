@@ -6,6 +6,7 @@ import { Button } from 'react-native-paper'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Amplitude from 'expo-analytics-amplitude'
+// import Branch, { BranchEvent } from 'expo-branch'
 
 import { Html5Entities } from 'html-entities'
 
@@ -14,16 +15,38 @@ const entities = new Html5Entities()
 const ArticleActionsScreen = (props) => {
     const { activeDomain, navigation, theme, saveArticle, removeSavedArticle, article } = props
 
-    const _shareArticle = () => {
+    const _shareArticle = async () => {
         //log share to old analytics
         Amplitude.logEventWithProperties('social share', {
             storyId: article.id,
         })
+        const title = entities.decode(article.title?.rendered || 'No Title')
+        const contentDescription = entities.decode(article.excerpt?.rendered || 'No Description')
         Share.share({
-            title: entities.decode(article.title.rendered),
-            message: entities.decode(article.title.rendered),
+            title,
+            message: contentDescription,
             url: article.link,
         })
+        // const _branchUniversalObject = await Branch.createBranchUniversalObject(
+        //     `article_${article.id}`,
+        //     {
+        //         title,
+        //         contentImageUrl: article.featuredImage?.uri,
+        //         contentDescription,
+        //         // This metadata can be used to easily navigate back to this screen
+        //         // when implementing deep linking with `Branch.subscribe`.
+        //         metadata: {
+        //             screen: 'articleScreen',
+        //             params: JSON.stringify({ articleId: article.id }),
+        //             desktopUrl: article.link,
+        //         },
+        //     }
+        // )
+        // const shareOptions = {
+        //     messageHeader: title,
+        //     messageBody: `Checkout my new article!`,
+        // }
+        // await _branchUniversalObject.showShareSheet(shareOptions)
     }
 
     const _saveRemoveToggle = () => {

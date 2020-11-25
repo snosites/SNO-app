@@ -22,6 +22,7 @@ const mapStateToProps = (state) => ({
     domains: state.domains,
     isLoading: availableDomainsLoadingSelector(state),
     error: availableDomainsErrorSelector(state),
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

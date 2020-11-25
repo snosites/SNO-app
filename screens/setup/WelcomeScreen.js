@@ -23,7 +23,7 @@ import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
-const theme = {
+const defaultTheme = {
     roundness: 7,
     colors: {
         primary:
@@ -34,7 +34,7 @@ const theme = {
 }
 
 const WelcomeScreen = (props) => {
-    const { navigation, domains, setActiveDomain } = props
+    const { navigation, domains, setActiveDomain, theme } = props
 
     const [loading, setLoading] = useState(false)
     const [schoolName, setSchoolName] = useState('')
@@ -44,11 +44,11 @@ const WelcomeScreen = (props) => {
         navigation.navigate('Select', { searchTerm: schoolName })
     }
 
-    _handleBrowse = () => {
+    const _handleBrowse = () => {
         navigation.navigate('Select')
     }
 
-    _handleUseLocation = () => {
+    const _handleUseLocation = () => {
         Haptics.selectionAsync()
         if (Platform.OS === 'android' && !Constants.isDevice) {
             setError(
@@ -59,7 +59,7 @@ const WelcomeScreen = (props) => {
         }
     }
 
-    _getLocationAsync = async () => {
+    const _getLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION)
         if (status !== 'granted') {
             setError(
@@ -97,6 +97,7 @@ const WelcomeScreen = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     paddingHorizontal: 20,
+                    backgroundColor: theme.colors.background,
                 }}
             >
                 <Text
@@ -104,14 +105,14 @@ const WelcomeScreen = (props) => {
                         fontSize: 19,
                         fontWeight: 'bold',
                         textAlign: 'center',
-                        color: '#424242',
+                        color: theme.colors.text,
                     }}
                 >
                     {error}
                 </Text>
                 <Button
                     mode='contained'
-                    theme={theme}
+                    theme={defaultTheme}
                     style={{ padding: 5, marginTop: 50 }}
                     onPress={() => {
                         setError(null)
@@ -130,8 +131,8 @@ const WelcomeScreen = (props) => {
         )
     }
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <StatusBar style={'dark'} />
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+            <StatusBar style={theme.dark ? 'light' : 'dark'} />
             <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={'handled'}>
                 <KeyboardAvoidingView style={{ flex: 1 }} behavior='position' enabled>
                     <View style={styles.container}>
@@ -146,12 +147,12 @@ const WelcomeScreen = (props) => {
                             />
                         </View>
                         <View style={styles.getStartedContainer}>
-                            <Text style={styles.getStartedText}>
+                            <Text style={[styles.getStartedText, { color: theme.colors.text }]}>
                                 Get started by finding your school
                             </Text>
                             <Button
                                 mode='contained'
-                                theme={theme}
+                                theme={defaultTheme}
                                 style={{ padding: 10, marginBottom: 30, width: 300 }}
                                 onPress={_handleUseLocation}
                             >
@@ -159,13 +160,15 @@ const WelcomeScreen = (props) => {
                             </Button>
                             <Button
                                 mode='contained'
-                                theme={theme}
+                                theme={defaultTheme}
                                 style={{ padding: 10, marginBottom: 50, width: 300 }}
                                 onPress={_handleBrowse}
                             >
                                 Browse All Schools
                             </Button>
-                            <Text style={styles.locationContainerText}>
+                            <Text
+                                style={[styles.locationContainerText, { color: theme.colors.text }]}
+                            >
                                 Or search for a school below
                             </Text>
                             <View style={styles.formContainer}>
@@ -173,14 +176,14 @@ const WelcomeScreen = (props) => {
                                     label='School Name'
                                     style={{ width: 300, marginBottom: 20 }}
                                     theme={{
-                                        ...theme,
+                                        ...defaultTheme,
                                         colors: {
-                                            primary: theme.colors.primary,
-                                            background: 'white',
+                                            primary: defaultTheme.colors.primary,
+                                            background: theme.colors.background,
                                         },
                                     }}
                                     mode='outlined'
-                                    selectionColor='black'
+                                    selectionColor={theme.colors.text}
                                     returnKeyType='search'
                                     value={schoolName}
                                     onChangeText={(text) => setSchoolName(text)}
@@ -188,7 +191,7 @@ const WelcomeScreen = (props) => {
                                 />
                                 <Button
                                     mode='contained'
-                                    theme={theme}
+                                    theme={defaultTheme}
                                     style={{ padding: 10, width: 300 }}
                                     onPress={_handleSubmit}
                                 >
@@ -198,7 +201,7 @@ const WelcomeScreen = (props) => {
                             {domains.length ? (
                                 <Button
                                     mode='text'
-                                    color='black'
+                                    color={defaultTheme.colors.primary}
                                     theme={{
                                         roundness: 7,
                                     }}
@@ -219,7 +222,6 @@ const WelcomeScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#ccc',
         margin: 30,
         alignItems: 'center',
     },
@@ -258,6 +260,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
     domains: state.domains,
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

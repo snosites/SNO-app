@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View, Modal, SafeAreaView, Platform } from 'react-native'
+
+import { connect } from 'react-redux'
+
 import { Button, Switch } from 'react-native-paper'
 import Constants from 'expo-constants'
 import * as Haptics from 'expo-haptics'
@@ -11,8 +14,10 @@ import { getReleaseChannel } from '../../constants/config'
 
 const version = getReleaseChannel()
 
-const initModal = (props) => {
-    const { modalVisible, handleDismiss } = props
+// TODO ADD DARK MODE
+
+const InitModal = (props) => {
+    const { modalVisible, handleDismiss, theme } = props
 
     const [showText, setShowText] = useState(false)
     const [allNotifications, setAllNotifications] = useState(true)
@@ -40,8 +45,20 @@ const initModal = (props) => {
                 handleDismiss(allNotifications)
             }}
             onShow={_startAnimation}
+            contentContainerStyle={{
+                flex: 1,
+                backgroundColor: theme.colors.background,
+            }}
         >
-            <SafeAreaView style={styles.modalContainer}>
+            <SafeAreaView
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    marginTop: 10,
+                    backgroundColor: theme.colors.background,
+                }}
+            >
                 <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
                     <View style={styles.animationContainer}>
                         <LottieView
@@ -64,12 +81,18 @@ const initModal = (props) => {
                                     fontSize: 30,
                                     paddingBottom: 10,
                                     textAlign: 'center',
+                                    color: theme.colors.text,
                                 }}
                             >
                                 Success!
                             </Text>
                             <Text
-                                style={{ fontFamily: 'raleway', fontSize: 17, paddingBottom: 30 }}
+                                style={{
+                                    fontFamily: 'raleway',
+                                    fontSize: 17,
+                                    paddingBottom: 30,
+                                    color: theme.colors.text,
+                                }}
                             >
                                 Your selected school has been saved. If you ever want to change this
                                 you can find it in your settings.
@@ -79,9 +102,10 @@ const initModal = (props) => {
                                     fontFamily: 'raleway',
                                     fontSize: 17,
                                     textAlign: 'center',
+                                    color: theme.colors.text,
                                 }}
                             >
-                                Category notifications for this school are currently:
+                                Notifications for this school are currently:
                             </Text>
                             <View
                                 style={{
@@ -96,6 +120,7 @@ const initModal = (props) => {
                                         fontSize: 19,
                                         fontFamily: 'ralewayBold',
                                         paddingRight: 10,
+                                        color: theme.colors.text,
                                     }}
                                 >
                                     {allNotifications ? 'ON' : 'OFF'}
@@ -117,6 +142,7 @@ const initModal = (props) => {
                                     fontFamily: 'openSansItalic',
                                     fontSize: 14,
                                     paddingBottom: 30,
+                                    color: theme.colors.gray,
                                 }}
                             >
                                 You can always change this later in settings based on individual
@@ -150,12 +176,6 @@ const initModal = (props) => {
 }
 
 const styles = StyleSheet.create({
-    modalContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginTop: 10,
-    },
     animationContainer: {
         width: 250,
         height: 250,
@@ -166,4 +186,5 @@ const styles = StyleSheet.create({
     },
 })
 
-export default initModal
+const mapStateToProps = (state) => ({ theme: state.theme })
+export default connect(mapStateToProps)(InitModal)

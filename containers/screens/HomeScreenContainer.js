@@ -74,7 +74,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    refreshHomeScreen: () => dispatch(globalActions.fetchHomeScreenArticles()),
+    fetchHomeScreenArticles: () => dispatch(globalActions.fetchHomeScreenArticles()),
     setActiveCategory: (categoryId) => dispatch(globalActions.setActiveCategory(categoryId)),
     sendAdAnalytic: (url, imageId, field) =>
         dispatch(adActions.sendAdAnalytic(url, imageId, field)),

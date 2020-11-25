@@ -9,6 +9,22 @@ import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1'
 const black = '#000000'
 const white = '#ffffff'
 
+// low limit
+const CONTRAST_LIMIT = 5
+
+const improveContrastRatio = (backgroundColor, mainColor) => {
+    const contrastRatio = backgroundColor.contrast(mainColor)
+
+    console.log('contrast', contrastRatio, mainColor)
+
+    if (contrastRatio < CONTRAST_LIMIT) {
+        const alteredColor = mainColor.mix(backgroundColor.negate(), 0.2)
+        return improveContrastRatio(backgroundColor, alteredColor)
+    }
+
+    return mainColor
+}
+
 export const types = {
     SAVE_THEME: 'SAVE_THEME',
     TOGGLE_DARK_MODE: 'TOGGLE_DARK_MODE',
@@ -56,7 +72,8 @@ function theme(state = defaultColorTheme, action) {
                     ...state.colors,
                     primary: action.theme.primary || state.colors.primary,
                     accent: action.theme.accent || state.colors.accent,
-                    homeScreenCategoryTitle: homeCategoryColor,
+                    homeScreenCategoryTitle:
+                        action.theme.homeCategoryColor || state.colors.homeScreenCategoryTitle,
                     primaryLightened,
                     accentLightened,
                     accentWhitened,
@@ -67,11 +84,27 @@ function theme(state = defaultColorTheme, action) {
                 navigationTheme,
             }
         case types.TOGGLE_DARK_MODE:
+            let _primaryColor = Color(state.colors.primary)
+            let _accentColor = Color(state.colors.accent)
+            let _homeTitleColor = Color(state.colors.homeScreenCategoryTitle)
+
+            let _backgroundColor = Color(
+                action.darkMode ? '#121212' : defaultNavigationTheme.colors.background
+            )
+
+            const alteredPrimaryColor = improveContrastRatio(_backgroundColor, _primaryColor)
+            const alteredAccentColor = improveContrastRatio(_backgroundColor, _accentColor)
+            const alteredTitleColor = improveContrastRatio(_backgroundColor, _homeTitleColor)
+
+            const newPrimaryIsDark = alteredPrimaryColor.isDark()
+            const newAccentIsDark = alteredAccentColor.isDark()
+            const newHomeTitleColorIsDark = alteredTitleColor.isDark()
+
             const _darkNavigationTheme = {
                 ...darkNavigationTheme,
                 colors: {
                     ...darkNavigationTheme.colors,
-                    primary: state.colors.accent,
+                    primary: alteredAccentColor.string(),
                     notification: '#b51010',
                 },
             }
@@ -80,7 +113,7 @@ function theme(state = defaultColorTheme, action) {
                 ...defaultNavigationTheme,
                 colors: {
                     ...defaultNavigationTheme.colors,
-                    primary: state.colors.accent,
+                    primary: alteredAccentColor.string(),
                     notification: '#b51010',
                 },
             }
@@ -92,7 +125,7 @@ function theme(state = defaultColorTheme, action) {
                     mode: 'adaptive',
                     colors: {
                         ...state.colors,
-                        background: _darkNavigationTheme.colors.background,
+                        // background: _darkNavigationTheme.colors.background,
                         background: '#121212',
                         surface: '#121212',
                         error: '#CF6679',
@@ -103,7 +136,13 @@ function theme(state = defaultColorTheme, action) {
                         placeholder: Color(white).alpha(0.54).rgb().string(),
                         backdrop: Color(black).alpha(0.5).rgb().string(),
                         notification: '#b51010',
+                        primary: alteredPrimaryColor.string(),
+                        accent: alteredAccentColor.string(),
+                        homeScreenCategoryTitle: alteredTitleColor.string(),
                     },
+                    primaryIsDark: newPrimaryIsDark,
+                    accentIsDark: newAccentIsDark,
+                    homeScreenCategoryTitleIsDark: newHomeTitleColorIsDark,
                     navigationTheme: _darkNavigationTheme,
                 }
             } else {
@@ -123,7 +162,13 @@ function theme(state = defaultColorTheme, action) {
                         placeholder: Color(black).alpha(0.54).rgb().string(),
                         backdrop: Color(black).alpha(0.5).rgb().string(),
                         notification: '#b51010',
+                        primary: alteredPrimaryColor.string(),
+                        accent: alteredAccentColor.string(),
+                        homeScreenCategoryTitle: alteredTitleColor.string(),
                     },
+                    primaryIsDark: newPrimaryIsDark,
+                    accentIsDark: newAccentIsDark,
+                    homeScreenCategoryTitleIsDark: newHomeTitleColorIsDark,
                     navigationTheme: _lightNavigationTheme,
                 }
             }

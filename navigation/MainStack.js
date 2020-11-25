@@ -1,22 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
-import {
-    View,
-    useWindowDimensions,
-    Image,
-    ImageBackground,
-    Text,
-    TouchableOpacity,
-    Animated,
-} from 'react-native'
-import {
-    createStackNavigator,
-    CardStyleInterpolators,
-    TransitionSpecs,
-    TransitionPresets,
-} from '@react-navigation/stack'
+import React, { useEffect, useRef } from 'react'
+import { View, useWindowDimensions, Image, ImageBackground, Animated } from 'react-native'
+import { createStackNavigator } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-
-import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 
 import ErrorScreen from '../screens/ErrorScreen'
 
@@ -36,7 +21,7 @@ const version = getReleaseChannel()
 
 const Stack = createStackNavigator()
 
-const { add, multiply } = Animated
+const { multiply } = Animated
 
 export default (props) => {
     const { theme, activeDomain, startup, splashScreen, startupError, initialized } = props
@@ -235,49 +220,6 @@ export default (props) => {
                         name='ArticleNavigator'
                         component={ArticleNavigator}
                         options={{ headerShown: false }}
-                        // options={({ route, navigation }) => ({
-                        //     headerTitle: null,
-                        //     headerRight: () => {
-                        //         return (
-                        //             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        //                 <TouchableOpacity
-                        //                     onPress={() => {}}
-                        //                     style={{
-                        //                         justifyContent: 'center',
-                        //                         alignItems: 'stretch',
-                        //                         padding: 10,
-                        //                     }}
-                        //                 >
-                        //                     <AntDesign
-                        //                         name={'like2'}
-                        //                         size={25}
-                        //                         style={{ marginBottom: -3 }}
-                        //                         color={theme.colors.accent}
-                        //                     />
-                        //                 </TouchableOpacity>
-                        //                 <TouchableOpacity
-                        //                     onPress={() => {
-                        //                         navigation.navigate('ArticleActions')
-                        //                     }}
-                        //                     style={{
-                        //                         justifyContent: 'center',
-                        //                         alignItems: 'stretch',
-                        //                         padding: 10,
-                        //                     }}
-                        //                 >
-                        //                     <MaterialCommunityIcons
-                        //                         name={'dots-horizontal'}
-                        //                         backgroundColor={'transparant'}
-                        //                         size={25}
-                        //                         style={{ marginBottom: -3 }}
-                        //                         color={theme.colors.accent}
-                        //                     />
-                        //                 </TouchableOpacity>
-                        //             </View>
-                        //         )
-                        //     },
-                        //     headerBackTitleVisible: false,
-                        // })}
                     />
                 </>
             )}

@@ -36,7 +36,7 @@ const HomeScreen = (props) => {
         articlesLoading,
         setActiveCategory,
         homeScreenData,
-        refreshHomeScreen,
+        fetchHomeScreenArticles,
     } = props
 
     const { homeScreenListStyle } = global
@@ -63,6 +63,10 @@ const HomeScreen = (props) => {
     }, [homeAds])
 
     useEffect(() => {
+        fetchHomeScreenArticles()
+    }, [])
+
+    useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             if (ad && ad.id && homeScreenData?.length) {
                 sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
@@ -84,7 +88,8 @@ const HomeScreen = (props) => {
         }
     }, [navigation])
 
-    const shouldShowAdImage = (sectionIndex) => homeAds.displayLocation?.includes(sectionIndex)
+    const shouldShowAdImage = (sectionIndex) =>
+        homeAds.displayLocation?.includes(sectionIndex) && ad
 
     const _playAnimation = () => {
         if (animationRef && animationRef.current) {
@@ -119,7 +124,7 @@ const HomeScreen = (props) => {
         )
     }
     if (!homeScreenData.length) {
-        return <ErrorView theme={theme} onRefresh={refreshHomeScreen} />
+        return <ErrorView theme={theme} onRefresh={fetchHomeScreenArticles} />
     }
 
     return (
@@ -134,7 +139,7 @@ const HomeScreen = (props) => {
                     style={{
                         fontFamily: 'ralewayExtraBold',
                         fontSize: 34,
-                        color: theme.colors.accent,
+                        color: theme.colors.homeScreenCategoryTitle,
                         paddingVertical: 20,
                     }}
                 >
@@ -172,7 +177,7 @@ const HomeScreen = (props) => {
                                         style={{
                                             fontFamily: 'ralewayBold',
                                             fontSize: 15,
-                                            color: theme.colors.accent,
+                                            color: theme.colors.homeScreenCategoryTitle,
                                         }}
                                     >
                                         {entities.decode(title)}
@@ -181,7 +186,7 @@ const HomeScreen = (props) => {
                                         name={'caretright'}
                                         size={12}
                                         style={{ marginBottom: -3, marginLeft: -2 }}
-                                        color={theme.colors.accent}
+                                        color={theme.colors.homeScreenCategoryTitle}
                                     />
                                 </View>
                             </TouchableOpacity>
@@ -190,7 +195,7 @@ const HomeScreen = (props) => {
                             style={{
                                 marginTop: 20,
                                 height: 1,
-                                backgroundColor: theme.colors.accent,
+                                backgroundColor: theme.colors.homeScreenCategoryTitle,
                                 marginHorizontal: 30,
                             }}
                         />

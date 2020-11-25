@@ -51,7 +51,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
                                 style={{
                                     fontSize: 17,
                                     textAlign: 'center',
-                                    paddingTop: 20,
                                     color: theme.colors.accent,
                                 }}
                             >
@@ -69,7 +68,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
                                 style={{
                                     fontSize: 17,
                                     textAlign: 'center',
-                                    paddingTop: 20,
                                     color: theme.colors.accent,
                                 }}
                             >
@@ -87,7 +85,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
                                 style={{
                                     fontSize: 17,
                                     textAlign: 'center',
-                                    paddingTop: 20,
                                     color: theme.colors.accent,
                                 }}
                             >
@@ -113,7 +110,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
                         style={{
                             fontSize: 17,
                             textAlign: 'center',
-                            paddingTop: 20,
                             color: theme.colors.accent,
                         }}
                     >
@@ -137,7 +133,6 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
                         style={{
                             fontSize: 17,
                             textAlign: 'center',
-                            paddingTop: 20,
                             color: theme.colors.accent,
                         }}
                     >

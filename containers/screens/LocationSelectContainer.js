@@ -14,6 +14,7 @@ const availableDomainsErrorSelector = createErrorMessageSelector([
 ])
 
 const mapStateToProps = (state) => ({
+    theme: state.theme,
     availableDomains: state.global.availableDomains,
     domains: state.domains,
     isLoading: availableDomainsLoadingSelector(state),

@@ -98,12 +98,12 @@ function* startup(action) {
 
         let activeCategory = menu[0].object_id
 
-        yield put(
-            articleActions.fetchArticlesIfNeeded({
-                domain: domain.url,
-                category: activeCategory,
-            })
-        )
+        // yield put(
+        //     articleActions.fetchArticlesIfNeeded({
+        //         domain: domain.url,
+        //         category: activeCategory,
+        //     })
+        // )
 
         yield put(globalActions.setActiveCategory(activeCategory))
 
@@ -175,7 +175,6 @@ function* getCustomOptions(domain) {
     try {
         const results = yield call(domainApiService.getCustomOptions, domain.url)
         const categories = yield call(domainApiService.fetchCategories, domain.url)
-        console.log('all categories', categories)
 
         yield put(globalActions.receiveHeader(results.nav_header))
         yield put(globalActions.receiveHeaderLogo(results.header_logo))
@@ -186,6 +185,7 @@ function* getCustomOptions(domain) {
                 homeCategoryColor: results.home_category_color,
             })
         )
+        console.log('results.home_category_color', results.home_category_color)
         const themeIsDark = yield select((state) => state.theme.dark)
         if (themeIsDark) {
             yield put(themeActions.toggleDarkMode(true))

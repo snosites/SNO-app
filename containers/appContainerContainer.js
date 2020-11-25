@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
         theme: state.theme,
         homeScreenMode: state.global.homeScreenMode,
         initializeUserLoading: initializeUserLoading(state),
-        initializeUserErrorSelector: initializeUserErrorSelector(state),
+        initializeUserError: initializeUserErrorSelector(state),
         activeDomain: getActiveDomain(state),
         user: state.user.user,
         initialized: state.global.initialized,
