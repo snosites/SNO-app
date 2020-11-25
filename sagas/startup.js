@@ -87,6 +87,7 @@ function* startup(action) {
                 },
             })
         }
+        console.log('dbCategories', dbCategories)
         // // reset all notifications toggle key
         yield put(userActions.setSubscribeAll(false))
 

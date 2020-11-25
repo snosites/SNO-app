@@ -20,11 +20,12 @@ export function* fetchMenu(action) {
 
         //filter out all menu items that are custom
         let filteredMobileMenu = mobileMenu.filter((menu) => {
-            if (menu.object !== 'custom') {
+            if (menu.object == 'category') {
                 return menu
             }
         })
 
+        console.log('mobileMenu', mobileMenu, filteredMobileMenu)
         // get categories from DB
         const dbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
 

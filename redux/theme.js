@@ -15,8 +15,6 @@ const CONTRAST_LIMIT = 5
 const improveContrastRatio = (backgroundColor, mainColor) => {
     const contrastRatio = backgroundColor.contrast(mainColor)
 
-    console.log('contrast', contrastRatio, mainColor)
-
     if (contrastRatio < CONTRAST_LIMIT) {
         const alteredColor = mainColor.mix(backgroundColor.negate(), 0.2)
         return improveContrastRatio(backgroundColor, alteredColor)
@@ -84,9 +82,11 @@ function theme(state = defaultColorTheme, action) {
                 navigationTheme,
             }
         case types.TOGGLE_DARK_MODE:
-            let _primaryColor = Color(state.colors.primary)
-            let _accentColor = Color(state.colors.accent)
-            let _homeTitleColor = Color(state.colors.homeScreenCategoryTitle)
+            let _primaryColor = Color(state.oldPrimary || state.colors.primary)
+            let _accentColor = Color(state.oldAccent || state.colors.accent)
+            let _homeTitleColor = Color(
+                state.oldHomeTitleColor || state.colors.homeScreenCategoryTitle
+            )
 
             let _backgroundColor = Color(
                 action.darkMode ? '#121212' : defaultNavigationTheme.colors.background
@@ -118,9 +118,33 @@ function theme(state = defaultColorTheme, action) {
                 },
             }
 
+            const cachedColors = {
+                oldPrimary: '',
+                oldAccent: '',
+                oldHomeTitleColor: '',
+                primaryIsDark: newPrimaryIsDark,
+                accentIsDark: newAccentIsDark,
+                homeScreenCategoryTitleIsDark: newHomeTitleColorIsDark,
+                navigationTheme: action.darkMode ? _darkNavigationTheme : _lightNavigationTheme,
+            }
+
+            if (_primaryColor.string() != alteredPrimaryColor.string()) {
+                // changed color
+                cachedColors.oldPrimary = _primaryColor.string()
+            }
+            if (_accentColor.string() != alteredAccentColor.string()) {
+                // changed color
+                cachedColors.oldAccent = alteredAccentColor.string()
+            }
+            if (_homeTitleColor.string() != alteredTitleColor.string()) {
+                // changed color
+                cachedColors.oldHomeTitleColor = _homeTitleColor.string()
+            }
+
             if (action.darkMode) {
                 return {
                     ...state,
+                    ...cachedColors,
                     dark: true,
                     mode: 'adaptive',
                     colors: {
@@ -140,14 +164,11 @@ function theme(state = defaultColorTheme, action) {
                         accent: alteredAccentColor.string(),
                         homeScreenCategoryTitle: alteredTitleColor.string(),
                     },
-                    primaryIsDark: newPrimaryIsDark,
-                    accentIsDark: newAccentIsDark,
-                    homeScreenCategoryTitleIsDark: newHomeTitleColorIsDark,
-                    navigationTheme: _darkNavigationTheme,
                 }
             } else {
                 return {
                     ...state,
+                    ...cachedColors,
                     dark: false,
                     mode: 'adaptive',
                     colors: {
@@ -166,10 +187,6 @@ function theme(state = defaultColorTheme, action) {
                         accent: alteredAccentColor.string(),
                         homeScreenCategoryTitle: alteredTitleColor.string(),
                     },
-                    primaryIsDark: newPrimaryIsDark,
-                    accentIsDark: newAccentIsDark,
-                    homeScreenCategoryTitleIsDark: newHomeTitleColorIsDark,
-                    navigationTheme: _lightNavigationTheme,
                 }
             }
         default:

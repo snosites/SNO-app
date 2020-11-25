@@ -49,7 +49,7 @@ const FollowingScreen = (props) => {
 
     const [notifications, setNotifications] = useState(
         domains.reduce((map, domain) => {
-            map[domain.id] = domain.notificationCategories.reduce(function (map, notification) {
+            map[domain.id] = domain.notificationCategories.reduce((map, notification) => {
                 map[notification.id] = notification.active
                 return map
             }, {})
@@ -134,7 +134,7 @@ const FollowingScreen = (props) => {
                 >
                     <Text style={{ color: theme.colors.text, fontFamily: 'raleway', fontSize: 14 }}>
                         You currently do not allow push notifications for this app. You won't
-                        recieve notifications.
+                        recieve any of the below notifications.
                     </Text>
                     <Button
                         mode='contained'
@@ -152,8 +152,8 @@ const FollowingScreen = (props) => {
                 </View>
             ) : null}
             <List.Accordion
-                title='Categories'
-                description='New content that gets posted to these categories'
+                title='Topics'
+                description='New content that gets posted to these topics'
                 titleStyle={{
                     fontFamily: 'ralewayExtraBold',
                     fontSize: 28,
@@ -170,44 +170,20 @@ const FollowingScreen = (props) => {
                 // left={(props) => <List.Icon {...props} icon='category' />}
             >
                 {activeDomain.notificationCategories.map((item, i) => {
-                    if (item.category_name == 'custom_push') {
-                        return (
-                            <List.Item
-                                key={item.id}
-                                style={{
-                                    paddingVertical: 0,
-                                    paddingLeft: 60,
-                                }}
-                                title='Alerts'
-                                titleStyle={{ fontWeight: 'bold', fontSize: 18 }}
-                                right={() => {
-                                    return (
-                                        <Switch
-                                            style={{ margin: 10 }}
-                                            value={notifications[activeDomain.id][item.id]}
-                                            onValueChange={(value) => {
-                                                _toggleNotifications(
-                                                    item.id,
-                                                    value,
-                                                    activeDomain,
-                                                    item
-                                                )
-                                            }}
-                                        />
-                                    )
-                                }}
-                            />
-                        )
-                    }
                     return (
                         <List.Item
                             key={item.id}
                             style={{ paddingVertical: 0, paddingLeft: 60 }}
                             titleEllipsizeMode='tail'
                             titleNumberOfLines={1}
-                            title={entities.decode(item.category_name)}
+                            title={
+                                item.category_name == 'custom_push'
+                                    ? 'Alerts'
+                                    : entities.decode(item.category_name)
+                            }
                             titleStyle={{ fontWeight: 'bold', fontSize: 18 }}
                             right={() => {
+                                console.log('item.id', item.id)
                                 return (
                                     <Switch
                                         style={{ margin: 10 }}
