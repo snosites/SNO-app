@@ -24,8 +24,6 @@ export function* fetchMenu(action) {
                 return menu
             }
         })
-
-        console.log('mobileMenu', mobileMenu, filteredMobileMenu)
         // get categories from DB
         const dbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, useLinkTo } from '@react-navigation/native'
 
 import { View, ActivityIndicator, Text } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
@@ -15,8 +15,6 @@ import AuthStack from '../navigation/AuthStack'
 import MainStackContainer from '../containers/navigators/MainStackContainer'
 import SnackbarQueue from './SnackbarQueue'
 
-// import NotificationAlertContainer from '../containers/NotificationAlertContainer'
-
 import * as SplashScreen from 'expo-splash-screen'
 
 import * as Linking from 'expo-linking'
@@ -25,7 +23,16 @@ import * as Linking from 'expo-linking'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const prefix = Linking.makeUrl('/')
-console.log('prefix', prefix)
+
+Notifications.setNotificationHandler({
+    handleNotification: async (notification) => {
+        return {
+            shouldShowAlert: true,
+            shouldPlaySound: false,
+            shouldSetBadge: false,
+        }
+    },
+})
 
 async function hideSplashScreen() {
     await SplashScreen.hideAsync()
@@ -45,32 +52,38 @@ const AppContainer = (props) => {
         setDeepLinkArticle,
         fromDeepLink,
         setFromDeepLink,
+        setActiveDomain,
     } = props
 
-    const notificationListener = useRef().current
-    const responseListener = useRef().current
+    const notificationListener = useRef()
+    const responseListener = useRef()
 
     useEffect(() => {
         if (!user.id) {
             initializeUser()
         }
-        if (user.push_token) {
-            // This listener is fired whenever a notification is received while the app is foregrounded
-            notificationListener = Notifications.addNotificationReceivedListener((notification) => {
-                console.log('notification received...', notification)
-                // setNotification(notification)
-            })
+        // if (user.push_token) {
+        //     // This listener is fired whenever a notification is received while the app is foregrounded
+        //     notificationListener.current = Notifications.addNotificationReceivedListener(
+        //         (notification) => {
+        //             console.log('notification received...', notification)
+        //         }
+        //     )
 
-            // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-            responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
-                console.log('notification response recieved...', response)
-            })
+        //     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+        //     responseListener.current = Notifications.addNotificationResponseReceivedListener(
+        //         ({ notification: { request } }) => {
+        //             console.log('notification was pressed...')
+        //             handleNotificationPress(request?.content)
+        //         }
+        //     )
+        //     // const prefix = Linking.makeUrl('/')
 
-            return () => {
-                Notifications.removeNotificationSubscription(notificationListener)
-                Notifications.removeNotificationSubscription(responseListener)
-            }
-        }
+        //     return () => {
+        //         Notifications.removeNotificationSubscription(notificationListener.current)
+        //         Notifications.removeNotificationSubscription(responseListener.current)
+        //     }
+        // }
     }, [user])
 
     useEffect(() => {
@@ -79,6 +92,13 @@ const AppContainer = (props) => {
             hideSplashScreen()
         }
     }, [activeDomain])
+
+    // {
+    //     "domain_id": 182442528,
+    //     "post_id": 1196,
+    //     "site_name": 'SNO Test',
+    //     "link": 'https://google.com'
+    // }
 
     // useEffect(() => {
     //     if (!initializeUserLoading) setLoading(false)
@@ -104,87 +124,63 @@ const AppContainer = (props) => {
     //         setFromDeepLink(true)
     //     }
     // }
-    const linking = {
-        //   prefixes: ['myapp://', 'https://myapp.com'],
-        prefixes: [prefix],
 
-        async getInitialURL() {
-            const url = await Linking.getInitialURL()
+    const handleNotificationPress = async (notificationContent) => {
+        const jsonData = notificationContent.data?.body
+        console.log('handleNotificationPress', jsonData)
+        try {
+            if (!jsonData) throw new Error('no JSON data in notification')
 
-            if (url != null) {
-                console.log('found default initial URL', url)
-                return url
-            } else return null
-            // const params = Branch.getFirstReferringParams()
-
-            // return params?.$canonical_url
-        },
-
-        subscribe(listener) {
-            const onReceiveURL = ({ url }) => {
-                console.log('onReceiveURL', url)
-                return listener(url)
+            if (jsonData.link) {
+                await WebBrowser.openBrowserAsync(jsonData.link)
+                return
             }
-            Linking.addEventListener('url', onReceiveURL)
-            // Branch.subscribe(({ error, params, uri }) => {
-            //     if (error) {
-            //         console.error('Error from Branch: ' + error)
-            //         return
-            //     }
+            // if the push is from active domain go to article
+            if (jsonData.domain_id == activeDomain.id) {
+                // get article
 
-            //     if (params['+non_branch_link']) {
-            //         const nonBranchUrl = params['+non_branch_link']
-            //         // Route non-Branch URL if appropriate.
-            //         return
-            //     }
+                const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
+                listener(url)
+            } else {
+                // make sure domain origin is a saved domain
+                let found = domains.find((domain) => {
+                    return domain.id == jsonData.domain_id
+                })
+                if (!found) {
+                    // user doesnt have this domain saved so dont direct anywhere
+                    throw new Error('no domain saved for this notification')
+                }
+                Alert.alert(
+                    'Switch Active School?',
+                    `Viewing this story will switch your active school to ${jsonData.site_name}.`,
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => {},
+                            style: 'cancel',
+                        },
+                        {
+                            text: 'Proceed',
+                            onPress: () => {
+                                setActiveDomain(found.id)
+                                setInitialized(false)
 
-            //     if (!params['+clicked_branch_link']) {
-            //         // Indicates initialization success and some other conditions.
-            //         // No link was opened.
-            //         return
-            //     }
-
-            //     // A Branch link was opened
-            //     const url = params.$canonical_url
-
-            //     listener(url)
-            // })
-
-            return () => {
-                // Clean up the event listeners
-                Linking.removeEventListener('url', onReceiveURL)
-                // Branch.unsubscribe()
+                                const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
+                                listener(url)
+                            },
+                        },
+                    ],
+                    { cancelable: false }
+                )
             }
-        },
-
-        // test domain ID 182442528
-        // xcrun simctl openurl booted exp://127.0.0.1:19000/--/article/1196
-        // xcrun simctl openurl booted exp://127.0.0.1:19000/--/auth/182442528
-        config: {
-            initialRouteName: activeDomain.id ? 'Tabs' : 'Welcome',
-            screens: {
-                Welcome: 'Welcome',
-                Select: {
-                    path: 'auth/:schoolId',
-                    parse: {
-                        schoolId: Number,
-                    },
-                },
-                Tabs: {
-                    initialRouteName: 'HomeTab',
-                    screens: {
-                        HomeTab: 'homeTab',
-                    },
-                },
-                ArticleNavigator: {
-                    path: 'article/:articleId',
-                    parse: {
-                        articleId: Number,
-                    },
-                },
-            },
-        },
+        } catch (err) {
+            console.log('error in notification press', err)
+            Sentry.captureException(err)
+            return null
+        }
     }
+
+    // const linking =
 
     if (!user.id || initializeUserLoading) {
         return (
@@ -193,9 +189,121 @@ const AppContainer = (props) => {
             </View>
         )
     }
+    console.log('app container', user)
     return (
         <NavigationContainer
-            linking={linking}
+            linking={{
+                //   prefixes: ['myapp://', 'https://myapp.com'],
+                prefixes: [prefix],
+
+                async getInitialURL() {
+                    const url = await Linking.getInitialURL()
+                    console.log('getInitialURL', url)
+
+                    if (url != null) {
+                        console.log('found default initial URL', url)
+                        return url
+                    } else return null
+                    // const params = Branch.getFirstReferringParams()
+
+                    // return params?.$canonical_url
+                },
+
+                subscribe(listener) {
+                    const onReceiveURL = ({ url }) => {
+                        console.log('onReceiveURL', url)
+                        return listener(url)
+                    }
+
+                    // let notificationSubscription = null
+
+                    // if (user.push_token) {
+                    //     notificationSubscription = Notifications.addNotificationResponseReceivedListener(
+                    //         ({ notification: { request } }) => {
+                    //             console.log('notification was pressed...', request?.content)
+                    //             // handleNotificationPress(request?.content)
+                    //         }
+                    //     )
+                    // }
+                    console.log('liiinking', user)
+                    let notificationSubscription = null
+
+                    // if (user.push_token) {
+                    //     notificationSubscription = Notifications.addNotificationResponseReceivedListener(
+                    //         ({ notification: { request } }) => {
+                    //             console.log('notification was pressed...', request?.content)
+                    //             // handleNotificationPress(request?.content)
+                    //         }
+                    //     )
+                    //     notificationSubscription = Notifications.addNotificationReceivedListener(
+                    //         ({ notification: { request } }) => {
+                    //             console.log('notification recieved ...', request?.content)
+                    //             // handleNotificationPress(request?.content)
+                    //         }
+                    //     )
+                    // }
+
+                    Linking.addEventListener('url', onReceiveURL)
+                    // Branch.subscribe(({ error, params, uri }) => {
+                    //     if (error) {
+                    //         console.error('Error from Branch: ' + error)
+                    //         return
+                    //     }
+
+                    //     if (params['+non_branch_link']) {
+                    //         const nonBranchUrl = params['+non_branch_link']
+                    //         // Route non-Branch URL if appropriate.
+                    //         return
+                    //     }
+
+                    //     if (!params['+clicked_branch_link']) {
+                    //         // Indicates initialization success and some other conditions.
+                    //         // No link was opened.
+                    //         return
+                    //     }
+
+                    //     // A Branch link was opened
+                    //     const url = params.$canonical_url
+
+                    //     listener(url)
+                    // })
+
+                    return () => {
+                        // Clean up the event listeners
+                        Linking.removeEventListener('url', onReceiveURL)
+                        // if (notificationSubscription) notificationSubscription.remove()
+                        // Branch.unsubscribe()
+                    }
+                },
+
+                // test domain ID 182442528
+                // xcrun simctl openurl booted exp://127.0.0.1:19000/--/article/1196
+                // xcrun simctl openurl booted exp://127.0.0.1:19000/--/auth/182442528
+                config: {
+                    initialRouteName: activeDomain.id ? 'Tabs' : 'Welcome',
+                    screens: {
+                        Welcome: 'Welcome',
+                        Select: {
+                            path: 'auth/:schoolId',
+                            parse: {
+                                schoolId: Number,
+                            },
+                        },
+                        Tabs: {
+                            initialRouteName: 'HomeTab',
+                            screens: {
+                                HomeTab: 'homeTab',
+                            },
+                        },
+                        ArticleNavigator: {
+                            path: 'article/:articleId',
+                            parse: {
+                                articleId: Number,
+                            },
+                        },
+                    },
+                },
+            }}
             theme={theme.navigationTheme}
             ref={RootNavigation.navigationRef}
             onReady={() => {

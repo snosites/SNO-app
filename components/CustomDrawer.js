@@ -54,7 +54,6 @@ const CustomDrawerContent = (props) => {
                 })
                 setActiveCategory(item.object_id)
             } else {
-                console.log('item', item)
                 navigation.navigate('DefaultPage', {
                     pageId: item.object_id,
                 })

@@ -41,10 +41,7 @@ const FollowingScreen = (props) => {
         unsubscribe,
         subscribeLoading,
         unsubscribeLoading,
-        setActiveDomain,
-        deleteDomain,
         removeSchoolSub,
-        fetchProfile,
     } = props
 
     const [notifications, setNotifications] = useState(
@@ -115,7 +112,7 @@ const FollowingScreen = (props) => {
 
     return (
         <ScrollView style={{ padding: 15 }} contentContainerStyle={{ paddingBottom: 80 }}>
-            {!user.user?.push_token ? (
+            {!userInfo.user?.push_token ? (
                 <View
                     style={{
                         padding: 10,
@@ -183,7 +180,6 @@ const FollowingScreen = (props) => {
                             }
                             titleStyle={{ fontWeight: 'bold', fontSize: 18 }}
                             right={() => {
-                                console.log('item.id', item.id)
                                 return (
                                     <Switch
                                         style={{ margin: 10 }}

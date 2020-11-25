@@ -1,15 +1,9 @@
 import React from 'react'
 import { Text, View, TouchableOpacity, StyleSheet, Image, useWindowDimensions } from 'react-native'
-import { withTheme, Badge, Colors } from 'react-native-paper'
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
 
-import { handleArticlePress } from '../../utils/articlePress'
-
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
-
 import { Html5Entities } from 'html-entities'
-import theme from '../../redux/theme'
 
 const entities = new Html5Entities()
 

@@ -3,7 +3,7 @@ import AppContainer from '../components/AppContainer'
 
 import { types as globalTypes, actions as globalActions } from '../redux/global'
 import { createErrorMessageSelector } from '../redux/errors'
-import { getActiveDomain } from '../redux/domains'
+import { actions as domainActions, getActiveDomain } from '../redux/domains'
 import { createLoadingSelector } from '../redux/loading'
 
 const initializeUserErrorSelector = createErrorMessageSelector([globalTypes.INITIALIZE_USER])
@@ -25,6 +25,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
     initializeUser: () => dispatch(globalActions.initializeUser()),
     setInitialized: (payload) => dispatch(globalActions.setInitialized(payload)),
+    setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
     // initializeDeepLinkUser: (params) => dispatch(globalActions.initializeDeepLinkUser(params)),
     // setDeepLinkArticle: (payload) => dispatch(globalActions.setDeepLinkArticle(payload)),
     // setFromDeepLink: (payload) => dispatch(globalActions.setFromDeepLink(payload)),
