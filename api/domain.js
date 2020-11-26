@@ -266,6 +266,17 @@ const domainApiService = {
             throw err
         }
     },
+    fetchArticleChapterInfo: async (domainUrl, articleId, metaKey) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=${metaKey}&meta_query[0][value]=${articleId}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch article chapter info api', err, err.response)
+            throw err
+        }
+    },
     fetchPage: async (domainUrl, pageId) => {
         try {
             const response = await axios.get(`https://${domainUrl}/wp-json/wp/v2/pages/${pageId}`)

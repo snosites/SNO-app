@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { NavigationContainer, useLinkTo } from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 
 import { View, ActivityIndicator, Text } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
@@ -62,28 +62,6 @@ const AppContainer = (props) => {
         if (!user.id) {
             initializeUser()
         }
-        // if (user.push_token) {
-        //     // This listener is fired whenever a notification is received while the app is foregrounded
-        //     notificationListener.current = Notifications.addNotificationReceivedListener(
-        //         (notification) => {
-        //             console.log('notification received...', notification)
-        //         }
-        //     )
-
-        //     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-        //     responseListener.current = Notifications.addNotificationResponseReceivedListener(
-        //         ({ notification: { request } }) => {
-        //             console.log('notification was pressed...')
-        //             handleNotificationPress(request?.content)
-        //         }
-        //     )
-        //     // const prefix = Linking.makeUrl('/')
-
-        //     return () => {
-        //         Notifications.removeNotificationSubscription(notificationListener.current)
-        //         Notifications.removeNotificationSubscription(responseListener.current)
-        //     }
-        // }
     }, [user])
 
     useEffect(() => {
@@ -125,63 +103,6 @@ const AppContainer = (props) => {
     //     }
     // }
 
-    const handleNotificationPress = async (notificationContent) => {
-        const jsonData = notificationContent.data?.body
-        console.log('handleNotificationPress', jsonData)
-        try {
-            if (!jsonData) throw new Error('no JSON data in notification')
-
-            if (jsonData.link) {
-                await WebBrowser.openBrowserAsync(jsonData.link)
-                return
-            }
-            // if the push is from active domain go to article
-            if (jsonData.domain_id == activeDomain.id) {
-                // get article
-
-                const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
-                listener(url)
-            } else {
-                // make sure domain origin is a saved domain
-                let found = domains.find((domain) => {
-                    return domain.id == jsonData.domain_id
-                })
-                if (!found) {
-                    // user doesnt have this domain saved so dont direct anywhere
-                    throw new Error('no domain saved for this notification')
-                }
-                Alert.alert(
-                    'Switch Active School?',
-                    `Viewing this story will switch your active school to ${jsonData.site_name}.`,
-                    [
-                        {
-                            text: 'Cancel',
-                            onPress: () => {},
-                            style: 'cancel',
-                        },
-                        {
-                            text: 'Proceed',
-                            onPress: () => {
-                                setActiveDomain(found.id)
-                                setInitialized(false)
-
-                                const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
-                                listener(url)
-                            },
-                        },
-                    ],
-                    { cancelable: false }
-                )
-            }
-        } catch (err) {
-            console.log('error in notification press', err)
-            Sentry.captureException(err)
-            return null
-        }
-    }
-
-    // const linking =
-
     if (!user.id || initializeUserLoading) {
         return (
             <View style={{ flex: 1 }}>
@@ -189,16 +110,13 @@ const AppContainer = (props) => {
             </View>
         )
     }
-    console.log('app container', user)
+
     return (
         <NavigationContainer
             linking={{
-                //   prefixes: ['myapp://', 'https://myapp.com'],
                 prefixes: [prefix],
-
                 async getInitialURL() {
                     const url = await Linking.getInitialURL()
-                    console.log('getInitialURL', url)
 
                     if (url != null) {
                         console.log('found default initial URL', url)
@@ -215,33 +133,73 @@ const AppContainer = (props) => {
                         return listener(url)
                     }
 
-                    // let notificationSubscription = null
+                    const handleNotificationPress = async (notificationContent) => {
+                        const jsonData = notificationContent.data?.body
+                        console.log('handleNotificationPress', jsonData)
+                        try {
+                            if (!jsonData) throw new Error('no JSON data in notification')
 
-                    // if (user.push_token) {
-                    //     notificationSubscription = Notifications.addNotificationResponseReceivedListener(
-                    //         ({ notification: { request } }) => {
-                    //             console.log('notification was pressed...', request?.content)
-                    //             // handleNotificationPress(request?.content)
-                    //         }
-                    //     )
-                    // }
-                    console.log('liiinking', user)
+                            if (jsonData.link) {
+                                await WebBrowser.openBrowserAsync(jsonData.link)
+                                return
+                            }
+                            // if the push is from active domain go to article
+                            if (jsonData.domain_id == activeDomain.id) {
+                                // get article
+
+                                const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
+                                listener(url)
+                            } else {
+                                // make sure domain origin is a saved domain
+                                let found = domains.find((domain) => {
+                                    return domain.id == jsonData.domain_id
+                                })
+                                if (!found) {
+                                    // user doesnt have this domain saved so dont direct anywhere
+                                    throw new Error('no domain saved for this notification')
+                                }
+                                Alert.alert(
+                                    'Switch Active School?',
+                                    `Viewing this story will switch your active school to ${jsonData.site_name}.`,
+                                    [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => {},
+                                            style: 'cancel',
+                                        },
+                                        {
+                                            text: 'Proceed',
+                                            onPress: () => {
+                                                setActiveDomain(found.id)
+                                                setInitialized(false)
+
+                                                const url = Linking.makeUrl(
+                                                    `/article/${jsonData.post_id}`
+                                                )
+                                                listener(url)
+                                            },
+                                        },
+                                    ],
+                                    { cancelable: false }
+                                )
+                            }
+                        } catch (err) {
+                            console.log('error in notification press', err)
+                            Sentry.captureException(err)
+                            return null
+                        }
+                    }
+
                     let notificationSubscription = null
 
-                    // if (user.push_token) {
-                    //     notificationSubscription = Notifications.addNotificationResponseReceivedListener(
-                    //         ({ notification: { request } }) => {
-                    //             console.log('notification was pressed...', request?.content)
-                    //             // handleNotificationPress(request?.content)
-                    //         }
-                    //     )
-                    //     notificationSubscription = Notifications.addNotificationReceivedListener(
-                    //         ({ notification: { request } }) => {
-                    //             console.log('notification recieved ...', request?.content)
-                    //             // handleNotificationPress(request?.content)
-                    //         }
-                    //     )
-                    // }
+                    if (user.push_token) {
+                        notificationSubscription = Notifications.addNotificationResponseReceivedListener(
+                            ({ notification: { request } }) => {
+                                console.log('notification was pressed...', request?.content)
+                                handleNotificationPress(request?.content)
+                            }
+                        )
+                    }
 
                     Linking.addEventListener('url', onReceiveURL)
                     // Branch.subscribe(({ error, params, uri }) => {
@@ -271,7 +229,7 @@ const AppContainer = (props) => {
                     return () => {
                         // Clean up the event listeners
                         Linking.removeEventListener('url', onReceiveURL)
-                        // if (notificationSubscription) notificationSubscription.remove()
+                        if (notificationSubscription) notificationSubscription.remove()
                         // Branch.unsubscribe()
                     }
                 },
@@ -309,6 +267,7 @@ const AppContainer = (props) => {
             onReady={() => {
                 RootNavigation.isReadyRef.current = true
             }}
+            fallback={<View style={{ backgroundColor: 'red', height: 100 }}></View>}
         >
             <PaperProvider theme={theme}>
                 <ErrorBoundary navigation={RootNavigation}>

@@ -33,14 +33,9 @@ const ArticleContent = (props) => {
         adPosition,
     } = props
 
-    console.log(
-        'navigation',
-        navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetState()
-    )
-
     const viewportWidth = useWindowDimensions().width
 
-    const MEDIAWIDTH = viewportWidth * 0.9
+    const MEDIAWIDTH = viewportWidth
     const MEDIA_HEIGHT = useWindowDimensions().height * 0.35
 
     const _renderDate = (date) => {

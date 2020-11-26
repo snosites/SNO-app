@@ -5,7 +5,12 @@ import { types as articleTypes, actions as articleActions } from '../redux/artic
 import { actions as userActions } from '../redux/user'
 import domainApiService from '../api/domain'
 
-import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
+import {
+    asyncFetchArticle,
+    asyncFetchFeaturedImage,
+    asyncFetchComments,
+    getAttachmentsAsync,
+} from '../utils/sagaHelpers'
 
 import * as Sentry from 'sentry-expo'
 
@@ -50,24 +55,17 @@ function* fetchArticles(action) {
             childCategoryIds,
             page,
         })
+
         yield all(
             stories.map((story) => {
-                if (story._links['wp:featuredmedia']) {
-                    return call(
-                        asyncFetchFeaturedImage,
-                        `${story._links['wp:featuredmedia'][0].href}`,
-                        story
-                    )
-                } else {
-                    return call(Promise.resolve)
-                }
+                return call(getStoryExtras, domain, story)
             })
         )
-        yield all(
-            stories.map((story) => {
-                return call(asyncFetchComments, domain, story)
-            })
-        )
+        // yield all(
+        //     stories.map((story) => {
+        //         return call(asyncFetchComments, domain, story)
+        //     })
+        // )
         const normalizedData = normalize(stories, articleListSchema)
 
         yield put(articleActions.receiveArticles(category, normalizedData))
@@ -75,6 +73,71 @@ function* fetchArticles(action) {
         console.log('error fetching articles in saga', err, category)
         yield put(articleActions.fetchArticlesFailure(category, 'error in article saga'))
         Sentry.captureException(err)
+    }
+}
+
+export function* getStoryExtras(domainUrl, article) {
+    try {
+        if (
+            article._links &&
+            article._links['wp:featuredmedia'] &&
+            article._links['wp:featuredmedia'][0]
+        ) {
+            yield call(
+                asyncFetchFeaturedImage,
+                `${article._links['wp:featuredmedia'][0].href}`,
+                article
+            )
+        }
+        if (
+            article.custom_fields.featureimage &&
+            article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'
+        ) {
+            article.slideshow = yield call(getAttachmentsAsync, article)
+        }
+
+        let storyChapters = []
+        let metaKey = ''
+
+        if (article.custom_fields.sno_format == 'Long-Form') {
+            metaKey = 'sno_longform_list'
+        } else if (article.custom_fields.sno_format == 'Grid') {
+            metaKey = 'sno_grid_list'
+        } else if (article.custom_fields.sno_format == 'Side by Side') {
+            metaKey = 'sno_sidebyside_list'
+        }
+        if (metaKey) {
+            console.log('container', article)
+            storyChapters = yield call(
+                domainApiService.fetchArticleChapterInfo,
+                domainUrl,
+                article.id,
+                metaKey
+            )
+            console.log('storyChapters', storyChapters)
+        }
+
+        // let updatedStoryChapters = await Promise.all(
+        //     storyChapters.map(async (article) => {
+        //         return await asyncFetchArticle(domainUrl, article.ID, true)
+        //     })
+        // )
+        // let updatedStoryChapters = await Promise.all(
+        //     storyChapters.map(async (article) => {
+        //         return await asyncFetchArticle(domainUrl, article.ID, true)
+        //     })
+        // )
+        let updatedStoryChapters = yield all(
+            storyChapters.map((story) => {
+                return call(asyncFetchArticle, domainUrl, story.ID, true)
+            })
+        )
+
+        article.storyChapters = updatedStoryChapters
+        return article
+    } catch (err) {
+        console.log('error fetching article extras', err)
+        return article
     }
 }
 

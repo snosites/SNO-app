@@ -7,12 +7,14 @@ import domainApiService from '../api/domain'
 
 import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
 
+import { getStoryExtras } from './article'
+
 const articleSchema = new schema.Entity('articles')
 const articleListSchema = new schema.Array(articleSchema)
 
 function* fetchRecentArticles(action) {
     const { domain, categories, page } = action
-    if(!page) {
+    if (!page) {
         page = 1
     }
     try {
@@ -21,26 +23,15 @@ function* fetchRecentArticles(action) {
         const stories = yield call(domainApiService.fetchRecentArticles, {
             domainUrl: domain,
             categories,
-            page
+            page,
         })
+
         yield all(
-            stories.map(story => {
-                if (story._links['wp:featuredmedia']) {
-                    return call(
-                        asyncFetchFeaturedImage,
-                        `${story._links['wp:featuredmedia'][0].href}`,
-                        story
-                    )
-                } else {
-                    return call(Promise.resolve)
-                }
+            stories.map((story) => {
+                return call(getStoryExtras, domain, story)
             })
         )
-        yield all(
-            stories.map(story => {
-                return call(asyncFetchComments, domain, story)
-            })
-        )
+
         const normalizedData = normalize(stories, articleListSchema)
         yield put(recentActions.receiveRecentArticles(normalizedData))
     } catch (err) {
@@ -73,8 +64,8 @@ function shouldFetchMoreRecentArticles(articles) {
     }
 }
 
-const getMenuState = state => state.global.menuItems
-const getRecentArticleState = state => state.recentArticles
+const getMenuState = (state) => state.global.menuItems
+const getRecentArticleState = (state) => state.recentArticles
 
 function* fetchRecentArticlesIfNeeded(action) {
     const { domain } = action
@@ -82,16 +73,16 @@ function* fetchRecentArticlesIfNeeded(action) {
     if (shouldFetchRecentArticles(recentArticles)) {
         const menus = yield select(getMenuState)
         if (menus) {
-            const filteredMenus = menus.filter(item => {
+            const filteredMenus = menus.filter((item) => {
                 return item.object === 'category'
             })
-            const menuCategories = filteredMenus.map(item => {
+            const menuCategories = filteredMenus.map((item) => {
                 return Number(item.object_id)
             })
             yield call(fetchRecentArticles, {
                 domain,
                 categories: menuCategories,
-                page: 1
+                page: 1,
             })
         }
     }
@@ -103,16 +94,16 @@ function* fetchMoreRecentArticlesIfNeeded(action) {
     if (shouldFetchMoreRecentArticles(recentArticles)) {
         const menus = yield select(getMenuState)
         if (menus) {
-            const filteredMenus = menus.filter(item => {
+            const filteredMenus = menus.filter((item) => {
                 return item.object === 'category'
             })
-            const menuCategories = filteredMenus.map(item => {
+            const menuCategories = filteredMenus.map((item) => {
                 return Number(item.object_id)
             })
             yield call(fetchRecentArticles, {
                 domain,
                 categories: menuCategories,
-                page: recentArticles.page
+                page: recentArticles.page,
             })
         }
     }
@@ -124,7 +115,7 @@ function* recentArticleSaga() {
         takeLatest(
             recentTypes.FETCH_MORE_RECENT_ARTICLES_IF_NEEDED,
             fetchMoreRecentArticlesIfNeeded
-        )
+        ),
     ])
 }
 

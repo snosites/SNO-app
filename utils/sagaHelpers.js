@@ -1,6 +1,6 @@
 import domainApiService from '../api/domain'
 
-getAttachmentsAsync = async (article) => {
+export async function getAttachmentsAsync(article) {
     const response = await fetch(article._links['wp:attachment'][0].href)
     const imageAttachments = await response.json()
     return imageAttachments
@@ -112,6 +112,8 @@ export async function asyncFetchArticle(domainUrl, articleId, isChapter = false)
         let storyChapters = []
         let metaKey = ''
 
+        console.log('article.custom_fields.sno_format', article.custom_fields.sno_format)
+
         if (!isChapter) {
             if (article.custom_fields.sno_format == 'Long-Form') {
                 metaKey = 'sno_longform_list'
@@ -122,7 +124,7 @@ export async function asyncFetchArticle(domainUrl, articleId, isChapter = false)
             }
             if (metaKey) {
                 let results = await fetch(
-                    `https://${activeDomain.url}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=${metaKey}&meta_query[0][value]=${article.id}`
+                    `https://${domainUrl}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=${metaKey}&meta_query[0][value]=${article.id}`
                 )
                 storyChapters = await results.json()
             }

@@ -40,7 +40,6 @@ const ArticleScreen = (props) => {
     const [ad, setAd] = useState(null)
 
     const [loadingLink, setLoadingLink] = useState(false)
-    const [articleChapters, setArticleChapters] = useState([])
     const [titleYOffset, setTitleYOffset] = useState(null)
 
     const animationRef = useRef(null)
@@ -222,7 +221,7 @@ const ArticleScreen = (props) => {
                     snoAd={storyAds && storyAds.snoAdImage ? storyAds.snoAdImage : null}
                     adPosition={storyAds.displayLocation}
                 />
-                {articleChapters.map((article) => (
+                {article.storyChapters?.map((article) => (
                     <ArticleContent
                         key={article.id}
                         navigation={navigation}

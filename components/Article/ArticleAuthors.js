@@ -143,7 +143,8 @@ const ArticleAuthors = ({ article, navigation, theme }) => {
         }
     } else if (article.custom_fields.writer && article.custom_fields.writer[0]) {
         // let writers = article.custom_fields.writer
-        console.log('no term IDs for article authors but has writer field', article)
+        // console.log('no term IDs for article authors but has writer field', article)
+        // TODO handle old way
     } else {
         console.log('no term IDs for article authors', article)
         return null
