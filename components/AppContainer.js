@@ -154,6 +154,7 @@ const AppContainer = (props) => {
                                 let found = domains.find((domain) => {
                                     return domain.id == jsonData.domain_id
                                 })
+                                console.log('info', found)
                                 if (!found) {
                                     // user doesnt have this domain saved so dont direct anywhere
                                     throw new Error('no domain saved for this notification')

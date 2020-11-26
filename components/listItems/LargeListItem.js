@@ -27,7 +27,11 @@ const LargeListItem = (props) => {
 
     return (
         <TouchableOpacity
-            style={{ flex: 1, backgroundColor: background, borderRadius: 10 }}
+            style={{
+                flex: 1,
+                backgroundColor: background,
+                borderRadius: 10,
+            }}
             onPress={onPress}
         >
             <View

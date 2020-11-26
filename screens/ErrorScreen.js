@@ -7,26 +7,17 @@ import { Button, List, Divider } from 'react-native-paper'
 import { actions as domainActions } from '../redux/domains'
 
 const ErrorScreen = (props) => {
-    const { route, navigation, domains, setActiveDomain } = props
+    const { route, navigation, domains, setActiveDomain, theme } = props
 
     const errorMessage = route.params?.errorMessage
 
     const [modalVisible, setModalVisible] = useState(false)
-
-    _handleSelectActive = () => {
-        setModalVisible(true)
-    }
 
     _handleSelect = async (id) => {
         try {
             Haptics.selectionAsync()
             setActiveDomain(id)
             setModalVisible(false)
-
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-            })
         } catch (error) {
             console.log('error selecting school from error page')
             setModalVisible(false)
@@ -39,8 +30,10 @@ const ErrorScreen = (props) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
-            <StatusBar style='dark' />
+        <SafeAreaView
+            style={{ flex: 1, alignItems: 'center', backgroundColor: theme.colors.background }}
+        >
+            <StatusBar style={theme.dark ? 'light' : 'dark'} />
             <Text
                 style={{
                     textAlign: 'center',
@@ -48,37 +41,29 @@ const ErrorScreen = (props) => {
                     paddingVertical: 50,
                     fontSize: 20,
                     fontFamily: 'ralewayBold',
+                    color: theme.colors.text,
                 }}
             >
                 {errorMessage}
             </Text>
             <Button
                 mode='contained'
-                theme={{
-                    roundness: 7,
-                    colors: {
-                        primary: '#2099CE',
-                    },
-                }}
                 style={{ padding: 5, marginBottom: 20 }}
                 onPress={() => setActiveDomain(null)}
             >
                 Select a New School
             </Button>
-            <Text style={{ fontFamily: 'ralewayBold', textAlign: 'center', paddingBottom: 20 }}>
+            <Text
+                style={{
+                    fontFamily: 'ralewayBold',
+                    textAlign: 'center',
+                    paddingBottom: 20,
+                    color: theme.colors.text,
+                }}
+            >
                 Or
             </Text>
-            <Button
-                mode='contained'
-                theme={{
-                    roundness: 7,
-                    colors: {
-                        primary: '#2099CE',
-                    },
-                }}
-                style={{ padding: 5 }}
-                onPress={_handleSelectActive}
-            >
+            <Button mode='contained' style={{ padding: 5 }} onPress={() => setModalVisible(true)}>
                 Choose From Your Saved Schools
             </Button>
             <Modal
@@ -86,8 +71,12 @@ const ErrorScreen = (props) => {
                 presentationStyle='fullScreen'
                 transparent={false}
                 visible={modalVisible}
+                contentContainerStyle={{
+                    flex: 1,
+                    backgroundColor: theme.colors.background,
+                }}
             >
-                <SafeAreaView style={{ flex: 1, padding: 0, backgroundColor: '#f6f6f6' }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
                     <ScrollView>
                         {domains.map((item) => {
                             return (
@@ -113,6 +102,7 @@ const ErrorScreen = (props) => {
 
 const mapStateToProps = (state) => ({
     domains: state.domains,
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

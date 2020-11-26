@@ -87,7 +87,6 @@ function* startup(action) {
                 },
             })
         }
-        console.log('dbCategories', dbCategories)
         // // reset all notifications toggle key
         yield put(userActions.setSubscribeAll(false))
 
@@ -175,7 +174,7 @@ function* getHomeScreenArticles() {
 function* getCustomOptions(domain) {
     try {
         const results = yield call(domainApiService.getCustomOptions, domain.url)
-        const categories = yield call(domainApiService.fetchCategories, domain.url)
+        // const categories = yield call(domainApiService.fetchCategories, domain.url)
 
         yield put(globalActions.receiveHeader(results.nav_header))
         yield put(globalActions.receiveHeaderLogo(results.header_logo))
@@ -186,7 +185,6 @@ function* getCustomOptions(domain) {
                 homeCategoryColor: results.home_category_color,
             })
         )
-        console.log('results.home_category_color', results.home_category_color)
         const themeIsDark = yield select((state) => state.theme.dark)
         if (themeIsDark) {
             yield put(themeActions.toggleDarkMode(true))
@@ -288,26 +286,7 @@ function* checkIfDomainIsInDb(domainId) {
     }
 }
 
-function* initializeDeepLinkUser({ params: { schoolId } }) {
-    try {
-        // if deep link this will run
-        yield put(globalActions.initializeDeepLinkUserRequest())
-
-        console.log('in deep link init', schoolId)
-        yield call(findOrCreateUser)
-
-        // SplashScreen.hide()
-        // NavigationService.navigate('DeepSelect', { schoolId: schoolId })
-
-        yield put(globalActions.initializeDeepLinkUserSuccess())
-    } catch (err) {
-        console.log('error initializing deep link user in saga', err)
-        yield put(globalActions.initializeDeepLinkUserError('error initializing deep link user'))
-    }
-}
-
 function* fetchAds(domain, adOptions) {
-    console.log('fetch ads', adOptions)
     try {
         yield all(
             Object.keys(adOptions).map((adName) => {
@@ -349,7 +328,6 @@ function* startupSaga() {
     yield all([
         takeLatest(globalTypes.STARTUP, startup),
         takeLatest(globalTypes.INITIALIZE_USER, initializeUser),
-        // takeLatest(globalTypes.INITIALIZE_DEEP_LINK_USER, initializeDeepLinkUser),
         takeLatest(globalTypes.FETCH_HOME_SCREEN_ARTICLES, getHomeScreenArticles),
     ])
 }
