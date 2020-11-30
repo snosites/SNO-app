@@ -4,8 +4,6 @@ import Color from 'color'
 import HTML from 'react-native-render-html'
 import * as WebBrowser from 'expo-web-browser'
 
-import { NavigationEvents } from 'react-navigation'
-
 import LottieView from 'lottie-react-native'
 
 import ErrorView from '../components/ErrorView'

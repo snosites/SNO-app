@@ -17,7 +17,6 @@ import { handleArticlePress } from '../utils/articlePress'
 
 import { Feather, MaterialIcons } from '@expo/vector-icons'
 import HTML from 'react-native-render-html'
-import { NavigationEvents } from 'react-navigation'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ProfileArticleListItem from '../components/listItems/ProfileArticleListItem'

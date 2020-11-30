@@ -11,13 +11,10 @@ import {
 import Moment from 'moment'
 import Color from 'color'
 
-import { NavigationEvents } from 'react-navigation'
-
 import LottieView from 'lottie-react-native'
 import { DataTable, Card, Button, Modal, Portal, RadioButton } from 'react-native-paper'
 
 import { Ionicons } from '@expo/vector-icons'
-import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons'
 import moment from 'moment'
 
 class SportcenterScreen extends React.Component {

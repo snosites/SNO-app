@@ -11,7 +11,6 @@ import {
 import { StatusBar } from 'expo-status-bar'
 import * as Amplitude from 'expo-analytics-amplitude'
 import LottieView from 'lottie-react-native'
-import { NavigationEvents } from 'react-navigation'
 
 import * as WebBrowser from 'expo-web-browser'
 import { SafeAreaView } from 'react-native-safe-area-context'

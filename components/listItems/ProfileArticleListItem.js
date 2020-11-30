@@ -16,7 +16,6 @@ import * as WebBrowser from 'expo-web-browser'
 
 import { Feather, MaterialIcons } from '@expo/vector-icons'
 import HTML from 'react-native-render-html'
-import { NavigationEvents } from 'react-navigation'
 
 import { Divider, Colors, Chip } from 'react-native-paper'
 

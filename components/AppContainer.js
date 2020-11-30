@@ -18,8 +18,7 @@ import SnackbarQueue from './SnackbarQueue'
 import * as SplashScreen from 'expo-splash-screen'
 
 import * as Linking from 'expo-linking'
-// import Branch, { BranchEvent } from 'expo-branch'
-
+import Branch from '../constants/branchSetup'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const prefix = Linking.makeUrl('/')
@@ -121,10 +120,11 @@ const AppContainer = (props) => {
                     if (url != null) {
                         console.log('found default initial URL', url)
                         return url
-                    } else return null
-                    // const params = Branch.getFirstReferringParams()
+                    }
 
-                    // return params?.$canonical_url
+                    const params = Branch.getFirstReferringParams()
+
+                    return params?.$canonical_url
                 },
 
                 subscribe(listener) {
@@ -154,7 +154,6 @@ const AppContainer = (props) => {
                                 let found = domains.find((domain) => {
                                     return domain.id == jsonData.domain_id
                                 })
-                                console.log('info', found)
                                 if (!found) {
                                     // user doesnt have this domain saved so dont direct anywhere
                                     throw new Error('no domain saved for this notification')
@@ -203,35 +202,38 @@ const AppContainer = (props) => {
                     }
 
                     Linking.addEventListener('url', onReceiveURL)
-                    // Branch.subscribe(({ error, params, uri }) => {
-                    //     if (error) {
-                    //         console.error('Error from Branch: ' + error)
-                    //         return
-                    //     }
+                    Branch.subscribe(({ error, params, uri }) => {
+                        if (error) {
+                            console.error('Error from Branch: ' + error)
+                            return
+                        }
 
-                    //     if (params['+non_branch_link']) {
-                    //         const nonBranchUrl = params['+non_branch_link']
-                    //         // Route non-Branch URL if appropriate.
-                    //         return
-                    //     }
+                        if (params['+non_branch_link']) {
+                            const nonBranchUrl = params['+non_branch_link']
+                            // Route non-Branch URL if appropriate.
+                            console.log('nonBranchUrl: ' + nonBranchUrl)
+                            return
+                        }
 
-                    //     if (!params['+clicked_branch_link']) {
-                    //         // Indicates initialization success and some other conditions.
-                    //         // No link was opened.
-                    //         return
-                    //     }
+                        if (!params['+clicked_branch_link']) {
+                            // Indicates initialization success and some other conditions.
+                            // No link was opened.
+                            return
+                        }
 
-                    //     // A Branch link was opened
-                    //     const url = params.$canonical_url
+                        // A Branch link was opened
+                        const url = params.$canonical_url
 
-                    //     listener(url)
-                    // })
+                        console.log('branch link success', params, url)
+
+                        // listener(url)
+                    })
 
                     return () => {
                         // Clean up the event listeners
                         Linking.removeEventListener('url', onReceiveURL)
                         if (notificationSubscription) notificationSubscription.remove()
-                        // Branch.unsubscribe()
+                        Branch.unsubscribe()
                     }
                 },
 

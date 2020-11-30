@@ -11,8 +11,6 @@ import {
 import Moment from 'moment'
 import Color from 'color'
 
-import { NavigationEvents } from 'react-navigation'
-
 import LottieView from 'lottie-react-native'
 import { Card, Button } from 'react-native-paper'
 
