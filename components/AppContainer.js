@@ -225,6 +225,7 @@ const AppContainer = (props) => {
                         const url = params.$canonical_url
 
                         console.log('branch link success', params, url)
+                        alert(JSON.stringify(params))
 
                         // listener(url)
                     })
