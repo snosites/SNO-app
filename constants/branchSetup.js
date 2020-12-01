@@ -11,13 +11,5 @@ if (Constants.appOwnership !== 'standalone') {
         getFirstReferringParams: () => ({ $canonical_url: null }),
     }
 } else {
-    // module.exports = require('expo-branch')
-    module.exports = {
-        subscribe: () => console.log('Branch subscribe method is being mocked in development!'),
-        unsubscribe: () => console.log('Branch unsubscribe method is being mocked in development!'),
-        createBranchUniversalObject: async () => ({
-            showShareSheet: console.log,
-        }),
-        getFirstReferringParams: () => ({ $canonical_url: null }),
-    }
+    module.exports = require('expo-branch')
 }
