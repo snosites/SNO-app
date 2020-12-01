@@ -200,15 +200,18 @@ const AppContainer = (props) => {
                 prefixes: [prefix],
                 async getInitialURL() {
                     const url = await Linking.getInitialURL()
+                    const parsedUrl = await Linking.parseInitialURLAsync()
+
+                    alert('initial url' + JSON.stringify(url) + JSON.stringify(parsedUrl))
 
                     if (url != null) {
                         console.log('found default initial URL', url)
-                        return url
+                        // return url
                     }
 
                     const params = await Branch.getFirstReferringParams()
 
-                    alert('branch initial params', JSON.stringify(params))
+                    alert('branch initial params' + JSON.stringify(params))
 
                     if (params) {
                         const { school_id, post_id } = params
