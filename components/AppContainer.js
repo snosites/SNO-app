@@ -234,7 +234,7 @@ const AppContainer = (props) => {
                         // Clean up the event listeners
                         Linking.removeEventListener('url', onReceiveURL)
                         if (notificationSubscription) notificationSubscription.remove()
-                        Branch.unsubscribe()
+                        if (Branch.unsubscribe) Branch.unsubscribe()
                     }
                 },
 
