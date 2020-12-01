@@ -103,6 +103,7 @@ const AppContainer = (props) => {
     // }
 
     const handleInitialBranchLink = (schoolId, postId) => {
+        alert('handleInitialBranchLink')
         if (schoolId == activeDomain.id) {
             // direct to article
             const url = Linking.makeUrl(`/article/${postId}`)
@@ -144,6 +145,7 @@ const AppContainer = (props) => {
     }
 
     const handleBranchLink = (schoolId, postId, listener) => {
+        console.log('handleBranchLink')
         if (schoolId == activeDomain.id) {
             // direct to article
             const url = Linking.makeUrl(`/article/${postId}`)
@@ -205,6 +207,8 @@ const AppContainer = (props) => {
                     }
 
                     const params = await Branch.getFirstReferringParams()
+
+                    alert('branch initial params', JSON.stringify(params))
 
                     if (params) {
                         const { school_id, post_id } = params
