@@ -213,6 +213,9 @@ export default (props) => {
                         options={{
                             headerTitle: null,
                             headerBackTitleVisible: false,
+                            headerStyle: {
+                                backgroundColor: theme.colors.background,
+                            },
                             // headerShown: false,
                         }}
                     />

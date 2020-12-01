@@ -102,6 +102,88 @@ const AppContainer = (props) => {
     //     }
     // }
 
+    const handleInitialBranchLink = (schoolId, postId) => {
+        if (schoolId == activeDomain.id) {
+            // direct to article
+            const url = Linking.makeUrl(`/article/${postId}`)
+            return url
+        } else {
+            // make sure domain origin is a saved domain
+            let found = domains.find((domain) => {
+                return domain.id == schoolId
+            })
+            if (!found) {
+                // user doesnt have this domain saved so dont direct anywhere
+                console.log('no domain saved for this link', schoolId)
+                const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
+                return selectSchoolUrl
+            }
+            Alert.alert(
+                'Switch Active School?',
+                `Viewing this story will switch your active school to ${jsonData.site_name}.`,
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => {},
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Proceed',
+                        onPress: () => {
+                            setActiveDomain(found.id)
+                            setInitialized(false)
+
+                            const url = Linking.makeUrl(`/article/${postId}`)
+                            return url
+                        },
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+    }
+
+    const handleBranchLink = (schoolId, postId, listener) => {
+        if (schoolId == activeDomain.id) {
+            // direct to article
+            const url = Linking.makeUrl(`/article/${postId}`)
+            listener(url)
+        } else {
+            // make sure domain origin is a saved domain
+            let found = domains.find((domain) => {
+                return domain.id == schoolId
+            })
+            if (!found) {
+                // user doesnt have this domain saved so dont direct anywhere
+                console.log('no domain saved for this link', schoolId)
+                const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
+                listener(selectSchoolUrl)
+            }
+            Alert.alert(
+                'Switch Active School?',
+                `Viewing this story will switch your active school to ${jsonData.site_name}.`,
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => {},
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Proceed',
+                        onPress: () => {
+                            setActiveDomain(found.id)
+                            setInitialized(false)
+
+                            const url = Linking.makeUrl(`/article/${postId}`)
+                            listener(url)
+                        },
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+    }
+
     if (!user.id || initializeUserLoading) {
         return (
             <View style={{ flex: 1 }}>
@@ -122,9 +204,15 @@ const AppContainer = (props) => {
                         return url
                     }
 
-                    const params = Branch.getFirstReferringParams()
+                    const params = await Branch.getFirstReferringParams()
 
-                    return params?.$canonical_url
+                    if (params) {
+                        const { school_id, post_id } = params
+
+                        if (school_id && post_id) handleInitialBranchLink(school_id, post_id)
+                    }
+
+                    return null
                 },
 
                 subscribe(listener) {
@@ -222,12 +310,8 @@ const AppContainer = (props) => {
                         }
 
                         // A Branch link was opened
-                        const url = params.$canonical_url
-
-                        console.log('branch link success', params, url)
-                        alert(JSON.stringify(params))
-
-                        // listener(url)
+                        const { school_id, post_id } = params
+                        handleBranchLink(school_id, post_id, listener)
                     })
 
                     return () => {
