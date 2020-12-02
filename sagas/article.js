@@ -107,14 +107,12 @@ export function* getStoryExtras(domainUrl, article) {
             metaKey = 'sno_sidebyside_list'
         }
         if (metaKey) {
-            console.log('container', article)
             storyChapters = yield call(
                 domainApiService.fetchArticleChapterInfo,
                 domainUrl,
                 article.id,
                 metaKey
             )
-            console.log('storyChapters', storyChapters)
         }
 
         // let updatedStoryChapters = await Promise.all(

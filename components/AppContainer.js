@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 
-import { View, ActivityIndicator, Text } from 'react-native'
+import { View, ActivityIndicator, Text, Alert, TouchableOpacity } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 
 import * as Notifications from 'expo-notifications'
@@ -52,10 +52,18 @@ const AppContainer = (props) => {
         fromDeepLink,
         setFromDeepLink,
         setActiveDomain,
+        firstInstall,
+        setFirstInstall,
+        domains,
     } = props
 
-    const notificationListener = useRef()
-    const responseListener = useRef()
+    const navigationQueue = useRef(null)
+
+    useEffect(() => {
+        return () => {
+            RootNavigation.isReadyRef.current = false
+        }
+    }, [])
 
     useEffect(() => {
         if (!user.id) {
@@ -70,120 +78,9 @@ const AppContainer = (props) => {
         }
     }, [activeDomain])
 
-    // {
-    //     "domain_id": 182442528,
-    //     "post_id": 1196,
-    //     "site_name": 'SNO Test',
-    //     "link": 'https://google.com'
-    // }
-
-    // useEffect(() => {
-    //     if (!initializeUserLoading) setLoading(false)
-    // }, [initializeUserLoading])
-    // useEffect(() => {
-    //     if (switchingDomain) {
-    //         return
-    //     }
-    //     if (fromDeepLink) {
-    //         handleFromDeepLink()
-    //     } else {
-    //         initializeUser()
-    //     }
-    // }, [switchingDomain, fromDeepLink])
-
-    // const checkIfDeepLinkUser = async () => {
-    //     const { path, queryParams } = await Linking.parseInitialURLAsync()
-
-    //     let isDeepSelect = path ? path.includes('deepSelect') : false
-    //     let isDeepLinkArticle = path ? path.includes('article') : false
-
-    //     if (path && (isDeepSelect || isDeepLinkArticle)) {
-    //         setFromDeepLink(true)
-    //     }
-    // }
-
-    const handleInitialBranchLink = (schoolId, postId) => {
-        alert('handleInitialBranchLink')
-        if (schoolId == activeDomain.id) {
-            // direct to article
-            const url = Linking.makeUrl(`/article/${postId}`)
-            return url
-        } else {
-            // make sure domain origin is a saved domain
-            let found = domains.find((domain) => {
-                return domain.id == schoolId
-            })
-            if (!found) {
-                // user doesnt have this domain saved so dont direct anywhere
-                console.log('no domain saved for this link', schoolId)
-                const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
-                return selectSchoolUrl
-            }
-            Alert.alert(
-                'Switch Active School?',
-                `Viewing this story will switch your active school to ${jsonData.site_name}.`,
-                [
-                    {
-                        text: 'Cancel',
-                        onPress: () => {},
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Proceed',
-                        onPress: () => {
-                            setActiveDomain(found.id)
-                            setInitialized(false)
-
-                            const url = Linking.makeUrl(`/article/${postId}`)
-                            return url
-                        },
-                    },
-                ],
-                { cancelable: false }
-            )
-        }
-    }
-
-    const handleBranchLink = (schoolId, postId, listener) => {
-        console.log('handleBranchLink')
-        if (schoolId == activeDomain.id) {
-            // direct to article
-            const url = Linking.makeUrl(`/article/${postId}`)
-            listener(url)
-        } else {
-            // make sure domain origin is a saved domain
-            let found = domains.find((domain) => {
-                return domain.id == schoolId
-            })
-            if (!found) {
-                // user doesnt have this domain saved so dont direct anywhere
-                console.log('no domain saved for this link', schoolId)
-                const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
-                listener(selectSchoolUrl)
-            }
-            Alert.alert(
-                'Switch Active School?',
-                `Viewing this story will switch your active school to ${jsonData.site_name}.`,
-                [
-                    {
-                        text: 'Cancel',
-                        onPress: () => {},
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Proceed',
-                        onPress: () => {
-                            setActiveDomain(found.id)
-                            setInitialized(false)
-
-                            const url = Linking.makeUrl(`/article/${postId}`)
-                            listener(url)
-                        },
-                    },
-                ],
-                { cancelable: false }
-            )
-        }
+    const errorRetry = () => {
+        setActiveDomain()
+        setInitialized(false)
     }
 
     if (!user.id || initializeUserLoading) {
@@ -202,31 +99,51 @@ const AppContainer = (props) => {
                     const url = await Linking.getInitialURL()
                     const parsedUrl = await Linking.parseInitialURLAsync()
 
-                    alert('initial url' + JSON.stringify(url) + JSON.stringify(parsedUrl))
-
-                    if (url != null) {
+                    if (url != null && parsedUrl?.path) {
                         console.log('found default initial URL', url)
-                        // return url
+                        return url
                     }
 
                     const params = await Branch.getFirstReferringParams()
 
-                    alert('branch initial params' + JSON.stringify(params))
+                    const schoolId = params?.school_id
+                    const postId = params?.post_id
 
-                    if (params) {
-                        const { school_id, post_id } = params
+                    if (firstInstall && schoolId) {
+                        setFirstInstall(false)
 
-                        if (school_id && post_id) handleInitialBranchLink(school_id, post_id)
+                        alert('first install...' + firstInstall + RootNavigation.isReadyRef.current)
+
+                        const branchLinkType = params['~feature']
+
+                        if (branchLinkType === 'linked-school') {
+                            alert('first install linked...' + firstInstall)
+                            setActiveDomain(null)
+                            setInitialized(false)
+
+                            const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
+                            return selectSchoolUrl
+                        } else {
+                            // article link
+                            const url = Linking.makeUrl(`/article/${postId}`)
+                            navigationQueue.current = url
+                            setActiveDomain(null)
+                            setInitialized(false)
+
+                            const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
+                            return selectSchoolUrl
+                        }
                     }
 
                     return null
                 },
 
                 subscribe(listener) {
-                    const onReceiveURL = ({ url }) => {
-                        console.log('onReceiveURL', url)
-                        return listener(url)
-                    }
+                    // const onReceiveURL = ({ url }) => {
+                    //     alert('onReceiveURL' + url)
+                    //     console.log('onReceiveURL', url)
+                    //     return listener(url)
+                    // }
 
                     const handleNotificationPress = async (notificationContent) => {
                         const jsonData = notificationContent.data?.body
@@ -265,13 +182,13 @@ const AppContainer = (props) => {
                                         {
                                             text: 'Proceed',
                                             onPress: () => {
-                                                setActiveDomain(found.id)
-                                                setInitialized(false)
-
                                                 const url = Linking.makeUrl(
                                                     `/article/${jsonData.post_id}`
                                                 )
-                                                listener(url)
+                                                navigationQueue.current = url
+
+                                                setActiveDomain(found.id)
+                                                setInitialized(false)
                                             },
                                         },
                                     ],
@@ -286,6 +203,7 @@ const AppContainer = (props) => {
                     }
 
                     let notificationSubscription = null
+                    let branchUnsubscribe = null
 
                     if (user.push_token) {
                         notificationSubscription = Notifications.addNotificationResponseReceivedListener(
@@ -296,36 +214,99 @@ const AppContainer = (props) => {
                         )
                     }
 
-                    Linking.addEventListener('url', onReceiveURL)
-                    Branch.subscribe(({ error, params, uri }) => {
-                        if (error) {
-                            console.error('Error from Branch: ' + error)
-                            return
+                    // Linking.addEventListener('url', onReceiveURL)
+                    Branch.initSessionTtl = 10000
+                    if (RootNavigation.isReadyRef.current && (!activeDomain.id || initialized)) {
+                        if (navigationQueue.current && initialized) {
+                            const url = navigationQueue.current
+                            navigationQueue.current = null
+                            //need to handle navigation
+                            listener(url)
                         }
 
-                        if (params['+non_branch_link']) {
-                            const nonBranchUrl = params['+non_branch_link']
-                            // Route non-Branch URL if appropriate.
-                            console.log('nonBranchUrl: ' + nonBranchUrl)
-                            return
-                        }
+                        branchUnsubscribe = Branch.subscribe(({ error, params, uri }) => {
+                            if (error) {
+                                console.error('Error from Branch: ' + error)
+                                return
+                            }
+                            if (params['+non_branch_link']) {
+                                const nonBranchUrl = params['+non_branch_link']
+                                // Route non-Branch URL if appropriate.
+                                console.log('nonBranchUrl: ' + nonBranchUrl)
+                                return
+                            }
+                            if (!params['+clicked_branch_link']) {
+                                // Indicates initialization success and some other conditions.
+                                // No link was opened.
+                                return
+                            }
 
-                        if (!params['+clicked_branch_link']) {
-                            // Indicates initialization success and some other conditions.
-                            // No link was opened.
-                            return
-                        }
+                            // A Branch link was opened
+                            const schoolId = params?.school_id
+                            const postId = params?.post_id
+                            const linkType = params['~feature']
 
-                        // A Branch link was opened
-                        const { school_id, post_id } = params
-                        handleBranchLink(school_id, post_id, listener)
-                    })
+                            if (linkType === 'linked-school') {
+                                alert('linked-school' + linkType + JSON.stringify(params))
+                                setActiveDomain(null)
+
+                                const url = Linking.makeUrl(`auth/${schoolId}`)
+                                listener(url)
+                                return
+                            }
+                            if (schoolId && schoolId == activeDomain.id) {
+                                // direct to article
+                                const url = Linking.makeUrl(`/article/${postId}`)
+                                listener(url)
+                            } else {
+                                // check if linked domain is saved
+                                let found = domains.find((domain) => {
+                                    return domain.id == schoolId
+                                })
+                                // user doesnt have this domain saved
+                                if (!found) {
+                                    // const url = Linking.makeUrl(`/article/${postId}`)
+                                    // navigationQueue.current = url
+                                    // setActiveDomain(null)
+                                    // setInitialized(false)
+
+                                    const selectSchoolUrl = Linking.makeUrl(`auth/${schoolId}`)
+                                    listener(selectSchoolUrl)
+                                    return
+                                } else {
+                                    Alert.alert(
+                                        'Switch Active School?',
+                                        `Viewing this story will switch your active school.`,
+                                        [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => {},
+                                                style: 'cancel',
+                                            },
+                                            {
+                                                text: 'Proceed',
+                                                onPress: () => {
+                                                    const url = Linking.makeUrl(
+                                                        `/article/${postId}`
+                                                    )
+                                                    navigationQueue.current = url
+                                                    setActiveDomain(found.id)
+                                                    setInitialized(false)
+                                                },
+                                            },
+                                        ],
+                                        { cancelable: false }
+                                    )
+                                }
+                            }
+                        })
+                    }
 
                     return () => {
                         // Clean up the event listeners
-                        Linking.removeEventListener('url', onReceiveURL)
+                        // Linking.removeEventListener('url', onReceiveURL)
                         if (notificationSubscription) notificationSubscription.remove()
-                        if (Branch.unsubscribe) Branch.unsubscribe()
+                        if (branchUnsubscribe) branchUnsubscribe()
                     }
                 },
 
@@ -365,7 +346,7 @@ const AppContainer = (props) => {
             fallback={<View style={{ backgroundColor: 'red', height: 100 }}></View>}
         >
             <PaperProvider theme={theme}>
-                <ErrorBoundary navigation={RootNavigation}>
+                <ErrorBoundary onRetry={errorRetry}>
                     <StatusBar style={theme.primaryIsDark ? 'light' : 'dark'} />
                     {!activeDomain.id ? <AuthStack /> : <MainStackContainer />}
                 </ErrorBoundary>

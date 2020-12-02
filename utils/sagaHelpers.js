@@ -112,8 +112,6 @@ export async function asyncFetchArticle(domainUrl, articleId, isChapter = false)
         let storyChapters = []
         let metaKey = ''
 
-        console.log('article.custom_fields.sno_format', article.custom_fields.sno_format)
-
         if (!isChapter) {
             if (article.custom_fields.sno_format == 'Long-Form') {
                 metaKey = 'sno_longform_list'

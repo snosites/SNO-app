@@ -48,11 +48,11 @@ const SelectScreen = (props) => {
         if (schoolId && availableDomains.length) {
             const linkedDomainIndex = availableDomains.findIndex((domain) => domain.id == schoolId)
 
-            if (linkedDomainIndex) {
+            if (linkedDomainIndex > 1) {
                 console.log('linkedDomainIndex', linkedDomainIndex)
                 // setSelectedDomain(foundDomain)
                 flatListRef.current?.scrollToIndex({
-                    index: linkedDomainIndex - 5,
+                    index: linkedDomainIndex > 5 ? linkedDomainIndex - 5 : linkedDomainIndex,
                     viewPosition: 0.5,
                     // viewOffset: 0,
                 })

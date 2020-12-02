@@ -21,8 +21,8 @@ export const types = {
     CLEARING_SETTINGS: 'CLEARING_SETTINGS',
     SET_WRITER_SUBSCRIPTIONS: 'SET_WRITER_SUBSCRIPTIONS',
     SET_FROM_PUSH: 'SET_FROM_PUSH',
-
     RESET_SETTINGS: 'RESET_SETTINGS',
+    SET_FIRST_INSTALL: 'SET_FIRST_INSTALL',
 }
 
 const initialState = {
@@ -32,6 +32,7 @@ const initialState = {
     user: {},
     writerSubscriptions: [],
     fromPush: false,
+    firstInstall: true,
 }
 
 export default function user(state = initialState, action) {
@@ -72,6 +73,11 @@ export default function user(state = initialState, action) {
                 ...state,
                 fromPush: action.payload,
             }
+        case types.SET_FIRST_INSTALL:
+            return {
+                ...state,
+                firstInstall: action.payload,
+            }
         default:
             return state
     }
@@ -102,6 +108,10 @@ export const actions = {
         payload,
     }),
     setFromPush: (payload) => ({ type: types.SET_FROM_PUSH, payload }),
+    setFirstInstall: (payload) => ({
+        type: types.SET_FIRST_INSTALL,
+        payload,
+    }),
 }
 
 //selectors

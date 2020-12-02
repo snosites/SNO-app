@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component {
 
     render() {
         const { error, submitting, successful } = this.state
-        const { navigation } = this.props
+        const { onRetry } = this.props
         if (error) {
             return (
                 <SafeAreaView
@@ -77,7 +77,7 @@ class ErrorBoundary extends React.Component {
                                             eventId: null,
                                             submitting: false,
                                         })
-                                        navigation.goBack()
+                                        onRetry()
                                     }}
                                 >
                                     Go To Home Screen
