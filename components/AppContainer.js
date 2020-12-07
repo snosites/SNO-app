@@ -112,12 +112,9 @@ const AppContainer = (props) => {
                     if (firstInstall && schoolId) {
                         setFirstInstall(false)
 
-                        alert('first install...' + firstInstall + RootNavigation.isReadyRef.current)
-
                         const branchLinkType = params['~feature']
 
                         if (branchLinkType === 'linked-school') {
-                            alert('first install linked...' + firstInstall)
                             setActiveDomain(null)
                             setInitialized(false)
 
@@ -160,7 +157,12 @@ const AppContainer = (props) => {
                                 // get article
 
                                 const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
-                                listener(url)
+
+                                if (initialized) listener(url)
+                                else {
+                                    navigationQueue.current = url
+                                    return
+                                }
                             } else {
                                 // make sure domain origin is a saved domain
                                 let found = domains.find((domain) => {
@@ -247,7 +249,6 @@ const AppContainer = (props) => {
                             const linkType = params['~feature']
 
                             if (linkType === 'linked-school') {
-                                alert('linked-school' + linkType + JSON.stringify(params))
                                 setActiveDomain(null)
 
                                 const url = Linking.makeUrl(`auth/${schoolId}`)
