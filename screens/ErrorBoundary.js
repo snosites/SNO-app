@@ -1,6 +1,5 @@
 import React from 'react'
 import { ScrollView, Text, View, SafeAreaView, KeyboardAvoidingView } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
 import { Button, TextInput } from 'react-native-paper'
 
 import * as Sentry from 'sentry-expo'
@@ -38,7 +37,6 @@ class ErrorBoundary extends React.Component {
                             behavior='position'
                             enabled
                         >
-                            <StatusBar style={'dark'} />
                             <View
                                 style={{
                                     flex: 1,
