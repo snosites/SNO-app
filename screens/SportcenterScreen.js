@@ -16,25 +16,26 @@ import { DataTable, Card, Button, Modal, Portal, RadioButton } from 'react-nativ
 
 import { Ionicons } from '@expo/vector-icons'
 import moment from 'moment'
+import theme from '../redux/theme'
 
 class SportcenterScreen extends React.Component {
-    static navigationOptions = ({ navigation, screenProps }) => {
-        const { theme } = screenProps
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        const logo = navigation.getParam('headerLogo', null)
-        return {
-            title: 'Sports Center',
-            headerLeft: logo && (
-                <Image
-                    source={{ uri: logo }}
-                    style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
-                    resizeMode='cover'
-                />
-            ),
-            headerTitleAlign: 'center',
-        }
-    }
+    // static navigationOptions = ({ navigation, screenProps }) => {
+    //     const { theme } = screenProps
+    //     let primaryColor = Color(theme.colors.primary)
+    //     let isDark = primaryColor.isDark()
+    //     const logo = navigation.getParam('headerLogo', null)
+    //     return {
+    //         title: 'Sports Center',
+    //         headerLeft: logo && (
+    //             <Image
+    //                 source={{ uri: logo }}
+    //                 style={{ width: 60, height: 30, borderRadius: 7, marginLeft: 10 }}
+    //                 resizeMode='cover'
+    //             />
+    //         ),
+    //         headerTitleAlign: 'center',
+    //     }
+    // }
 
     state = {
         selectedButton: 'game_schedule',
@@ -52,15 +53,9 @@ class SportcenterScreen extends React.Component {
     _hideModal = () => this.setState({ modalVisible: false })
 
     componentDidMount() {
-        const { navigation, global } = this.props
-        navigation.setParams({
-            headerLogo: global.headerSmall,
-        })
-
         if (this.animation) {
             this._playAnimation()
         }
-
         this._loadOptions()
     }
 
@@ -102,9 +97,9 @@ class SportcenterScreen extends React.Component {
         if (noSports) {
             return (
                 <View
-                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}
+                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30 }}
                 >
-                    <Text style={{ fontSize: 28, textAlign: 'center' }}>
+                    <Text style={{ fontSize: 24, textAlign: 'center', color: theme.colors.text }}>
                         There are currently no sports added to Sport Center
                     </Text>
                 </View>
@@ -116,7 +111,7 @@ class SportcenterScreen extends React.Component {
                     icon='chevron-right'
                     mode='text'
                     onPress={this._showModal}
-                    color='black'
+                    color={theme.colors.primary}
                     style={{ margin: 20 }}
                 >
                     <Text
@@ -125,6 +120,7 @@ class SportcenterScreen extends React.Component {
                             textAlign: 'center',
                             paddingTop: 10,
                             paddingBottom: 10,
+                            color: theme.colors.text,
                         }}
                     >
                         {selectedSport === 'all'
@@ -144,7 +140,6 @@ class SportcenterScreen extends React.Component {
                         Select a sport to view the full schedule and toggle between other options
                     </Text>
                 ) : null}
-                {/* <View style={{ flexDirection: 'row' }}> */}
                 <View style={{ flex: 1 }}>
                     <View>
                         <ScrollView
@@ -215,11 +210,17 @@ class SportcenterScreen extends React.Component {
                                             marginHorizontal: 20,
                                             padding: 20,
                                             paddingHorizontal: 20,
-                                            backgroundColor: '#F1F1F1',
+                                            backgroundColor: theme.colors.background,
                                             borderRadius: 15,
                                         }}
                                     >
-                                        <Text style={{ fontSize: 18, textAlign: 'center' }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 18,
+                                                textAlign: 'center',
+                                                color: theme.colors.text,
+                                            }}
+                                        >
                                             {this._renderEmptyText()}
                                         </Text>
                                     </View>
@@ -231,6 +232,7 @@ class SportcenterScreen extends React.Component {
                                                 fontWeight: 'bold',
                                                 paddingTop: 15,
                                                 paddingLeft: 20,
+                                                color: theme.colors.text,
                                             }}
                                         >
                                             Conference Standings
@@ -244,6 +246,7 @@ class SportcenterScreen extends React.Component {
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
                                                 paddingLeft: 20,
+                                                color: theme.colors.text,
                                             }}
                                         >
                                             State Rankings
@@ -260,6 +263,7 @@ class SportcenterScreen extends React.Component {
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
                                                 paddingLeft: 20,
+                                                color: theme.colors.text,
                                             }}
                                         >
                                             Recent Results
@@ -275,6 +279,7 @@ class SportcenterScreen extends React.Component {
                                                 fontWeight: 'bold',
                                                 paddingTop: 20,
                                                 paddingLeft: 20,
+                                                color: theme.colors.text,
                                             }}
                                         >
                                             Upcoming
@@ -290,7 +295,6 @@ class SportcenterScreen extends React.Component {
                         )}
                     </ScrollView>
                 </View>
-                {/* <View style={{ flex: 1 }} /> */}
                 <Portal>
                     <Modal
                         visible={this.state.modalVisible}
@@ -309,17 +313,30 @@ class SportcenterScreen extends React.Component {
                             style={{
                                 flex: 1,
                                 padding: 20,
-                                backgroundColor: '#F1F1F1',
+                                backgroundColor: theme.colors.surface,
                                 borderRadius: 15,
                             }}
                         >
                             <ScrollView style={{ flex: 1 }}>
                                 <Text
-                                    style={{ fontSize: 21, textAlign: 'center', paddingBottom: 10 }}
+                                    style={{
+                                        fontSize: 21,
+                                        textAlign: 'center',
+                                        paddingBottom: 10,
+                                        color: theme.colors.text,
+                                    }}
                                 >
                                     Select Sport and Year
                                 </Text>
-                                <Text style={{ fontSize: 18, paddingVertical: 10 }}>Sport</Text>
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        paddingVertical: 10,
+                                        color: theme.colors.text,
+                                    }}
+                                >
+                                    Sport
+                                </Text>
                                 <RadioButton.Group
                                     onValueChange={(value) =>
                                         this.setState({ selectedSport: value })
@@ -332,7 +349,9 @@ class SportcenterScreen extends React.Component {
                                             style={{ marginLeft: 10 }}
                                             onPress={() => this.setState({ selectedSport: 'all' })}
                                         >
-                                            <Text>All Sports</Text>
+                                            <Text style={{ color: theme.colors.text }}>
+                                                All Sports
+                                            </Text>
                                         </TouchableOpacity>
                                     </View>
                                     {this.state.sportcenterOptions.sports.map((sport, i) => (
@@ -347,12 +366,21 @@ class SportcenterScreen extends React.Component {
                                                     this.setState({ selectedSport: sport.name })
                                                 }
                                             >
-                                                <Text>{sport.name}</Text>
+                                                <Text style={{ color: theme.colors.text }}>
+                                                    {sport.name}
+                                                </Text>
                                             </TouchableOpacity>
                                         </View>
                                     ))}
                                 </RadioButton.Group>
-                                <Text style={{ fontSize: 18, paddingVertical: 10, paddingTop: 20 }}>
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        paddingVertical: 10,
+                                        paddingTop: 20,
+                                        color: theme.colors.text,
+                                    }}
+                                >
                                     Year
                                 </Text>
                                 <RadioButton.Group
@@ -377,7 +405,9 @@ class SportcenterScreen extends React.Component {
                                                         this.setState({ selectedYear: year.name })
                                                     }
                                                 >
-                                                    <Text>{year.name}</Text>
+                                                    <Text style={{ color: theme.colors.text }}>
+                                                        {year.name}
+                                                    </Text>
                                                 </TouchableOpacity>
                                             </View>
                                         )
@@ -400,6 +430,7 @@ class SportcenterScreen extends React.Component {
     }
 
     _renderStandingItem = (game, i, type) => {
+        const { theme } = this.props
         const { customFields } = game
 
         if (type === 'conference') {
@@ -411,7 +442,7 @@ class SportcenterScreen extends React.Component {
                             marginHorizontal: 20,
                             padding: 20,
                             paddingHorizontal: 20,
-                            backgroundColor: '#F1F1F1',
+                            backgroundColor: theme.colors.gray,
                             borderRadius: 15,
                         }}
                     >
@@ -451,7 +482,7 @@ class SportcenterScreen extends React.Component {
                             marginHorizontal: 20,
                             padding: 20,
                             paddingHorizontal: 20,
-                            backgroundColor: '#F1F1F1',
+                            backgroundColor: theme.colors.gray,
                             borderRadius: 15,
                         }}
                     >
@@ -479,13 +510,7 @@ class SportcenterScreen extends React.Component {
     _renderAllItem = (game, i, type) => {
         const { customFields } = game
         const { selectedButton, selectedSport } = this.state
-
-        console.log(
-            'in the render all',
-            type,
-            moment(customFields.date[0]),
-            moment(customFields.date[0]).isBefore(moment())
-        )
+        const { theme } = this.props
 
         if (type === 'previous') {
             if (customFields.date && moment(customFields.date[0]).isBefore(moment())) {
@@ -497,7 +522,7 @@ class SportcenterScreen extends React.Component {
                                 marginHorizontal: 20,
                                 padding: 20,
                                 paddingHorizontal: 20,
-                                backgroundColor: '#F1F1F1',
+                                backgroundColor: theme.colors.gray,
                                 borderRadius: 15,
                             }}
                         >
@@ -579,7 +604,7 @@ class SportcenterScreen extends React.Component {
                                 marginHorizontal: 20,
                                 padding: 20,
                                 paddingHorizontal: 20,
-                                backgroundColor: '#F1F1F1',
+                                backgroundColor: theme.colors.gray,
                                 borderRadius: 15,
                             }}
                         >
@@ -656,6 +681,7 @@ class SportcenterScreen extends React.Component {
     _renderItem = (game, i) => {
         const { customFields } = game
         const { selectedButton, selectedSport } = this.state
+        const { theme } = this.props
 
         if (selectedButton === 'game_schedule') {
             return (
@@ -666,7 +692,7 @@ class SportcenterScreen extends React.Component {
                             marginHorizontal: 20,
                             padding: 20,
                             paddingHorizontal: 20,
-                            backgroundColor: '#F1F1F1',
+                            backgroundColor: theme.colors.gray,
                             borderRadius: 15,
                         }}
                     >
@@ -745,7 +771,7 @@ class SportcenterScreen extends React.Component {
                             marginHorizontal: 20,
                             padding: 20,
                             paddingHorizontal: 20,
-                            backgroundColor: '#F1F1F1',
+                            backgroundColor: theme.colors.gray,
                             borderRadius: 15,
                         }}
                     >
@@ -823,11 +849,6 @@ class SportcenterScreen extends React.Component {
     }
 
     _loadData = async (year, sport, type) => {
-        // if (sport === 'all') {
-        //     console.log('in it', sport, year, type)
-        //     this.setState({ data: [], doneLoading: true, tabLoading: false })
-        //     return
-        // }
         const { activeDomain } = this.props
         const response = await fetch(
             `https://${activeDomain.url}/wp-json/sns-v2/sportcenter_query?sport=${sport}&year=${year}&type=${type}`,
@@ -838,7 +859,6 @@ class SportcenterScreen extends React.Component {
             }
         )
         const result = await response.json()
-        console.log('this is game schedule', result)
         result.sort(function (a, b) {
             a = new Date(a.customFields.date && a.customFields.date[0])
             b = new Date(b.customFields.date && b.customFields.date[0])

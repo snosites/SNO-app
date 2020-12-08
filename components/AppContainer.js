@@ -143,7 +143,7 @@ const AppContainer = (props) => {
                     // }
 
                     const handleNotificationPress = async (notificationContent) => {
-                        const jsonData = notificationContent.data?.body
+                        const jsonData = notificationContent.data
                         console.log('handleNotificationPress', jsonData)
                         try {
                             if (!jsonData) throw new Error('no JSON data in notification')
@@ -153,7 +153,7 @@ const AppContainer = (props) => {
                                 return
                             }
                             // if the push is from active domain go to article
-                            if (jsonData.domain_id == activeDomain.id) {
+                            if (Number(jsonData.domain_id) == activeDomain.id) {
                                 // get article
 
                                 const url = Linking.makeUrl(`/article/${jsonData.post_id}`)
