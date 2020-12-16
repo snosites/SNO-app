@@ -40,7 +40,6 @@ function* initializeUser() {
         yield call(findOrCreateUser)
 
         yield put(globalActions.initializeUserSuccess())
-        // yield call(hideSplashScreen)
     } catch (err) {
         console.log('error initializing user in saga', err)
         yield put(globalActions.initializeUserError('error initializing user'))
@@ -65,7 +64,12 @@ function* startup(action) {
         // get splash image right away
         const splashScreenUrl = yield call(getSplashScreenImage, domain)
         yield put(globalActions.receiveSplash(splashScreenUrl))
-        yield call(SplashScreen.hideAsync)
+
+        try {
+            yield call(SplashScreen.hideAsync)
+        } catch (e) {
+            console.warn(e)
+        }
 
         // get menus and sync with DB -- save updated DB categories to push notification categories -- return obj with menu and DB categories
         const { menu, dbCategories } = yield call(fetchMenu, {

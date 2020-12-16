@@ -136,12 +136,6 @@ const AppContainer = (props) => {
                 },
 
                 subscribe(listener) {
-                    // const onReceiveURL = ({ url }) => {
-                    //     alert('onReceiveURL' + url)
-                    //     console.log('onReceiveURL', url)
-                    //     return listener(url)
-                    // }
-
                     const handleNotificationPress = async (notificationContent) => {
                         const jsonData = notificationContent.data
                         console.log('handleNotificationPress', jsonData)
@@ -310,10 +304,6 @@ const AppContainer = (props) => {
                         if (branchUnsubscribe) branchUnsubscribe()
                     }
                 },
-
-                // test domain ID 182442528
-                // xcrun simctl openurl booted exp://127.0.0.1:19000/--/article/1196
-                // xcrun simctl openurl booted exp://127.0.0.1:19000/--/auth/182442528
                 config: {
                     initialRouteName: activeDomain.id ? 'Tabs' : 'Welcome',
                     screens: {
