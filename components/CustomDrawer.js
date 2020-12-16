@@ -26,6 +26,8 @@ const CustomDrawerContent = (props) => {
         setActiveCategory,
     } = props
 
+    console.log('in custom drawer')
+
     const _handleMenuPress = (item, index) => {
         navigation.closeDrawer()
         if (item.object === 'category') {

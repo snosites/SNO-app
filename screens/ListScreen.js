@@ -64,6 +64,10 @@ const ListScreen = (props) => {
         return unsubscribe
     }, [navigation])
 
+    useEffect(() => {
+        // navigation.openDrawer()
+    }, [])
+
     const shouldShowAd = (itemIndex) => {
         if (!listAds.displayLocation || !itemIndex) return false
 
@@ -95,8 +99,6 @@ const ListScreen = (props) => {
     const _scrollToTop = () => {
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
     }
-
-    console.log('info', categoryId, articlesByCategory, category)
 
     if (!categoryId || (!articlesByCategory.length && category.isFetching)) {
         return (

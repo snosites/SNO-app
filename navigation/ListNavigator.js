@@ -36,10 +36,6 @@ const ListStack = (props) => {
         return unsubscribe
     }, [navigation])
 
-    useEffect(() => {
-        navigation.openDrawer()
-    }, [])
-
     return (
         <Stack.Navigator
             screenOptions={{
@@ -129,7 +125,7 @@ const ConnectedListStack = connect(mapStateToProps)(ListStack)
 const DrawerNavigator = ({ theme }) => {
     return (
         <Drawer.Navigator
-            hideStatusBar={true}
+            // hideStatusBar={true}
             statusBarAnimation={true}
             drawerStyle={{
                 backgroundColor: theme.colors.surface,
