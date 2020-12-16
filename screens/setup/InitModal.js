@@ -55,7 +55,6 @@ const InitModal = (props) => {
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'flex-start',
-                    marginTop: 10,
                     backgroundColor: theme.colors.background,
                 }}
             >
