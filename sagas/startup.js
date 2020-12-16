@@ -102,12 +102,12 @@ function* startup(action) {
 
         let activeCategory = menu[0].object_id
 
-        // yield put(
-        //     articleActions.fetchArticlesIfNeeded({
-        //         domain: domain.url,
-        //         category: activeCategory,
-        //     })
-        // )
+        yield put(
+            articleActions.fetchArticlesIfNeeded({
+                domain: domain.url,
+                category: activeCategory,
+            })
+        )
 
         yield put(globalActions.setActiveCategory(activeCategory))
 

@@ -21,14 +21,6 @@ const Drawer = createDrawerNavigator()
 
 const Stack = createStackNavigator()
 
-const getActiveCategoryTitle = (menus, categoryId) => {
-    const category = menus.find((menu) => menu.object_id == categoryId)
-    if (category) {
-        return category.title
-    }
-    return ''
-}
-
 const ListStack = (props) => {
     const { theme, headerLogo, activeCategoryTitle, navigation, route } = props
 
@@ -70,7 +62,9 @@ const ListStack = (props) => {
                 headerRight: () => {
                     return (
                         <TouchableOpacity
-                            onPress={() => navigation.openDrawer()}
+                            onPress={() => {
+                                navigation.openDrawer()
+                            }}
                             style={{ flex: 1, paddingHorizontal: 15 }}
                         >
                             <Ionicons
@@ -111,6 +105,14 @@ const ListStack = (props) => {
             />
         </Stack.Navigator>
     )
+}
+
+const getActiveCategoryTitle = (menus, categoryId) => {
+    const category = menus.find((menu) => menu.object_id == categoryId)
+    if (category) {
+        return category.title
+    }
+    return ''
 }
 
 const mapStateToProps = (state) => ({

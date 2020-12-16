@@ -96,6 +96,8 @@ const ListScreen = (props) => {
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
     }
 
+    console.log('info', categoryId, articlesByCategory, category)
+
     if (!categoryId || (!articlesByCategory.length && category.isFetching)) {
         return (
             <View

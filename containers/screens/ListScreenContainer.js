@@ -14,10 +14,13 @@ const mapStateToProps = (state) => {
     const activeDomain = getActiveDomain(state)
     const listAds = getListAds(state)
 
+    console.log('categoryId', categoryId, state.articlesByCategory)
+
     // const menuCategoryItem = state.global.menuItems.find((item) => item.object_id == categoryId)
     // console.log('category', menuCategoryItem)
 
     if (!categoryId || !state.articlesByCategory[categoryId]) {
+        console.log('UGH')
         return {
             theme: state.theme,
             activeDomain,
@@ -25,6 +28,7 @@ const mapStateToProps = (state) => {
             category: {
                 isFetching: false,
             },
+            categoryId,
             articlesByCategory: [],
             global: state.global,
             listAds,
