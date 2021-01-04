@@ -65,28 +65,6 @@ const ArticleScreen = (props) => {
         return unsubscribe
     }, [navigation])
 
-    //  useEffect(() => {
-    //      const unsubscribe = navigation.addListener('blur', () => {
-    //          console.log('blurred')
-    //      })
-    //      return unsubscribe
-    //  }, [navigation])
-
-    // useeffect
-    // if (storyAds && storyAds.images && !storyAds.snoAds) {
-    //         this.setState({
-    //             ad: storyAds.images[Math.floor(Math.random() * storyAds.images.length)],
-    //         })
-    //     }
-
-    // on focus
-    // if (ad && ad.id) {
-    //                             sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-    //                         }
-    //                         if (storyAds.snoAds && storyAds.snoAds.ad_spot_id) {
-    //                             fetchSnoAdImage(storyAds.snoAds.ad_spot_id, storyAds.snoAds.ad_fill)
-    //                         }
-
     const _onLayout = (e) => {
         if (e.nativeEvent?.layout) {
             const { y, height } = e.nativeEvent.layout

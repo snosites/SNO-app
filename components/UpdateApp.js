@@ -35,7 +35,7 @@ const UpdateApp = (props) => {
     useEffect(() => {
         Alert.alert(
             'There is an update available',
-            `You need to update your app to the lastest version.  You may have to turn your push notification settings back on after the update.`,
+            `You need to update your app to the lastest version.`,
             [
                 {
                     text: 'Proceed',

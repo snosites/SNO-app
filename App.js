@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 
 import AppContainerContainer from './containers/AppContainerContainer'
 
 import { AppLoading } from 'expo'
-import * as Notifications from 'expo-notifications'
 import * as Icon from '@expo/vector-icons'
 import * as Font from 'expo-font'
 import { Asset } from 'expo-asset'
-import * as SplashScreen from 'expo-splash-screen'
-import SnackbarQueue from './components/SnackbarQueue'
+import UpdateApp from './components/UpdateApp'
 
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
