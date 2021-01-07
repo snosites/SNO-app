@@ -11,7 +11,7 @@ import Slideshow from '../../views/Slideshow'
 const FeaturedMedia = ({ navigation, article, theme }) => {
     const [expandCaption, setExpandCaption] = useState(false)
 
-    const MEDIA_HEIGHT = useWindowDimensions().height * 0.35
+    const MAX_MEDIA_HEIGHT = useWindowDimensions().height * 0.65
     const MEDIA_WIDTH = useWindowDimensions().width
 
     const _handleProfilePress = (writerId) => {
@@ -98,12 +98,18 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
         )
     }
     if (article.featuredImage) {
+        const imageAspectRatio = article.featuredImage.height / article.featuredImage.width
+        const maxImageAspectRatio = MAX_MEDIA_HEIGHT / MEDIA_WIDTH
+        const MEDIA_HEIGHT = MEDIA_WIDTH * imageAspectRatio
+
+        console.log('aspect rtatios', imageAspectRatio, maxImageAspectRatio)
         return (
             <ImageBackground
                 source={{ uri: article.featuredImage.uri }}
                 style={{
                     width: MEDIA_WIDTH,
-                    height: MEDIA_HEIGHT,
+                    height:
+                        imageAspectRatio < maxImageAspectRatio ? MEDIA_HEIGHT : MAX_MEDIA_HEIGHT,
                     resizeMode: 'contain',
                 }}
                 resizeMode='contain'

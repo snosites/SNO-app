@@ -17,10 +17,10 @@ import SearchScreenContainer from '../containers/screens/SearchScreenContainer'
 const Tab = createMaterialTopTabNavigator()
 const Stack = createStackNavigator()
 
-const TabHomeNavigator = ({ theme }) => {
+const TabHomeNavigator = ({ theme, homeScreenMode }) => {
     return (
         <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName={homeScreenMode === 'home' ? 'Home' : 'Recent'}
             backBehavior='order'
             style={{
                 backgroundColor: theme.navigationTheme.colors.surface,
@@ -38,6 +38,7 @@ const TabHomeNavigator = ({ theme }) => {
 
 const mapStateToProps = (state) => ({
     theme: state.theme,
+    homeScreenMode: state.global.homeScreenMode,
     headerLogo: state.global.headerSmall,
 })
 

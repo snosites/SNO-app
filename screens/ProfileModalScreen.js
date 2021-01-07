@@ -388,17 +388,50 @@ const ProfileModalScreen = (props) => {
                         >
                             {entities.decode(profile.post_excerpt)}
                         </Text>
-                        <Text
-                            numberOfLines={2}
-                            ellipsizeMode='tail'
-                            style={{
-                                fontFamily: 'raleway',
-                                fontSize: 14,
-                                color: theme.colors.text,
-                            }}
-                        >
-                            {entities.decode(profile.post_content)}
-                        </Text>
+                        {profile.post_content ? (
+                            <HTML
+                                html={profile.post_content}
+                                textSelectable={true}
+                                customWrapper={(text) => {
+                                    return (
+                                        <Text
+                                            numberOfLines={2}
+                                            ellipsizeMode='tail'
+                                            style={{
+                                                fontFamily: 'raleway',
+                                                fontSize: 14,
+                                                color: theme.colors.text,
+                                            }}
+                                        >
+                                            {text}
+                                        </Text>
+                                    )
+                                }}
+                                tagsStyles={{
+                                    p: {
+                                        fontSize: 16,
+                                        color: theme.colors.text,
+                                    },
+                                    rawtext: {
+                                        fontSize: 16,
+                                        color: theme.colors.text,
+                                    },
+                                }}
+                                allowedStyles={[]}
+                            />
+                        ) : (
+                            <View style={{ height: 150 }}>
+                                <Text
+                                    style={{
+                                        fontFamily: 'raleway',
+                                        fontSize: 14,
+                                        color: theme.colors.text,
+                                    }}
+                                >
+                                    No Profile Content
+                                </Text>
+                            </View>
+                        )}
                         <View
                             style={{
                                 flexDirection: 'row',

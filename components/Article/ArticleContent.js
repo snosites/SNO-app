@@ -45,9 +45,7 @@ const ArticleContent = (props) => {
 
     return (
         <View>
-            <View
-                style={{ flex: 0, height: MEDIA_HEIGHT, backgroundColor: theme.colors.background }}
-            >
+            <View style={{ backgroundColor: theme.colors.background }}>
                 <FeaturedMedia navigation={navigation} article={article} theme={theme} />
             </View>
             <View

@@ -179,7 +179,7 @@ function* getCustomOptions(domain) {
     try {
         const results = yield call(domainApiService.getCustomOptions, domain.url)
         // const categories = yield call(domainApiService.fetchCategories, domain.url)
-
+        console.log('results', results)
         yield put(globalActions.receiveHeader(results.nav_header))
         yield put(globalActions.receiveHeaderLogo(results.header_logo))
         yield put(
@@ -205,7 +205,7 @@ function* getCustomOptions(domain) {
             )
         )
         yield put(globalActions.receiveAppAdOptions(results.ads))
-        yield put(globalActions.receiveHomeScreenMode(results.legacy_home))
+        yield put(globalActions.receiveHomeScreenMode(results.default_home))
         yield put(
             globalActions.receiveHomeScreenListStyle(
                 results.home_list_type === 'small' ||

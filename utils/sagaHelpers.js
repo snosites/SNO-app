@@ -10,6 +10,7 @@ export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
+        console.log('featuredImage', featuredImage)
         if (!featuredImage.meta_fields) {
             if (
                 featuredImage.media_details &&
@@ -19,6 +20,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             ) {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.large.source_url,
+                    width: featuredImage.media_details.sizes.large.width,
+                    height: featuredImage.media_details.sizes.large.height,
                     photographer: '',
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
@@ -28,6 +31,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             } else {
                 story.featuredImage = {
                     uri: featuredImage.source_url,
+                    width: featuredImage.media_details.width,
+                    height: featuredImage.media_details.height,
                     photographer: '',
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
@@ -50,6 +55,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             ) {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.large.source_url,
+                    width: featuredImage.media_details.sizes.large.width,
+                    height: featuredImage.media_details.sizes.large.height,
                     photographer: featuredImage.meta_fields.photographer
                         ? featuredImage.meta_fields.photographer
                         : '',
@@ -62,6 +69,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             } else {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.full.source_url,
+                    width: featuredImage.media_details.width,
+                    height: featuredImage.media_details.height,
                     photographer: featuredImage.meta_fields.photographer
                         ? featuredImage.meta_fields.photographer
                         : '',

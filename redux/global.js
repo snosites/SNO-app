@@ -73,7 +73,7 @@ const initialState = {
     homeScreenCategoryAmounts: [],
     homeScreenCategoryColor: '',
     homeScreenListStyle: 'small',
-    homeScreenMode: 'categories',
+    homeScreenMode: 'home',
     initialized: false,
     activeCategory: null,
     deepLinkArticle: {},
