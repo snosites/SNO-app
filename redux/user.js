@@ -23,6 +23,10 @@ export const types = {
     SET_FROM_PUSH: 'SET_FROM_PUSH',
     RESET_SETTINGS: 'RESET_SETTINGS',
     SET_FIRST_INSTALL: 'SET_FIRST_INSTALL',
+    FETCH_UNREAD_STORIES: 'FETCH_UNREAD_STORIES',
+    FETCH_UNREAD_STORIES_REQUEST: 'FETCH_UNREAD_STORIES_REQUEST',
+    FETCH_UNREAD_STORIES_SUCCESS: 'FETCH_UNREAD_STORIES_SUCCESS',
+    FETCH_UNREAD_STORIES_ERROR: 'FETCH_UNREAD_STORIES_ERROR',
 }
 
 const initialState = {
@@ -33,6 +37,7 @@ const initialState = {
     writerSubscriptions: [],
     fromPush: false,
     firstInstall: true,
+    unreadStories: [],
 }
 
 export default function user(state = initialState, action) {
@@ -52,6 +57,16 @@ export default function user(state = initialState, action) {
             return {
                 ...state,
                 user: action.user,
+            }
+        case types.FETCH_UNREAD_STORIES_SUCCESS:
+            return {
+                ...state,
+                unreadStories: action.payload,
+            }
+        case types.FETCH_UNREAD_STORIES_ERROR:
+            return {
+                ...state,
+                unreadStories: [],
             }
         case types.FIND_OR_CREATE_USER_ERROR:
             return {
@@ -112,6 +127,10 @@ export const actions = {
         type: types.SET_FIRST_INSTALL,
         payload,
     }),
+    fetchUnreadStories: (payload) => ({ type: types.FETCH_UNREAD_STORIES, payload }),
+    fetchUnreadStoriesRequest: () => ({ type: types.FETCH_UNREAD_STORIES_REQUEST }),
+    fetchUnreadStoriesSuccess: (payload) => ({ type: types.FETCH_UNREAD_STORIES_SUCCESS, payload }),
+    fetchUnreadStoriesError: (error) => ({ type: types.FETCH_UNREAD_STORIES_ERROR, error }),
 }
 
 //selectors
