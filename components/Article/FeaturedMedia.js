@@ -11,7 +11,7 @@ import Slideshow from '../../views/Slideshow'
 const FeaturedMedia = ({ navigation, article, theme }) => {
     const [expandCaption, setExpandCaption] = useState(false)
 
-    const MAX_MEDIA_HEIGHT = useWindowDimensions().height * 0.65
+    const MAX_MEDIA_HEIGHT = useWindowDimensions().height * 0.35
     const MEDIA_WIDTH = useWindowDimensions().width
 
     const _handleProfilePress = (writerId) => {
@@ -30,13 +30,15 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
 
         if (source.includes('iframe')) {
             let regex = /<iframe.*?src=["'](.*?)["']/
-            var src = regex.exec(source)[1]
+            let src = regex.exec(source)[1]
+            console.log('src', src)
 
             return (
                 <WebView
+                    style={{ width: MEDIA_WIDTH, height: MAX_MEDIA_HEIGHT }}
                     scrollEnabled={false}
                     bounces={false}
-                    originWhitelist={['*']}
+                    originWhitelist={['https://*', 'http://*']}
                     allowsInlineMediaPlayback={true}
                     startInLoadingState={true}
                     renderError={() => (
@@ -56,9 +58,27 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
                             </Text>
                         </View>
                     )}
+                    onLoad={(syntheticEvent) => {
+                        // update component to be aware of loading status
+                        const { nativeEvent } = syntheticEvent
+                        console.log('onLoad: ', nativeEvent)
+                    }}
+                    onLoadStart={(syntheticEvent) => {
+                        // update component to be aware of loading status
+                        const { nativeEvent } = syntheticEvent
+                        console.log('onLoadStart: ', nativeEvent)
+                    }}
+                    onLoadEnd={(syntheticEvent) => {
+                        // update component to be aware of loading status
+                        const { nativeEvent } = syntheticEvent
+                        console.log('onLoadEnd: ', nativeEvent)
+                    }}
                     onError={(syntheticEvent) => {
                         const { nativeEvent } = syntheticEvent
-                        console.warn('WebView error: ', nativeEvent)
+                        console.log('onError: ', nativeEvent)
+                    }}
+                    renderError={(errorName) => {
+                        console.log('renderError: ', errorName)
                     }}
                     source={{ uri: src }}
                 />
