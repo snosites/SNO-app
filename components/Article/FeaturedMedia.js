@@ -89,6 +89,7 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
 
         return (
             <WebView
+                style={{ width: MEDIA_WIDTH, height: MAX_MEDIA_HEIGHT }}
                 scrollEnabled={false}
                 bounces={false}
                 originWhitelist={['*']}
