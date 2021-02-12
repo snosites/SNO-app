@@ -147,12 +147,28 @@ function* deleteUser() {
     }
 }
 
+export function* fetchUnreadStories() {
+    try {
+        yield put(userActions.fetchUnreadStoriesRequest())
+        const apiToken = yield select(getApiToken)
+
+        // yield call(apiService.deleteUser, apiToken)
+
+        yield put(userActions.fetchUnreadStoriesSuccess([]))
+    } catch (err) {
+        console.log('error fetching unread stories in saga', err)
+        yield put(userActions.fetchUnreadStoriesError('unread stories error'))
+        Sentry.captureException(err)
+    }
+}
+
 function* userSaga() {
     yield all([
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
         takeLatest(userTypes.DELETE_USER, deleteUser),
+        takeLatest(userTypes.FETCH_UNREAD_STORIES, fetchUnreadStories),
     ])
 }
 

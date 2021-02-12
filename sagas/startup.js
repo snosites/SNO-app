@@ -16,6 +16,7 @@ import {
     subscribe,
     fetchNotificationSubscriptions,
     findOrCreateUser,
+    fetchUnreadStories,
 } from '../sagas/user'
 
 import domainApiService from '../api/domain'
@@ -96,6 +97,9 @@ function* startup(action) {
 
         // get users notification subscriptions
         yield call(fetchNotificationSubscriptions, domain.id)
+
+        // get unread story ID's for user
+        yield call(fetchUnreadStories)
 
         //get domains custom options
         yield call(getCustomOptions, domain)
