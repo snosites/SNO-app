@@ -3,6 +3,10 @@ export const types = {
     FIND_OR_CREATE_USER_REQUEST: 'FIND_OR_CREATE_USER_REQUEST',
     FIND_OR_CREATE_USER_SUCCESS: 'FIND_OR_CREATE_USER_SUCCESS',
     FIND_OR_CREATE_USER_ERROR: 'FIND_OR_CREATE_USER_ERROR',
+    UPDATE_USER: 'UPDATE_USER',
+    UPDATE_USER_REQUEST: 'UPDATE_USER_REQUEST',
+    UPDATE_USER_SUCCESS: 'UPDATE_USER_SUCCESS',
+    UPDATE_USER_ERROR: 'UPDATE_USER_ERROR',
     SUBSCRIBE: 'SUBSCRIBE',
     SUBSCRIBE_REQUEST: 'SUBSCRIBE_REQUEST',
     SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
@@ -37,7 +41,6 @@ const initialState = {
     writerSubscriptions: [],
     fromPush: false,
     firstInstall: true,
-    unreadStories: [],
 }
 
 export default function user(state = initialState, action) {
@@ -103,6 +106,10 @@ export const actions = {
     findOrCreateUserRequest: () => ({ type: types.FIND_OR_CREATE_USER_REQUEST }),
     findOrCreateUserSuccess: (user) => ({ type: types.FIND_OR_CREATE_USER_SUCCESS, user }),
     findOrCreateUserError: (error) => ({ type: types.FIND_OR_CREATE_USER_ERROR, error }),
+    updateUser: (key, value) => ({ type: types.UPDATE_USER, key, value }),
+    updateUserRequest: () => ({ type: types.UPDATE_USER_REQUEST }),
+    updateUserSuccess: () => ({ type: types.UPDATE_USER_SUCCESS }),
+    updateUserError: (error) => ({ type: types.UPDATE_USER_ERROR, error }),
     subscribe: (payload) => ({ type: types.SUBSCRIBE, payload }),
     subscribeRequest: () => ({ type: types.SUBSCRIBE_REQUEST }),
     subscribeSuccess: () => ({ type: types.SUBSCRIBE_SUCCESS }),

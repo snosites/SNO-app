@@ -25,6 +25,26 @@ export function* findOrCreateUser() {
     }
 }
 
+function* updateUser(action) {
+    try {
+        yield put(userActions.updateUserRequest())
+
+        const apiToken = yield select(getApiToken)
+
+        const updatedUser = yield call(apiService.updateUser, apiToken, {
+            key: action.key,
+            value: action.value,
+        })
+        yield put(userActions.setUser(updatedUser))
+
+        yield put(userActions.updateUserSuccess())
+    } catch (err) {
+        console.log('error updating user in saga', err, err.response)
+        yield put(userActions.updateUserError('error updating user'))
+        Sentry.captureException(err)
+    }
+}
+
 export function* fetchNotificationSubscriptions(domainId) {
     const apiToken = yield select(getApiToken)
 
@@ -165,6 +185,7 @@ export function* fetchUnreadStories() {
 function* userSaga() {
     yield all([
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
+        takeLatest(userTypes.UPDATE_USER, updateUser),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
         takeLatest(userTypes.DELETE_USER, deleteUser),

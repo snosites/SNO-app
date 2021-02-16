@@ -14,7 +14,8 @@ import SportcenterStack from '../navigation/SportcenterStack'
 const Tab = createBottomTabNavigator()
 
 export default (props) => {
-    const { theme, sportCenterEnabled } = props
+    const { theme, sportCenterEnabled, user } = props
+    console.log('user', user)
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -93,7 +94,7 @@ export default (props) => {
                                 color={color}
                                 name='ios-apps'
                                 size={size}
-                                // badge='dot'
+                                badge={user.unread_ids?.length ? 'dot' : null}
                                 tabColor={theme.navigationTheme.colors.background}
                             />
                         )

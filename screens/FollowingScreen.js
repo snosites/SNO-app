@@ -1,5 +1,10 @@
-import React, { useLayoutEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View, TextInput, Text, Image, Alert, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, FlatList, ActivityIndicator, View, Text, Platform } from 'react-native'
+
+import ErrorView from '../components/ErrorView'
+import ListItemRenderer from '../components/listItems/ListItemRenderer'
+import { asyncFetchArticle } from '../utils/sagaHelpers'
+import { handleArticlePress } from '../utils/articlePress'
 
 import * as Linking from 'expo-linking'
 import * as IntentLauncher from 'expo-intent-launcher'
@@ -39,10 +44,39 @@ const FollowingScreen = (props) => {
         writerSubscriptions,
         subscribe,
         unsubscribe,
+        updateUser,
         subscribeLoading,
         unsubscribeLoading,
         removeSchoolSub,
     } = props
+
+    const unread_ids = userInfo.user?.unread_ids
+
+    const [unreadArticles, setUnreadArticles] = useState([])
+    const [loadingUnreadArticles, setLoadingUnreadArticles] = useState(true)
+
+    useEffect(() => {
+        if (unread_ids?.length) {
+            fetchUnreadArticles()
+        } else {
+            setLoadingUnreadArticles(false)
+        }
+    }, [unread_ids])
+
+    const fetchUnreadArticles = async () => {
+        const asyncRes = await Promise.all(
+            unread_ids.map(async (id) => {
+                const article = await asyncFetchArticle(activeDomain.url, id)
+                return article
+            })
+        )
+        setUnreadArticles(asyncRes)
+        setLoadingUnreadArticles(false)
+    }
+
+    const clearUnreadArticles = () => {
+        updateUser('unread_ids', null)
+    }
 
     const [notifications, setNotifications] = useState(
         domains.reduce((map, domain) => {
@@ -240,147 +274,94 @@ const FollowingScreen = (props) => {
                     )
                 })}
             </List.Accordion>
+            <View
+                style={{
+                    paddingHorizontal: 10,
+                    paddingBottom: 15,
+                    borderRadius: 15,
+                    backgroundColor: theme.colors.surface,
+                }}
+            >
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontFamily: 'ralewayBold',
+                            fontSize: 23,
+                            color: theme.colors.primary,
+                            paddingTop: 10,
+                            paddingBottom: 20,
+                        }}
+                    >
+                        From Notifications
+                    </Text>
+                    {unreadArticles.length ? (
+                        <Button
+                            mode='outline'
+                            theme={{ roundness: 8 }}
+                            compact={true}
+                            onPress={clearUnreadArticles}
+                            labelStyle={{ fontSize: 12 }}
+                        >
+                            Clear All
+                        </Button>
+                    ) : null}
+                </View>
+                {loadingUnreadArticles ? (
+                    <View style={{ padding: 30 }}>
+                        <ActivityIndicator />
+                    </View>
+                ) : unreadArticles.length ? (
+                    <FlatList
+                        Style={{ flex: 1 }}
+                        contentContainerStyle={{ padding: 10 }}
+                        data={unreadArticles}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item, index, separators }) => {
+                            return (
+                                <ListItemRenderer
+                                    theme={theme}
+                                    item={item}
+                                    index={index}
+                                    separators={separators}
+                                    onPress={() => handleArticlePress(item, activeDomain)}
+                                    listStyle={'small'}
+                                    ad={null}
+                                />
+                            )
+                        }}
+                        ItemSeparatorComponent={() => (
+                            <View style={{ height: 10, backgroundColor: theme.colors.surface }} />
+                        )}
+                    />
+                ) : (
+                    <View
+                        style={{
+                            borderRadius: 15,
+                            padding: 20,
+                            backgroundColor: theme.colors.lightGray,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 17,
+                                color: theme.colors.text,
+                                textAlign: 'center',
+                            }}
+                        >
+                            You are all caught up!
+                        </Text>
+                    </View>
+                )}
+            </View>
         </ScrollView>
     )
 }
-
-// ;<List.Section>
-//     <List.Subheader>Push Notifications</List.Subheader>
-//     {userInfo.user.push_token ? (
-//         domains.map((domain) => {
-//             const writerSubs = userInfo.writerSubscriptions.filter(
-//                 (writer) => writer.organization_id === domain.id
-//             )
-//             return (
-//                 <List.Accordion
-//                     key={domain.id}
-//                     title={domain.name}
-//                     left={(props) => <List.Icon {...props} icon='folder-open' />}
-//                 >
-//                     <List.Subheader>Writer Notifications</List.Subheader>
-//                     {writerSubs.length > 0 ? (
-//                         writerSubs.map((writerObj) => {
-//                             return (
-//                                 <List.Item
-//                                     key={writerObj.id}
-//                                     style={{
-//                                         paddingVertical: 0,
-//                                         paddingLeft: 60,
-//                                     }}
-//                                     title={writerObj.writer_name}
-//                                     right={() => {
-//                                         return unsubscribeLoading ? (
-//                                             <ActivityIndicator style={{ paddingRight: 10 }} />
-//                                         ) : (
-//                                             <IconButton
-//                                                 icon='delete'
-//                                                 color={Colors.red700}
-//                                                 size={20}
-//                                                 onPress={() =>
-//                                                     unsubscribe({
-//                                                         subscriptionType: 'writers',
-//                                                         ids: [writerObj.id],
-//                                                         domainId: domain.id,
-//                                                     })
-//                                                 }
-//                                             />
-//                                         )
-//                                     }}
-//                                 />
-//                             )
-//                         })
-//                     ) : (
-//                         <Text
-//                             style={{
-//                                 fontSize: 18,
-//                                 fontWeight: 'bold',
-//                                 paddingBottom: 10,
-//                             }}
-//                         >
-//                             You aren't following any writers yet
-//                         </Text>
-//                     )}
-
-//                     <List.Subheader>Category Notifications</List.Subheader>
-//                     {domain.notificationCategories.map((item, i) => {
-//                         if (item.category_name == 'custom_push') {
-//                             return (
-//                                 <List.Item
-//                                     key={item.id}
-//                                     style={{
-//                                         paddingVertical: 0,
-//                                         paddingLeft: 60,
-//                                     }}
-//                                     title='Alerts'
-//                                     right={() => {
-//                                         return (
-//                                             <Switch
-//                                                 style={{ margin: 10 }}
-//                                                 value={notifications[domain.id][item.id]}
-//                                                 onValueChange={(value) => {
-//                                                     _toggleNotifications(
-//                                                         item.id,
-//                                                         value,
-//                                                         domain,
-//                                                         item
-//                                                     )
-//                                                 }}
-//                                             />
-//                                         )
-//                                     }}
-//                                 />
-//                             )
-//                         }
-//                         return (
-//                             <List.Item
-//                                 key={item.id}
-//                                 style={{ paddingVertical: 0, paddingLeft: 60 }}
-//                                 title={
-//                                     <HTML
-//                                         html={item.category_name}
-//                                         customWrapper={(text) => {
-//                                             return (
-//                                                 <Text
-//                                                     ellipsizeMode='tail'
-//                                                     numberOfLines={1}
-//                                                     style={{ fontSize: 16 }}
-//                                                 >
-//                                                     {text}
-//                                                 </Text>
-//                                             )
-//                                         }}
-//                                         baseFontStyle={{ fontSize: 16 }}
-//                                     />
-//                                 }
-//                                 right={() => {
-//                                     return (
-//                                         <Switch
-//                                             style={{ margin: 10 }}
-//                                             value={notifications[domain.id][item.id]}
-//                                             onValueChange={(value) => {
-//                                                 _toggleNotifications(item.id, value, domain, item)
-//                                             }}
-//                                         />
-//                                     )
-//                                 }}
-//                             />
-//                         )
-//                     })}
-//                 </List.Accordion>
-//             )
-//         })
-//     ) : (
-//         <Text
-//             style={{
-//                 textAlign: 'center',
-//                 fontSize: 18,
-//                 fontWeight: 'bold',
-//                 paddingBottom: 10,
-//             }}
-//         >
-//             You have disabled push notifications for this app. Turn it in on your phone settings.
-//         </Text>
-//     )}
-// </List.Section>
 
 export default FollowingScreen

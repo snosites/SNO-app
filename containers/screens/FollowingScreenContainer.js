@@ -36,6 +36,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setActiveDomain: (domainId) => dispatch(domainActions.setActiveDomain(domainId)),
         saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
+        updateUser: (key, value) => dispatch(userActions.updateUser(key, value)),
         deleteDomain: (domainId) => dispatch(domainActions.deleteDomain(domainId)),
         removeSchoolSub: (url) => dispatch(globalActions.removeSchoolSub(url)),
         fetchProfile: (profileId) => dispatch(profileActions.fetchProfile(profileId)),
