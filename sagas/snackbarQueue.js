@@ -1,0 +1,64 @@
+import { all, put, call, takeLatest, select } from 'redux-saga/effects'
+
+import { types as savedArticleTypes, actions as savedArticleActions } from '../redux/savedArticles'
+import { types as likedArticleTypes } from '../redux/likedArticles'
+import { types as domainTypes, actions as domainActions } from '../redux/domains'
+import { types as articleTypes, actions as articleActions } from '../redux/articles'
+import { types as userTypes } from '../redux/user'
+import {
+    types as snackbarQueueTypes,
+    actions as snackbarQueueActions,
+} from '../redux/snackbarQueue'
+
+function* addToQueue(message) {
+    try {
+        yield put(snackbarQueueActions.addMessage(message))
+    } catch (err) {
+        console.log('error adding message to snackbar queue', err)
+    }
+}
+
+function* snackbarQueue() {
+    yield all([
+        takeLatest(savedArticleTypes.SAVE_ARTICLE, addToQueue, 'Article added to saved list'),
+        takeLatest(
+            savedArticleTypes.REMOVE_SAVED_ARTICLE,
+            addToQueue,
+            'Article removed from saved list'
+        ),
+        takeLatest(likedArticleTypes.LIKE_ARTICLE, addToQueue, 'Article liked'),
+        takeLatest(likedArticleTypes.REMOVE_LIKED_ARTICLE, addToQueue, 'Article unliked'),
+        takeLatest(domainTypes.DELETE_DOMAIN, addToQueue, 'Organization removed'),
+        takeLatest(userTypes.SUBSCRIBE_SUCCESS, addToQueue, 'Success'),
+        takeLatest(userTypes.UNSUBSCRIBE_SUCCESS, addToQueue, 'Success'),
+        takeLatest(userTypes.SUBSCRIBE_ERROR, addToQueue, 'Error following'),
+        takeLatest(userTypes.UNSUBSCRIBE_ERROR, addToQueue, 'Error unfollowing'),
+        takeLatest(
+            articleTypes.ADD_COMMENT_SUCCESS,
+            addToQueue,
+            'Success!  Your comment is awaiting review.'
+        ),
+        takeLatest(
+            articleTypes.ADD_COMMENT_ERROR,
+            addToQueue,
+            'There was an error submitting your comment.  Please try again.'
+        ),
+        takeLatest(
+            articleTypes.ASYNC_FETCH_ARTICLE_ERROR,
+            addToQueue,
+            'There was an error fetching that article.  Please try again later.'
+        ),
+        takeLatest(
+            articleTypes.ASYNC_FETCH_ARTICLE_ERROR,
+            addToQueue,
+            'There was an error fetching that article.  Please try again later.'
+        ),
+        takeLatest(
+            userTypes.DELETE_USER_ERROR,
+            addToQueue,
+            'There was an error clearing your settings. Please try again later.'
+        ),
+    ])
+}
+
+export default snackbarQueue

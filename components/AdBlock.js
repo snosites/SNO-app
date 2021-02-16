@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, TouchableOpacity, Image } from 'react-native'
+import { Text, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 
 import * as WebBrowser from 'expo-web-browser'
 import { connect } from 'react-redux'
@@ -7,27 +7,29 @@ import { connect } from 'react-redux'
 import { getActiveDomain } from '../redux/domains'
 import { actions as adActions } from '../redux/ads'
 
-import * as Linking from 'expo-linking'
-
-import NavigationService from '../utils/NavigationService'
-
 const AdBlock = ({
     image,
     style,
     activeDomain,
     sendAdAnalytic,
     sendSnoAdAnalytic,
-    snoAd = null,
+    themeIsDark = false,
+    snoAd = false,
 }) => {
-    console.log('ad image', image, snoAd)
+    const AD_CONTAINER_WIDTH = useWindowDimensions().width
+
+    const backgroundColor = themeIsDark ? '#212121' : '#e0e0e0'
+
     return (
         <TouchableOpacity
             style={{
                 flex: 1,
                 alignItems: 'center',
-                backgroundColor: '#e0e0e0',
+                backgroundColor,
                 marginVertical: 10,
                 ...style,
+                width: AD_CONTAINER_WIDTH,
+                marginLeft: -10,
             }}
             onPress={async () => {
                 if (!snoAd) {
@@ -58,6 +60,7 @@ const AdBlock = ({
                 style={{
                     width: 250,
                     height: 300,
+                    margin: 10,
                 }}
                 resizeMode='contain'
                 source={{

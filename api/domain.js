@@ -14,7 +14,6 @@ axios.interceptors.response.use(function (response) {
 
 const domainApiService = {
     getSplashScreenId: async (domainUrl) => {
-        console.log('ere', domainUrl)
         try {
             const response = await axios.get(
                 `https://${domainUrl}/wp-json/custom/option?type=sns_splash_screen`
@@ -86,175 +85,25 @@ const domainApiService = {
             throw err
         }
     },
-    getCustomHeader: async (domainUrl) => {
+    getCustomOptions: async (domainUrl) => {
         try {
-            const headerId = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_nav_header`
-            )
-            if (!headerId.data.result) {
-                return false
-            }
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/media?include=${headerId.data.result}`
-            )
-            return response.data
+            const result = await axios.get(`https://${domainUrl}/wp-json/sns-v2/custom-app-options`)
+
+            return result.data
         } catch (err) {
-            console.log('error in get custom header api', err, err.response)
+            console.log('error in get custom app options api', err, err.response)
             throw err
         }
     },
-    getCustomHeaderLogo: async (domainUrl) => {
+    getHomeScreenCategories: async (domainUrl) => {
         try {
-            const headerLogoId = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_header_logo`
+            const result = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/custom-home-categories`
             )
-            if (!headerLogoId.data.result) {
-                return false
-            }
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/wp/v2/media?include=${headerLogoId.data.result}`
-            )
-            return response.data
+
+            return result.data
         } catch (err) {
-            console.log('error in get custom header logo api', err, err.response)
-            throw err
-        }
-    },
-    getCustomTheme: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_theme`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom theme api', err, err.response)
-            throw err
-        }
-    },
-    getCommentsToggle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=comments&theme_mod=true`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get comments toggle api', err, err.response)
-            throw err
-        }
-    },
-    getCustomPrimaryColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_primary_color`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom primary color api', err, err.response)
-            throw err
-        }
-    },
-    getCustomAccentColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_accent_color`
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom primary color api', err, err.response)
-            throw err
-        }
-    },
-    getCustomHomeCategoryColor: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_color`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get custom home category color api', err, err.response)
-            throw err
-        }
-    },
-    getStoryListStyle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_list_type`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get story list style api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenCategory: async (domainUrl, categoryNumber) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home screen category api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenCategoryAmount: async (domainUrl, categoryNumber) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_category_${categoryNumber}_amount`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home screen category amount api', err, err.response)
-            throw err
-        }
-    },
-    getHomeScreenListStyle: async (domainUrl) => {
-        try {
-            const response = await axios.get(
-                `https://${domainUrl}/wp-json/custom/option?type=sns_home_list_type`,
-                {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                }
-            )
-            return response.data
-        } catch (err) {
-            console.log('error in get home list style api', err, err.response)
-            throw err
-        }
-    },
-    getAdOptions: async (domainUrl) => {
-        try {
-            const response = await axios.get(`https://${domainUrl}/wp-json/sns-v2/app-ad-options`)
-            return response.data
-        } catch (err) {
-            console.log('error in fetch app ad options api', err)
+            console.log('error in get custom home screen categories api', err, err.response)
             throw err
         }
     },
@@ -346,6 +195,22 @@ const domainApiService = {
             throw err
         }
     },
+    fetchCategories: async (domainUrl) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/categories?per_page=30&hide_empty=true`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch categories api', err, err.response)
+            throw err
+        }
+    },
     fetchChildCategories: async (options) => {
         const { domainUrl, parentCategoryId } = options
         try {
@@ -401,6 +266,26 @@ const domainApiService = {
             throw err
         }
     },
+    fetchArticleChapterInfo: async (domainUrl, articleId, metaKey) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=${metaKey}&meta_query[0][value]=${articleId}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch article chapter info api', err, err.response)
+            throw err
+        }
+    },
+    fetchPage: async (domainUrl, pageId) => {
+        try {
+            const response = await axios.get(`https://${domainUrl}/wp-json/wp/v2/pages/${pageId}`)
+            return response.data
+        } catch (err) {
+            console.log('error in fetch page api', err, err.response)
+            throw err
+        }
+    },
     searchArticles: async (options) => {
         const { domainUrl, searchTerm, page } = options
         try {
@@ -410,6 +295,18 @@ const domainApiService = {
             return response.data
         } catch (err) {
             console.log('error in search articles api', err, err.response)
+            throw err
+        }
+    },
+    searchAuthors: async (options) => {
+        const { domainUrl, searchTerm, page } = options
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/wp/v2/staff_profile?search=${searchTerm}&page=${page}`
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in search authors api', err, err.response)
             throw err
         }
     },
@@ -440,6 +337,38 @@ const domainApiService = {
             throw err
         }
     },
+    fetchProfile: async (domainUrl, profileTermId) => {
+        try {
+            const response = await axios.get(
+                `https://${domainUrl}/wp-json/sns-v2/get_profile?autherTermId=${profileTermId}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                }
+            )
+            return response.data
+        } catch (err) {
+            console.log('error in fetch profile api', err, err.response)
+            throw err
+        }
+    },
+    // fetchProfile: async (domainUrl, profileId) => {
+    //     try {
+    //         const response = await axios.get(
+    //             `https://${domainUrl}/wp-json/wp/v2/staff_profile/${profileId}`,
+    //             {
+    //                 headers: {
+    //                     'Cache-Control': 'no-cache',
+    //                 },
+    //             }
+    //         )
+    //         return response.data
+    //     } catch (err) {
+    //         console.log('error in fetch profile api', err, err.response)
+    //         throw err
+    //     }
+    // },
     addComment: async (domainUrl, postObj) => {
         try {
             const response = await axios.post(

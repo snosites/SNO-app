@@ -20,11 +20,10 @@ export function* fetchMenu(action) {
 
         //filter out all menu items that are custom
         let filteredMobileMenu = mobileMenu.filter((menu) => {
-            if (menu.object !== 'custom') {
+            if (menu.object == 'category') {
                 return menu
             }
         })
-
         // get categories from DB
         const dbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
 
@@ -33,7 +32,6 @@ export function* fetchMenu(action) {
         // fetch updated categories list
         const updatedDbCategories = yield call(fetchCategoriesFromDb, apiToken, domain.id)
 
-        console.log('updated db categories', updatedDbCategories)
         // // make sure there is at least one menu
         if (updatedDbCategories.length === 0) {
             throw new Error('no menus in DB for school')

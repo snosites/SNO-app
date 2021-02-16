@@ -7,7 +7,7 @@ export const types = {
     FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED: 'FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED',
     REQUEST_SEARCH_ARTICLES: 'REQUEST_SEARCH_ARTICLES',
     RECEIVE_SEARCH_ARTICLES: 'RECEIVE_SEARCH_ARTICLES',
-    FETCH_SEARCH_ARTICLES_FAILURE: 'FETCH_SEARCH_ARTICLES_FAILURE'
+    FETCH_SEARCH_ARTICLES_FAILURE: 'FETCH_SEARCH_ARTICLES_FAILURE',
 }
 
 export default function searchArticles(
@@ -16,7 +16,7 @@ export default function searchArticles(
         didInvalidate: false,
         page: 1,
         items: [],
-        error: ''
+        error: '',
     },
     action
 ) {
@@ -24,18 +24,18 @@ export default function searchArticles(
         case types.INVALIDATE_SEARCH_ARTICLES:
             return Object.assign({}, state, {
                 didInvalidate: true,
-                page: 1
+                page: 1,
             })
         case types.REQUEST_SEARCH_ARTICLES:
             return Object.assign({}, state, {
                 isFetching: true,
-                error: ''
+                error: '',
             })
         case types.FETCH_SEARCH_ARTICLES_FAILURE:
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: false,
-                error: action.error
+                error: action.error,
             })
         case types.RECEIVE_SEARCH_ARTICLES:
             let updatedPage = 'max'
@@ -53,7 +53,7 @@ export default function searchArticles(
                 didInvalidate: false,
                 items: newItems,
                 lastUpdated: action.receivedAt,
-                page: updatedPage
+                page: updatedPage,
             })
         default:
             return state
@@ -63,40 +63,40 @@ export default function searchArticles(
 export const actions = {
     invalidateSearchArticles() {
         return {
-            type: types.INVALIDATE_SEARCH_ARTICLES
+            type: types.INVALIDATE_SEARCH_ARTICLES,
         }
     },
     fetchSearchArticlesIfNeeded(domain, searchTerm) {
         return {
             type: types.FETCH_SEARCH_ARTICLES_IF_NEEDED,
             domain,
-            searchTerm
+            searchTerm,
         }
     },
     fetchMoreSearchArticlesIfNeeded(domain, searchTerm) {
         return {
             type: types.FETCH_MORE_SEARCH_ARTICLES_IF_NEEDED,
             domain,
-            searchTerm
+            searchTerm,
         }
     },
     requestSearchArticles() {
         return {
-            type: types.REQUEST_SEARCH_ARTICLES
+            type: types.REQUEST_SEARCH_ARTICLES,
         }
     },
     receiveSearchArticles(response) {
         return {
             type: types.RECEIVE_SEARCH_ARTICLES,
             response,
-            receivedAt: Date.now()
+            receivedAt: Date.now(),
         }
     },
     fetchSearchArticlesFailure(error) {
         return {
             type: types.FETCH_SEARCH_ARTICLES_FAILURE,
             error,
-            recievedAt: Date.now()
+            recievedAt: Date.now(),
         }
-    }
+    },
 }

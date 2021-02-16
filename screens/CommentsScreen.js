@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import {
     StyleSheet,
     Text,
@@ -8,287 +8,165 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView,
     Modal,
-    SafeAreaView,
     Keyboard,
+    KeyboardAvoidingView,
     ActivityIndicator,
 } from 'react-native'
-import { connect } from 'react-redux'
-
-import { actions as articleActions } from '../redux/articles'
-import { actions as userActions } from '../redux/user'
-import { getActiveDomain } from '../redux/domains'
 
 import Moment from 'moment'
-import Color from 'color'
 import HTML from 'react-native-render-html'
-import { CustomArticleHeader } from '../components/ArticleHeader'
 import { Ionicons } from '@expo/vector-icons'
 import { Button, TextInput as PaperTextInput, Snackbar } from 'react-native-paper'
 
-import { HeaderBackButton } from 'react-navigation'
+import CommentItem from '../components/listItems/CommentItem'
 
-class CommentsScreen extends React.Component {
-    static navigationOptions = ({ navigation, navigation: { state }, screenProps }) => {
-        let primaryColor = Color(screenProps.theme.colors.primary)
-        let isDark = primaryColor.isDark()
-        return {
-            headerTitle: <CustomArticleHeader state={state} navigation={navigation} />,
-            headerLeft: (
-                <HeaderBackButton
-                    tintColor={isDark ? 'white' : 'black'}
-                    onPress={() => {
-                        navigation.popToTop()
-                    }}
-                />
-            ),
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+const CommentScreen = (props) => {
+    const { navigation, activeDomain, userInfo, theme, addComment, isLoading, article } = props
+
+    const [commentInput, setCommentInput] = useState('')
+    const [comments, setComments] = useState([])
+
+    useEffect(() => {})
+
+    useEffect(() => {
+        if (article.comments) setComments(article.comments)
+    }, [article.comments])
+
+    const _addComment = () => {
+        Keyboard.dismiss()
+        if (!userInfo.username || !userInfo.email) {
+            navigation.push('UserInfoModal')
+        } else {
+            addComment({
+                domain: activeDomain.url,
+                articleId: article.id,
+                username: userInfo.username,
+                email: userInfo.email,
+                comment: commentInput,
+            })
+            setCommentInput('')
         }
     }
 
-    state = {
-        commentInput: '',
-        modalVisible: false,
-        username: '',
-        email: '',
-        commentSent: false,
-    }
-
-    componentDidMount() {
-        this.setState({
-            username: this.props.userInfo.username,
-            email: this.props.userInfo.email,
-        })
-    }
-
-    render() {
-        const { navigation, userInfo, saveUserInfo, theme, setCommentPosted } = this.props
-        const { modalVisible, username, email, commentInput } = this.state
-        let comments = navigation.getParam('comments', null)
-
-        let primaryColor = Color(theme.colors.primary)
-        let isDark = primaryColor.isDark()
-
-        return (
-            <View style={{ flex: 1 }}>
-                <KeyboardAvoidingView
-                    contentContainerStyle={{ flex: 1 }}
-                    style={{ flex: 1 }}
-                    behavior='position'
-                    keyboardVerticalOffset={80}
-                    enabled
-                >
-                    <View style={{ flex: 1, paddingBottom: 60 }}>
-                        <FlatList
-                            Style={{ flex: 1, marginVertical: 5 }}
-                            data={comments}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={this._renderItem}
-                        />
-                        <View style={styles.commentContainer}>
-                            <Ionicons
-                                name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'}
-                                size={45}
-                                color='#eeeeee'
-                                style={{ paddingHorizontal: 20 }}
-                            />
-                            <TextInput
-                                style={{ height: 60, flex: 1, fontSize: 19 }}
-                                placeholder='Write a comment'
-                                onSubmitEditing={() => {
-                                    if (!userInfo.username) {
-                                        this._showModal()
-                                    } else {
-                                        this._addComment()
-                                    }
-                                }}
-                                returnKeyType='send'
-                                value={commentInput}
-                                onChangeText={(text) => this.setState({ commentInput: text })}
-                            />
-                            <View style={styles.sendContainer}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.sendContainer,
-                                        { backgroundColor: primaryColor },
-                                    ]}
-                                    onPress={() => {
-                                        Keyboard.dismiss()
-                                        if (!userInfo.username || !userInfo.email) {
-                                            this._showModal()
-                                        } else {
-                                            this._addComment()
-                                        }
-                                    }}
-                                >
-                                    {this.state.commentSent ? (
-                                        <ActivityIndicator />
-                                    ) : (
-                                        <Ionicons
-                                            name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'}
-                                            size={45}
-                                            color={isDark ? 'white' : 'black'}
-                                        />
-                                    )}
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </KeyboardAvoidingView>
-                <Modal
-                    animationType='slide'
-                    transparent={false}
-                    visible={modalVisible}
-                    onDismiss={this._hideModal}
-                >
-                    <SafeAreaView
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            tabBarLabel: ({ focused, color }) => (
+                <View>
+                    <Text
                         style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            padding: 20,
-                            backgroundColor: '#f6f6f6',
+                            textAlign: 'center',
+                            textTransform: 'uppercase',
+                            fontSize: 13,
+                            margin: 4,
+                            backgroundColor: 'transparent',
+                            color,
                         }}
                     >
-                        <Text style={{ textAlign: 'center', fontSize: 19, padding: 30 }}>
-                            You need to enter some information before you can post comments. You
-                            will only have to do this once.
-                        </Text>
-                        <View style={{ flex: 1, alignItems: 'center' }}>
-                            <PaperTextInput
-                                label='Username'
-                                theme={{ roundness: 10 }}
-                                style={{ width: 300, borderRadius: 5, marginBottom: 20 }}
-                                placeholder='This is what will display publicly'
-                                mode='outlined'
-                                value={username}
-                                onChangeText={(text) => this.setState({ username: text })}
-                            />
-                            <PaperTextInput
-                                label='Email'
-                                placeholder='We need this for verification purposes'
-                                keyboardType='email-address'
-                                style={{ width: 300, borderRadius: 10 }}
-                                theme={{ roundness: 10 }}
-                                mode='outlined'
-                                value={email}
-                                onChangeText={(text) => this.setState({ email: text })}
-                            />
-                            <View style={{ flexDirection: 'row' }}>
-                                <Button
-                                    mode='contained'
-                                    theme={{ roundness: 10 }}
-                                    style={{
-                                        paddingHorizontal: 20,
-                                        margin: 20,
-                                        backgroundColor: '#f44336',
-                                        fontSize: 20,
-                                    }}
-                                    onPress={this._hideModal}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    mode='contained'
-                                    theme={{ roundness: 10 }}
-                                    style={{ paddingHorizontal: 20, margin: 20, fontSize: 20 }}
-                                    onPress={() => {
-                                        saveUserInfo({
-                                            username,
-                                            email,
-                                        })
-                                        this._hideModal()
-                                    }}
-                                >
-                                    Save
-                                </Button>
-                            </View>
-                        </View>
-                    </SafeAreaView>
-                </Modal>
-                <Snackbar
-                    visible={userInfo.commentPosted}
-                    onDismiss={() => {
-                        setCommentPosted(false)
-                        this.setState({
-                            commentSent: false,
-                        })
-                    }}
-                    duration={3000}
-                    action={{
-                        label: 'Dismiss',
-                        onPress: () => {
-                            setCommentPosted(false)
-                            this.setState({
-                                commentSent: false,
-                            })
-                        },
-                    }}
-                >
-                    {userInfo.commentPosted && userInfo.commentPosted === 'posted'
-                        ? 'Success!  Your comment is awaiting review'
-                        : 'There was an error posting your comment.  Please try again.'}
-                </Snackbar>
-            </View>
-        )
-    }
-
-    _showModal = () => this.setState({ modalVisible: true })
-    _hideModal = () => this.setState({ modalVisible: false })
-
-    _addComment = () => {
-        const { activeDomain, userInfo, addComment, navigation } = this.props
-        const articleId = navigation.getParam('articleId', null)
-        addComment({
-            domain: activeDomain.url,
-            articleId,
-            username: userInfo.username,
-            email: userInfo.email,
-            comment: this.state.commentInput,
-        })
-
-        this.setState({
-            commentInput: '',
-            commentSent: true,
-        })
-    }
-
-    _renderItem = ({ item, index }) => {
-        return (
-            <View style={styles.commentInfoContainer}>
-                <View style={styles.authorContainer}>
-                    {item.author_avatar_urls && item.author_avatar_urls[48] ? (
-                        <Image
-                            source={{ uri: item.author_avatar_urls[48] }}
+                        Comments
+                    </Text>
+                    {comments.length ? (
+                        <View
                             style={{
-                                width: 50,
-                                height: 50,
-                                resizeMode: 'cover',
-                                borderRadius: 25,
+                                position: 'absolute',
+                                top: -9,
+                                right: -9,
+                                height: 18,
+                                width: 18,
+                                borderRadius: 9,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: theme.colors.accent,
                             }}
-                        />
+                        >
+                            <Text
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    color: theme.accentIsDark ? 'white' : 'black',
+                                }}
+                            >
+                                {comments.length > 99 ? '99+' : comments.length}
+                            </Text>
+                        </View>
                     ) : null}
-                    <View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 20 }}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{item.author_name}</Text>
-                        <Text style={{ color: 'grey' }}>{String(Moment(item.date).fromNow())}</Text>
+                </View>
+            ),
+        })
+    }, [navigation, comments])
+
+    return (
+        <SafeAreaView style={{ flex: 1 }}>
+            <FlatList
+                Style={{ flex: 1 }}
+                data={comments}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <CommentItem key={item.id} comment={item} theme={theme} />
+                )}
+                ListEmptyComponent={() => (
+                    <View>
+                        <Text
+                            style={{
+                                fontFamily: 'ralewayBold',
+                                fontSize: 18,
+                                textAlign: 'center',
+                                paddingHorizontal: 20,
+                                color: theme.colors.text,
+                            }}
+                        >
+                            There are no comments for this article yet
+                        </Text>
+                    </View>
+                )}
+            />
+            <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={140} enabled>
+                <View
+                    style={[styles.commentContainer, { backgroundColor: theme.colors.background }]}
+                >
+                    <Ionicons
+                        name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'}
+                        size={25}
+                        color='#eeeeee'
+                        style={{ paddingRight: 20 }}
+                    />
+                    <TextInput
+                        style={{ flex: 1, fontSize: 16, color: theme.colors.text }}
+                        placeholder='Write a comment'
+                        placeholderTextColor={theme.colors.text}
+                        onSubmitEditing={_addComment}
+                        returnKeyType='send'
+                        value={commentInput}
+                        onChangeText={(text) => setCommentInput(text)}
+                        multiline={true}
+                        textAlignVertical='top'
+                    />
+                    <View style={styles.sendContainer}>
+                        <TouchableOpacity
+                            style={[
+                                styles.sendContainer,
+                                { backgroundColor: theme.colors.primary },
+                            ]}
+                            onPress={_addComment}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator />
+                            ) : (
+                                <Ionicons
+                                    name={Platform.OS === 'ios' ? 'ios-send' : 'md-send'}
+                                    size={25}
+                                    color={theme.primaryIsDark ? 'white' : 'black'}
+                                    style={{ marginBottom: -3 }}
+                                />
+                            )}
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <View style={styles.textCommentContainer}>
-                    <HTML
-                        html={item.content.rendered}
-                        textSelectable={true}
-                        // onLinkPress={(e, href) => this._viewLink(href)}
-                        // tagsStyles={{
-                        //     p: {
-                        //         fontSize: 18,
-                        //         marginBottom: 15
-                        //     }
-                        // }}
-                    />
-                    {/* <Text>{item.content.rendered}</Text> */}
-                </View>
-            </View>
-        )
-    }
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -296,18 +174,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         height: 60,
-        position: 'absolute',
+        margin: 5,
         bottom: 0,
         right: 0,
         left: 0,
-        borderTopWidth: 1,
+        borderWidth: 1,
         borderColor: '#e0e0e0',
-        backgroundColor: 'white',
         zIndex: 5,
+        borderRadius: 30,
+        overflow: 'hidden',
+        paddingHorizontal: 15,
     },
     sendContainer: {
-        height: 60,
-        width: 60,
+        height: 40,
+        width: 40,
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -320,18 +201,4 @@ const styles = StyleSheet.create({
     },
 })
 
-const mapStateToProps = (state) => {
-    return {
-        theme: state.theme,
-        activeDomain: getActiveDomain(state),
-        userInfo: state.user,
-    }
-}
-
-const mapDispatchToProps = (dispatch) => ({
-    addComment: (payload) => dispatch(articleActions.addComment(payload)),
-    setCommentPosted: (payload) => dispatch(userActions.setCommentPosted(payload)),
-    saveUserInfo: (payload) => dispatch(userActions.saveUserInfo(payload)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(CommentsScreen)
+export default CommentScreen

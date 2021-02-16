@@ -8,10 +8,14 @@ import loading from './loading'
 import global from './global'
 import articlesByCategory, { entities } from './articles'
 import savedArticlesBySchool from './savedArticles'
+import likedArticlesBySchool from './likedArticles'
 import searchArticles from './search'
+import searchAuthors from './searchAuthors'
 import profiles from './profiles'
+import pages from './pages'
 import recentArticles from './recent'
 import ads from './ads'
+import snackbarQueue from './snackbarQueue'
 
 const appReducer = combineReducers({
     user,
@@ -23,10 +27,14 @@ const appReducer = combineReducers({
     articlesByCategory,
     entities,
     savedArticlesBySchool,
+    likedArticlesBySchool,
     searchArticles,
+    searchAuthors,
     profiles,
+    pages,
     recentArticles,
     ads,
+    snackbarQueue,
 })
 
 // if user chnges domain clear out domain specific state data
@@ -34,14 +42,20 @@ const rootReducer = (state, action) => {
     if (action.type === 'SET_ACTIVE_DOMAIN') {
         state = {
             ...state,
+            // FIX LATER MAYBE?? global might cause bug
+            global: undefined,
             articlesByCategory: undefined,
             recentArticles: undefined,
             searchArticles: undefined,
+            searchAuthors: undefined,
             profiles: undefined,
+            pages: undefined,
             entities: undefined,
             ads: undefined,
             errors: {},
             loading: {},
+            ads: undefined,
+            snackbarQueue: undefined,
         }
     }
     if (action.type === 'PURGE_USER_STATE') {

@@ -1,7 +1,8 @@
 import uniqBy from 'lodash/uniqBy'
-import { put, call, takeLatest, all } from 'redux-saga/effects'
+import { put, call, takeLatest, all, select } from 'redux-saga/effects'
 
 import { types as profileTypes, actions as profileActions } from '../redux/profiles'
+import { getActiveDomain } from '../redux/domains'
 
 import { asyncFetchFeaturedImage, asyncFetchComments } from '../utils/sagaHelpers'
 
@@ -16,6 +17,26 @@ function* fetchProfiles(action) {
         yield put(profileActions.receiveProfiles(profiles))
     } catch (err) {
         console.log('error fetching profiles in saga', err)
+        Sentry.captureException(err)
+    }
+}
+
+function* fetchProfile(action) {
+    const { profileId } = action
+    try {
+        const domain = yield select(getActiveDomain)
+
+        yield put(profileActions.fetchProfileRequest())
+
+        const profile = yield call(domainApiService.fetchProfile, domain.url, profileId)
+        if (profile && profile.ID) {
+            yield put(profileActions.fetchProfileSuccess(profile))
+        } else {
+            yield put(profileActions.fetchProfileSuccess(null))
+        }
+    } catch (err) {
+        console.log('error fetching profile in saga', err)
+        yield put(profileActions.fetchProfileError('error fetching profile'))
         Sentry.captureException(err)
     }
 }
@@ -36,8 +57,6 @@ function* fetchProfileArticles(action) {
         // get list of articles written by writer
         const authorArticles = yield call(domainApiService.fetchProfileArticles, url, writerTermId)
 
-        console.log('writer aeticles', authorArticles)
-
         if (authorArticles.length == 0) {
             throw new Error('no posts')
         }
@@ -46,17 +65,17 @@ function* fetchProfileArticles(action) {
 
         // get the full posts for all articles
         const updatedArticlesByWriter = yield all(
-            articlesByWriter.map(article => {
+            articlesByWriter.map((article) => {
                 return call(fetchAuthorArticle, url, article.ID)
             })
         )
         // filter out any bad requests
-        const verifiedArticlesByWriter = updatedArticlesByWriter.filter(article => {
+        const verifiedArticlesByWriter = updatedArticlesByWriter.filter((article) => {
             return !!article.id
         })
         // get featured images
         yield all(
-            verifiedArticlesByWriter.map(story => {
+            verifiedArticlesByWriter.map((story) => {
                 if (story._links['wp:featuredmedia']) {
                     return call(
                         asyncFetchFeaturedImage,
@@ -69,7 +88,7 @@ function* fetchProfileArticles(action) {
             })
         )
         yield all(
-            verifiedArticlesByWriter.map(story => {
+            verifiedArticlesByWriter.map((story) => {
                 return call(asyncFetchComments, url, story)
             })
         )
@@ -91,7 +110,8 @@ function* fetchProfileArticles(action) {
 function* profilesSaga() {
     yield all([
         takeLatest(profileTypes.FETCH_PROFILES, fetchProfiles),
-        takeLatest(profileTypes.FETCH_PROFILE_ARTICLES, fetchProfileArticles)
+        takeLatest(profileTypes.FETCH_PROFILE, fetchProfile),
+        takeLatest(profileTypes.FETCH_PROFILE_ARTICLES, fetchProfileArticles),
     ])
 }
 

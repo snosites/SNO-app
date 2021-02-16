@@ -7,9 +7,9 @@ import { actions as domainsActions } from '../redux/domains'
 import apiService from '../api/api'
 
 import { persistor } from '../redux/configureStore'
-import NavigationService from '../utils/NavigationService'
+// import NavigationService from '../utils/NavigationService-old'
 
-import { Notifications } from 'expo'
+import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
 import * as Sentry from 'sentry-expo'
 
@@ -25,12 +25,32 @@ export function* findOrCreateUser() {
     }
 }
 
+function* updateUser(action) {
+    try {
+        yield put(userActions.updateUserRequest())
+
+        const apiToken = yield select(getApiToken)
+
+        const updatedUser = yield call(apiService.updateUser, apiToken, {
+            key: action.key,
+            value: action.value,
+        })
+        yield put(userActions.setUser(updatedUser))
+
+        yield put(userActions.updateUserSuccess())
+    } catch (err) {
+        console.log('error updating user in saga', err, err.response)
+        yield put(userActions.updateUserError('error updating user'))
+        Sentry.captureException(err)
+    }
+}
+
 export function* fetchNotificationSubscriptions(domainId) {
     const apiToken = yield select(getApiToken)
 
     const [notifications, writerNotifications] = yield all([
         call(apiService.getSubscriptions, apiToken),
-        call(apiService.getWriterSubscriptions, apiToken)
+        call(apiService.getWriterSubscriptions, apiToken),
     ])
     yield put(domainsActions.setNotifications(domainId, notifications))
     yield put(userActions.setWriterSubscriptions(writerNotifications))
@@ -86,12 +106,12 @@ export function* checkNotificationSettings() {
             const { status } = yield call(Permissions.askAsync, Permissions.NOTIFICATIONS)
             finalStatus = status
         }
-        // Stop here if the user did not grant permissions -- save token as 0
+        // Stop here if the user did not grant permissions
         if (finalStatus !== 'granted') {
             //update user's push_token
             const updatedUser = yield call(apiService.updateUser, apiToken, {
                 key: 'push_token',
-                value: null
+                value: null,
             })
             yield put(userActions.setUser(updatedUser))
             return null
@@ -103,9 +123,19 @@ export function* checkNotificationSettings() {
         //update user's push_token
         let updatedUser = yield call(apiService.updateUser, apiToken, {
             key: 'push_token',
-            value: token
+            value: token.data,
         })
+        console.log('push token', token)
         yield put(userActions.setUser(updatedUser))
+
+        // if (Platform.OS === 'android') {
+        //     Notifications.setNotificationChannelAsync('default', {
+        //     name: 'default',
+        //     importance: Notifications.AndroidImportance.MAX,
+        //     vibrationPattern: [0, 250, 250, 250],
+        //     lightColor: '#FF231F7C',
+        //     });
+        // }
 
         return updatedUser.push_token
     } catch (err) {
@@ -123,15 +153,31 @@ function* deleteUser() {
 
         persistor.purge()
         yield put({
-            type: 'PURGE_USER_STATE'
+            type: 'PURGE_USER_STATE',
         })
 
-        NavigationService.navigate('AuthLoading')
+        // TODO: navigate to home
+        // NavigationService.navigate('AuthLoading')
 
         yield put(userActions.deleteUserSuccess())
     } catch (err) {
         console.log('error deleting user in saga', err)
-        yield put(userActions.deleteUserError('delete user-saga error'))
+        yield put(userActions.deleteUserError('delete user saga error'))
+        Sentry.captureException(err)
+    }
+}
+
+export function* fetchUnreadStories() {
+    try {
+        yield put(userActions.fetchUnreadStoriesRequest())
+        const apiToken = yield select(getApiToken)
+
+        // yield call(apiService.deleteUser, apiToken)
+
+        yield put(userActions.fetchUnreadStoriesSuccess([]))
+    } catch (err) {
+        console.log('error fetching unread stories in saga', err)
+        yield put(userActions.fetchUnreadStoriesError('unread stories error'))
         Sentry.captureException(err)
     }
 }
@@ -139,9 +185,11 @@ function* deleteUser() {
 function* userSaga() {
     yield all([
         takeLatest(userTypes.FIND_OR_CREATE_USER, findOrCreateUser),
+        takeLatest(userTypes.UPDATE_USER, updateUser),
         takeLatest(userTypes.SUBSCRIBE, subscribe),
         takeLatest(userTypes.UNSUBSCRIBE, unsubscribe),
-        takeLatest(userTypes.DELETE_USER, deleteUser)
+        takeLatest(userTypes.DELETE_USER, deleteUser),
+        takeLatest(userTypes.FETCH_UNREAD_STORIES, fetchUnreadStories),
     ])
 }
 

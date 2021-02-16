@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ScrollView, View, Text, Modal, SafeAreaView, Platform } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import * as Haptics from 'expo-haptics'
@@ -6,123 +6,103 @@ import { connect } from 'react-redux'
 import { Button, List, Divider } from 'react-native-paper'
 import { actions as domainActions } from '../redux/domains'
 
-class ErrorScreen extends React.Component {
-    static navigationOptions = {
-        header: null,
-    }
+const ErrorScreen = (props) => {
+    const { route, navigation, domains, setActiveDomain, theme } = props
 
-    state = {
-        modalVisible: false,
-    }
+    const errorMessage = route.params?.errorMessage
 
-    render() {
-        const { domains, navigation } = this.props
-        const { modalVisible } = this.state
-        const errorMessage = navigation.getParam('errorMessage', null)
-        return (
-            <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
-                <StatusBar style='dark' />
-                <Text
-                    style={{
-                        textAlign: 'center',
-                        padding: 20,
-                        paddingBottom: 50,
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {errorMessage}
-                </Text>
-                <Button
-                    mode='contained'
-                    theme={{
-                        roundness: 7,
-                        colors: {
-                            primary: '#2099CE',
-                        },
-                    }}
-                    style={{ padding: 5, marginBottom: 20 }}
-                    onPress={this._handleSelectAgain}
-                >
-                    Select a New School
-                </Button>
-                <Text style={{ textAlign: 'center', paddingBottom: 20 }}>Or</Text>
-                <Button
-                    mode='contained'
-                    theme={{
-                        roundness: 7,
-                        colors: {
-                            primary: '#2099CE',
-                        },
-                    }}
-                    style={{ padding: 5 }}
-                    onPress={this._handleSelectActive}
-                >
-                    Choose From Your Saved Schools
-                </Button>
-                <Modal
-                    animationType='slide'
-                    presentationStyle='fullScreen'
-                    transparent={false}
-                    visible={modalVisible}
-                    // onDismiss={this._hideModal}
-                >
-                    <SafeAreaView style={{ flex: 1, padding: 0, backgroundColor: '#f6f6f6' }}>
-                        <ScrollView>
-                            {domains.map((item) => {
-                                return (
-                                    <View key={item.id}>
-                                        <List.Item
-                                            title={item.name}
-                                            style={{ paddingVertical: 0 }}
-                                            left={(props) => (
-                                                <List.Icon {...props} icon='chevron-right' />
-                                            )}
-                                            onPress={() => this._handleSelect(item.id)}
-                                        />
-                                        <Divider />
-                                    </View>
-                                )
-                            })}
-                        </ScrollView>
-                    </SafeAreaView>
-                </Modal>
-            </SafeAreaView>
-        )
-    }
-
-    _handleSelectAgain = () => {
-        this.props.navigation.navigate('Auth')
-    }
-
-    _handleSelectActive = () => {
-        this.setState({
-            modalVisible: true,
-        })
-    }
+    const [modalVisible, setModalVisible] = useState(false)
 
     _handleSelect = async (id) => {
         try {
             Haptics.selectionAsync()
-
-            const { setActiveDomain, navigation } = this.props
             setActiveDomain(id)
-            this.setState({
-                modalVisibile: false,
-            })
-            navigation.navigate('AuthLoading')
+            setModalVisible(false)
         } catch (error) {
             console.log('error selecting school from error page')
-            this.setState({
-                modalVisibile: false,
+            setModalVisible(false)
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
             })
-            navigation.navigate('AuthLoading')
         }
     }
+
+    return (
+        <SafeAreaView
+            style={{ flex: 1, alignItems: 'center', backgroundColor: theme.colors.background }}
+        >
+            <StatusBar style={theme.dark ? 'light' : 'dark'} />
+            <Text
+                style={{
+                    textAlign: 'center',
+                    padding: 20,
+                    paddingVertical: 50,
+                    fontSize: 20,
+                    fontFamily: 'ralewayBold',
+                    color: theme.colors.text,
+                }}
+            >
+                {errorMessage}
+            </Text>
+            <Button
+                mode='contained'
+                style={{ padding: 5, marginBottom: 20 }}
+                onPress={() => setActiveDomain(null)}
+            >
+                Select a New School
+            </Button>
+            <Text
+                style={{
+                    fontFamily: 'ralewayBold',
+                    textAlign: 'center',
+                    paddingBottom: 20,
+                    color: theme.colors.text,
+                }}
+            >
+                Or
+            </Text>
+            <Button mode='contained' style={{ padding: 5 }} onPress={() => setModalVisible(true)}>
+                Choose From Your Saved Schools
+            </Button>
+            <Modal
+                animationType='slide'
+                presentationStyle='fullScreen'
+                transparent={false}
+                visible={modalVisible}
+                contentContainerStyle={{
+                    flex: 1,
+                    backgroundColor: theme.colors.background,
+                }}
+            >
+                <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+                    <ScrollView>
+                        {domains.map((item) => {
+                            return (
+                                <View key={item.id}>
+                                    <List.Item
+                                        title={item.name}
+                                        style={{ paddingVertical: 0 }}
+                                        left={(props) => (
+                                            <List.Icon {...props} icon='chevron-right' />
+                                        )}
+                                        onPress={() => _handleSelect(item.id)}
+                                    />
+                                    <Divider />
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
+        </SafeAreaView>
+    )
 }
 
-const mapStateToProps = (store) => ({
-    domains: store.domains,
+const mapStateToProps = (state) => ({
+    domains: state.domains,
+    theme: state.theme,
 })
 
 const mapDispatchToProps = (dispatch) => ({

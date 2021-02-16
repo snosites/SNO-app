@@ -1,15 +1,11 @@
-import React from 'react';
-import {
-    Animated,
-    PanResponder,
-} from 'react-native';
-
+import React from 'react'
+import { Animated, PanResponder } from 'react-native'
 
 export default class FadeInView extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
-            slideAnim: new Animated.Value(-125)
+            slideAnim: new Animated.Value(-140),
         }
 
         this._panResponder = PanResponder.create({
@@ -20,73 +16,70 @@ export default class FadeInView extends React.Component {
                 return dy > 2 || dy < -2
             },
             onPanResponderTerminationRequest: (evt, gestureState) => true,
-            onPanResponderGrant: (evt, gestureState) => {
-            },
-            onPanResponderMove: Animated.event([
-                null, {
-                    dy: this.state.slideAnim
-                }
-            ]),
+            onPanResponderGrant: (evt, gestureState) => {},
+            onPanResponderMove: Animated.event(
+                [
+                    null,
+                    {
+                        dy: this.state.slideAnim,
+                    },
+                ],
+                { useNativeDriver: true }
+            ),
             onPanResponderRelease: (e, gestureState) => {
                 if (gestureState.dy < -40) {
-                    this._hide();
+                    this._hide()
                 } else {
-                    this._show();
+                    this._show()
                 }
-            }
-        });
+            },
+        })
     }
-
 
     componentDidMount() {
         if (this.props.visible) {
-            this._show();
+            this._show()
         }
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.visible !== this.props.visible) {
-            this._toggle();
+            this._toggle()
         }
     }
 
     _toggle = () => {
         if (this.props.visible) {
-            this._show();
+            this._show()
         } else {
-            this._hide();
+            this._hide()
         }
-    };
+    }
 
     _show = () => {
-        Animated.timing(
-            this.state.slideAnim,
-            {
-                toValue: 0,
-                duration: 800,
-                // useNativeDriver: true,
-            }
-        ).start();
+        Animated.timing(this.state.slideAnim, {
+            toValue: 0,
+            duration: 800,
+            useNativeDriver: true,
+        }).start()
     }
 
     _hide = () => {
-        clearTimeout(this._hideTimeout);
+        clearTimeout(this._hideTimeout)
 
         Animated.timing(this.state.slideAnim, {
-            toValue: -125,
+            toValue: -140,
             duration: 400,
-            // useNativeDriver: true,
+            useNativeDriver: true,
         }).start(({ finished }) => {
             if (finished) {
                 //
             }
-        });
+        })
     }
 
-
-
     render() {
-        let { slideAnim } = this.state;
+        let { slideAnim } = this.state
 
         return (
             <Animated.View
@@ -98,17 +91,17 @@ export default class FadeInView extends React.Component {
                         {
                             // translateY: slideAnim
                             translateY: slideAnim.interpolate({
-                                inputRange: [-125, 0],
-                                outputRange: [0, 125],
-                                extrapolateRight: 'clamp'
+                                inputRange: [-140, 0],
+                                outputRange: [0, 140],
+                                extrapolateRight: 'clamp',
                             }),
                         },
                         { perspective: 1000 },
-                    ]
+                    ],
                 }}
             >
                 {this.props.children}
             </Animated.View>
-        );
+        )
     }
 }

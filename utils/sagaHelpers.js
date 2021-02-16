@@ -1,9 +1,16 @@
 import domainApiService from '../api/domain'
 
+export async function getAttachmentsAsync(article) {
+    const response = await fetch(article._links['wp:attachment'][0].href)
+    const imageAttachments = await response.json()
+    return imageAttachments
+}
+
 export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
+        console.log('featuredImage', featuredImage)
         if (!featuredImage.meta_fields) {
             if (
                 featuredImage.media_details &&
@@ -13,6 +20,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             ) {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.large.source_url,
+                    width: featuredImage.media_details.sizes.large.width,
+                    height: featuredImage.media_details.sizes.large.height,
                     photographer: '',
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
@@ -22,6 +31,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             } else {
                 story.featuredImage = {
                     uri: featuredImage.source_url,
+                    width: featuredImage.media_details.width,
+                    height: featuredImage.media_details.height,
                     photographer: '',
                     caption:
                         featuredImage.caption && featuredImage.caption.rendered
@@ -44,6 +55,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             ) {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.large.source_url,
+                    width: featuredImage.media_details.sizes.large.width,
+                    height: featuredImage.media_details.sizes.large.height,
                     photographer: featuredImage.meta_fields.photographer
                         ? featuredImage.meta_fields.photographer
                         : '',
@@ -56,6 +69,8 @@ export async function asyncFetchFeaturedImage(url, story) {
             } else {
                 story.featuredImage = {
                     uri: featuredImage.media_details.sizes.full.source_url,
+                    width: featuredImage.media_details.width,
+                    height: featuredImage.media_details.height,
                     photographer: featuredImage.meta_fields.photographer
                         ? featuredImage.meta_fields.photographer
                         : '',
@@ -85,7 +100,7 @@ export async function asyncFetchComments(url, story) {
     return
 }
 
-export async function asyncFetchArticle(domainUrl, articleId) {
+export async function asyncFetchArticle(domainUrl, articleId, isChapter = false) {
     try {
         const article = await domainApiService.fetchArticle(domainUrl, articleId)
 
@@ -96,7 +111,60 @@ export async function asyncFetchArticle(domainUrl, articleId) {
         ) {
             await asyncFetchFeaturedImage(`${article._links['wp:featuredmedia'][0].href}`, article)
         }
+        if (
+            article.custom_fields.featureimage &&
+            article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'
+        ) {
+            article.slideshow = await getAttachmentsAsync(article)
+        }
+
+        let storyChapters = []
+        let metaKey = ''
+
+        if (!isChapter) {
+            if (article.custom_fields.sno_format == 'Long-Form') {
+                metaKey = 'sno_longform_list'
+            } else if (article.custom_fields.sno_format == 'Grid') {
+                metaKey = 'sno_grid_list'
+            } else if (article.custom_fields.sno_format == 'Side by Side') {
+                metaKey = 'sno_sidebyside_list'
+            }
+            if (metaKey) {
+                let results = await fetch(
+                    `https://${domainUrl}/wp-json/custom_meta/my_meta_query?meta_query[0][key]=${metaKey}&meta_query[0][value]=${article.id}`
+                )
+                storyChapters = await results.json()
+            }
+        }
+
+        let updatedStoryChapters = await Promise.all(
+            storyChapters.map(async (article) => {
+                return await asyncFetchArticle(domainUrl, article.ID, true)
+            })
+        )
+
+        article.storyChapters = updatedStoryChapters
+
         await asyncFetchComments(domainUrl, article)
+
+        if (article.custom_fields.sno_format == 'Long-Form') {
+            // sort long form chapters
+            updatedStoryChapters.sort(function (a, b) {
+                if (
+                    a.custom_fields.sno_longform_order &&
+                    a.custom_fields.sno_longform_order[0] < b.custom_fields.sno_longform_order &&
+                    b.custom_fields.sno_longform_order[0]
+                )
+                    return -1
+                if (
+                    a.custom_fields.sno_longform_order &&
+                    a.custom_fields.sno_longform_order[0] > b.custom_fields.sno_longform_order &&
+                    b.custom_fields.sno_longform_order[0]
+                )
+                    return 1
+                return 0
+            })
+        }
 
         return article
     } catch (err) {

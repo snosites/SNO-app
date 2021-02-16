@@ -11,7 +11,6 @@ import {
 } from 'react-native'
 import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel'
 import HTML from 'react-native-render-html'
-import Colors from '../constants/Colors'
 import TouchableItem from '../constants/TouchableItem'
 
 import { getActiveDomain } from '../redux/domains'
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
         right: itemHorizontalMargin,
         bottom: 18,
         backgroundColor: 'white',
-        shadowColor: Colors.black,
+        shadowColor: 'black',
         shadowOpacity: 0.45,
         shadowOffset: { width: 10, height: 10 },
         shadowRadius: 10,
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
-        backgroundColor: Colors.black,
+        backgroundColor: 'black',
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius,
     },
@@ -248,14 +247,14 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: entryBorderRadius,
-        backgroundColor: Colors.black,
+        backgroundColor: 'black',
     },
     textContainer: {
         justifyContent: 'center',
         paddingTop: 2,
         paddingBottom: 4 + entryBorderRadius,
         paddingHorizontal: 16,
-        backgroundColor: Colors.black,
+        backgroundColor: 'black',
         borderBottomLeftRadius: entryBorderRadius,
         borderBottomRightRadius: entryBorderRadius,
     },
@@ -267,7 +266,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         // marginTop: 6,
-        color: Colors.gray,
+        color: '#888888',
         fontSize: 12,
         fontStyle: 'italic',
     },
