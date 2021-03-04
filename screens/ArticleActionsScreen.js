@@ -7,6 +7,7 @@ import { Button } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Amplitude from 'expo-analytics-amplitude'
 // import Branch, { BranchEvent } from 'expo-branch'
+import Branch from '../constants/branchSetup'
 
 import { Html5Entities } from 'html-entities'
 
@@ -21,32 +22,38 @@ const ArticleActionsScreen = (props) => {
             storyId: article.id,
         })
         const title = entities.decode(article.title?.rendered || 'No Title')
-        const contentDescription = entities.decode(article.excerpt?.rendered || 'No Description')
-        Share.share({
-            title,
-            message: contentDescription,
-            url: article.link,
-        })
-        // const _branchUniversalObject = await Branch.createBranchUniversalObject(
-        //     `article_${article.id}`,
-        //     {
-        //         title,
-        //         contentImageUrl: article.featuredImage?.uri,
-        //         contentDescription,
-        //         // This metadata can be used to easily navigate back to this screen
-        //         // when implementing deep linking with `Branch.subscribe`.
-        //         metadata: {
-        //             screen: 'articleScreen',
-        //             params: JSON.stringify({ articleId: article.id }),
-        //             desktopUrl: article.link,
-        //         },
-        //     }
-        // )
-        // const shareOptions = {
-        //     messageHeader: title,
-        //     messageBody: `Checkout my new article!`,
-        // }
-        // await _branchUniversalObject.showShareSheet(shareOptions)
+        const contentDescription = `Check out this story: ${article.link}`
+
+        const _branchUniversalObject = await Branch.createBranchUniversalObject(
+            `article_${article.id}`,
+            {
+                title,
+                contentImageUrl: article.featuredImage?.uri,
+                contentDescription,
+                // This metadata can be used to easily navigate back to this screen
+                // when implementing deep linking with `Branch.subscribe`.
+                metadata: {
+                    screen: 'articleScreen',
+                    params: JSON.stringify({ articleId: article.id }),
+                    desktopUrl: article.link,
+                },
+            }
+        )
+        const shareOptions = {
+            messageHeader: title,
+            messageBody: `Checkout my new article!`,
+        }
+        try {
+            await _branchUniversalObject.showShareSheet(shareOptions)
+        } catch (err) {
+            // fallback to old share
+            console.log('error opening branch share sheet')
+            Share.share({
+                title,
+                message: contentDescription,
+                url: article.link,
+            })
+        }
     }
 
     const _saveRemoveToggle = () => {

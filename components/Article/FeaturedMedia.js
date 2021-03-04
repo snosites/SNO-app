@@ -123,7 +123,6 @@ const FeaturedMedia = ({ navigation, article, theme }) => {
         const maxImageAspectRatio = MAX_MEDIA_HEIGHT / MEDIA_WIDTH
         const MEDIA_HEIGHT = MEDIA_WIDTH * imageAspectRatio
 
-        console.log('aspect rtatios', imageAspectRatio, maxImageAspectRatio)
         return (
             <ImageBackground
                 source={{ uri: article.featuredImage.uri }}

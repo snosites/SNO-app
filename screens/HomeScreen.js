@@ -156,81 +156,6 @@ const HomeScreen = (props) => {
                                 justifyContent: 'flex-end',
                                 alignItems: 'center',
                             }}
-<<<<<<< HEAD
-                            loop={true}
-                            autoPlay={true}
-                            source={require('../assets/lottiefiles/broken-stick-error')}
-                        />
-                    </View>
-                    <Text style={{ textAlign: 'center', fontSize: 17, padding: 30 }}>
-                        Sorry, something went wrong. If you are the site owner, please submit a
-                        support request.
-                    </Text>
-                    <Button
-                        mode='contained'
-                        theme={{
-                            roundness: 7,
-                            colors: {
-                                primary: theme ? theme.colors.primary : '#2099CE',
-                            },
-                        }}
-                        style={{ padding: 5 }}
-                        onPress={this._handleRefresh}
-                    >
-                        Reload
-                    </Button>
-                </View>
-            )
-        }
-
-        const categoryBackgroundColor = homeScreenCategoryColor
-            ? homeScreenCategoryColor
-            : theme.colors.primary
-
-        let primaryCategoryBackgroundColor = Color(categoryBackgroundColor)
-        let isCategoryColorDark = primaryCategoryBackgroundColor.isDark()
-
-        return (
-            <ScrollView style={{ flex: 1 }}>
-                <NavigationEvents
-                    onDidFocus={() => {
-                        if (ad && ad.id) {
-                            sendAdAnalytic(activeDomain.url, ad.id, 'ad_views')
-                        }
-                    }}
-                />
-                {categoryTitles.map((title, i) => {
-                    // const margin = i ? 40 : 0
-                    const listLength = homeScreenCategoryAmounts[i] || 5
-                    const shouldShowAd =
-                        homeAds.displayLocation && homeAds.displayLocation.includes(i + 1) && ad
-
-                    console.log('should show ad', shouldShowAd, homeAds.displayLocation, ad)
-                    return (
-                        <View style={{ flex: 1 }} key={i}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigation.navigate('List', {
-                                        menuTitle: title,
-                                        categoryId: homeScreenCategories[i],
-                                    })
-                                    setActiveCategory(homeScreenCategories[i])
-                                }}
-                                style={{
-                                    backgroundColor: categoryBackgroundColor,
-                                    justifyContent: 'center',
-                                    paddingVertical: 10,
-                                    // marginTop: margin,
-                                    shadowColor: '#000',
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 2,
-                                    },
-                                    shadowOpacity: 0.23,
-                                    shadowRadius: 2.62,
-
-                                    elevation: 4,
-=======
                         >
                             <Text
                                 style={{
@@ -245,7 +170,6 @@ const HomeScreen = (props) => {
                                 onPress={() => {
                                     setActiveCategory(id)
                                     navigation.navigate('ListDrawer')
->>>>>>> navigation-v5
                                 }}
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>

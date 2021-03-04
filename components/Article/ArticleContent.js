@@ -181,7 +181,7 @@ const ArticleContent = (props) => {
                         onParsed={(dom, RNElements) => {
                             // snoAd is always in the middle
                             if (snoAd) {
-                                const ad = {
+                                const _ad = {
                                     wrapper: null,
                                     tagName: 'adBlock',
                                     attribs: {},
@@ -190,14 +190,13 @@ const ArticleContent = (props) => {
                                     nodeIndex: Math.floor(RNElements.length / 2),
                                 }
                                 // // Insert the component
-                                RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
+                                RNElements.splice(Math.floor(RNElements.length / 2), 0, _ad)
 
                                 return RNElements
                             }
                             if (!ad || !adPosition || adPosition !== 'middle') return RNElements
-
                             // Find the index of the first paragraph
-                            const ad = {
+                            const _ad = {
                                 wrapper: null,
                                 tagName: 'adBlock',
                                 attribs: {},
@@ -206,7 +205,7 @@ const ArticleContent = (props) => {
                                 nodeIndex: Math.floor(RNElements.length / 2),
                             }
                             // // Insert the component
-                            RNElements.splice(Math.floor(RNElements.length / 2), 0, ad)
+                            RNElements.splice(Math.floor(RNElements.length / 2), 0, _ad)
 
                             return RNElements
                         }}
