@@ -77,7 +77,7 @@ const apiService = {
     searchAvailableDomains: async (apiToken, version, searchTerm) => {
         try {
             const response = await axios.get(
-                `/domains/search/${searchTerm}/${'college'}?api_token=${apiToken}`,
+                `/domains/search/${searchTerm}/${version}?api_token=${apiToken}`,
                 {
                     baseURL: BASE_URL,
                 }
