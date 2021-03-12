@@ -50,16 +50,12 @@ const Slideshow = (props) => {
         }
     }, [])
 
-    useEffect(() => {
-        console.log('expand cap', expandCaption)
-    })
-
-    _getImage = async (imageId) => {
+    const _getImage = async (imageId) => {
         const result = await fetch(`http://${activeDomain.url}/wp-json/wp/v2/media/${imageId}`)
         return await result.json()
     }
 
-    _getImageData = async (imageIds) => {
+    const _getImageData = async (imageIds) => {
         try {
             const images = await Promise.all(
                 imageIds.map(async (id) => {
@@ -74,7 +70,7 @@ const Slideshow = (props) => {
         }
     }
 
-    _renderItem = ({ item, index }, parallaxProps) => {
+    const _renderItem = ({ item, index }, parallaxProps) => {
         const photographer =
             item.meta_fields && item.meta_fields.photographer
                 ? item.meta_fields.photographer[0]
@@ -86,7 +82,6 @@ const Slideshow = (props) => {
                 style={styles.slideInnerContainer}
                 delayPressIn={300}
                 onPress={() => {
-                    console.log('photos', photos)
                     if (expandCaption) {
                         setExpandCaption(false)
                     } else {

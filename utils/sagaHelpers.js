@@ -1,8 +1,10 @@
 import domainApiService from '../api/domain'
 
 export async function getAttachmentsAsync(article) {
+    // I think the problems that it is fetching a max of 10 images in the REST API.  check wp
     const response = await fetch(article._links['wp:attachment'][0].href)
     const imageAttachments = await response.json()
+    console.log('imageAttachments', imageAttachments)
     return imageAttachments
 }
 
@@ -10,7 +12,6 @@ export async function asyncFetchFeaturedImage(url, story) {
     try {
         const imgResponse = await fetch(url)
         const featuredImage = await imgResponse.json()
-        console.log('featuredImage', featuredImage)
         if (!featuredImage.meta_fields) {
             if (
                 featuredImage.media_details &&
@@ -115,6 +116,7 @@ export async function asyncFetchArticle(domainUrl, articleId, isChapter = false)
             article.custom_fields.featureimage &&
             article.custom_fields.featureimage[0] == 'Slideshow of All Attached Images'
         ) {
+            console.log('here 2')
             article.slideshow = await getAttachmentsAsync(article)
         }
 
