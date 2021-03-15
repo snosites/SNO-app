@@ -2,7 +2,9 @@ import domainApiService from '../api/domain'
 
 export async function getAttachmentsAsync(article) {
     // I think the problems that it is fetching a max of 10 images in the REST API.  check wp
-    const response = await fetch(article._links['wp:attachment'][0].href)
+    const url = `${article._links['wp:attachment'][0].href}&per_page=30`
+
+    const response = await fetch(url)
     const imageAttachments = await response.json()
     console.log('imageAttachments', imageAttachments)
     return imageAttachments
