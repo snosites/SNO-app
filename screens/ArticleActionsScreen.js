@@ -39,12 +39,23 @@ const ArticleActionsScreen = (props) => {
                 },
             }
         )
+
         const shareOptions = {
             messageHeader: title,
-            messageBody: `Checkout my new article!`,
+            messageBody: `Checkout this new story!`,
+        }
+        const linkProperties = { feature: 'share', channel: 'RNApp' }
+        const controlParams = {
+            $desktop_url: article.link,
+            // $ios_url: 'http://example.com/ios',
         }
         try {
-            await _branchUniversalObject.showShareSheet(shareOptions)
+            const { channel, completed, error } = await _branchUniversalObject.showShareSheet(
+                shareOptions,
+                linkProperties,
+                controlParams
+            )
+            console.log('completed', completed)
         } catch (err) {
             // fallback to old share
             console.log('error opening branch share sheet')
