@@ -37,7 +37,7 @@
     "expo-web-browser": "~8.5.0",
     "geolib": "^3.0.3",
     "html-entities": "^1.3.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "lottie-react-native": "~2.6.1",
     "moment": "^2.24.0",
     "normalizr": "^3.3.0",
